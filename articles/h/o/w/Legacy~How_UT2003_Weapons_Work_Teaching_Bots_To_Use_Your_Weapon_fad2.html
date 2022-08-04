@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:How UT2003 Weapons Work/Teaching Bots To Use Your Weapon - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:How UT2003 Weapons Work/Teaching Bots To Use Your Weapon</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_cfe8.html" title="Legacy:How UT2003 Weapons Work">Legacy:How UT2003 Weapons Work</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#Bot_variables"><span class="tocnumber">2</span> <span class="toctext">Bot variables</span></a></li>
+<li class="toclevel-1"><a href="#Weapon_Functions"><span class="tocnumber">3</span> <span class="toctext">Weapon Functions</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">4</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<p>Bots don't understand the most obvious thing about your weapon. I don't care if it's just another machinegun or yet another shotgun. The truth is, it might as well be a stick of wood for all they care. Fortunatly, the bot does know how to pull a trigger, so it can handle that. Unfortunatly, it doesn't know what the trigger does or whether your superdoopershotgun is better than the wet noodle it can also choose from. Even if it can make a choice, there's probably more than one way to use your weapon, assuming there's an alt-fire function. This all means we're going to have to do a little work to make the weapon bot-friendly.</p>
+<p>First, in any function you've got to get a handle for a bot. This is done like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Bot B;
+ 
+B = Bot<span class="br0">(</span>Instigator.<span class="me1">Controller</span><span class="br0">)</span>;
+</pre></div>
+<p>And then running off and doing whatever we're going to do with it. I'm using examples from my work on the <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_Semigib_Onslaught_1a6b.html" title="Legacy:Mod Ideas/Semigib Onslaught">Mod_Ideas/Semigib_Onslaught</a> mutator</p>
+<p><a name="Bot_variables" id="Bot_variables"></a></p>
+<h2><span class="mw-headline">Bot variables</span></h2>
+<dl>
+<dt>Pawn Enemy&#160;</dt>
+<dd>The pawn the bot is hunting/fighting with (not used normally since Target is the real meat)</dd>
+<dt>Actor Target&#160;</dt>
+<dd>Whatever the bot is shooting at</dd>
+<dt>bool bFire&#160;</dt>
+<dd>1 if the primary fire mode is selected</dd>
+<dt>bool bAltFire&#160;</dt>
+<dd>1 if the alt-fire mode is selected</dd>
+</dl>
+<p><a name="Weapon_Functions" id="Weapon_Functions"></a></p>
+<h2><span class="mw-headline">Weapon Functions</span></h2>
+<dl>
+<dt>function float RangedAttackTime()&#160;</dt>
+<dd>Time for the bot to wait between attacks.</dd>
+<dt>function bool RecommendRangedAttack()&#160;</dt>
+<dd>Unknown, What is defined as "Ranged" in the UT engine? This is false by default, and ranged weapons don't seem to be bothered by this.</dd>
+<dt>function bool RecommendLongRangedAttack()&#160;</dt>
+<dd>Unknown, What is defined as "Long Ranged" in the UT engine? This is false by default, and ranged weapons don't seem to be bothered by this.</dd>
+<dt>function bool FocusOnLeader(bool bLeaderFiring)&#160;</dt>
+<dd>return true if the bot should focus on the leader of it's Squad. The best example of this is the Link Gun.</dd>
+<dt>function bool SplashDamage()&#160;</dt>
+<dd>return true if weapon effect has splash damage (if significant), used by bot to avoid hurting self. It should be based on current firing Mode if active</dd>
+<dt>function bool RecommendSplashDamage()&#160;</dt>
+<dd>return true if weapon should be fired to take advantage of splash damage. For example, rockets should be fired at enemy feet</dd>
+<dt>function float GetDamageRadius()&#160;</dt>
+<dd>return the damage radius of the splash damage.</dd>
+<dt>function float RefireRate()&#160;</dt>
+<dd>Repeater weapons like minigun should be 0.99, other weapons based on likelihood of firing again right away</dd>
+<dt>function bool FireOnRelease()&#160;</dt>
+<dd>tells AI that it needs to release the fire button for this weapon to do anything</dd>
+<dt>function byte BestMode()&#160;</dt>
+<dd>choose between regular or alt-fire, 0 is regular, 1 is alt-fire.</dd>
+</dl>
+<p>Note: This is for the Instagib Linkgun. The primary fire is only useful for other xPawns, and thus the secondary fire is chosen if the bot is targeting a xPawn. Of course, the primary fire doesn't help teammates, so the check for teams had to be added as well</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">byte</span> BestMode<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> bot B;
+ 
+        B = Bot<span class="br0">(</span>Instigator.<span class="me1">Controller</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span> B == <span class="kw9">None</span> <span class="br0">)</span> || <span class="br0">(</span><span class="br0">(</span>xPawn<span class="br0">(</span>B.<span class="me1">Target</span><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>xPawn<span class="br0">(</span>B.<span class="me1">Target</span><span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span> != Instigator.<span class="me1">Controller</span>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>
+                <span class="kw1">return</span> <span class="nu0">0</span>;
+ 
+        <span class="kw1">return</span> <span class="nu0">1</span>;
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dt>function bool BotFire(bool bFinished, optional name FiringMode)&#160;</dt>
+<dd>called by NPC firing weapon. Weapon chooses appropriate firing Mode to use (typically no change) bFinished should only be true if called from the Finished() function FiringMode can be passed in to specify a firing Mode (used by scripted sequences)</dd>
+<dt>simulated function float RateSelf()&#160;</dt>
+<dd>need to figure out modified rating based on enemy/tactical situation. The range is -2 to 2, the higher the better.</dd>
+<dt>function float GetAIRating()&#160;</dt>
+<dd>Returns the AI Rating for the weapon ranged from -2.0 to 2.0. This is the real meat of the rating system. It's what is used, along with a bot's personal opinion of the weapon (this is where the "favorite weapon" comes into play) comes into effect and is actually used when the bot trys to descide which weapon to bring up.</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">float</span> GetAIRating<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw5">local</span> Bot B;
+ 
+        B = Bot<span class="br0">(</span>Instigator.<span class="me1">Controller</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>B == <span class="kw9">None</span><span class="br0">)</span>
+                <span class="kw1">return</span> AIRating;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>B.<span class="me1">Enemy</span> == <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>B.<span class="me1">Target</span> == <span class="kw9">none</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>AmmoCharge<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> &gt;= FireMode<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoClass</span>.<span class="kw1">default</span>.<span class="me1">AmmoAmount</span><span class="br0">)</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="nu0">-2.0</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>xPawn<span class="br0">(</span>B.<span class="me1">Target</span><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+           <span class="kw1">return</span> <span class="nu0">2.0</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Vehicle<span class="br0">(</span>B.<span class="me1">Target</span><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="nu0">1.2</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>VSize<span class="br0">(</span> Instigator.<span class="me1">Location</span> - B.<span class="me1">Target</span>.<span class="me1">Location</span><span class="br0">)</span> &gt; LinkFire<span class="br0">(</span>FireMode<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">TraceRange</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="nu0">-2.0</span>;
+ 
+    <span class="kw1">return</span> AIRating;
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dt>function float SuggestAttackStyle()&#160;</dt>
+<dd>tells bot whether to charge or back off while using this weapon (negative = run away, positive = run towards)</dd>
+<dt>function float SuggestDefenseStyle()&#160;</dt>
+<dd>tells bot whether to charge or back off while defending against this weapon (negative = run away, positive = run towards)</dd>
+<dt>function bool SplashJump()&#160;</dt>
+<dd>return true if recommend jumping while firing to improve splash damage (by shooting at feet) true for R.L., for example</dd>
+<dt>function bool CanAttack(Actor Other)&#160;</dt>
+<dd>return false if out of range, can't see target, etc. otherwise, if the bot can attack then return true.</dd>
+</dl>
+<p>In this case, I had to let the bot know that the link beam has a limited range.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> CanAttack<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> bot B;
+ 
+        B = Bot<span class="br0">(</span>Instigator.<span class="me1">Controller</span><span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span>B == <span class="kw9">none</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="kw9">true</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span> B.<span class="me1">bAltFire</span> == <span class="nu0">1</span> <span class="br0">)</span> &amp;&amp; <span class="br0">(</span> VSize<span class="br0">(</span> Instigator.<span class="me1">Location</span> - Other.<span class="me1">Location</span><span class="br0">)</span> &gt; LinkFire<span class="br0">(</span>FireMode<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">TraceRange</span><span class="br0">)</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+    <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Enigmatic:</b> OK, I probably could use a etter name/location for this mess, but I think it's a pretty solid block of something at least</p>
+<p><b>JonAzz:</b> What signifigance does this function have in any of this?</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">float</span> GetRange<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">LifeSpan</span> == <span class="nu0">0.0</span><span class="br0">)</span>
+                <span class="kw1">return</span> <span class="nu0">15000</span>;
+        <span class="kw1">else</span>
+                <span class="kw1">return</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">MaxSpeed</span> * <span class="kw1">default</span>.<span class="me1">LifeSpan</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>this is from UT2004... I can't find a UT2004 version, but I am assuming they are similar...somewhat.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 20/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_Teaching_Bots_To_Use_Your_Weapon_fad2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/h/o/w/Legacy_talk%7EHow_UT2003_Weapons_Work_Teaching_Bots_To_Use_Your_Weapon_e9c5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:How_UT2003_Weapons_Work/Teaching_Bots_To_Use_Your_Weapon">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:49, 1 May 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

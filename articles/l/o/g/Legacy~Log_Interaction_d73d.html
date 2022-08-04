@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Log Interaction - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Log Interaction</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><b>Shambler:</b> Got fed up of using the log window to debug stuff so made this real quick....basically this code will allow you to display log info on the HUD ingame and there are a number of ways you can format it to stand out.</p>
+<p>Posting it on the wiki for others who may find use in it.</p>
+<dl>
+<dd>&lt;wiki&gt;[[Image:Legacy_pgDebugLog.jpeg|]]</dd>
+</dl>
+<p><a name="How_to_use_it" id="How_to_use_it"></a></p>
+<h2><span class="mw-headline">How to use it</span></h2>
+<p>Create a mutator like this one:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> pgPortalGunMut <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        <span class="co1">// Debug</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Other.<span class="me1">Controller</span> != <span class="kw9">none</span> &amp;&amp; PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span> != <span class="kw9">none</span> &amp;&amp; PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span> != <span class="kw9">none</span>
+                &amp;&amp; PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">InteractionMaster</span> != <span class="kw9">none</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span>.<span class="kw6">Length</span>; ++i<span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span>MathDebugInteraction<span class="br0">(</span>PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                                bSkip = <span class="kw9">True</span>;
+                                <span class="kw1">break</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+                <span class="kw1">if</span> <span class="br0">(</span>!bSkip<span class="br0">)</span>
+                        PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">InteractionMaster</span>.<span class="me1">AddInteraction</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw5">Class</span><span class="st0">'MathDebugInteraction'</span><span class="br0">)</span>, PlayerController<span class="br0">(</span>Other.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">Player</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw6">Super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Mutate<span class="br0">(</span><span class="kw4">string</span> MutateString, PlayerController Sender<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>MutateString ~= <span class="st0">"pgToggleDebug"</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>Sender.<span class="me1">Player</span> != <span class="kw9">none</span> &amp;&amp; Sender.<span class="me1">Player</span>.<span class="me1">InteractionMaster</span> != <span class="kw9">none</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;Sender.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span>.<span class="kw6">Length</span>; ++i<span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="kw1">if</span> <span class="br0">(</span>MathDebugInteraction<span class="br0">(</span>Sender.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        MathDebugInteraction<span class="br0">(</span>Sender.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>.<span class="me1">ToggleDebug</span><span class="br0">(</span><span class="br0">)</span>;
+                                        <span class="kw1">break</span>;
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+                <span class="kw6">Super</span>.<span class="me1">Mutate</span><span class="br0">(</span>MutateString, Sender<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Add some debugging code to the class you want to debug</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> SomeClass <span class="kw5">extends</span> SomeActor;
+ 
+<span class="kw5">var</span> MathDebugInteraction ActiveDebug;
+<span class="kw5">var</span> <span class="kw4">int</span> FireMode; <span class="co1">// This isn't important</span>
+ 
+<span class="kw5">function</span> SomeFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> XDot, ZDot, ZAxisDiff, ClockX, ClockZ, DiffClockZ, ClockTest;
+ 
+ 
+        <span class="co1">// Do stuff with these variables</span>
+        XDot = Blah;
+        ZDot = Blah;
+        ZAxisDiff = Blah;
+        ClockX = Blah;
+        ClockZ = Blah;
+        ClockTest = Blah;
+        DiffClockZ = Blah;
+ 
+ 
+ 
+        <span class="co1">// Log stuff to display on screen (shown in picture)</span>
+ 
+ 
+        <span class="co1">// Format of the LogString function: (copied here for reference)</span>
+ 
+        <span class="co1">// function LogString(string Info, optional color StringColor, optional bool bUseColor, optional bool bUnderline, optional color HighlightColor, optional bool bDontEndLine)</span>
+        <span class="co1">// Parameter 1: The string you want to log</span>
+        <span class="co1">// Parameter 2: The colour of the logstring</span>
+        <span class="co1">// Parameter 3: Pass in True if you put in a colour for parameter 2 (I should change this but cba)</span>
+        <span class="co1">// Parameter 4: Underline the text if True is passed in</span>
+        <span class="co1">// Parameter 5: If you pass a colour in (with an Alpha greater than 0) then the text is highlighted with that colour</span>
+        <span class="co1">// Parameter 6: If you want the next log string to write on the same line, pass in True here</span>
+ 
+ 
+ 
+ 
+        <span class="co1">// I want to rewrite the log info every tick, so check the timestamp on the debug object...if its 'out of date', use EmptyList to wipe the log data (specifying a new timestamp)</span>
+        <span class="kw1">if</span> <span class="br0">(</span>ActiveDebug.<span class="me1">LogTimestamp</span> != <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                ActiveDebug.<span class="me1">EmptyList</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">TimeSeconds</span><span class="br0">)</span>;
+ 
+                <span class="co1">// The command to turn this off is detailed in the mutator class</span>
+                ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"To disable this text type: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">0</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+                ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"Mutate pgToggleDebug"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">0</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span><span class="br0">)</span>;
+                ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">""</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>FireMode == <span class="nu0">0</span><span class="br0">)</span>
+                ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"Portal"</span>@FireMode, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">128</span>,<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>;
+        <span class="kw1">else</span>
+                ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"Portal"</span>@FireMode, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">128</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"XDot"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(XY Axis change) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>XDot<span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span>, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">" or "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw7">ACos</span><span class="br0">(</span>XDot<span class="br0">)</span> * <span class="nu0">57.295779</span><span class="br0">)</span>$<span class="st0">"º"</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">0</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"ZDot"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(Z Axis change) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>ZDot<span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span>, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">" or "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw7">ACos</span><span class="br0">(</span>ZDot<span class="br0">)</span> * <span class="nu0">57.295779</span><span class="br0">)</span>$<span class="st0">"º"</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">0</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"ZAxisDiff"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(Portal Up-Axis offset) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>ZAxisDiff<span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span>, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">" or "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw7">ACos</span><span class="br0">(</span>ZAxisDiff<span class="br0">)</span> * <span class="nu0">57.295779</span><span class="br0">)</span>$<span class="st0">"º"</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">0</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"ClockX"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(XDot/Yaw clockwise?) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw4">bool</span><span class="br0">(</span>ClockX<span class="br0">)</span><span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"ClockZ"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(ZDot/Pitch clockwise?) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw4">bool</span><span class="br0">(</span>ClockZ<span class="br0">)</span><span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"DiffClockZ"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">" is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw4">bool</span><span class="br0">(</span>DiffClockZ<span class="br0">)</span><span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"ClockTest"</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>, <span class="kw9">True</span>,, <span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">"(ZDot/Roll clockwise?) is: "</span>, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>, <span class="kw9">True</span>,,,<span class="kw9">True</span><span class="br0">)</span>;
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw4">bool</span><span class="br0">(</span>ClockTest<span class="br0">)</span><span class="br0">)</span>,,,, <span class="kw5">Class</span><span class="st0">'Canvas'</span>.<span class="kw6">static</span>.<span class="me1">MakeColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        ActiveDebug.<span class="me1">LogString</span><span class="br0">(</span><span class="st0">""</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>And put this in a .uc file in with your source, modify the 'foreach' loop on line 45 so you can 'attach' (i.e. put a reference to) the interaction in the class you want to debug.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// An interaction to help me debug problems with the portal gun math</span>
+<span class="kw5">Class</span> MathDebugInteraction <span class="kw5">extends</span> Interaction;
+ 
+<span class="kw4">struct</span> LogElement
+<span class="br0">{</span>
+        <span class="kw5">var</span> <span class="kw4">string</span> LogString;
+        <span class="kw5">var</span> <span class="kw4">color</span> StringColor;
+        <span class="kw5">var</span> <span class="kw4">bool</span> bUnderline;
+        <span class="kw5">var</span> <span class="kw4">color</span> HighlightColor;
+        <span class="kw5">var</span> <span class="kw4">bool</span> bDontEndLine;
+<span class="br0">}</span>;
+ 
+<span class="kw5">var</span> array&lt;LogElement&gt; LogList;
+<span class="kw5">var</span> <span class="kw4">int</span> ListSpacing;
+<span class="kw5">var</span> <span class="kw4">color</span> ListColor;
+<span class="kw5">var</span> font ListFont;
+<span class="kw5">var</span> <span class="kw4">float</span> ListX, ListY, FontY, FontScale, LogTimestamp;
+<span class="kw5">var</span> <span class="kw4">bool</span> bInitialSetup;
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bDisableDebug;
+ 
+ 
+<span class="kw5">function</span> ToggleDebug<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        bDisableDebug = !bDisableDebug;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>bDisableDebug<span class="br0">)</span>
+                EmptyList<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span>canvas Canvas<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> pgPortalDecal PD;
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="kw5">local</span> <span class="kw4">float</span> LenX, LenY, LastX, LastY;
+ 
+        <span class="coMULTI">/*
+        EmptyList();
+        LogString("Arf, testing");
+        LogString("Wewt, testing2", Canvas.MakeColor(255,255,255,255), True, True,,True);
+        LogString("AMG TEST",,,True,Canvas.MakeColor(0,255,0,128));
+        LogString("FEYNAL TEST!!");
+        */</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>ViewportOwner != <span class="kw9">none</span> &amp;&amp; ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a> != <span class="kw9">none</span> &amp;&amp; ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">none</span> &amp;&amp; xPawn<span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+                <span class="kw1">foreach</span> ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">DynamicActors</span><span class="br0">(</span><span class="kw5">Class</span><span class="st0">'pgPortalDecal'</span>, PD<span class="br0">)</span>
+                        <span class="kw1">if</span> <span class="br0">(</span>PD.<span class="me1">Owner</span> == ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a><span class="coMULTI">/* &amp;&amp; PD.FireMode == 0*/</span> &amp;&amp; PD.<span class="me1">ActiveDebug</span> != <span class="kw8">self</span><span class="br0">)</span>
+                                PD.<span class="me1">ActiveDebug</span> = <span class="kw8">self</span>;
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>LogList.<span class="kw6">Length</span> == <span class="nu0">0</span><span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+ 
+        <span class="co1">// ListX and ListY in default properties tell the code where to start drawing (between 0.0 and 1.0), FontScale determines the size of font with changing screen size</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!bInitialSetup<span class="br0">)</span>
+        <span class="br0">{</span>
+                ListX = Canvas.<span class="me1">ClipX</span> * ListX;
+                ListY = Canvas.<span class="me1">ClipY</span> * ListY;
+                FontScale = Canvas.<span class="me1">ClipX</span> * FontScale;
+ 
+                bInitialSetup = <span class="kw9">True</span>;
+        <span class="br0">}</span>
+ 
+ 
+        Canvas.<span class="me1">Reset</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+ 
+        <span class="co1">// Setup stored variables</span>
+        Canvas.<span class="me1">Font</span> = ListFont;
+ 
+        Canvas.<span class="me1">Style</span> = <span class="nu0">5</span>;
+ 
+        Canvas.<span class="me1">CurX</span> = ListX;
+        Canvas.<span class="me1">CurY</span> = ListY;
+        Canvas.<span class="me1">FontScaleX</span> = FontScale;
+        Canvas.<span class="me1">FontScaleY</span> = FontScale;
+ 
+        Canvas.<span class="me1">DrawColor</span> = ListColor;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>FontY == <span class="nu0">0</span><span class="br0">)</span>
+                Canvas.<span class="me1">StrLen</span><span class="br0">(</span><span class="st0">"X"</span>, FontY, FontY<span class="br0">)</span>;
+ 
+ 
+        <span class="co1">// Draw the list</span>
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;LogList.<span class="kw6">Length</span>; ++i<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>Canvas.<span class="me1">CurY</span> &lt; Canvas.<span class="me1">ClipY</span> &amp;&amp; Canvas.<span class="me1">CurX</span> &lt; Canvas.<span class="me1">ClipX</span> &amp;&amp; LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">LogString</span> != <span class="st0">""</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        LastX = Canvas.<span class="me1">CurX</span>;
+                        LastY = Canvas.<span class="me1">CurY</span>;
+ 
+                        Canvas.<span class="me1">StrLen</span><span class="br0">(</span>LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">LogString</span>, LenX, LenY<span class="br0">)</span>;
+ 
+                        <span class="co1">// Manage highlighting</span>
+                        <span class="kw1">if</span> <span class="br0">(</span>LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">HighlightColor</span>.<span class="me1">A</span> != <span class="nu0">0</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                                Canvas.<span class="me1">DrawColor</span> = LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">HighlightColor</span>;
+                                Canvas.<span class="me1">DrawRect</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'WhiteTexture'</span>, <span class="kw7">Min</span><span class="br0">(</span>LenX, Canvas.<span class="me1">ClipX</span> - Canvas.<span class="me1">CurX</span><span class="br0">)</span>, FontY<span class="br0">)</span>;
+                                Canvas.<span class="me1">CurX</span> = LastX;
+                                Canvas.<span class="me1">CurY</span> = LastY;
+                        <span class="br0">}</span>
+ 
+                        <span class="co1">// Setup the color</span>
+                        Canvas.<span class="me1">DrawColor</span> = LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">StringColor</span>;
+ 
+                        <span class="co1">// Manage underlining</span>
+                        <span class="kw1">if</span> <span class="br0">(</span>LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bUnderline</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                                Canvas.<span class="me1">CurY</span> += FontY;
+                                Canvas.<span class="me1">DrawRect</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'WhiteTexture'</span>, <span class="kw7">Min</span><span class="br0">(</span>LenX, Canvas.<span class="me1">ClipX</span> - Canvas.<span class="me1">CurX</span><span class="br0">)</span>, FontScale<span class="br0">)</span>;
+                                Canvas.<span class="me1">CurX</span> = LastX;
+                                Canvas.<span class="me1">CurY</span> = LastY;
+                        <span class="br0">}</span>
+ 
+                        Canvas.<span class="me1">DrawTextClipped</span><span class="br0">(</span>LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">LogString</span><span class="br0">)</span>;
+ 
+ 
+                        Canvas.<span class="me1">CurX</span> += <span class="kw7">Min</span><span class="br0">(</span>LenX, Canvas.<span class="me1">ClipX</span> - Canvas.<span class="me1">CurX</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+ 
+                <span class="co1">// Endline</span>
+                <span class="kw1">if</span> <span class="br0">(</span>!LogList<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bDontEndLine</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        Canvas.<span class="me1">CurX</span> = ListX;
+                        Canvas.<span class="me1">CurY</span> += ListSpacing + FontY;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        Canvas.<span class="me1">Reset</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> EmptyList<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">float</span> NewTimestamp<span class="br0">)</span>
+<span class="br0">{</span>
+        LogList.<span class="kw6">Length</span> = <span class="nu0">0</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>NewTimestamp != <span class="nu0">0.0</span><span class="br0">)</span>
+                LogTimestamp = NewTimestamp;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// LogString parameters:</span>
+<span class="co1">// Parameter 1: The string you want to log</span>
+<span class="co1">// Parameter 2: The colour of the logstring</span>
+<span class="co1">// Parameter 3: Pass in True if you put in a colour for parameter 2 (I should change this but cba)</span>
+<span class="co1">// Parameter 4: Underline the text if True is passed in</span>
+<span class="co1">// Parameter 5: If you pass a colour in (with an Alpha greater than 0) then the text is highlighted with that colour</span>
+<span class="co1">// Parameter 6: If you want the next log string to write on the same line, pass in True here</span>
+ 
+<span class="kw5">function</span> LogString<span class="br0">(</span><span class="kw4">string</span> Info, <span class="kw6">optional</span> <span class="kw4">color</span> StringColor, <span class="kw6">optional</span> <span class="kw4">bool</span> bUseColor, <span class="kw6">optional</span> <span class="kw4">bool</span> bUnderline, <span class="kw6">optional</span> <span class="kw4">color</span> HighlightColor, <span class="kw6">optional</span> <span class="kw4">bool</span> bDontEndLine<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>bDisableDebug<span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        LogList.<span class="kw6">Length</span> = LogList.<span class="kw6">Length</span> + <span class="nu0">1</span>;
+ 
+        LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">LogString</span> = Info;
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>bUseColor<span class="br0">)</span>
+                LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">StringColor</span> = StringColor;
+        <span class="kw1">else</span>
+                LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">StringColor</span> = ListColor;
+ 
+ 
+        LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">bUnderline</span> = bUnderline;
+        LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">HighlightColor</span> = HighlightColor;
+        LogList<span class="br0">[</span>LogList.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>.<span class="me1">bDontEndLine</span> = bDontEndLine;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        bVisible=<span class="kw9">True</span>
+ 
+ 
+        ListX=<span class="nu0">0.5625</span>
+        ListY=<span class="nu0">0.125</span>
+        ListSpacing=<span class="nu0">5</span>
+        ListColor=<span class="br0">(</span>R=<span class="nu0">255</span>,G=<span class="nu0">0</span>,B=<span class="nu0">0</span>,A=<span class="nu0">255</span><span class="br0">)</span>
+        ListFont=DefaultFont
+        FontScale=<span class="nu0">0.00125</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Shambler:</b> Feel free to reformat the page, just keep all the code as it is&#160;;) (I may update it later)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/o/g/Legacy%7ELog_Interaction_d73d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/o/g/Legacy_talk%7ELog_Interaction_42f9.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Log_Interaction">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:22, 6 November 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

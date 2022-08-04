@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:One Way Volume - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:One Way Volume</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is a two actor system I coded last night that only allows players to pass through it in one direction.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> OneWayPhysicsVolume <span class="kw5">extends</span> PhysicsVolume;
+ 
+<span class="co1">// Volume to handle adding and removing players from the affected array.</span>
+ 
+<span class="kw5">var</span> array&lt;Pawn&gt; MyPawns;
+<span class="kw5">var</span> array&lt;vector&gt; MyLocs;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bAffectsRed, bAffectsBlue;  <span class="co1">// For team games.</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> PawnEnteredVolume<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+    <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">bTeamGame</span> &amp;&amp; <span class="br0">(</span><span class="br0">(</span>Other.<span class="me1">GetTeamNum</span><span class="br0">(</span><span class="br0">)</span> == <span class="nu0">0</span> &amp;&amp; !bAffectsRed<span class="br0">)</span> || <span class="br0">(</span>Other.<span class="me1">GetTeamNum</span><span class="br0">(</span><span class="br0">)</span> == <span class="nu0">1</span> &amp;&amp; !bAffectsBlue<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;MyPawns.<span class="kw6">Length</span>; i++<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>MyPawns<span class="br0">[</span>i<span class="br0">]</span> == Other<span class="br0">)</span>
+            <span class="kw1">return</span>; <span class="co1">// Make sure this pawn isn't already in the array.</span>
+        <span class="kw1">if</span> <span class="br0">(</span>MyPawns<span class="br0">[</span>i<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="co1">// remove empty slot</span>
+            MyPawns.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;
+            MyLocs.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;
+            i--;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    MyPawns<span class="br0">[</span>i<span class="br0">]</span> = Other;
+    MyLocs<span class="br0">[</span>i<span class="br0">]</span> = Other.<span class="me1">Location</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> PawnLeavingVolume<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> m;
+ 
+    <span class="kw1">for</span><span class="br0">(</span>m = MyPawns.<span class="kw6">Length</span> - <span class="nu0">1</span>; m &gt;= <span class="nu0">0</span>; m--<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>MyPawns<span class="br0">[</span>m<span class="br0">]</span> == Other ||MyPawns<span class="br0">[</span>j<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            MyPawns.<span class="kw6">Remove</span><span class="br0">(</span>m, <span class="nu0">1</span><span class="br0">)</span>;
+            MyLocs.<span class="kw6">Remove</span><span class="br0">(</span>m, <span class="nu0">1</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    bAffectsRed=<span class="kw9">true</span>
+    bAffectsBlue=<span class="kw9">true</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Then the actor that actually handles the movement:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> OneWayChecker <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>
+    <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">edfindable</span> OneWayPhysicsVolume MyVolume;
+<span class="kw5">var</span> <span class="kw4">float</span> ObjectAngle;
+ 
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DT<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> k;
+    <span class="kw5">local</span> <span class="kw4">rotator</span> R;
+    <span class="kw5">local</span> <span class="kw4">vector</span> B, NewLoc;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>MyVolume == <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        Destroy<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">return</span>; <span class="co1">// If there's no volume assigned, destroy this actor.</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw1">for</span><span class="br0">(</span>k=<span class="nu0">0</span>; k&lt;MyVolume.<span class="me1">MyPawns</span>.<span class="kw6">Length</span>; k++<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>MyVolume.<span class="me1">MyPawns</span><span class="br0">[</span>k<span class="br0">]</span> != <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="co1">// Find out the angle between this actor's rotation and</span>
+            <span class="co1">// the rotator of the player's last and current position.</span>
+            <span class="co1">// I know this next line could be optimized by not using acos.  :)</span>
+            <span class="kw1">if</span><span class="br0">(</span><span class="kw7">acos</span><span class="br0">(</span>Normal<span class="br0">(</span><span class="kw4">vector</span><span class="br0">(</span>Rotation<span class="br0">)</span><span class="br0">)</span> <span class="kw3">dot</span> Normal<span class="br0">(</span>MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> - MyVolume.<span class="me1">MyPawns</span><span class="br0">[</span>k<span class="br0">]</span>.<span class="me1">Location</span><span class="br0">)</span><span class="br0">)</span> &lt; ObjectAngle<span class="br0">)</span>
+            <span class="br0">{</span>
+                <span class="co1">// Find the rotator perpendicular with this actor.</span>
+                R.<span class="me1">Yaw</span> = Rotation.<span class="me1">Yaw</span> + <span class="nu0">16384</span>;
+                <span class="co1">// Find a point along that rotator.</span>
+                B = MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> + <span class="kw4">vector</span><span class="br0">(</span>R<span class="br0">)</span>;
+                <span class="co1">// Find the point where the player's location intersects</span>
+                <span class="co1">// perpendicularly with the line between those vectors.</span>
+                NewLoc = MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> + Normal<span class="br0">(</span> B - MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> <span class="br0">)</span> * <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span> B - MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> <span class="br0">)</span>
+                    <span class="kw3">dot</span> <span class="br0">(</span> MyVolume.<span class="me1">MyPawns</span><span class="br0">[</span>k<span class="br0">]</span>.<span class="me1">Location</span> - MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> <span class="br0">)</span><span class="br0">)</span> / VSize<span class="br0">(</span> MyVolume.<span class="me1">MyLocs</span><span class="br0">[</span>k<span class="br0">]</span> - B <span class="br0">)</span><span class="br0">)</span>;
+                <span class="co1">// Keep the player's Z axis position.</span>
+                NewLoc.<span class="me1">Z</span> = MyVolume.<span class="me1">MyPawns</span><span class="br0">[</span>k<span class="br0">]</span>.<span class="me1">Location</span>.<span class="me1">Z</span>;
+                <span class="co1">// Move the pawn to this new position.</span>
+                MyVolume.<span class="me1">MyPawns</span><span class="br0">[</span>k<span class="br0">]</span>.<span class="me1">SetLocation</span><span class="br0">(</span>NewLoc<span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    bDirectional=<span class="kw9">True</span>
+    bHidden=<span class="kw9">True</span>
+    ObjectAngle=<span class="nu0">1.5</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Set up in the editor, it looks like this:</p>
+<p>[[Image:Legacy_AngelMapperOneWayVolume.jpeg|]]</p>
+<p>The direction of the checker's arrow indicates where the player will be able to walk. Trying to go against this arrow will stop the player.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/o/n/e/Legacy%7EOne_Way_Volume_0789.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/n/e/Legacy_talk%7EOne_Way_Volume_3812.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:One_Way_Volume">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:04, 7 December 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

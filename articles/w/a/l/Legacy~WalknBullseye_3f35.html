@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:WalknBullseye - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:WalknBullseye</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is my contribution to the Unreal community.</p>
+<p>I am pretty new to the coding aspect of gaming. So new in fact that I had know idea how the game actually worked, internally. I have had no previous coding experience whatsoever. Everything that I have learned is self taught thru this site. Without this resource it would have been impossible for me to have gotten to where I am now.</p>
+<p>I started off modifying rifles for sniper/camper clans. I have progressed to the point where I have actually created a few mutators from scratch.</p>
+<p>One thing that I have found difficult to do is actually get a mutator to work. Meaning to get the mutator assigned to a player and then getting the mutator to function.</p>
+<p>I will use as an example a mutator that I recently created.</p>
+<p>SID ( Slow It Down ) an Anti-Run mutator</p>
+<p>Lets start off with our vars</p>
+<p><a name="Vars" id="Vars"></a></p>
+<h3><span class="mw-headline">Vars</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> RunMonitor <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">mutator</span></a> <span class="kw6">config</span> <span class="br0">(</span>SIDvX<span class="br0">)</span>;
+ 
+ 
+ 
+<span class="kw5">var</span> <a href="/Pawn"><span class="kw10">pawn</span></a> Runner;
+<span class="kw4">struct</span> PlayerInfo                 <span class="co1">// Here we store all of the relevant info for the player</span>
+<span class="br0">{</span>                                 
+       <span class="kw5">var</span> <span class="kw4">int</span> RT;               
+       <span class="kw5">var</span> <span class="kw4">int</span> GPTime;            
+       <span class="kw5">var</span> <span class="kw4">bool</span> bGP;              
+       <span class="kw5">var</span> <span class="kw4">int</span> PlayerID;
+       <span class="kw5">var</span> <span class="kw4">string</span> PlayerName;
+       <span class="kw5">var</span> <span class="kw4">int</span> count;
+       <span class="kw5">var</span> <span class="kw4">int</span> PCount;
+       <span class="kw5">var</span> <span class="kw4">int</span> TeamID;
+       <span class="kw5">var</span> <span class="kw4">float</span> PositionX,
+                 PositionY;
+       <span class="kw5">var</span> <span class="kw4">bool</span> bMoved;
+       <span class="kw5">var</span> <span class="kw4">bool</span> bDamage;
+<span class="br0">}</span>;
+<span class="kw5">var</span> PlayerInfo PI<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;            <span class="co1">// Now we create an array so each player can have their own info</span>
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bInitialized,bbInit,Init2;
+</pre></div>
+<p>For my mutator I decided to use a struct to handle the storage of the relevant values. The reason I did, is a struct can hold any type of var in it. In my case I am going to have a lot of info for each player that I am going to have to use and keep track of. I could have used an array for each var type, like this</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> RT<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">int</span> GPTime<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;            
+<span class="kw5">var</span> <span class="kw4">bool</span> bGP<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;              
+<span class="kw5">var</span> <span class="kw4">int</span> PlayerID<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">string</span> PlayerName<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">int</span> count<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">int</span> PCount<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">int</span> TeamID<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">float</span> PositionX<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>,
+                 PositionY<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">bool</span> bMoved<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">bool</span> bDamage<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+</pre></div>
+<p>and got the same effect.</p>
+<p>I found it easier to keep up with by using a struct and then creating an array of that struct</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> PlayerInfo PI<span class="br0">[</span><span class="nu0">64</span><span class="br0">]</span>;
+</pre></div>
+<p><a name="Setting_the_values" id="Setting_the_values"></a></p>
+<h3><span class="mw-headline">Setting the values</span></h3>
+<p>Now that we have the vars created we need to assign some values to them so we can use them</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> FillList <span class="br0">(</span><span class="br0">)</span>              <span class="co1">// Here we fill our PlayerInfo array PI[ ]</span>
+<span class="br0">{</span>
+ 
+ 
+    <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> PList;
+    <span class="kw5">local</span> <span class="kw4">int</span> i,x;
+ 
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;<span class="nu0">64</span>; i++<span class="br0">)</span>         <span class="co1">// First off lets fill the entire array with some default values</span>
+        <span class="br0">{</span>
+                PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerID</span> = <span class="nu0">-1</span>;
+                PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerName</span> = <span class="st0">""</span>;
+        <span class="br0">}</span>
+        i = <span class="nu0">0</span>;
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;<span class="nu0">4</span>; i++<span class="br0">)</span>          <span class="co1">// Same here</span>
+        <span class="br0">{</span>
+            TPI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">TPCount</span> = <span class="nu0">0</span>;
+            TPI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">TWCount</span> = <span class="nu0">0</span>;
+        <span class="br0">}</span>
+ 
+        i = <span class="nu0">0</span>;                                                                    <span class="co1">// We need to fill our array with the correct values</span>
+        <span class="kw1">for</span> <span class="br0">(</span> PList=<span class="kw8">Level</span>.<span class="me1">PawnList</span>; PList!=<span class="kw9">None</span>; PList=PList.<span class="me1">nextPawn</span> <span class="br0">)</span>  <span class="co1">// Level.Pawnlist is a list of all of the Pawn in a game</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span>     <span class="br0">(</span>  <span class="br0">(</span> PList.<span class="me1">bIsPlayer</span> &amp;&amp; PList.<span class="kw5">class</span> != <span class="kw5">class</span><span class="st0">'Spectator'</span> <span class="br0">)</span>   <span class="co1">// We check to make sure we do not have a specator</span>
+                        &amp;&amp;      <span class="br0">(</span> !PList.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">bIsSpectator</span> <span class="br0">)</span>
+                        &amp;&amp;      <span class="br0">(</span> !PList.<span class="me1">bHidden</span> <span class="br0">)</span>
+                        <span class="br0">)</span>
+                <span class="br0">{</span>
+                    x = PList.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span>;   <span class="co1">// We grab the player ID and assign to to 'x'</span>
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">PlayerID</span> = PList.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span>;  <span class="co1">// Now we simply assign the values we want to the array PI[x].XXX</span>
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">count</span> = <span class="nu0">0</span>;
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">RT</span> = RunTime;
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">PlayerName</span> = PList.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span>;
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">PCount</span> = <span class="nu0">0</span>;
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">PositionX</span> = <span class="nu0">0</span>;
+                        PI<span class="br0">[</span>x<span class="br0">]</span>.<span class="me1">PositionY</span> = <span class="nu0">0</span>;
+                        i++;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>We now have a function that 'Fill' our array with all of the values we are going to need. Now we need to find some way of getting this function executed. A lot of mutators are started in</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+</pre></div>
+<p>or</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+</pre></div>
+<p>This won't work for me because I am basing my array entries on the playerID. At the time that Pre/PostBeginPlay are executed the players do not have IDs yet. So...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>     <span class="co1">// When the player is spawned, this function is called</span>
+<span class="br0">{</span>                                     <span class="co1">// here is a good place to 'set' the players info</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> TAG;                    <span class="co1">// We cant fill our list any earlier since until this point all of the players are specators</span>
+    <span class="kw1">if</span> <span class="br0">(</span>!bInit<span class="br0">)</span>                       <span class="co1">// We set a bool here to 'Fill' our player list</span>
+     <span class="br0">{</span>                                <span class="co1">// using a bool we can make sure its only loaded once</span>
+        FillList<span class="br0">(</span><span class="br0">)</span>;                    
+        bInit = <span class="kw9">true</span>;
+     <span class="br0">}</span>
+ 
+        <span class="kw1">if</span><span class="br0">(</span> <span class="br0">(</span>Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span> <span class="br0">)</span> &amp;&amp; Other.<span class="me1">bIsPlayer</span> &amp;&amp; !Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Spectator'</span><span class="br0">)</span><span class="br0">)</span>      
+           <span class="br0">{</span>
+             Tag = PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span>;                
+                 <span class="co1">// We need to have some way of identifying the player so we can access the correct array entry</span>
+         <span class="kw1">if</span> <span class="br0">(</span>PI<span class="br0">[</span>TAG<span class="br0">]</span>.<span class="me1">PlayerName</span> == <span class="st0">""</span> || <span class="br0">(</span>PI<span class="br0">[</span>TAG<span class="br0">]</span>.<span class="me1">PlayerName</span> != PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span><span class="br0">)</span><span class="br0">)</span>   
+                <span class="co1">// We need to verify the player spawning has the correct info</span>
+           <span class="br0">{</span>
+               Update<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span><span class="br0">)</span>;     <span class="co1">// If the player name does not match the player name in the array, we update the array info</span>
+           <span class="br0">}</span> 
+              SetMessage <span class="br0">(</span> <span class="kw5">class</span><span class="st0">'SIDv5.RunMonitor'</span>.<span class="kw1">default</span>.<span class="me1">Message</span><span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>, <span class="nu0">7</span><span class="br0">)</span>;
+          PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">ReceiveLocalizedMessage</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Warning2'</span>,<span class="nu0">7</span>, <span class="br0">)</span>;      
+              <span class="co1">// Give the player the grace period message when they spawn</span>
+ 
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">RT</span> = RunTime;         <span class="co1">// We assign the the modified players ID # to the value TAG </span>
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">GPTime</span> = GracePeriod;          <span class="co1">// Now by usin the var TAG in the array designator [ ],we can assign the values we want</span>
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">PositionX</span> = PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Location</span>.<span class="me1">X</span>;          <span class="co1">// to the array that matches the player ID</span>
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">PositionY</span> = PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Location</span>.<span class="me1">Y</span>;
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">TeamID</span> = PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">TeamID</span>;
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">bMoved</span> = <span class="kw9">false</span>;
+              PI<span class="br0">[</span>Tag<span class="br0">]</span>.<span class="me1">bDamage</span> = <span class="kw9">true</span>;
+           <span class="br0">}</span>
+ 
+ 
+        <span class="kw6">super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>We have now assigned an array entry that corresponds to the playerID and filled to entry with all of info we want. The only thing we need to worry about now is, what happens if the player disconnects in the middle of the game? Right now the player will get a new array with the default values. Meaning, They get a fresh start. Lets see about fixing that.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>PI<span class="br0">[</span>TAG<span class="br0">]</span>.<span class="me1">PlayerName</span> == <span class="st0">""</span> || <span class="br0">(</span>PI<span class="br0">[</span>TAG<span class="br0">]</span>.<span class="me1">PlayerName</span> != PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span><span class="br0">)</span><span class="br0">)</span>   
+                <span class="co1">// We need to verify the player spawning has the correct info</span>
+           <span class="br0">{</span>
+               Update<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span><span class="br0">)</span>;     <span class="co1">// If the player name does not match the player name in the array, we update the array info</span>
+</pre></div>
+<p>Lets take care of that here...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Update <span class="br0">(</span><a href="/Pawn"><span class="kw10">pawn</span></a> P<span class="br0">)</span>                 <span class="co1">// Here is where we update or player info when it doesnt match</span>
+<span class="br0">{</span>                                        
+ 
+   <span class="kw5">local</span> <span class="kw4">int</span> i;                          
+   <span class="kw5">local</span> <span class="kw4">int</span> ID;                         
+ 
+   ID = P.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span>;         <span class="co1">// Again we assign the player ID to a var 'ID'</span>
+ 
+ 
+          <span class="kw1">for</span> <span class="br0">(</span> i = <span class="nu0">0</span>; i &lt; <span class="nu0">64</span>; i++<span class="br0">)</span>               <span class="co1">// We cycle thru the array list </span>
+             <span class="br0">{</span>
+                 <span class="kw1">if</span> <span class="br0">(</span> P.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span> == PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerName</span>   <span class="co1">// If we find a playername that IS the same in the array</span>
+                     &amp;&amp; P.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span> != PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerID</span>     <span class="co1">// AND the player ID IS NOT (!=) the same as the array #</span>
+                     &amp;&amp; P.<span class="me1">bIsPlayer</span><span class="br0">)</span>                                           <span class="co1">// then we assign the values in the old array entry (PI[i])</span>
+                    <span class="br0">{</span>                                                          <span class="co1">// to the new array entry (PI[ID]) </span>
+                        PI<span class="br0">[</span>ID<span class="br0">]</span>.<span class="me1">count</span> = PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">count</span>;
+                        PI<span class="br0">[</span>ID<span class="br0">]</span>.<span class="me1">PlayerName</span> = PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerName</span>;
+                        PI<span class="br0">[</span>ID<span class="br0">]</span>.<span class="me1">PlayerID</span> = ID;
+                        PI<span class="br0">[</span>ID<span class="br0">]</span>.<span class="me1">PCount</span> = PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PCount</span>;
+                        PI<span class="br0">[</span>ID<span class="br0">]</span>.<span class="me1">RT</span> = Runtime;                                   <span class="co1">// Here we blank out the old name just for good measure</span>
+                        PI<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PlayerName</span> = <span class="st0">"~~~~~~~~"</span>;
+ 
+                    <span class="br0">}</span>
+ 
+ 
+             <span class="br0">}</span>
+ 
+ 
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>Now if a player disconnects in an attempt to reset the mutator values and get a fresh start, they will bet their old values. Of course if they change their name it will reset their values. Oh well. At least they will have to do some more work.</p>
+<p>Now that you have your arrays set, filled and ready to go... now what???</p>
+<p>You need to use those values and actually do something with them.</p>
+<p>This is how I used my newly created var array</p>
+<p>Here is just a portion of the mutator (Too much stuff to put it all here)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Here is where the magic happens!!!</span>
+<span class="kw5">function</span> Timer <span class="br0">(</span><span class="br0">)</span>              <span class="co1">// I decided to use the timer function    </span>
+<span class="br0">{</span>                              <span class="co1">// In prebeginplay we set the timer cycle time</span>
+   <span class="kw5">local</span> <span class="kw4">int</span> R,T;              <span class="co1">// settimer(1.5,true) 1.5=the time between cycles, True=does it repeat</span>
+ 
+ 
+ 
+ 
+ 
+<span class="kw1">for</span> <span class="br0">(</span> Runner = <span class="kw8">Level</span>.<span class="me1">PawnList</span>; Runner != <span class="kw9">none</span>; Runner=Runner.<span class="me1">NextPawn</span><span class="br0">)</span> <span class="co1">// Lets grab a player (Runner)</span>
+ <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+   <span class="br0">{</span>
+    <span class="kw1">if</span>   <span class="br0">(</span>!PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Spectator'</span><span class="br0">)</span><span class="br0">)</span>
+     <span class="br0">{</span>
+      <span class="kw1">if</span>   <span class="br0">(</span>PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'playerPawn'</span><span class="br0">)</span> &amp;&amp; !PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'bot'</span><span class="br0">)</span><span class="br0">)</span>
+       <span class="br0">{</span>
+        R = PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerID</span>;  <span class="co1">// We got a valid player</span>
+            <span class="co1">// We can now use the valid players ID to 'tie' it to an array by 'seeting' the value R=PlayerID</span>
+        <span class="kw1">if</span> <span class="br0">(</span>PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">PlayerName</span> == <span class="st0">""</span> || <span class="br0">(</span>PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">PlayerName</span> != PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span><span class="br0">)</span><span class="br0">)</span>
+         <span class="br0">{</span>
+          Update<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span><span class="br0">)</span>;  <span class="co1">// The player ID and Name dont match so we need to update the array</span>
+         <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">level</span>.<span class="me1">Game</span>.<span class="me1">bTeamGame</span><span class="br0">)</span>
+         <span class="br0">{</span>
+          T = PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>;
+         <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">PositionX</span> != PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">Location</span>.<span class="me1">X</span><span class="br0">)</span> || <span class="br0">(</span>PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">PositionY</span> != PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">Location</span>.<span class="me1">Y</span><span class="br0">)</span> <span class="br0">)</span>
+         <span class="br0">{</span>                       <span class="co1">// Here we make a check on the players postition so we know if they have moved</span>
+          PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">bMoved</span> = <span class="kw9">true</span>;   <span class="co1">// This way the grace period timer does not start until they move</span>
+         <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span>PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">bMoved</span><span class="br0">)</span>        <span class="co1">// Once they have moved the graceperiod time starts</span>
+         <span class="br0">{</span>
+          PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">GPTime</span> --;       <span class="co1">// Every cycle of the timer will take 1 off of the var GPTime in the players array</span>
+          <span class="kw1">if</span> <span class="br0">(</span> PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">GPTime</span> &gt; <span class="nu0">0</span> <span class="br0">)</span> <span class="co1">// If the value is over the GPtime we send the player a message of what the current count is</span>
+           <span class="br0">{</span>
+            PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">ReceiveLocalizedMessage</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Warning3'</span>,PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">GPTime</span>, <span class="br0">)</span>;
+            <span class="kw1">break</span>;                <span class="co1">// Here I use the the value of GPTime to determine which message get displayed</span>
+           <span class="br0">}</span>                      <span class="co1">// Using 'break' here will stop any more of the code from this function from getting executed</span>
+                                  <span class="co1">// Otherwise the engine will exit out this 'if' statment and continue on to the next one.</span>
+          <span class="kw1">if</span> <span class="br0">(</span> PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">GPTime</span> == <span class="nu0">0</span> <span class="br0">)</span>  <span class="co1">// At 0, the player gets a message telling them GP is over</span>
+           <span class="br0">{</span>
+            SetMessage <span class="br0">(</span> <span class="kw5">class</span><span class="st0">'SIDv5.RunMonitor'</span>.<span class="kw1">default</span>.<span class="me1">Message</span><span class="br0">[</span><span class="nu0">8</span><span class="br0">]</span>, <span class="nu0">8</span><span class="br0">)</span>;
+            PlayerPawn<span class="br0">(</span>Runner<span class="br0">)</span>.<span class="me1">ReceiveLocalizedMessage</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Warning2'</span>,<span class="nu0">8</span>, <span class="br0">)</span>;
+            PI<span class="br0">[</span>R<span class="br0">]</span>.<span class="me1">bGP</span> = <span class="kw9">true</span>;     <span class="co1">// Once the GPTime gets to 0 we set the vlaue bGp to true so it no bypasses this section</span>
+           <span class="br0">}</span>
+          <span class="br0">}</span>
+</pre></div>
+<p>That is just a small example of how I got my mutator to work. Using this example, you will be able do many different types of things.</p>
+<p><b>Tarquin:</b> Hi, welcome to Unreal Wiki&#160;:)</p>
+<p><b>WalknBullseye:</b> Thanks, good to be here</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 33/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/a/l/Legacy%7EWalknBullseye_3f35.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/a/l/Legacy_talk%7EWalknBullseye_f122.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:WalknBullseye">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:26, 9 July 2006 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

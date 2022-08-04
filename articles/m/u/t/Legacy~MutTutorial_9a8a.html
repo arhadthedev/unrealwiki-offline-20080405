@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MutTutorial - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MutTutorial</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This Unreal Tournament 2004 Tutorial will take you through the basic process of creating a mutator that allows you to alter a players health and the number of multi-jumps they can perform.</p>
+<p>You can download the code from <a href="http://www.home.earthlink.net/~doodlethe1/MutNeedBetterName.zip" class="external autonumber" title="http://www.home.earthlink.net/~doodlethe1/MutNeedBetterName.zip" rel="nofollow">[1]</a>, but it might not be as up to date as the code on this page. For the original page check out <a href="../../../../articles/m/u/t/Legacy%7EMutTutorial_Code_6b27.html" title="Legacy:MutTutorial Code">MutTutorial code</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Before_You_Start"><span class="tocnumber">1</span> <span class="toctext">Before You Start</span></a></li>
+<li class="toclevel-1"><a href="#Writing_the_Mutator"><span class="tocnumber">2</span> <span class="toctext">Writing the Mutator</span></a></li>
+<li class="toclevel-1"><a href="#Compiling_and_Using_the_Mutator"><span class="tocnumber">3</span> <span class="toctext">Compiling and Using the Mutator</span></a></li>
+<li class="toclevel-1"><a href="#Adding_a_Configuration_Window"><span class="tocnumber">4</span> <span class="toctext">Adding a Configuration Window</span></a></li>
+<li class="toclevel-1"><a href="#Useful_Pages"><span class="tocnumber">5</span> <span class="toctext">Useful Pages</span></a></li>
+<li class="toclevel-1"><a href="#Conclusion"><span class="tocnumber">6</span> <span class="toctext">Conclusion</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Before_You_Start" id="Before_You_Start"></a></p>
+<h2><span class="mw-headline">Before You Start</span></h2>
+<p>As with the <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Hello_World_0bc7.html" title="Legacy:UnrealScript Hello World">UnrealScript Hello World</a> tutorial we need to create a directory to hold our mutator code. The name of the directory determines the name of the package into which your code will be compiled. To that end you need to <a href="../../../../articles/s/e/t/Legacy%7ESet_Up_Package_Folders_6a30.html" title="Legacy:Set Up Package Folders">Set Up Package Folders</a>:</p>
+<ol>
+<li>Create a directory <code>MutNeedBetterName</code> within your UT2004 directory</li>
+<li>Create a directory <code>Classes</code> within the <code>MutNeedBetterName</code> you just created.</li>
+</ol>
+<p>You should have the following folder tree:</p>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;">UT2004<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />MutNeedBetterName<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Classes<br /></div>
+<p>The <b>Mut</b> prefix is used as a convention within UT2004 to indicate all packages and classes that relate to mutators. It is not mandatory to do this and we could have called our package (and therefore the directory) <code>NeedBetterName</code>. It is recommended that you use the conventional Mut prefix though for organisations sake.</p>
+<p><a name="Writing_the_Mutator" id="Writing_the_Mutator"></a></p>
+<h2><span class="mw-headline">Writing the Mutator</span></h2>
+<p>Now to actually write some code that can be compiled.</p>
+<p>Within your <code>/UT2004/MutNeedBetterName/Classes</code> directory create a file called <code>MutNeedBetterName.uc</code>. All Unreal Script class files have an extension of <b>.uc</b>. They <b>must</b> also be named after the class file they are contained within.</p>
+<p>Add the following code to the file. The code is described after each logical block.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MutNeedBetterName <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+</pre></div>
+<p>This is the class declaration. We are essentially telling the game that this is a new class called <code>MutNeedBetterName</code> and that it is a type of (it extends, or subclasses) <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a>. And finally, like all good things in life, the class declaration is terminated with a semi-colon. You can see <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class Syntax</a> for more information.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> MultiJumpCount, MultiJumpBoost, StartingHealth, MaximumHealth, SuperDuberMaximumHealth; <span class="co1">// The number of multi-jumps allowed</span>
+<span class="co1">//The boost the player gets from a multi-jump and the player's starting health</span>
+</pre></div>
+<p>The section above defines three variables (all integers - see <a href="../../../../articles/v/a/r/Legacy%7EVariable_Type_ce04.html" title="Legacy:Variable Type">Variable Types</a>) that are all properties of the class being defined.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> xPawn x; <span class="co1">//x is a variable</span>
+  x = xPawn<span class="br0">(</span>Other<span class="br0">)</span>; 
+  <span class="kw1">if</span> <span class="br0">(</span>x != <span class="kw9">None</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    x.<span class="me1">MaxMultiJump</span> = MultiJumpCount;
+    x.<span class="me1">MultiJumpBoost</span> = MultiJumpBoost;
+    x.<span class="me1">Health</span> = StartingHealth;
+    x.<span class="me1">HealthMax</span> = MaximumHealth;
+    x.<span class="me1">SuperHealthMax</span> = SuperDuberMaximumHealth;
+  <span class="br0">}</span>
+  <span class="co1">// YOU FORGOT TO CALL THE SUPERCLASS! THIS BREAKS THE MUTATOR CHAIN</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>The first line declares the function (see <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a>). This is the function that actually updates the player's attributes. Because our class is a type of Mutator the <code>ModifyPlayer()</code> function will be called automatically for every player in the game as they spawn.</p>
+<p>The next two lines of code (ignoring the braces) do the following.</p>
+<ul>
+<li>Declare a local (only visible within the function) variable of type xPawn (<a href="../../../../articles/x/p/a/Legacy%7EXPawn_d626.html" title="Legacy:XPawn">xPawn</a> is a type of <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a>, and can be found in the xGame package).</li>
+<li>Assign a value to our local variable after <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">Typecasting</a> the value passed in the <code>Other</code> function parameter. Note that if <code>Other</code> is not a type of (or subclass) xPawn our local variable will contain <code>None</code>.</li>
+</ul>
+<p>The <code>if</code> statement checks to see if the local variable has a value by comparing it to the "empty value" <code>None</code> using the not equal to (<code>!=</code>) operator. See <a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a> for more information. Remember - if the object referenced by <code>Other</code> is not an xPawn our local variable will be equal to (<code>----</code>) None.</p>
+<p>The block of code within the <code>if</code> statement adjusts the player's jump and health properties using the values from our mutator's configurable properties.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  MultiJumpCount=<span class="nu0">10</span>
+  MultiJumpBoost=<span class="nu0">50</span>
+  StartingHealth=<span class="nu0">250</span>
+  MaximumHealth=<span class="nu0">250</span>
+  SuperDuberMaximumHealth=<span class="nu0">500</span>
+  GroupName=<span class="st0">"MutNeedBetterName"</span>
+  FriendlyName=<span class="st0">"What ever you want the Mutator to be called"</span> <span class="co1">//This is the name of the Mutator that will display in game</span>
+  Description=<span class="st0">"Changes your initial health and Multi-Jumping ability"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This block of code allows you to specify default values for all of your class properties. If a class property is declared as configurable then the value within the mutator's ini file will be used if available instead of the value specified here. The <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">Default Properties</a> page contains much more information about how default values should be specified.</p>
+<p><a name="Compiling_and_Using_the_Mutator" id="Compiling_and_Using_the_Mutator"></a></p>
+<h2><span class="mw-headline">Compiling and Using the Mutator</span></h2>
+<p>Next add this code to the file UT2004.ini: "EditPackages=MutNeedBetterName"</p>
+<p>Move the folder MutNeedBetterName into C:\UT2004 (or where ever you installed UT2004)</p>
+<p>Move the file MutNeedBetterName.int into UT2004\system</p>
+<p>Open Command line (a quick way to do this is to open "run" and type cmd)</p>
+<p>type in "C:\UT2004\System\ucc make" press enter and wait.</p>
+<p>Ucc will go through all the folders and if you edited your UT2004[or 3 i think].ini right it should go through your folder.</p>
+<p>Hopefully it will say success, there were no errors. If it does run Unreal Tourney and you will see under mutators Mutation Tutorial.</p>
+<p><a name="Adding_a_Configuration_Window" id="Adding_a_Configuration_Window"></a></p>
+<h2><span class="mw-headline">Adding a Configuration Window</span></h2>
+<p>If you want to allow your mutator's configurable parameters to be changed from the standard UT2004 mutator config window then please see the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> reference.</p>
+<p><a name="Useful_Pages" id="Useful_Pages"></a></p>
+<h2><span class="mw-headline">Useful Pages</span></h2>
+<ul>
+<li><a href="../../../../articles/c/o/m/Legacy%7ECompiler_Errors_68c7.html" title="Legacy:Compiler Errors">Compiler Errors</a></li>
+</ul>
+<hr />
+<p><a name="Conclusion" id="Conclusion"></a></p>
+<h2><span class="mw-headline">Conclusion</span></h2>
+<p>You should now have code that looks like this (without the comments): <a href="../../../../articles/m/u/t/Legacy%7EMutTutorial_Code_6b27.html" title="Legacy:MutTutorial Code">MutTutorial Code</a></p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Tarquin:</b> I don't understand what this is trying to show, or why there is no text on that page, only script. Secondly, in your script comments there are a number of questions you've left, and a few misconceptions. I suggest you get wait for feedback on it first before adding it to the chain of lessons.</p>
+<p><b>EntropicLqd:</b> Imagine you are completely new to Unreal Script. Is this page going to actually help you in <a href="../../../../articles/s/e/t/Legacy%7ESetting_Up_UnrealScript_3ce8.html" title="Legacy:Setting Up UnrealScript">Setting Up UnrealScript</a> or how to <a href="../../../../articles/s/e/t/Legacy%7ESet_Up_Package_Folders_6a30.html" title="Legacy:Set Up Package Folders">Set Up Package Folders</a>. There's no set of pre-requisites mentioned anywhere or even any real explanation of what is going on (note to self - must add them to my tut. page). To my mind the worst thing about the tutorial is that you've assumed that someone has downloaded your code. Try and fit your tutorial into a similar structure to the other tutorials on the Wiki. At least that way all of the tutorials will be in a similar form. Also one of your stated commands will not work under Windows XP, and one of them is redundant - but maybe I'm just being picky in my old age.</p>
+<p><b>Mr.bob</b> Uhhhhhhhhhh... what are pre-requisites (I mean in ucode context). Also that is kind of weird because I just used this mut in windows xp and it compiled and then worked flawlessly. Also what does redundant mean. About the prompt command I think you are talking about, I'm surprised it didn't work. Maybe I misspelled it but when I type "prompt $1 into command line in windows XP it gives me a blank prompt which is what I want. Finally there is a smiley I've been wanting to try out...<br />
+&#160;:stupid:</p>
+<p>Oh ya, most importantly this tutorial was not meant for reading, it was meant for downloading as folders a .uc file and a .int file. However that didn't seem to work out. In response to Tarquin (who seems to really enjoy messing with and moving around my things ... this gives me an idea&#160;:cheesy: ) this code is trying to give newbs some code that they can mess around with and understand. The very first step people do when they are learning to mess with code is to do things like replace the word health with shield, and this code lets them do that.</p>
+<p>Later: Just discovered that all the links I had previously posted to the .zip file were broken. Here is one that has to work: <a href="http://www.home.earthlink.net/~doodlethe1/MutNeedBetterName" class="external text" title="http://www.home.earthlink.net/~doodlethe1/MutNeedBetterName" rel="nofollow">THE FILE</a></p>
+<p>Tarquin, why don't you tell me what the misconceptions are so I can fix them, you people should really give me a lot more input, although the problem is you can't because there are no links to this page.</p>
+<p><b>Tarquin:</b> things like "says that there is a local variable that applies only to Xpawns, and that varaible is x." Please also take care to spell correctly. And please remove your tutorial from the list – you can put the link further down the page if you like. You can get it linked by addding a category tag to this page.</p>
+<p><b>EntropicLqd:</b> The redundant command is indeed the prompt one. You might not like to see where you are in the directory structure but I'm betting most people (like me) do. Not only that, but the command is irrelevant. You don't need it to compile any Unreal Script at all - but that's not explained.</p>
+<dl>
+<dd>The one I thought wouldn't work under XP was running "command". It does work but gives you the old Win9x DOS shell. The XP version (like NT) is <i>cmd</i>.</dd>
+<dd>Pre-requisites in Unreal Script terms are the basic things someone needs to know before they can starting writing code. I linked to them in my previous post. Also, simply downloading some code and then tweaking the values to see what they do is a very inefficient way of learning. A good tutorial does the following:</dd>
+<dd>* Explains what the tutorial will cover and what the person is supposed to learn from doing it.</dd>
+<dd>* Explains what the person doing the tutorial needs to know in order to complete it. That is - the assumed <i>base knowledge</i> or as we like to say <i>prerequisites</i>.</dd>
+<dd>* Explain in simple steps what must be done to accomplish the goal of the tutorial. At this point explaining why things are done (in this case why ModifyPlayer() was used) in a lot of detail is necessary. Your description of ModifyPlayer() is somewhat vague – and could even be misleading. And also, you should never ever leave questions unanswered in a tutorial.</dd>
+<dd>* Conclude with a summary of what the person is supposed to have learned from the tutorial.</dd>
+<dd>So to reiterate my original point, simply providing people with some code they can mess about with is not a tutorial. It's also unlikely to help them write their own code in the future as it provides no method for understanding why something was done in a specific way.</dd>
+</dl>
+<p><b>Mr.bob:</b> At this point I am once again forced to admit to my newbishness (is that even a word?) and bow down to your superior knowledge. Putting the tutorial on the front page was reckless and hasty (what do you expect, I'm 14). I will delete it from the front page and start working on one worthy of this terrific site, thx for the advice <a href="../../../../articles/e/n/t/Legacy%7EEntropicLqd_4784.html" title="Legacy:EntropicLqd">EntropicLqd</a> and sorry for bugging you by posting so much junk <a href="../../../../articles/t/a/r/Legacy%7ETarquin_1d9d.html" title="Legacy:Tarquin">Tarquin</a>. A few more points, command, while not as good a cmd still works, but thx anyway for the update. Just saying it would help if you included a description of what modify player does, considering my description was very incorrect.</p>
+<p>Growing up in the age of spell checkers has severely damaged my spelling capabilities.</p>
+<p>My brother is insisting that I keep the things in progress section intact with my link in it, but I'm telling him <a href="../../../../articles/t/a/r/Legacy%7ETarquin_1d9d.html" title="Legacy:Tarquin">Tarquin</a> isn't going to be happy.</p>
+<p>Whew, that should do it, the tutorial isn't perfect yet, but it is much better then before. It is still not in traditional tutorial format, but I don't really like the traditional tutorial format.</p>
+<p><b>Foxpaw:</b> I put some more comments in there to explain some stuff that was a bit misleading. However, as you can now see, the comments take up so much space it's hard to see the code. What you might consider doing is listing the code in it's entirety (without the play by play comments) and then below that take each line and show it dissected.</p>
+<p><b>Tarquin:</b> "I was sick of lessons like the regeneration mutator that would tell you to modify some code you found without telling you what that code meant." – I think that is an <i>excellent</i> point! We should look into adding a "How it works" or "What's going on" section to our scripting tutorial pages!</p>
+<p><b>Mr.Bob's brother:</b> a simple note about the prompt $1 thing. we use it because in Windows XP home edition you start in this part of the directory structure: <tt>C:/Documents and settings/~username&gt;</tt> and the UT2004 directory is <tt>C:/UT2004</tt> so we need to make the directory structure become blank to go down to C:/.</p>
+<p>PS. call me Doodle77 because it is my username for a bunch of games</p>
+<p><b>EntropicLqd:</b> The <i>prompt</i> command simply changes the DOS prompt. It <i>does not</i> change the directory you are in. I suspect you actually meant <code>cd c:\UT2004</code>. If you wanted to make the directory structure blank then <code>format C:\</code> is the command you are after.</p>
+<p><b>Mr.bob:</b> Never mind, you can type in the file path without typing in prompt $1 first, i have changed the script apropratly in light of this new discovery.</p>
+<p>Wow this tutorial is really something now. Now i think it can add it to the chain. I will update the .zip file with the new code, and add it to the top of the Uscript lessons. The full exspanation of what the code means will REALLY help out people who are compleate newbs to programing.</p>
+<p><b>Tarquin:</b> Please could you:</p>
+<ul>
+<li>make links in your text</li>
+<li>add a few headings perhaps</li>
+<li>fix spelling mistakes</li>
+<li>explain what the variables you have modified mean</li>
+<li>I think it would be better to remove the explanations from the script entirely, it would make then easier to read – instead of comments within script, a section of text with script extracts within it.</li>
+</ul>
+<p><b>EntropicLqd:</b> Right then Mr.Bob. Please finish off your tutorial in the style it has started in. If you do a good job maybe I'll come back and extend it with information regarding constructing a configuration GUI for it.</p>
+<p><b>Mr.bob:</b> This is what I like about the wiki, it is not me writing this tutorial anymore, it is the whole wiki community. It's very much like open source code, that is what makes open source programs so good and flawless, there is a large amount of people who can look at the code and change things.</p>
+<p><b>EntropicLqd:</b> Maybe, maybe not. I'm just showing you how you should have written it in the first place. I won't be finishing it off for you (and I doubt whether anyone else will) as I don't have time. I certainly won't be restructuing any more of your tutorials if they are presented in the manner similar to the way this one was.</p>
+<p><b>RegularX:</b> While I like that more verbal tutes like this are getting written - it should be noted that because this is the wiki, tutes like Regen mutator can be appended to describe the inner workings of the tutorial itself...</p>
+<p><b>Mr.bob:</b> You said that you wouldn't be finishing it off. Personally I have seen much less polished tutorials then this. I think it is finished, what more does it need?</p>
+<p>arg i read it and there is some sloppy coding, i changed it, Please don't change it back, it is acutally really bad. And this is a newb telling you this. First of all the config part is junk, second of all you repeated a lot of parts you didn't have to repeat, third of all the pre-requisites are MUCH steeper then what i had in mind ... ok it is so bad i am sequencering (&lt;-spelling bad) the whole new section and making one that doesn't suck so much later. Please don't put it back, the code is very misleading and wasteful. I can't do anything too soon becuase my mouse is broken, sry.</p>
+<p><b>EntropicLqd:</b></p>
+<dl>
+<dd>Firstly - Thanks Foxpaw. I was in a hurry and didn't bother to read what I'd actually written. Apologies to Mr Bob. for introducing <i>junk</i> into his perfect tutorial, and also to Foxpaw for making him come in here and fix it.</dd>
+<dd>Mr Bob, just because there are much less polished tutorials than this doesn't mean that is one is finished. It just means that the other tutorials are not as good. While I agree I repeated a lot of the stuff that is covered within the <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Hello_World_0bc7.html" title="Legacy:UnrealScript Hello World">UnrealScript Hello World</a> tutorial I felt it was necessary to make the tutorial complete. You could also argue that this would be a better <i>Hello World</i> style tutorial than the existing one as it actually does something.</dd>
+<dd>Yes I agree the pre-requisites are fairly heavy. However there is actually a fair amount of stuff that you need to know, and get right before you even start writing any code.</dd>
+<dd>I'm also fairly sure that the code is broken around the "health" area but I've not had time to actually compile it and check (I'm relatively sure the player's health will get reset to 100 should thep layer actually run over a standard health pickup).</dd>
+<dd>I've essentially left the compilation and use section for you to complete. When that's done I'll add the GUI elements unless you also fill those in.</dd>
+</dl>
+<p><b>Mr.bob:</b> New tutorial, in traditional format (me don't like tradition) and the coding is awful, I will make a major revision after I get my mouse fixed. I'm just glad entropiclqd didn't delete anything important. I thought he was skilled, and maybe he is, but it looks like he was trying to make a 2004 GUI and didn't quite complete it. You should know that when changing a public page you don't present new incomplete code that you haven't even complied and tested. If I complied this code, it probably would compile and even if it did, it would be very sloppy wasteful code that might glitch the program in a worst case scenario. I don't like the traditional format that much, but if you people insist that my tutorial look like everyone else's then it shall be. If you complete the 2004 GUI soon enough I will forgive you entopiclqd, but if you don't, I'm scraping all your work, or at least sequestering it.</p>
+<p>One more point, the pre-requisites are completely ridiculous, you don't need the unreal script source code, you don't need to have read any of those pages, and I haven't glanced at the terminology page. The installed UT2004/3 on your computer is way too obvious. I also don't like how you changed it to MutPlayerTweak. NO ONE CHANGE THE ORIGANAL PAGE SECTION, good I made my self clear.</p>
+<p>I just turned 15 today&#160;:)</p>
+<p><b>EntropicLqd:</b></p>
+<ul>
+<li>This isn't a public page yet.</li>
+<li>Tutorials should be written for people to follow and understand. Tradition has nothing to do with it.</li>
+<li>Thankyou for scrapping all my work. I look forward to seeing your alternative offering.</li>
+<li>MutTutorial is a crap name for the muator.</li>
+<li>I am indeed an <i>old geezer</i>.</li>
+<li>Happy birthday.</li>
+<li>Oh dear - I just changed the original page section.</li>
+</ul>
+<p><b>Mr.bob:</b> Damn, i thought I deleted the old geezer part, (I did, you just looked at the history) i was in a bad mood. Your right, both the names are stupid, we need a good name. And I didn't scrap all your work yet, i will in five minutes. Your right about the part about tradition, the whole time i've been trying to create a downloadable tutorial, so you don't need to copy and paste too much, that is what my origanal structure was about. Thank you for the happy birthday. Now to look at the origanal page section ... YOU DELETED IT!!!&#160;:Pissed: that is very annoying, now I need to harvest it from the history. Are you mad at me for calling you an old geezer&#160;:cheesy: (i deleted it i tell you). But comeon, that was just pointless. Now to scrap most of your changes (i was going to wait a while, but you deleted the origanal page, and i have nothing better to do).</p>
+<p>"sigh", you could have just taken the compiling instructions from the origanal code, but i seems that you were too lazy.</p>
+<p>I didn't compleatly scrap everything and a lot of the things you said were pretty good, all i ask is that you make a seperate page for the 2004 GUI, although i really want you to make one.</p>
+<p><b>Tarquin:</b> We can leave the GUI part out – the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> tutorial should be generic enough to work with any mutator (and should be tweaked so it works like that). MrBob, if people are too lazy to copy &amp; paste instead of downloading, then modding <i>really isn't for them</i>.&#160;:D I really don't think it's much of a timesaver, you still need to compile, and it's harder for us to maintain it here.</p>
+<p><b>Mr.bob:</b> Ok fine I'll take the download part out.</p>
+<p>Entopiclqd, if you are interested in making a GUI for 2004 then look at this .uc file, if you have UT2004 then you probably have it, but for your convinance you can download it here: <a href="http://home.earthlink.net/~theultimatebob/air_control.zip" class="external text" title="http://home.earthlink.net/~theultimatebob/air_control.zip" rel="nofollow">Air Control</a>. As you can tell the file is the air control mutator for UT2004, which is vaguly similer to the mutator above. I was not able to make any sense of it, or figure out how to tweak it enough to work with health instead of air control, but you know much more about Uscript then I do.</p>
+<p><b>EntropicLqd:</b> Please see the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> reference page for instructions on how to add GUI configuration to your mutator. I will add a discussion section at the bottom of that page should you have additional questions. If you find youself struggling with the page then I suggest referring to the set of pre-requisites I originally added to the tutorial. Calling me an <i>old geezer</i> is in no way offensive - I am over twice you age.</p>
+<p><b>Mr.bob:</b> Kewl, about the whole GUI thing, the above link doesn't help me, makes no sense at all. Also the volume control mutator, helped a bit more, but doesn't have enough comments in the GUI section. So far my most useful resource has been air control.</p>
+<p><b>Tarquin:</b> Like I said above, <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> should give you a template to create a GUI for any given mutator, I hope. Since I don't have UT2004 I can't try it for myself. Now as for this page's name.... I have altered the listing on the Lessons page to be a bit clearer, and I want to do the same to the name. Since the main thing this does is alter jumping, how about "SuperJump Mutator Tutorial"?</p>
+<p><b>Tarquin:</b> Message for ppp-62-235-110-208.tiscali.be – thanks for your typo corrections, much appreciated! But please don't introduce "smart quotes" into the wiki text (the &amp;#8217; things) – either turn them off in MS Word or use a text editor. Thanks!</p>
+<p><b>Random Guest:</b> Sorry about that.. I don't know how that happened, maybe because i'm using IE 5.0. Anyway, this script isn't working when I try to compile it. Says MaxHealth isn't a member of xPawn. The code-page doesn't use MaxHealth. Maybe this page, or the other needs some updating. I deleted the maxhealth thing, since it didn't work. There's HealthMax in Pawn, but setting Other.HealtMax gives me another error. I don't know why, I'm a newbie. I also had to take it out of the defaultproperties. Now it works.</p>
+<p><b>MythOpus:</b> I don't have the time to test this Mut out but... have you tried x.HealthMax instead of just deleteing it completely? I think it's a critical part in the mutator... I think without changing the HealthMax property, the health can't be set over it's max... which is... 199 I believe? And why use Other when you can use x&#160;:)</p>
+<p><b>Tarquin:</b> The variable I think you want is <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a>.HealthMax. MrBob, did you actually TEST this????</p>
+<p><b>Mr.bob:</b> Ya, i tested it, three times, but not sense the most recent changes. sry. I'll test it now, and update the zip file.</p>
+<p>Yay it compiled&#160;:), now to update the zip file.</p>
+<p>Wait those aren't the problem. I see the problem now. The problem is that it is "healthmax", not "maxhealth". I have edited the code.</p>
+<p><b>Random Guest:</b> That was indeed the problem. The code as it is now works, but there's one small problem. Taking health vials (the +5 things) only boosts your health till 199, not till 250 of whatever. Regular health packs do get you to 250! Therefore, i would propose this code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+x.<span class="me1">Health</span> = StartingHealth;
+    x.<span class="me1">HealthMax</span> = StartingHealth;
+    x.<span class="me1">SuperHealthMax</span> = HealthMax;
+</pre></div>
+<p>This sets the paws starting health, as discussed before, says the normal health you can reach is the same starting health, and the super health (normally 199) is set to the maximum.</p>
+<p>I also made gui-code (mutator settings in the configuration-screen), should i post them or is that overkill for this example?</p>
+<p><b>EntropicLqd:</b> It's a little overkill for this example. Also, if the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> page isn't good enough then it is that page that should be updated. In terms of the smart-quotes - if you edit the tutorial text in Word, they will be added in automatically. And if you use Notepad remember to turn <i>wordwrap</i> off.</p>
+<p><b>Mr.bob:</b> Greetings from saratoga! I've been on vacation and i havn't had acess to a computer. Right now I am using the library computer, unfortanatly I don't have a apointment and i'm in the childrens section computers (the adult comps were full). So they could kick me off at any time.</p>
+<p>Ok, I'm going to change the code so there is super health max. Also random guest, if you have this mut with the GUI zip the .uc file(s), put them on your website (you have a website right?) and put a link to them. You can also make an extention tutorial on the wiki that tells you how to add a GUI to this mutator. Put it under the currently existing "Adding a Configuration Window" heading.</p>
+<p>arg the&#160;: p_i_s_s_e_d&#160;: (ignore the underscores, they have a bunch of wierd filtering software on this computer which makes it so I can't write words like p_i_s_s. just don't ask) smily is broke! (or is it the filtering software on the kidy computers?).</p>
+<p><b>Tarquin:</b> I don't think SuperHealthMax = SuperMaxHealth is a good choice of variable names.........</p>
+<p><b>Mr.bob:</b> Greating from independent lake camp! Can't think of a better var name sry. Also when is random guest going to show me how to make a GUI? Hope it is soon&#160;:)</p>
+<p><b>Tarquin:</b> well TRY. Having variables called SuperHealthMax and SuperMaxHealth is just horribly confusing. What is the difference between these two vars? How do their names tell me of this difference? If you're going to write tutorials, you HAVE to think of this. Also, I don't think this tute should contain the GUI – see what Ent said above.</p>
+<p><b>MythOpus:</b> Instead of using 'x' as a variable. Couldn't you make life easier by using:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>xPawn<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+<span class="br0">{</span>
+            xPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">MaxMultiJump</span> = MultiJumpCount;
+            xPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">MultiJumpBoost</span> = MultiJumpBoost;
+<span class="br0">}</span>
+ 
+Other.<span class="me1">Health</span> = StartingHealth;
+Other.<span class="me1">HealthMax</span> = MaximumHealth
+Other.<span class="me1">SuperHealthMax</span> = SuperMaxHealth
+</pre></div>
+<p><b>EntropicLqd:</b> Mr Bob have you not read what has been written in the comments section? RandomGuest has been specifically asked not to add a section on creating a GUI for the mutator as this is covered on the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> page. If you do not understand the information on that page then you should post some questions there.</p>
+<p><b>Mr.bob:</b> You said that he shouldn't add it on to this <u>page</u>. I am asking him to make a seperate page. I know you are proud of the <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> page. But I have looked at it and tried some things and ....</p>
+<p><b>EntropicLqd:</b>....Comments moved to <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html" title="Legacy:Mutator Config GUI (UT2004)">Mutator Config GUI (UT2004)</a> page as originally requested....</p>
+<p><b>Mr.bob:</b>&#160;:confused: I didn't request it to be moved to that page&#160;:confused: .</p>
+<p>Random guest, at some point I would like to see this mut customized with a GUI somewhere. Don't worry, I wo't get inpatiant until I get back to NYC.</p>
+<p><b>Random Guest:</b> I've already put it on the wiki, but i haven't linked yet, since i don't know if i may, it's at <a href="../../../../articles/m/u/t/Legacy%7EMutTutorial_Code_With_GUI_43c9.html" title="Legacy:MutTutorial Code With GUI">MutTutorial Code With GUI</a>. Read the <a href="../../../../articles/r/e/c/Legacy%7ERecent_Changes_e3f2.html" class="mw-redirect" title="Legacy:Recent Changes">Recent Changes</a>&#160;;)</p>
+<p><b>Tarquin:</b> MR Bob, have you actually read the comments above? Have you read my note about variable names? If you want to have a hand in writing a tutorial here, please take note of these things instead of asking for more help.</p>
+<p><b>Mr.bob:</b> Sorry about my laziness tarquin. I'll change the bad var name now.</p>
+<p>You are the coolest random guest. Thank you so much.&#160;:D&#160;:)&#160;:D</p>
+<p>I tested the mutator with the GUI, it works perfectly. After I tweak it and make it bigger, i'm going to make a tutorial for it (unless random guest wants to first).</p>
+<p><b>Tarquin:</b> I thought this tutorial was meant to be <b>simple</b>.</p>
+<p><b>Random Guest:</b> Be my guest Mr. bob, make all you like. I don't like typing tutorials&#160;:-) You can use wotgreal (don't know the link to the page), that expands a menu when you type a dot.</p>
+<p><b>Mr.bob:</b> I meant I would make a different tutorial for this, one that would say that it was harder.</p>
+<p>Does anyone know what other modifiable things are a part of the class Xpawn, besides the ones used above?</p>
+<p><b>Mr.bob:</b> It's been about 2 months, and the Mut turorial code with GUI hasn't been updated. And no one ahs responded to my question.&#160;:(</p>
+<p>The mut tutorial with GUI has some confusing variable names, for example multijumpboost = multijumpboost and healthmax = healthmax , and superhealthmax = superhealthmax. They should be changed, in my opinion at least, (Behind my back my brother is compaining that those names make it easier and i'm wrong.</p>
+<p><b>GRAF1K:</b> Your question either is confusingly stated or assumes something incorrect, so people are unlikely to respond. Rephrase it and you'll have better luck.</p>
+<p><b>Tarquin:</b> With the variable names, I think you need to adopt a scheme that makes it clear which xPawn variable it relates to. Eg,</p>
+<pre>
+x.MultiJumpBoost = myMultiJumpBoost ;
+</pre>
+<p>and so on.</p>
+<p><b>SuperApe:</b> I'm just guessing by the sheer volume of discussion entries that this page needs a RefactorMe tag. If not, (or if refactored) please remove.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 73/1000000
+Post-expand include size: 22/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/u/t/Legacy%7EMutTutorial_9a8a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/u/t/Legacy_talk%7EMutTutorial_5733.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MutTutorial">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:17, 6 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

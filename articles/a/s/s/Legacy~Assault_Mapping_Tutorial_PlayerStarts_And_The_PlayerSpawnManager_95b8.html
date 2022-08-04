@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_a684.html" title="Legacy:Assault Mapping Tutorial">Legacy:Assault Mapping Tutorial</a></span></div>
+	    	    	    <!-- start content -->
+	    <hr />
+<p>This page is a section of the <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_a684.html" title="Legacy:Assault Mapping Tutorial">Assault Mapping Tutorial</a>. If you have arrived here from some other place, this page will likely make more sense if you start at the above link and read the tutorial through from beginning to end.</p>
+<p><b>Previous Section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Creating_A_Destroyable_Objective_27d7.html" title="Legacy:Assault Mapping Tutorial/Creating A Destroyable Objective">Legacy:Assault Mapping Tutorial/Creating A Destroyable Objective</a></b></p>
+<p><b>Next Section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Attacking_And_Defending_e978.html" title="Legacy:Assault Mapping Tutorial/Attacking And Defending">Legacy:Assault Mapping Tutorial/Attacking And Defending</a></b></p>
+<hr />
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#PlayerStarts_and_the_PlayerSpawnManager"><span class="tocnumber">1</span> <span class="toctext">PlayerStarts and the PlayerSpawnManager</span></a></li>
+<li class="toclevel-1"><a href="#Attacker_Spawns"><span class="tocnumber">2</span> <span class="toctext">Attacker Spawns</span></a></li>
+<li class="toclevel-1"><a href="#Defender_Spawns"><span class="tocnumber">3</span> <span class="toctext">Defender Spawns</span></a></li>
+<li class="toclevel-1"><a href="#Equipment_and_Supplies"><span class="tocnumber">4</span> <span class="toctext">Equipment and Supplies</span></a></li>
+<li class="toclevel-1"><a href="#Comments:"><span class="tocnumber">5</span> <span class="toctext">Comments:</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="PlayerStarts_and_the_PlayerSpawnManager" id="PlayerStarts_and_the_PlayerSpawnManager"></a></p>
+<h2><span class="mw-headline">PlayerStarts and the PlayerSpawnManager</span></h2>
+<p>Now it's time to set up how we're going to get players into this nice map of ours. As you may have guessed, we're going to need two groups of PlayerStarts, one for the attackers and one for the defenders.</p>
+<p>It's important to note here that you want to have at least as many PlayerSpawns in any given spot as you will have people on one team. If there are too few PlayerSpawns for a given team somewhere, this can cause a bottleneck in gameplay, annoying players, and potentially throwing off the balance of the game. The game engine will also complain bitterly in the log if it can't find somewhere to spawn somebody when it needs to.</p>
+<p><a name="Attacker_Spawns" id="Attacker_Spawns"></a></p>
+<h2><span class="mw-headline">Attacker Spawns</span></h2>
+<p>Let's start by placing some PlayerStarts for the attacking team at the far end of the valley from the base. It's always better to have too many than too few, and we've deliberately left ourselves a reasonable space for it, so let's put down around 16 or so (16 for each side, so our map can support up to 32 players in a game, which should be more than people will usually want to do). The next thing we want to do is set the PlayerStart-&gt;TeamNumber property on all of the PlayerStarts in this group to a unique number. In this case, they should all default to 0, which is fine for here, so we'll leave that (but it doesn't hurt to check to make sure they all actually are set to 0).</p>
+<p>That should do it, right? Well, not quite. Unlike for other game types, PlayerSpawn management for Assault is a bit more complicated. Despite the name of the property, in Assault, PlayerStart-&gt;TeamNumber does not actually determine what team uses a PlayerStart. Instead, the TeamNumber property is actually used to group PlayerStarts into groups (all PlayerStarts with the same TeamNumber are in the same group), and we use another actor to actually control how each group is used (you'll see why this is useful later). What we need to do now is tell the game that "PlayerSpawns in group 0" (that is, all the PlayerSpawns in the game with a TeamNumber of 0) should be where the attacking team initially spawns. To do this, <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an Actor</a>&gt;&gt;Info&gt;&gt;PlayerSpawnManager actor to the map (it doesn't matter where, but put it close to the PlayerSpawns we just created so that it's easy to find later). Open up the PlayerSpawnManager Properties, and <a href="../../../../articles/s/e/t/Legacy%7ESet_The_Following_Properties_ae9e.html" title="Legacy:Set The Following Properties">set the following properties</a>:</p>
+<ul>
+<li>PlayerSpawnManager-&gt;AssaultTeam = EPSM_Attackers</li>
+<li>PlayerSpawnManager-&gt;bEnabled = True</li>
+<li>PlayerSpawnManager-&gt;PlayerStartTeam = 0</li>
+</ul>
+<p>Setting PlayerStartTeam to 0 tells the game that this PlayerSpawnManager will affect any PlayerSpawns which have a TeamNumber of 0. bEnabled tells it that this group of PlayerStarts will be active as soon as the game starts, and setting AssaultTeam to EPSM_Attackers, tells it that the attacking team should spawn here.</p>
+<p><a name="Defender_Spawns" id="Defender_Spawns"></a></p>
+<h2><span class="mw-headline">Defender Spawns</span></h2>
+<p>Next, we'll set up the PlayerSpawns for the defenders. We'll have them spawn on top of the base roof, so go there and put down the same number of PlayerSpawn actors as we gave to the attackers (16). Now, select all of the defender PlayerSpawns, bring up their properties, and set PlayerSpawn-&gt;TeamNumber to 1. We now have a group of PlayerSpawns which are part of "group 1" instead of the "group 0" we created for the attackers.</p>
+<p>Now create a PlayerSpawnManager actor for the defending team, somewhere near group 1. Open up its properties, and set the following:</p>
+<ul>
+<li>PlayerSpawnManager-&gt;AssaultTeam = EPSM_Defenders</li>
+<li>PlayerSpawnManager-&gt;bEnabled = True</li>
+<li>PlayerSpawnManager-&gt;PlayerStartTeam = 1</li>
+</ul>
+<p>Now we have a second PlayerSpawnManager, which affects all PlayerSpawns with a TeamNumber of 1 ("group 1"), is initially active when the game starts, and tells the game that defenders should spawn here.</p>
+<p><a name="Equipment_and_Supplies" id="Equipment_and_Supplies"></a></p>
+<h2><span class="mw-headline">Equipment and Supplies</span></h2>
+<p>With a lot of other game types, obtaining the right weapons and ammo are part of the challenge, and thus they're scattered about the map in various locations where people can track down and grab what they want. Assault is a timed challenge, however, and spending a lot of time running all over the place to stock up on weapons every time you die before you can rejoin the assault is both annoying to players and problematic to game flow, so most Assault maps make a point of placing most of the stuff players are going to need conveniently right next to where they're going to spawn, so they can load up quickly and get back into the fight.</p>
+<p>The compact way to go about this for weapons and ammo is to use a few <a href="../../../../articles/w/e/a/Legacy%7EWeaponLocker_e609.html" title="Legacy:WeaponLocker">WeaponLockers</a> at each spawn area with appropriate weapons for the task at hand. You will generally want at least a couple of WeaponLockers in each spawn area, so that everybody isn't rushing to one point as soon as they spawn and causing a big traffic accident. For each of our two spawn areas, let's <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an Actor</a>&gt;&gt;Pickup&gt;&gt;WeaponLocker or two. For each WeaponLocker, we will now need to tell the game what type of weapons we should be supplying. To do this, open the properties, go to the WeaponLocker-&gt;Weapons property, and <a href="../../../../articles/e/x/t/Legacy%7EExtend_The_Dynamic_Array_9fdf.html" title="Legacy:Extend The Dynamic Array">extend the dynamic array</a> for each weapon type you want the given locker to carry. For each new array entry, select the WeaponClass property and choose what type of weapon to use (Note: "SniperRifle" is actually the Lightning Gun. The real sniper rifle is "ClassicSniperRifle"). That's about all there is to it!</p>
+<p>You will want to put a bit of thought into what weapons you will have in which lockers, of course. The choice of available weapons can affect not only the enjoyability of the game for the players but how the balance works out (for example, if the defenders all get rocket launchers and shock rifles, and the attackers only get bio rifles, it can make it a lot harder for the attackers to actually get close enough to complete the objective. This isn't necessarily a bad thing, though. Tweaking available weapons is a good way to make adjustments if you find out that part of your map has balance issues). You also don't want to just give everybody everything off the bat, because part of Assault is also the challenge of using what you've been given to achieve a goal. Realism also plays a role too, of course. What self-respecting army would go in to blow up a blast door but arm their soldiers with only flak cannons?</p>
+<p>Also, keep in mind that just because you've got WeaponLockers in place doesn't mean you can't hide a goodie or two elsewhere in the map for people to discover and pick up (such as sticking a Flak Cannon behind the crates in RobotFactory, for example). Be creative. Is there some weapon that would be really useful in a particular scenario? Make people put some effort into finding or obtaining it.</p>
+<p>For the purposes of our map, we will give the attackers:</p>
+<dl>
+<dt>Rocket Launcher</dt>
+<dd>We are going to be blowing things up after all..</dd>
+<dt>Lightning Gun ("SniperRifle" in the properties)</dt>
+<dd>To pick off pesky defenders from a safe distance.</dd>
+<dt>Flak Cannon</dt>
+<dd>Challenging for attacking with, but might be useful to those skilled with it.</dd>
+<dt>Link Gun</dt>
+<dd>Good at doing damage to doors as a backup for the rocket launcher, and a decent short-to-mid range weapon for those who can use it.</dd>
+<dt>Minigun</dt>
+<dd>Just because it's always a fun choice for mowing down opposition.</dd>
+</dl>
+<p>For a little variety, let's give our defenders:</p>
+<dl>
+<dt>Lightning Gun ("SniperRifle")</dt>
+<dd>For picking off pesky attackers as they come over the hill.</dd>
+<dt>Bio Rifle</dt>
+<dd>Very useful for defending things, for those who know how to use it.</dd>
+<dt>Flak Cannon</dt>
+<dd>For those not skilled enough for the Bio Rifle&#160;:)</dd>
+<dt>Shock Rifle</dt>
+<dd>Handy for keeping an oncoming horde at a distance.</dd>
+</dl>
+<hr />
+<p><b>Proceed to the next section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Attacking_And_Defending_e978.html" title="Legacy:Assault Mapping Tutorial/Attacking And Defending">Legacy:Assault Mapping Tutorial/Attacking And Defending</a></b></p>
+<hr />
+<p>This tutorial was originally written and contributed to the Wiki community by <a href="../../../../articles/f/o/o/Legacy%7EFoogod_0d6e.html" title="Legacy:Foogod">Foogod</a>. Questions and comments are welcome! Please either leave them on my personal page or at the bottom of the relevant tutorial page. If you see something which is wrong or unclear and you think needs some correction, please feel free to edit the text directly (that's what the Wiki is for!), but please try to keep the tutorial flow intact (no thread discussions in the middle of the tutorial text, please).</p>
+<p>Note: To reduce clutter, comments on the tutorial pages will be periodically moved to the <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Discussion_978b.html" title="Legacy:Assault Mapping Tutorial/Discussion">Legacy:Assault Mapping Tutorial/Discussion</a> page. Look there for older comments and thread discussions.</p>
+<p><a name="Comments:" id="Comments:"></a></p>
+<h2><span class="mw-headline">Comments:</span></h2>
+<p><b>Kirk:</b> Not truly related to the topic at hand, but the PlayerSpawnManager also has something called a ForcedPawnClass. Here you can enter the <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> you want the player to spawn as. This is particularly useful to spawn a player as/in a vehicle, most notably an ASVehicle_SpaceFighter. The spawnmanager assigns the player to a spawn group as described, so the spacefighter spawns at one of the <a href="../../../../articles/p/l/a/Legacy%7EPlayerStart_0952.html" title="Legacy:PlayerStart">PlayerStarts</a> that have that group set as their team number. Don't forget to set OverridePawnClass to ESPM_ForcedPawnClass (or at least I think that is necessary for it to work).</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 14/1000000
+Post-expand include size: 120/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_PlayerStarts_And_The_PlayerSpawnManager_95b8.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/s/s/Legacy_talk%7EAssault_Mapping_Tutorial_PlayerStarts_And_The_PlayerSpawnManager_64b6.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Assault_Mapping_Tutorial/PlayerStarts_And_The_PlayerSpawnManager">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:36, 5 June 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

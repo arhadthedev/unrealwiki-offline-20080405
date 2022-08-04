@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Object Oriented Programming Overview - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Object Oriented Programming Overview</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial assumes you know a little bit about programming already. Maybe you've written a bit of javascript or some perl, or some BASIC programs. Here we explain the additional concepts you need to program in an Object Oriented style.</p>
+<p>Writing UnrealScript is not possible without writing <b>classes</b> and using <b>objects</b>. Every player, vehicle, weapon, pickup, and light is an object. Even abstract things like the game rules and the scoreboard are objects. Every object belongs to a Class, which describes what data and functions are applicable to that object. For example, each player has an <a href="../../../../articles/a/s/s/Legacy%7EAssaultRifle_cca0.html" title="Legacy:AssaultRifle">AssaultRifle</a>. These are all of the same Class: every AssaultRifle has primary and secondary fire, and has a number of bullets and a number of grenades; but they are separate Objects (because each AssaultRifle in a game has a different number of bullets and grenades remaining).</p>
+<dl>
+<dt>class</dt>
+<dd>the 'blueprint' for objects</dd>
+<dt>object</dt>
+<dd>an actual thing in the world</dd>
+</dl>
+<p>There are many ways to think of classes and objects: you can imagine a class as a "recipe" or a "blueprint" for making things. It defines <b>properties</b> that every object of this class will have (even if the values may differ), and <b>functions</b> (or <b>methods</b>) that every object of this class can perform.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Creating_a_Class"><span class="tocnumber">1</span> <span class="toctext">Creating a Class</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Where.27s_My_Pizza.3F"><span class="tocnumber">1.1</span> <span class="toctext">Where's My Pizza?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Subclassing"><span class="tocnumber">2</span> <span class="toctext">Subclassing</span></a></li>
+<li class="toclevel-1"><a href="#What_next"><span class="tocnumber">3</span> <span class="toctext">What next</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Creating_a_Class" id="Creating_a_Class"></a></p>
+<h2><span class="mw-headline">Creating a Class</span></h2>
+<p>Say you want to create a Pizza. A Pizza is a meal, so:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Pizza <span class="kw5">extends</span> Meal;
+</pre></div>
+<p>A Pizza is generally divided into smaller parts:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> NumberOfParts=<span class="nu0">1</span>;
+</pre></div>
+<p>Also, a pizza remembers whether it has tomato sauce or cheese on it:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasSauce;
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasCheese;
+</pre></div>
+<p>Those are all properties that exist on any pizza you may create.</p>
+<p>Now for some methods:</p>
+<p>You can slice the pizza:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Slice<span class="br0">(</span>pieces<span class="br0">)</span>
+<span class="br0">{</span>
+  NumberOfParts=pieces
+<span class="br0">}</span>
+</pre></div>
+<p>You can add sauce, or eat the sauce, you can add cheese, or eat the cheese:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> AddSauce<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasSauce = <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw5">function</span> EatSauce<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasSauce  = <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> AddCheese<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasCheese = <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> EatCheese<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasCheese = <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>You can eat parts of the pizza:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> EatParts<span class="br0">(</span><span class="kw4">int</span> number<span class="br0">)</span>
+<span class="br0">{</span>
+  NumberOfParts -= number;
+ 
+  <span class="kw1">if</span><span class="br0">(</span>NumberOfParts &lt;= <span class="nu0">0</span><span class="br0">)</span>
+    Destroy<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>Notice that if the pizza object has 0 parts left, it no longer exists and must be <a href="../../../../articles/d/e/s/Legacy%7EDestroying_Objects_45cb.html" title="Legacy:Destroying Objects">destroyed</a>. If you really wanted to be polite, you might want the EatParts function to return a value to tell the person trying to eat it if they have been successful or not, for instance trying to eat four parts when there are only three left.</p>
+<p><a name="Where.27s_My_Pizza.3F" id="Where.27s_My_Pizza.3F"></a></p>
+<h3><span class="mw-headline">Where's My Pizza?</span></h3>
+<p>Mind you, what we've been doing up to here is just describing what a pizza looks like and how to create (and eat) it. It's like you're writing a recipe (that's your UnrealScript class).</p>
+<p>You still don't <i>have</i> a pizza to eat right now, even though you perfectly know <i>how</i> to eat it and what it would look like. In real life, you'd have to gather kitchen utensils and pizza ingredients and bake one; in <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>, you can just wave your magic wand and <a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">spawn</a> one:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Now that I know what a pizza looks like, I'm hungry and want to eat one.</span>
+ 
+<span class="kw5">local</span> Pizza MyPizza;             <span class="co1">// That's where I'm going to hold the pizza.  Like a dish.</span>
+ 
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pizza'</span><span class="br0">)</span>;  <span class="co1">// Hooray!  Pizza's ready!</span>
+MyPizza.<span class="me1">Slice</span><span class="br0">(</span><span class="nu0">8</span><span class="br0">)</span>;                <span class="co1">// Cut into 8 parts</span>
+MyPizza.<span class="me1">EatParts</span><span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>;             <span class="co1">// Now I'm eating two parts of my pizza.</span>
+</pre></div>
+<p><a name="Subclassing" id="Subclassing"></a></p>
+<h2><span class="mw-headline">Subclassing</span></h2>
+<p>Now, you want a better Pizza, with mushrooms and bacon and egg. This is an enhanced pizza, so:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> BetterPizza <span class="kw5">extends</span> Pizza;
+</pre></div>
+<p>This subclass <i>inherits</i> all the variables (<i>NumberOfParts</i>, <i>bHasCheese</i>, etc) from the Pizza class. So it already has cheese and it has sauce, but this sauce doesn't include egg and mushrooms, so we have to change this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasMushrooms;
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasEgg;
+ 
+<span class="kw5">function</span> AddSauce<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasEgg = <span class="kw9">true</span>;
+  bHasMushrooms = <span class="kw9">true</span>;
+  <span class="kw6">Super</span>.<span class="me1">AddSauce</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Hold it! What's this "Super" thing?</p>
+<p>It is a way to call the original Pizza's AddSauce function. This way, we don't have to re-code the Sauce Management&#160;:D Same goes for EatSauce:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> EatSauce<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  bHasEgg = <span class="kw9">false</span>;
+  bHasMushrooms = <span class="kw9">false</span>;
+  <span class="kw6">Super</span>.<span class="me1">EatSauce</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The BetterPizza also inherited the functions to handle the parts. It is a <i>complete</i>, functional Pizza&#160;:)</p>
+<p>Now that you've mastered the use of a single object, you can begin to work with multiple objects that interact with each other. This is covered in the next part of this this tutorial.</p>
+<p><a name="What_next" id="What_next"></a></p>
+<h2><span class="mw-headline">What next</span></h2>
+<ul>
+<li><a href="../../../../articles/u/s/i/Legacy%7EUsing_Objects_0d74.html" title="Legacy:Using Objects">Using objects</a> – part two of this tutorial</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_cee2.html" title="Legacy:UnrealScript Language Reference">UnrealScript Language Reference</a> – Tim Sweeney's introduction to UnrealScript</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_States_8f56.html" title="Legacy:UnrealScript Language Reference/States">Object states</a> in UnrealScript</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Object_Oriented_Programming_5c6f.html" title="Legacy:Unreal Object Oriented Programming">Unreal Object Oriented Programming</a> – Introduction to object orientation and modding Unreal in general</li>
+<li><a href="../../../../articles/p/e/p/Legacy%7EPeppers_And_Pepper_Grinders_6769.html" title="Legacy:Peppers And Pepper Grinders">Peppers And Pepper Grinders</a> – Another analogy to help more easily understand object oriented programming</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Sweavo:</b> I'd like to see the example replaced by one you can actually try in-game.</p>
+<p><b>MythOpus:</b> I think this page is more for the theory of Object Oriented Programming, rather than seeing how it works, if that makes sense. I think an actual working example that one would be able to try would be pointless at this stage as it would require someone to go through the steps of setting up a package, which many may not know how to do at this point.</p>
+<p><b>Sweavo:</b> true enough. But a crash course in OO programming is a bit off-topic for an unreal wiki, no? I take your point about the package though.</p>
+<p><b>MythOpus:</b> I guess it is slightly off-topic, but not entirely as UnrealScript is an Object Oriented language.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 38/1000000
+Post-expand include size: 36/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/o/b/j/Legacy%7EObject_Oriented_Programming_Overview_3984.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/b/j/Legacy_talk%7EObject_Oriented_Programming_Overview_2ba4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Object_Oriented_Programming_Overview">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:37, 26 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

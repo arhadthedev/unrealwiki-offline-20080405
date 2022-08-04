@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Scripting Linked Lists - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Scripting Linked Lists</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#How_a_List_Is_Set_Up"><span class="tocnumber">1</span> <span class="toctext">How a List Is Set Up</span></a></li>
+<li class="toclevel-1"><a href="#Navigating_through_a_List"><span class="tocnumber">2</span> <span class="toctext">Navigating through a List</span></a></li>
+<li class="toclevel-1"><a href="#Adding_to_Lists"><span class="tocnumber">3</span> <span class="toctext">Adding to Lists</span></a>
+<ul>
+<li class="toclevel-2"><a href="#At_the_Beginning"><span class="tocnumber">3.1</span> <span class="toctext">At the Beginning</span></a></li>
+<li class="toclevel-2"><a href="#At_the_End"><span class="tocnumber">3.2</span> <span class="toctext">At the End</span></a></li>
+<li class="toclevel-2"><a href="#In_the_Middle"><span class="tocnumber">3.3</span> <span class="toctext">In the Middle</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Removing_Items"><span class="tocnumber">4</span> <span class="toctext">Removing Items</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Removing_the_whole_list"><span class="tocnumber">4.1</span> <span class="toctext">Removing the whole list</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Advanced_Lists"><span class="tocnumber">5</span> <span class="toctext">Advanced Lists</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">7</span> <span class="toctext">Comments</span></a></li>
+<li class="toclevel-1"><a href="#About_this_page"><span class="tocnumber">8</span> <span class="toctext">About this page</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="How_a_List_Is_Set_Up" id="How_a_List_Is_Set_Up"></a></p>
+<h2><span class="mw-headline">How a List Is Set Up</span></h2>
+<p>A <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked list</a> requires two things:</p>
+<ul>
+<li>a base object that has pointer to first member of the list. This is the "way in" to the list. It doesn't necessarily have to point to the first member (but it does in this tutorial) and under strange circumstances this may be omitted.</li>
+<li>a pointer in <i>every</i> list element to another element</li>
+</ul>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> ListElement <span class="kw5">extends</span> <a href="/Object"><span class="kw10">object</span></a>;
+<span class="kw5">Var</span> ListElement Next; <span class="co1">// the next list element.</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> SomeImportantActor <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">actor</span></a>;
+<span class="kw5">Var</span> ListElement FirstElement; <span class="co1">// the first element in the list</span>
+</pre></div>
+<p>SomeImportantActor should be some critical actor in your mod. As an example, Unreal uses the <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> to hold the pointer to the first Pawn and NavigationPoint in the PawnList and NavigationPointList, respectively. The first inventory item of a player is connected by a pointer residing inside of that player. If you're coding a mutator, then your mutator class could be a good place to put the first pointer. Alternatively, you can store the first pointer in the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a> of ListElement.</p>
+<p>The Next pointer points to the next element of the list. The list terminates when Next==None.</p>
+<p>A third part of the list also exists; contents. This is simply whatever the list elements are supposed to do or store.</p>
+<p><a name="Navigating_through_a_List" id="Navigating_through_a_List"></a></p>
+<h2><span class="mw-headline">Navigating through a List</span></h2>
+<p>The easiest to move through the list is simply to use the For loop.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// this is run inside the SomeImportantActor class.</span>
+<span class="kw5">Local</span> ListElement Element;
+<span class="kw1">For</span> <span class="br0">(</span>Element=FirstElement; Element!=<span class="kw9">none</span>; Element=Element.<span class="me1">Next</span><span class="br0">)</span>
+  <span class="co1">//here each element's variables can be read, edited, or have functions called on it.</span>
+</pre></div>
+<p>Note how the above works. First the temporary Element pointer is set to the base element. At the end of each loop, the Element pointer is set to its Next pointer. This continues until no more elements are present (i.e. the Element pointer equals None).</p>
+<p><a name="Adding_to_Lists" id="Adding_to_Lists"></a></p>
+<h2><span class="mw-headline">Adding to Lists</span></h2>
+<p>There are three ways of adding to a list; at the beginning, at the end, or in the middle.</p>
+<p><b>Note:</b> In this example the ListElement class is only an object, but not an actor. If you make a subclass of actor then you should replace <code>new (none) class'ListElement';</code> with <code>spawn (class'ListElement');</code>.</p>
+<p>[b]Note:[/b] If your list is replicated, it is best to add the new item to the end of the list. Every item in the list after the new item has to be replicated.</p>
+<p><a name="At_the_Beginning" id="At_the_Beginning"></a></p>
+<h3><span class="mw-headline">At the Beginning</span></h3>
+<p>Simply instantiate an object, set its Next pointer to the current base (the ListElement pointer), and then set it as the base:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+TempElement=<span class="kw6">New</span> <span class="br0">(</span><span class="kw9">none</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'ListElement'</span>;
+TempElement.<span class="me1">next</span>=FirstElement;
+FirstElement=TempElement;
+</pre></div>
+<p><a name="At_the_End" id="At_the_End"></a></p>
+<h3><span class="mw-headline">At the End</span></h3>
+<p>There are two ways that a new element can be added at the end of a list. The loop method inside the SomeImportantActor:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Local</span> ListElement Element;
+Element=FirstElement;
+<span class="kw1">While</span> <span class="br0">(</span>Element.<span class="me1">next</span>!=<span class="kw9">none</span><span class="br0">)</span>
+  Element=Element.<span class="me1">next</span>;
+Element.<span class="me1">Next</span>=<span class="kw6">new</span> <span class="br0">(</span><span class="kw9">none</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'ListElement'</span>;
+</pre></div>
+<p>Note that this loop terminates not when Element is none, but when an <b>Element's next pointer</b> is none. This allows a pointer to the last element of the list to exist when the loop has completed.</p>
+<p><b>The "1337 function in each element" method:</b> I do not know of the "official" name of this method. Nonetheless, this is the simpler method, which is used to add mutators. Remember that list elements are true objects and CAN have functions called on them. This allows for very simple code to exist. Inside SomeImportantActor:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ListElement.<span class="me1">AddElement</span><span class="br0">(</span><span class="kw6">new</span> <span class="br0">(</span><span class="kw9">none</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'ListElement'</span><span class="br0">)</span>;
+</pre></div>
+<p>The class ListElement has the following function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> AddElement <span class="br0">(</span>ListElement NewElement<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">If</span> <span class="br0">(</span>Next!=<span class="kw9">None</span><span class="br0">)</span>
+    Next.<span class="me1">AddElement</span><span class="br0">(</span>NewElement<span class="br0">)</span>;
+  <span class="kw1">Else</span>
+    Next=NewElement;
+<span class="br0">}</span>
+</pre></div>
+<p>First a ListElement is instantiated. Then the ListElement's AddElement function is called with a pointer to the new ListElement. If there is another element in the list, it then calls the AddElement function on that element. Eventually, the end of the list is reached, where Next is none. Now Next is set to point to the new ListElement.</p>
+<p><a name="In_the_Middle" id="In_the_Middle"></a></p>
+<h3><span class="mw-headline">In the Middle</span></h3>
+<p>Adding an element into the middle of any list obviously requires a pointer to the item one wishes to add after. Assume that Element is some element inside the list:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+TempElement=<span class="kw6">new</span> <span class="kw5">class</span><span class="st0">'listelement'</span>;
+TempElement.<span class="me1">Next</span>=Element.<span class="me1">Next</span>;
+Element.<span class="me1">Next</span>=TempElement;
+</pre></div>
+<p>Again an element is created. Its Next var is set to whatever the Next var is of the element that this one is being added in front of. Finally, the element that is going to have the new element added after it has its Next var set to the new element.</p>
+<p><a name="Removing_Items" id="Removing_Items"></a></p>
+<h2><span class="mw-headline">Removing Items</span></h2>
+<p>In the case of actor lists, it is not safe to simply destroy an actor that is part of the list (objects do not apply as they cannot be manually destroyed). This causes any list elements after it to become unlinked. To remove any list item (it is safe to do this in actor.destroyed()), one must do the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// in the SomeImportantActor class</span>
+<span class="kw5">Function</span> RemoveElement<span class="br0">(</span>ListElement Element<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">Local</span> ListElement List;
+  <span class="kw1">If</span> <span class="br0">(</span>Element==FirstElement<span class="br0">)</span>
+    Element=FirstElement.<span class="me1">Next</span>;
+  <span class="kw1">Else</span>
+    <span class="kw1">For</span> <span class="br0">(</span>List=Element;List!=<span class="kw9">none</span>;List=List.<span class="me1">Next</span><span class="br0">)</span>
+      <span class="kw1">If</span> <span class="br0">(</span>List.<span class="me1">Next</span>==Element<span class="br0">)</span>
+      <span class="br0">{</span>
+        List.<span class="me1">Next</span>=Element.<span class="me1">Next</span>;
+        <span class="kw1">Break</span>;
+      <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>First and foremost, a check must be performed to see if the element to be removed is the base pointer. If it is, then the base is simply set to whatever that element's next is. Yet, if this is not the case, the code must go looking for that doomed object. A loop is performed which goes through all the elements. With each loop, it is checked temporary List pointer's Next pointer is the item that should be removed. If this is the case, that element's next pointer is set to the to-be-deleted element's next. The loop can then be terminated.</p>
+<p>You can synthesize the above information to conduct some exciting list manipulation. For instance to move a list item, you can simply remove it and then insert it in the middle of something else.</p>
+<p><a name="Removing_the_whole_list" id="Removing_the_whole_list"></a></p>
+<h3><span class="mw-headline">Removing the whole list</span></h3>
+<p>To remove the whole linked list (eg when an actor is destroyed), you can do the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> ListElement NextElement
+ 
+<span class="kw1">while</span> <span class="br0">(</span> FirstElement != <span class="kw9">none</span> <span class="br0">)</span>
+<span class="br0">{</span>
+    NextElement = FirstElement.<span class="me1">Next</span>;
+    FirstElement = <span class="kw9">none</span>;
+    FirstElement = NextElement;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Advanced_Lists" id="Advanced_Lists"></a></p>
+<h2><span class="mw-headline">Advanced Lists</span></h2>
+<p>The above is only the basics of how a list is constructed. Many other pointers however may exist in a list. For instance, a two-way list can be created by having each item not only have a pointer to the next, but also to the previous. There can also be a pointer in every element to the base or even to the end. While this does mean execution can be faster and frankly easier to set up, it does mean more needs to be done when adding or removing elements. Also note that more pointers allow greater flexibility. For instance, with a pointer to the first or previous element, this allows for the link to the list to be at any element, rather than the first. As an example, in Operation: Na Pali, the translator has a history of all previous messages. I simply have a pointer to the TranslatorHistoryList that holds the current message. If a user wishes to read older or newer messages, the pointer to the TranslatorHistoryList simply changes to the current pointer's Next or Prev pointers, respectfully. This allows for simple and fast executing code.</p>
+<p><b>Note:</b> When variables exist that apply to the list as a whole, rather than a per element basis, they should be placed in the actor that links to the list or the first element. In the latter case, this often means having a pointer to the first element in all elements.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">Linked List</a></li>
+<li><a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Linked List/Existing Lists In Unreal Tournament</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><a name="About_this_page" id="About_this_page"></a></p>
+<h2><span class="mw-headline">About this page</span></h2>
+<p>This page is based on a tutorial by <a href="../../../../articles/u/s/a/Legacy%7EUsAaR33_e4e0.html" title="Legacy:UsAaR33">UsAaR33</a>. Mad propz to <a href="http://chimeric.beyondunreal.com" class="external text" title="http://chimeric.beyondunreal.com" rel="nofollow">CHiMERiC</a>.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 47/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/c/r/Legacy%7EScripting_Linked_Lists_06c2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/c/r/Legacy_talk%7EScripting_Linked_Lists_9b2e.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Scripting_Linked_Lists">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:24, 11 November 2006 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Alpha Channel - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Alpha Channel</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>An <b>alpha channel</b>, also sometimes called a mask, controls the transparency of an image. In programs like Lightwave and 3D Studio, the image and its alpha channel can be separate image files, but most image formats store the alpha channel information within the main image file. For <a href="../../../../articles/t/e/x/Legacy%7ETexture_Import_And_Export_cd4f.html" title="Legacy:Texture Import And Export">importing to UnrealEd</a>, it's best to use 32 bit <a href="http://en.wikipedia.org/wiki/TGA" class="extiw" title="wikipedia:TGA">Wikipedia:TGA</a> (Targa) files.</p>
+<p>Alpha channels use black for transparent areas, and white for opaque areas. Files that are only black and white are sometimes called masks. An example might be an image of a tree where the trunk, branches, and leaves are visible but everything else is "invisible" or transparent.</p>
+<p>They can also be used to make gradual shifts in transparency such as with the simulated glow of coronas and particles. Since black is transparent, a dark grey (eg, RGB 10,10,10) is mostly transparent but not completely.</p>
+<p>Alpha channels are used to simulate 3D geometry without increasing the number of physical polygons. For example, a picket fence would require modeling individual boards and nails while an alpha channel image fence would simply contain and image of a fence and its alpha channel; transparent areas around the top and between individual fence boards.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#About_the_.TGA_file_format"><span class="tocnumber">1</span> <span class="toctext">About the .TGA file format</span></a></li>
+<li class="toclevel-1"><a href="#Adding_An_Alpha_Channel_to_an_Image"><span class="tocnumber">2</span> <span class="toctext">Adding An Alpha Channel to an Image</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Adobe_Photoshop"><span class="tocnumber">2.1</span> <span class="toctext">Adobe Photoshop</span></a></li>
+<li class="toclevel-2"><a href="#Paint_Shop_Pro"><span class="tocnumber">2.2</span> <span class="toctext">Paint Shop Pro</span></a></li>
+<li class="toclevel-2"><a href="#The_GIMP"><span class="tocnumber">2.3</span> <span class="toctext">The GIMP</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Importing_into_UnrealEd:"><span class="tocnumber">3</span> <span class="toctext">Importing into UnrealEd:</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="About_the_.TGA_file_format" id="About_the_.TGA_file_format"></a></p>
+<h2><span class="mw-headline">About the .TGA file format</span></h2>
+<ul>
+<li>It is designed for high quality, raster images.</li>
+<li>They can be very large files because 1 byte is used for each color .</li>
+<li>TGAs support greyscale transparency, and so store the mask within the TGA.</li>
+<li>A TGA with an alpha channel (transparency information) are typically 32 bit files.</li>
+<li>TGA files can be run length encoded to save space; RLE compression is directly proportional to the complexity of the image. "Noisy" images don't compress well, while bands of the same color do compress well.</li>
+<li>TGAs are sometimes called Targas or Targavision, or Truevision Targa.</li>
+</ul>
+<p>see <a href="http://en.wikipedia.org/wiki/TGA" class="extiw" title="wikipedia:TGA">Wikipedia:TGA</a> for more in-depth information.</p>
+<p><a name="Adding_An_Alpha_Channel_to_an_Image" id="Adding_An_Alpha_Channel_to_an_Image"></a></p>
+<h2><span class="mw-headline">Adding An Alpha Channel to an Image</span></h2>
+<p><a name="Adobe_Photoshop" id="Adobe_Photoshop"></a></p>
+<h3><span class="mw-headline">Adobe Photoshop</span></h3>
+<ol>
+<li>Using the various laso tools, magic wand and the pen tool make your selection. If you don't already know how great the pen tool can be for making your selections try this <a href="http://www.gurusnetwork.com/tutorials/photoshop/pen1intro.html" class="external text" title="http://www.gurusnetwork.com/tutorials/photoshop/pen1intro.html" rel="nofollow">tutorial</a>.</li>
+<li>Go to the channels tab (next where the layers tab is usualy).</li>
+<li>Press the button "Save selection as channel" and a channel named Alpha1 should appear.</li>
+<li>N ow check if what you want to be visible is white. If it's the opposite, click on the Alpha1 channel (should be under the blue) deselect (Ctrl+D) and invert (Ctrl+I). There you have it!</li>
+</ol>
+<p><b>Note:</b> that in Photoshop 7.0 there is a bug that makes it imposible to save alpha channels in Targas. To fix this either update to 7.01 or download a small fix for the Adobe web site.</p>
+<p><a href="http://www.adobe.com/support/downloads/detail.jsp?ftpID=1544" class="external free" title="http://www.adobe.com/support/downloads/detail.jsp?ftpID=1544" rel="nofollow">http://www.adobe.com/support/downloads/detail.jsp?ftpID=1544</a></p>
+<p>Make sure you follow the instructions given there.</p>
+<p>Also if you're using Photoshop you can save textures with alpha channels in <a href="../../../../articles/d/x/t/Legacy%7EDXT_d85c.html" title="Legacy:DXT">DXT</a>3 format. It only has a 4-bit alpha, instead of the 8-bit TGA alpha channel, but compression with DXT is much better and in most cases quality isn't much of an issue with alpha channels.</p>
+<p><a name="Paint_Shop_Pro" id="Paint_Shop_Pro"></a></p>
+<h3><span class="mw-headline">Paint Shop Pro</span></h3>
+<ol>
+<li>Do Main menu-&gt;Selections-&gt;Select All, and press CTRL-C to copy the image to the clipboard.</li>
+<li>Press CTRL-V to paste it as a new image (you will be working on the cloned image first).</li>
+<li>Select the parts of the image you want to make transparent. The Wand selection tool is useful for this. Hold down the shift key to select multiple parts of the image.</li>
+<li>Take your floodfill tool and select a dark colour (the darker the colour, the more transparent the pixel will be). Floodfill within the selected areas.</li>
+<li>In the menu, do Selections-&gt;Invert. This will invert your selection.</li>
+<li>Whatever you <i>do not</i> want transparent is now selected. Take your floodfill tool and select a light colour (the lighter the colour, the less transparent the pixel will be). Floodfill within the selected areas.</li>
+<li>In the menu, do 'Layers-&gt;Load/Save Mask-&gt;Save Mask to Disk'. Type in a filename and hit Save.</li>
+<li>In the menu, click on 'Selections-&gt;Select None' to deselect everything.</li>
+<li>Reopen your original image.</li>
+<li>In the menu, click on 'Selections-&gt;Select All'.</li>
+<li>In the menu, click on 'Layers-&gt;Load/Save Mask-&gt;Load Mask from Disk'and look in the menu bar at the top of screen for Mask. Select Mask-&gt;New-&gt;From Image. In this dialogue box, for the source window, the pulldown box, 'blank' and select your masked texture's filename, and press ok.</li>
+<li>Select Masks-&gt;Save to Alpha channel from the menu. Just agree with the next two windows (hit 'OK'), and save your new masked image. Make sure you choose .TGA file format (it will be listed as Truevision TARGA (.TGA)).</li>
+</ol>
+<p><b>DJPaul:</b> Did some more work on this. Fell through when I released the Beta 8 of PSP menu-wise is much different from PSP7, so i'm stuck. Plus my art sk1lls about suitable for MS Paint. I will try find someone who knows to finish it.</p>
+<p><a name="The_GIMP" id="The_GIMP"></a></p>
+<h3><span class="mw-headline">The GIMP</span></h3>
+<ol>
+<li>Select the parts of the image you want to be visible. (Or select what you want to be transparent, and do Select-&gt;Invert.)</li>
+<li>Do Layer-&gt;Mask-&gt;Add Layer Mask
+<ol>
+<li>In the dialog, set Initialize Layer Mark to 'Selection'</li>
+</ol>
+</li>
+<li>You can make further changes by painting directly on the layer mask. The layermask is just a grayscale image; black means fully transparent and white fully opaque.</li>
+<li>The new mask is selected in the layer list. Before you save, click on the original layer to select it. (Otherwise, saving will only export the grayscale mask.)</li>
+<li>When saving as TGA, the export procedure will tell you it needs to "Apply layer mask". Click 'Export'.</li>
+</ol>
+<p>Another way to do is it right click on the layer and select "Add alpha channel" and use the Erase tool or Edit-&gt;Clear to erase the parts you want transparent.</p>
+<p><a name="Importing_into_UnrealEd:" id="Importing_into_UnrealEd:"></a></p>
+<h2><span class="mw-headline">Importing into UnrealEd:</span></h2>
+<ul>
+<li>Be sure to check the 'alpha' checkbox when you import your texture. If you forget to do this, you can always change it by setting the <b>bAlphaTexture</b> to True in the 'surface' section of the Texture Properties window (open that by right-clicking your texture and selecting 'properties' in the context list).</li>
+<li>You will know that you have created and imported the alpha texture properly if you can see some of the texture window's background through your texture. for example, it looks a little like this:</li>
+</ul>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AlphaTexExample.jpeg_459e.html" class="image" title="Alpha textures appear like this, with the background showing through."><img alt="Alpha textures appear like this, with the background showing through." src="../../../../images/Legacy_AlphaTexExample.jpeg" width="207" height="174" border="0" /></a></span></div>
+</div>
+<p>See <a href="../../../../articles/t/e/x/Legacy%7ETexture_Import_And_Export_cd4f.html" title="Legacy:Texture Import And Export">Texture Import and Export</a> for more information on importing textures.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/g/r/a/Legacy%7EGraphics_Application_8ec5.html" title="Legacy:Graphics Application">Graphics Application</a></li>
+<li><a href="../../../../articles/t/e/x/Legacy%7ETexture_Import_And_Export_cd4f.html" title="Legacy:Texture Import And Export">Texture Import And Export</a> for <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>DJPaul:</b> Did some more work on this. Fell through when I released the Beta 8 of PSP menu-wise is much different from PSP7, so i'm stuck. Plus my art sk1lls about suitable for MS Paint. I will try find someone who knows to finish it.</p>
+<p><b>Foxpaw:</b> Is there a way to make a add a mask to a texture within UnrealEd? IE Set a texture as the alpha mask for another material?</p>
+<p><b>Wormbo:</b> I'm sure this is possible through extensive use of texture modifiers, e.g. you can use a <a href="../../../../articles/c/o/m/Legacy%7ECombiner_c4be.html" title="Legacy:Combiner">Combiner</a> to combine the colors of one texture with the alpha map of a different texture. With a <a href="../../../../articles/f/i/n/Legacy%7EFinalBlend_f0d5.html" title="Legacy:FinalBlend">FinalBlend</a> modifier you can create an alpha channel based on a texture's brightness (like the render style STY_Translucent in <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>) and use it in a Combiner to combine texture 1 and alpha channel of that FinalBlend. In both cases you have to apply another FinalBlend to the Combiner to make it actually use its alpha channel.</p>
+<p><b>Foxpaw:</b> I haven't been successful in using the finalblend to make an alpha channel like that, but that is basically what I was aiming for.. can you explain the process in greater detail, or maybe make a tutorial page on how to do it?</p>
+<p><b>LegalAssassin:</b> If you want an anti-aliased edge in PS you might experience (Geforce 2 GTS at least) that at distances this edge will turn white (!) in UEd. This is because of the the alpha color being white in PS. This looks bad when making, for instance, leaves on a branch. To fix this I use PSP 7 and open a .psd-version of the texture with the transparency as you want it. Now, make a new background layer, fill it with a more appropriate color (for leaves, some green would be nice) and save it as a .tga in PSP. The AA'd edge should now look good.</p>
+<p>I'm sure there's a better way, but I'm learning PS by trial-and-error.</p>
+<p><b>Tarquin:</b> Discussion needs cleaning... <a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a></p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> - Discussion needs cleaning</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 26/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/l/p/Legacy%7EAlpha_Channel_f319.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/l/p/Legacy_talk%7EAlpha_Channel_0080.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Alpha_Channel">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:12, 11 January 2007 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MD5Hash - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MD5Hash</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; MD5Hash (custom class)</div>
+<p>A custom utility class for calculating <a href="http://en.wikipedia.org/wiki/MD5" class="extiw" title="wikipedia:MD5">Wikipedia:MD5</a> hashes of strings and dynamic byte arrays. It cannot be used in UnrealEngine1 games due to their lack of dynamic arrays.</p>
+<p>This implementation is specially optimized for <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> and probably won't perform well when ported to Java, C/C++ or other languages. Important performance optimizations include the use of class-global variables and the lack of <tt>out</tt> parameters, because those are <i>not</i> "by reference" in UnrealScript!</p>
+<p>Note that the bottle neck of this implementation – string to byte conversion – still is there and there's no real workaround for that yet. Passing large strings around takes some time, and they always need to be passed at least to the <tt>Mid()</tt> function.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Usage"><span class="tocnumber">1</span> <span class="toctext">Usage</span></a></li>
+<li class="toclevel-1"><a href="#Methods"><span class="tocnumber">2</span> <span class="toctext">Methods</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Static_Methods"><span class="tocnumber">2.1</span> <span class="toctext">Static Methods</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Code"><span class="tocnumber">3</span> <span class="toctext">Code</span></a></li>
+<li class="toclevel-1"><a href="#Implementation_Notes"><span class="tocnumber">4</span> <span class="toctext">Implementation Notes</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Usage" id="Usage"></a></p>
+<h2><span class="mw-headline">Usage</span></h2>
+<p>For now the class can only be used statically:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> array&lt;byte&gt; SomeData;
+<span class="kw5">local</span> <span class="kw4">string</span> Result;
+ 
+<span class="co1">// fill SomeData with byte values</span>
+ 
+Result = <span class="kw5">class</span><span class="st0">'MD5Hash'</span>.<span class="kw6">static</span>.<span class="me1">GetArrayHashString</span><span class="br0">(</span>SomeData<span class="br0">)</span>;
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">string</span> SomeData;
+<span class="kw5">local</span> <span class="kw4">string</span> Result;
+ 
+<span class="co1">// fill SomeData with a string</span>
+ 
+Result = <span class="kw5">class</span><span class="st0">'MD5Hash'</span>.<span class="kw6">static</span>.<span class="me1">GetStringHashString</span><span class="br0">(</span>SomeData<span class="br0">)</span>;
+</pre></div>
+<p>A new version is being worked on that allows the programmer to create an instance of the class as "MD5 context" for more performance-friendly handling of more complex values.</p>
+<p><a name="Methods" id="Methods"></a></p>
+<h2><span class="mw-headline">Methods</span></h2>
+<p><a name="Static_Methods" id="Static_Methods"></a></p>
+<h3><span class="mw-headline">Static Methods</span></h3>
+<dl>
+<dt>GUID GetArrayHash(array&lt;byte&gt; InData)&#160;</dt>
+<dd>Returns the MD5 hash of the specified byte array as a GUID.</dd>
+<dt>string GetArrayHashString(array&lt;byte&gt; InData)&#160;</dt>
+<dd>Returns the MD5 hash of the specified byte array as a string.</dd>
+<dt>GUID GetStringHash(string InData)&#160;</dt>
+<dd>Returns the MD5 hash of the specified string as a GUID.</dd>
+<dt>string GetStringHashString(string InData)&#160;</dt>
+<dd>Returns the MD5 hash of the specified string as a string.</dd>
+<dt>string GetHashString(GUID Hash)&#160;</dt>
+<dd>Returns the string representation of the MD5 hash.</dd>
+<dt>string LittleEndianToHex(int i)&#160;</dt>
+<dd>Returns the little endian string representation of the integer value.</dd>
+</dl>
+<p><a name="Code" id="Code"></a></p>
+<h2><span class="mw-headline">Code</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/******************************************************************************
+MD5 hash implementation for UnrealScript by Wormbo.
+Feel free to modify and optimize for your needs.
+******************************************************************************/</span>
+ 
+ 
+<span class="kw5">class</span> MD5Hash <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+ 
+ 
+<span class="coMULTI">/** @ignore */</span>
+<span class="kw5">var</span> <span class="kw6">private</span> <span class="kw4">GUID</span> StaticHashValue;
+<span class="coMULTI">/** @ignore */</span>
+<span class="kw5">var</span> <span class="kw6">private</span> array&lt;byte&gt; StaticData;
+ 
+ 
+<span class="co1">//=============================================================================</span>
+<span class="co1">// Instant hash functions - probably not suitable for long input data</span>
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">GUID</span> GetStringHash<span class="br0">(</span><span class="kw4">string</span> In<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> StrLen, i;
+ 
+  StrLen = <span class="kw7">Len</span><span class="br0">(</span>In<span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> = StrLen;
+  <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; StrLen; i++<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i<span class="br0">]</span> = <span class="kw7">Asc</span><span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>In, i, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  StaticProcessChunks<span class="br0">(</span><span class="br0">)</span>;
+  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetStringHashString<span class="br0">(</span><span class="kw4">string</span> In<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> StrLen, i;
+ 
+  StrLen = <span class="kw7">Len</span><span class="br0">(</span>In<span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> = StrLen;
+  <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; StrLen; i++<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i<span class="br0">]</span> = <span class="kw7">Asc</span><span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>In, i, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  StaticProcessChunks<span class="br0">(</span><span class="br0">)</span>;
+  <span class="kw1">return</span> LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">A</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">B</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">C</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">D</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">GUID</span> GetArrayHash<span class="br0">(</span>array&lt;byte&gt; In<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">default</span>.<span class="me1">StaticData</span> = In;
+  StaticProcessChunks<span class="br0">(</span><span class="br0">)</span>;
+  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetArrayHashString<span class="br0">(</span>array&lt;byte&gt; In<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">default</span>.<span class="me1">StaticData</span> = In;
+  StaticProcessChunks<span class="br0">(</span><span class="br0">)</span>;
+  <span class="kw1">return</span> LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">A</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">B</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">C</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">D</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetHashString<span class="br0">(</span><span class="kw4">GUID</span> Hash<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> LittleEndianToHex<span class="br0">(</span>Hash.<span class="me1">A</span><span class="br0">)</span> $ LittleEndianToHex<span class="br0">(</span>Hash.<span class="me1">B</span><span class="br0">)</span>
+      $ LittleEndianToHex<span class="br0">(</span>Hash.<span class="me1">C</span><span class="br0">)</span> $ LittleEndianToHex<span class="br0">(</span>Hash.<span class="me1">D</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">//=============================================================================</span>
+<span class="co1">// Internal stuff for static instant hashing functions</span>
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> LittleEndianToHex<span class="br0">(</span><span class="kw4">int</span> i<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">const</span> hex = <span class="st0">"0123456789abcdef"</span>;
+ 
+  <span class="kw1">return</span> <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">4</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span> $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span>
+      $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">12</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span> $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">8</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span>
+      $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">20</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span> $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">16</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span>
+      $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">28</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span> $ <span class="kw7">Mid</span><span class="br0">(</span>hex, i &gt;&gt; <span class="nu0">24</span> &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> StaticProcessChunks<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw5">local</span> <span class="kw4">int</span> A, B, C, D;
+  <span class="kw5">local</span> <span class="kw4">int</span> W<span class="br0">[</span><span class="nu0">16</span><span class="br0">]</span>;
+ 
+  i = <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span>;
+  <span class="kw1">if</span> <span class="br0">(</span>i % <span class="nu0">64</span> &lt; <span class="nu0">56</span><span class="br0">)</span>
+    <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> = <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> + <span class="nu0">64</span> - i % <span class="nu0">64</span>;
+  <span class="kw1">else</span>
+    <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> = <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> + <span class="nu0">128</span> - i % <span class="nu0">64</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i<span class="br0">]</span> = 0x80;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> - <span class="nu0">4</span><span class="br0">]</span> = <span class="br0">(</span>i &gt;&gt;&gt; <span class="nu0">29</span><span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> - <span class="nu0">5</span><span class="br0">]</span> = <span class="br0">(</span>i &gt;&gt;&gt; <span class="nu0">21</span><span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> - <span class="nu0">6</span><span class="br0">]</span> = <span class="br0">(</span>i &gt;&gt;&gt; <span class="nu0">13</span><span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> - <span class="nu0">7</span><span class="br0">]</span> = <span class="br0">(</span>i &gt;&gt;&gt;  <span class="nu0">5</span><span class="br0">)</span>;
+  <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> - <span class="nu0">8</span><span class="br0">]</span> = <span class="br0">(</span>i &lt;&lt;   <span class="nu0">3</span><span class="br0">)</span>;
+ 
+  <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">A</span> = 0x67452301;
+  <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">B</span> = 0xEFCDAB89;
+  <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">C</span> = 0x98BADCFE;
+  <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">D</span> = 0x10325476;
+ 
+  <span class="kw1">while</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; <span class="nu0">16</span>; i++<span class="br0">)</span> <span class="br0">{</span>
+      W<span class="br0">[</span>i<span class="br0">]</span> = <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i * <span class="nu0">4</span> + <span class="nu0">3</span><span class="br0">]</span> &lt;&lt; <span class="nu0">24</span><span class="br0">)</span>
+          | <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i * <span class="nu0">4</span> + <span class="nu0">2</span><span class="br0">]</span> &lt;&lt; <span class="nu0">16</span><span class="br0">)</span>
+          | <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i * <span class="nu0">4</span> + <span class="nu0">1</span><span class="br0">]</span> &lt;&lt; <span class="nu0">8</span><span class="br0">)</span>
+          | <span class="kw1">default</span>.<span class="me1">StaticData</span><span class="br0">[</span>i * <span class="nu0">4</span><span class="br0">]</span>;
+    <span class="br0">}</span>
+ 
+    <span class="co1">// initialize hash value for this chunk</span>
+    A = <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">A</span>;
+    B = <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">B</span>;
+    C = <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">C</span>;
+    D = <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">D</span>;
+ 
+    <span class="co1">// round 1</span>
+    A += <span class="br0">(</span>D ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span> + 0xD76AA478;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">7</span> | A &gt;&gt;&gt;  <span class="nu0">-7</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>C ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span> + 0xE8C7B756;   D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">12</span> | D &gt;&gt;&gt; <span class="nu0">-12</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>B ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span> + 0x242070DB;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">17</span> | C &gt;&gt;&gt; <span class="nu0">-17</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>A ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span> + 0xC1BDCEEE;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">22</span> | B &gt;&gt;&gt; <span class="nu0">-22</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>D ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span> + 0xF57C0FAF;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">7</span> | A &gt;&gt;&gt;  <span class="nu0">-7</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>C ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span> + 0x4787C62A;   D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">12</span> | D &gt;&gt;&gt; <span class="nu0">-12</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>B ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span> + 0xA8304613;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">17</span> | C &gt;&gt;&gt; <span class="nu0">-17</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>A ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span> + 0xFD469501;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">22</span> | B &gt;&gt;&gt; <span class="nu0">-22</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>D ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span> + 0x698098D8;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">7</span> | A &gt;&gt;&gt;  <span class="nu0">-7</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>C ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span> + 0x8B44F7AF;   D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">12</span> | D &gt;&gt;&gt; <span class="nu0">-12</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>B ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span> + 0xFFFF5BB1;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">17</span> | C &gt;&gt;&gt; <span class="nu0">-17</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>A ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span> + 0x895CD7BE;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">22</span> | B &gt;&gt;&gt; <span class="nu0">-22</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>D ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span> + 0x6B901122;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">7</span> | A &gt;&gt;&gt;  <span class="nu0">-7</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>C ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span> + 0xFD987193;   D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">12</span> | D &gt;&gt;&gt; <span class="nu0">-12</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>B ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span> + 0xA679438E;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">17</span> | C &gt;&gt;&gt; <span class="nu0">-17</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>A ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span> + 0x49B40821;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">22</span> | B &gt;&gt;&gt; <span class="nu0">-22</span><span class="br0">)</span>;
+ 
+    <span class="co1">// round 2</span>
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span> + 0xF61E2562;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">5</span> | A &gt;&gt;&gt;  <span class="nu0">-5</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span> + 0xC040B340;   D = A + <span class="br0">(</span>D &lt;&lt;  <span class="nu0">9</span> | D &gt;&gt;&gt;  <span class="nu0">-9</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span> + 0x265E5A51;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">14</span> | C &gt;&gt;&gt; <span class="nu0">-14</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span> + 0xE9B6C7AA;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">20</span> | B &gt;&gt;&gt; <span class="nu0">-20</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span> + 0xD62F105D;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">5</span> | A &gt;&gt;&gt;  <span class="nu0">-5</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span> + 0x02441453;   D = A + <span class="br0">(</span>D &lt;&lt;  <span class="nu0">9</span> | D &gt;&gt;&gt;  <span class="nu0">-9</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span> + 0xD8A1E681;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">14</span> | C &gt;&gt;&gt; <span class="nu0">-14</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span> + 0xE7D3FBC8;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">20</span> | B &gt;&gt;&gt; <span class="nu0">-20</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span> + 0x21E1CDE6;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">5</span> | A &gt;&gt;&gt;  <span class="nu0">-5</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span> + 0xC33707D6;   D = A + <span class="br0">(</span>D &lt;&lt;  <span class="nu0">9</span> | D &gt;&gt;&gt;  <span class="nu0">-9</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span> + 0xF4D50D87;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">14</span> | C &gt;&gt;&gt; <span class="nu0">-14</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span> + 0x455A14ED;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">20</span> | B &gt;&gt;&gt; <span class="nu0">-20</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>D &amp; <span class="br0">(</span>B ^ C<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span> + 0xA9E3E905;   A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">5</span> | A &gt;&gt;&gt;  <span class="nu0">-5</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>C &amp; <span class="br0">(</span>A ^ B<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span> + 0xFCEFA3F8;   D = A + <span class="br0">(</span>D &lt;&lt;  <span class="nu0">9</span> | D &gt;&gt;&gt;  <span class="nu0">-9</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>B &amp; <span class="br0">(</span>D ^ A<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span> + 0x676F02D9;   C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">14</span> | C &gt;&gt;&gt; <span class="nu0">-14</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>A &amp; <span class="br0">(</span>C ^ D<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span> + 0x8D2A4C8A;   B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">20</span> | B &gt;&gt;&gt; <span class="nu0">-20</span><span class="br0">)</span>;
+ 
+    <span class="co1">// round 3</span>
+    A += <span class="br0">(</span>B ^ C ^ D<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span> + 0xFFFA3942;    A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">4</span> | A &gt;&gt;&gt;  <span class="nu0">-4</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>A ^ B ^ C<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span> + 0x8771F681;    D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">11</span> | D &gt;&gt;&gt; <span class="nu0">-11</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>D ^ A ^ B<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span> + 0x6D9D6122;    C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">16</span> | C &gt;&gt;&gt; <span class="nu0">-16</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>C ^ D ^ A<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span> + 0xFDE5380C;    B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">23</span> | B &gt;&gt;&gt; <span class="nu0">-23</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>B ^ C ^ D<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span> + 0xA4BEEA44;    A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">4</span> | A &gt;&gt;&gt;  <span class="nu0">-4</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>A ^ B ^ C<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span> + 0x4BDECFA9;    D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">11</span> | D &gt;&gt;&gt; <span class="nu0">-11</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>D ^ A ^ B<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span> + 0xF6BB4B60;    C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">16</span> | C &gt;&gt;&gt; <span class="nu0">-16</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>C ^ D ^ A<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span> + 0xBEBFBC70;    B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">23</span> | B &gt;&gt;&gt; <span class="nu0">-23</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>B ^ C ^ D<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span> + 0x289B7EC6;    A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">4</span> | A &gt;&gt;&gt;  <span class="nu0">-4</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>A ^ B ^ C<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span> + 0xEAA127FA;    D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">11</span> | D &gt;&gt;&gt; <span class="nu0">-11</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>D ^ A ^ B<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span> + 0xD4EF3085;    C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">16</span> | C &gt;&gt;&gt; <span class="nu0">-16</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>C ^ D ^ A<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span> + 0x04881D05;    B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">23</span> | B &gt;&gt;&gt; <span class="nu0">-23</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>B ^ C ^ D<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span> + 0xD9D4D039;    A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">4</span> | A &gt;&gt;&gt;  <span class="nu0">-4</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>A ^ B ^ C<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span> + 0xE6DB99E5;    D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">11</span> | D &gt;&gt;&gt; <span class="nu0">-11</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>D ^ A ^ B<span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span> + 0x1FA27CF8;    C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">16</span> | C &gt;&gt;&gt; <span class="nu0">-16</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>C ^ D ^ A<span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span> + 0xC4AC5665;    B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">23</span> | B &gt;&gt;&gt; <span class="nu0">-23</span><span class="br0">)</span>;
+ 
+    <span class="co1">// round 4</span>
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>B | ~D<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span> + 0xF4292244;     A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">6</span> | A &gt;&gt;&gt;  <span class="nu0">-6</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>A | ~C<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span> + 0x432AFF97;     D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">10</span> | D &gt;&gt;&gt; <span class="nu0">-10</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>D | ~B<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span> + 0xAB9423A7;     C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">15</span> | C &gt;&gt;&gt; <span class="nu0">-15</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>C | ~A<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span> + 0xFC93A039;     B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">21</span> | B &gt;&gt;&gt; <span class="nu0">-21</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>B | ~D<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span> + 0x655B59C3;     A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">6</span> | A &gt;&gt;&gt;  <span class="nu0">-6</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>A | ~C<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span> + 0x8F0CCC92;     D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">10</span> | D &gt;&gt;&gt; <span class="nu0">-10</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>D | ~B<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span> + 0xFFEFF47D;     C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">15</span> | C &gt;&gt;&gt; <span class="nu0">-15</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>C | ~A<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span> + 0x85845dd1;     B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">21</span> | B &gt;&gt;&gt; <span class="nu0">-21</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>B | ~D<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span> + 0x6FA87E4F;     A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">6</span> | A &gt;&gt;&gt;  <span class="nu0">-6</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>A | ~C<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span> + 0xFE2CE6E0;     D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">10</span> | D &gt;&gt;&gt; <span class="nu0">-10</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>D | ~B<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span> + 0xA3014314;     C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">15</span> | C &gt;&gt;&gt; <span class="nu0">-15</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>C | ~A<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span> + 0x4E0811A1;     B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">21</span> | B &gt;&gt;&gt; <span class="nu0">-21</span><span class="br0">)</span>;
+ 
+    A += <span class="br0">(</span>C ^ <span class="br0">(</span>B | ~D<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span> + 0xF7537E82;     A = B + <span class="br0">(</span>A &lt;&lt;  <span class="nu0">6</span> | A &gt;&gt;&gt;  <span class="nu0">-6</span><span class="br0">)</span>;
+    D += <span class="br0">(</span>B ^ <span class="br0">(</span>A | ~C<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span> + 0xBD3AF235;     D = A + <span class="br0">(</span>D &lt;&lt; <span class="nu0">10</span> | D &gt;&gt;&gt; <span class="nu0">-10</span><span class="br0">)</span>;
+    C += <span class="br0">(</span>A ^ <span class="br0">(</span>D | ~B<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span> + 0x2AD7D2BB;     C = D + <span class="br0">(</span>C &lt;&lt; <span class="nu0">15</span> | C &gt;&gt;&gt; <span class="nu0">-15</span><span class="br0">)</span>;
+    B += <span class="br0">(</span>D ^ <span class="br0">(</span>C | ~A<span class="br0">)</span><span class="br0">)</span> + W<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span> + 0xEB86D391;     B = C + <span class="br0">(</span>B &lt;&lt; <span class="nu0">21</span> | B &gt;&gt;&gt; <span class="nu0">-21</span><span class="br0">)</span>;
+ 
+    <span class="co1">// add this chunk's hash to result so far</span>
+    <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">A</span> += A;
+    <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">B</span> += B;
+    <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">C</span> += C;
+    <span class="kw1">default</span>.<span class="me1">StaticHashValue</span>.<span class="me1">D</span> += D;
+ 
+    <span class="kw1">default</span>.<span class="me1">StaticData</span>.<span class="kw6">Remove</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">64</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Implementation_Notes" id="Implementation_Notes"></a></p>
+<h2><span class="mw-headline">Implementation Notes</span></h2>
+<p>Only the 5 least significant bits of the second operand of <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>'s bitshift operators are used. That means, for example <code>(C &gt;&gt;&gt; -30)</code> is the same as <code>(C &gt;&gt;&gt; 2)</code>.</p>
+<p>The implementation avoids the unneccessary circular variable assignments and additional function calls the original MD5 implementation in <a href="http://tools.ietf.org/html/rfc1321" class="external" title="http://tools.ietf.org/html/rfc1321">RFC 1321</a> and on Wikipedia suggest. While Wikipedia's very efficient notation of the main loop (see below) is very small, the high number of assignments make it quite slow in UnrealScript.</p>
+<pre>
+   <b>for</b> i <b>from</b> 0 to 63
+       <b>if</b> 0 ≤ i ≤ 15 <b>then</b>
+           f := (b <b>and</b> c) <b>or</b> ((<b>not</b> b) <b>and</b> d)
+           g := i
+       <b>else if</b> 16 ≤ i ≤ 31
+           f := (d <b>and</b> b) <b>or</b> ((<b>not</b> d) <b>and</b> c)
+           g := (5*i + 1) <b>mod</b> 16
+       <b>else if</b> 32 ≤ i ≤ 47
+           f := b <b>xor</b> c <b>xor</b> d
+           g := (3*i + 5) <b>mod</b> 16
+       <b>else if</b> 48 ≤ i ≤ 63
+           f := c <b>xor</b> (b <b>or</b> (<b>not</b> d))
+           g := (7*i) <b>mod</b> 16
+
+       temp := d
+       d := c
+       c := b
+       b := ((a + f + k(i) + w(g)) <b>leftrotate</b> r(i)) + b
+       a := temp
+</pre>
+<p>Another difference from the original implementation suggestions are the calculations on the first and second round. This algorithm implements the optimizations suggested by Wikipedia: <code>d xor (b and (c xor d))</code> instead of <code>(b and c) or ((not b) and d)</code> for the first round and <code>c xor (d and (b xor c))</code> instead of <code>(d and b) or ((not d) and c)</code> for the second round. This results in a lower number of operations without changing the result.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/s/h/a/Legacy%7ESHA1Hash_3c71.html" title="Legacy:SHA1Hash">SHA1Hash</a> – a similar class for calculating SHA1 hashes</li>
+<li><a href="http://en.wikipedia.org/wiki/MD5" class="extiw" title="wikipedia:MD5">Wikipedia:MD5</a> – Wikipedia article about the MD5 hash function</li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 41/1000000
+Post-expand include size: 128/2097152 bytes
+Template argument size: 51/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Algorithm_8f6a.html" title="Category:Legacy Algorithm">Legacy Algorithm</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/d/5/Legacy%7EMD5Hash_9302.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/d/5/Legacy_talk%7EMD5Hash_4a1c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MD5Hash">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 16:48, 19 November 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

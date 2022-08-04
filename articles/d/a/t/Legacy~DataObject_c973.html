@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:DataObject - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:DataObject</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>/<a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <i><b>Note:</b></i> DataObject is not part of the stock <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_Versions_2_56d4.html" title="Legacy:Unreal Engine Versions/2">Unreal Engine 2.0</a>, it is only implemented in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> and <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>.</div>
+<p>DataObjects are an alternative method to <a href="../../../../articles/c/o/n/Legacy%7EConfig_Vars_And_.Ini_Files_5a43.html" title="Legacy:Config Vars And .Ini Files">Config Vars and .Ini Files</a> for storing information that can be accessed later by the game. They are often a better solution when you need to store a lot of information or you don't want it easily edited from outside the game (ie if you use it to store player progress in a game).</p>
+<p>An example of DataObjects in UT2003 would be GameProfile, which is used to store a Single Player profile.</p>
+<p>In order to make use of DataObject you need an instance of <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> or one of it's subclasses (usually via Level.Game), because the functions required to access DataObjects are all contained in <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Variables"><span class="tocnumber">1</span> <span class="toctext">Variables</span></a></li>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">2</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-1"><a href="#Usage"><span class="tocnumber">3</span> <span class="toctext">Usage</span></a></li>
+<li class="toclevel-1"><a href="#Example"><span class="tocnumber">4</span> <span class="toctext">Example</span></a>
+<ul>
+<li class="toclevel-2"><a href="#TestDataObject.uc"><span class="tocnumber">4.1</span> <span class="toctext">TestDataObject.uc</span></a></li>
+<li class="toclevel-2"><a href="#DataObjectTest.uc"><span class="tocnumber">4.2</span> <span class="toctext">DataObjectTest.uc</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Variables" id="Variables"></a></p>
+<h2><span class="mw-headline">Variables</span></h2>
+<p>The following variables are passed to the DataObject functions. Here's a quick description of what they mean:</p>
+<dl>
+<dt>packageName&#160;</dt>
+<dd>This is the name of the package file the object(s) will be saved in. The package is stored in Saves\<tt>packageName</tt>.uvx</dd>
+<dt>objClass&#160;</dt>
+<dd>This is the class name of the objet to be created.</dd>
+<dt>objName&#160;</dt>
+<dd>This is a unique identifier for the stored object, it has to be unique in that package or else it will overwrite existing objects with the same name.</dd>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<p>The following DataObject related functions are defined in <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>.</p>
+<dl>
+<dt><a href="../../../../articles/m/a/n/Legacy%7EManifest_853d.html" title="Legacy:Manifest">Manifest</a> GetSavedGames() [native, final]&#160;</dt>
+<dd>This will return an instance of <a href="../../../../articles/m/a/n/Legacy%7EManifest_853d.html" title="Legacy:Manifest">Manifest</a>. <a href="../../../../articles/m/a/n/Legacy%7EManifest_853d.html" title="Legacy:Manifest">Manifest</a>.<tt>ManifestEntries</tt> is a list of all the Packages in the Saves directory. <b>Note:</b> This is a list of the packages, not the DataObjects they contain.</dd>
+<dt><a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> CreateDataObject( <a href="../../../../articles/c/l/a/Legacy%7EClass_cd43.html" class="mw-redirect" title="Legacy:Class">class</a> objClass, string objName, string packageName ) [native, final]&#160;</dt>
+<dd>This will create a new DataObject. If successful it will return an instance of the new <tt>Object</tt>, otherwise it returns <tt>None</tt>. <b>Note:</b> this does not save the package file to disk.</dd>
+<dt><a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> LoadDataObject( <a href="../../../../articles/c/l/a/Legacy%7EClass_cd43.html" class="mw-redirect" title="Legacy:Class">class</a> objClass, string objName, string packageName ) [native, final]&#160;</dt>
+<dd>Load an existing DataObject, if the DataObject doesn't exist in the package (or the package doesn't exist) <tt>None</tt> will be returned.</dd>
+<dt>bool DeleteDataObject( <a href="../../../../articles/c/l/a/Legacy%7EClass_cd43.html" class="mw-redirect" title="Legacy:Class">class</a> objClass, string objName, string packageName ) [native, final]&#160;</dt>
+<dd>Delete an existing DataObject from the specified package. This does not remove the package file from the disk. If successful it return <tt>True</tt>, otherwise <tt>False</tt>.</dd>
+<dt>AllDataObjects( <a href="../../../../articles/c/l/a/Legacy%7EClass_cd43.html" class="mw-redirect" title="Legacy:Class">class</a> objClass, out <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> obj, string packageName ) [native, final, iterator]&#160;</dt>
+<dd>List all DataObjects in the specified package.</dd>
+<dt>bool SavePackage( string packageName ) [native, final]&#160;</dt>
+<dd>This will save the package to disk, it will be saved to: Saves\&lt;packagename&gt;.uvx If successful it return <tt>True</tt>, otherwise <tt>False</tt>.</dd>
+<dt>bool DeletePackage( string packageName ) [native, final]&#160;</dt>
+<dd>This will delete the complete package from the disk. If successful it return <tt>True</tt>, otherwise <tt>False</tt>.</dd>
+</dl>
+<p><a name="Usage" id="Usage"></a></p>
+<h2><span class="mw-headline">Usage</span></h2>
+<p>The data that can be stored in DataObjects follows the same rules as the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">Default Properties</a>. You can store the 6 basic data types (<tt>int</tt>, <tt>float</tt>, <tt>string</tt>, <tt>name</tt>, <tt>class</tt>, <tt>enum</tt>) and <tt>array</tt>s and <tt>struct</tt>s of the 6 basic data types. But you can't store references to other objects.</p>
+<p>It is recommended that you prefix package names so it's easier to identify which packages your code has created (eg "Foo_Package1", "Foo_Package2", and so you don't overwrite packages created by someone elses code.</p>
+<p><a name="Example" id="Example"></a></p>
+<h2><span class="mw-headline">Example</span></h2>
+<p>A working example, from any class call <tt>CreateDataObjects()</tt> and <tt>ListDataObjects()</tt> and check the game <a href="../../../../articles/l/o/g/Legacy%7ELog_File_4fcc.html" title="Legacy:Log File">log file</a> for the results.</p>
+<p><b>Note:</b> As noted above, the DataObject functions are in <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>, so you must pass an instance of <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> to these functions for them to be able to access the DataObject functions.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span><span class="st0">'DataObjectTest'</span>.<span class="kw6">static</span>.<span class="me1">CreateDataObjects</span><span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span> <span class="br0">)</span>;
+        <span class="kw5">class</span><span class="st0">'DataObjectTest'</span>.<span class="kw6">static</span>.<span class="me1">ListDataObjects</span><span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span> <span class="br0">)</span>;
+</pre></div>
+<p><a name="TestDataObject.uc" id="TestDataObject.uc"></a></p>
+<h3><span class="mw-headline">TestDataObject.uc</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TestDataObject <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+ 
+<span class="kw5">var</span> <span class="kw4">string</span> PackageName;
+<span class="kw5">var</span> <span class="kw4">int</span> ObjectNum;
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        PackageName=<span class="st0">"TestPackage"</span>
+        ObjectNum=<span class="nu0">-1</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="DataObjectTest.uc" id="DataObjectTest.uc"></a></p>
+<h3><span class="mw-headline">DataObjectTest.uc</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> DataObjectTest <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw5">var</span> <span class="kw4">string</span> pkgPrefix;
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> CreateDataObjects<span class="br0">(</span> GameInfo G <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> TestDataObject CurrentObject;
+        <span class="kw5">local</span> <span class="kw4">int</span> pNum, oNum;
+ 
+        <span class="co1">// Lets create 3 packages containing 3 DataObjects each.</span>
+        <span class="kw1">for</span> <span class="br0">(</span> pNum = <span class="nu0">1</span>; pNum &lt; <span class="nu0">4</span>; pNum++ <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">for</span> <span class="br0">(</span> oNum = <span class="nu0">1</span>; oNum &lt; <span class="nu0">4</span>; oNum++ <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="co1">// Create a new DataObject.</span>
+                        CurrentObject = G.<span class="me1">CreateDataObject</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'TestDataObject'</span>, <span class="st0">"MyDataObject_"</span>$oNum, <span class="kw1">default</span>.<span class="me1">pkgPrefix</span>$pNum <span class="br0">)</span>;
+ 
+                        <span class="co1">// If we successfully created a DataObject do something with it.</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> CurrentObject != <span class="kw9">none</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                CurrentObject.<span class="me1">PackageName</span> = <span class="kw1">default</span>.<span class="me1">pkgPrefix</span>$pNum;
+                                CurrentObject.<span class="me1">ObjectNum</span> = oNum;
+                        <span class="br0">}</span>
+                        <span class="kw1">else</span>
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Error creating TestDataObject"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+                <span class="co1">// We've created our DataObjects, so lets save the package.</span>
+                <span class="kw1">if</span> <span class="br0">(</span> G.<span class="me1">SavePackage</span><span class="br0">(</span> <span class="kw1">default</span>.<span class="me1">pkgPrefix</span>$pNum <span class="br0">)</span> <span class="br0">)</span>
+                        <span class="kw7">log</span><span class="br0">(</span> <span class="kw1">default</span>.<span class="me1">pkgPrefix</span>$pNum$<span class="st0">" package saved!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                <span class="kw1">else</span>
+                        <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Error saving "</span>$default.<span class="me1">pkgPrefix</span>$pNum$<span class="st0">" package!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> ListDataObjects<span class="br0">(</span> GameInfo G <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Manifest M;
+        <span class="kw5">local</span> <span class="kw4">int</span> iPrefixLen;
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="kw5">local</span> TestDataObject CurrentObject;
+ 
+        <span class="co1">// Get a list of all the packages in the Saves directory.</span>
+        M = G.<span class="me1">GetSavedGames</span><span class="br0">(</span><span class="br0">)</span>;
+        iPrefixLen = <span class="kw7">Len</span><span class="br0">(</span> <span class="kw1">default</span>.<span class="me1">pkgPrefix</span> <span class="br0">)</span>;
+ 
+        <span class="co1">// Run through the list of packages.</span>
+        <span class="kw1">for</span> <span class="br0">(</span> i = <span class="nu0">0</span>; i &lt; M.<span class="me1">ManifestEntries</span>.<span class="kw6">Length</span>; i++ <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="co1">// If the package name begins with "DataObjectTest_".</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">Left</span><span class="br0">(</span> M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span>, iPrefixLen <span class="br0">)</span> ~= <span class="kw1">default</span>.<span class="me1">pkgPrefix</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="co1">// Get all the DataObjects from the current package.</span>
+                        <span class="kw1">foreach</span> G.<span class="me1">AllDataObjects</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'TestDataObject'</span>, CurrentObject, M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="co1">// Print out the contents of the DataObject.</span>
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"----------------------------------------------------------------------------"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"     Package Name:"</span>@M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"     Object name :"</span>@CurrentObject.<span class="kw4">Name</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"     Object Class:"</span>@CurrentObject.<span class="kw5">Class</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"     ObjectNum   :"</span>@CurrentObject.<span class="me1">ObjectNum</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"----------------------------------------------------------------------------"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+ 
+                                <span class="co1">// Lets try and delete the DataObject.</span>
+                                <span class="kw1">if</span> <span class="br0">(</span> G.<span class="me1">DeleteDataObject</span> <span class="br0">(</span> <span class="kw5">class</span><span class="st0">'TestDataObject'</span>, <span class="kw4">string</span><span class="br0">(</span>CurrentObject.<span class="kw4">Name</span><span class="br0">)</span>, M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span> <span class="br0">)</span>
+                                        <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"DataObject deleted!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                                <span class="kw1">else</span>
+                                        <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Error deleting DataObject!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+                <span class="co1">// The package is empty now so lets delete it.</span>
+                <span class="kw1">if</span> <span class="br0">(</span> G.<span class="me1">DeletePackage</span><span class="br0">(</span> M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span> <span class="br0">)</span>
+                        <span class="kw7">log</span><span class="br0">(</span> M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span>$<span class="st0">" package deleted!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+                <span class="kw1">else</span>
+                        <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Error deleting "</span>$M.<span class="me1">ManifestEntries</span><span class="br0">[</span>i<span class="br0">]</span>$<span class="st0">" package!"</span>, <span class="st0">'DataObjectTest'</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        pkgPrefix=<span class="st0">"DataObjectTest_"</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/c/o/n/Legacy%7EConfig_Vars_And_.Ini_Files_5a43.html" title="Legacy:Config Vars And .Ini Files">Config_Vars_And_.Ini_Files</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Fyfe:</b> Almost finished refactoring, just need to finish the intro. <s><i>Reminder:</i> must link DateObject functions in <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> to this page.</s> Done</p>
+<p><b>Fyfe:</b> Refactoring done.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 70/1000000
+Post-expand include size: 318/2097152 bytes
+Template argument size: 242/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/a/t/Legacy%7EDataObject_c973.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/a/t/Legacy_talk%7EDataObject_e138.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:DataObject">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:44, 28 November 2006 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

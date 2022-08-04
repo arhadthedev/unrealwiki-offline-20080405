@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Weapon Modification (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Weapon Modification (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i>This page is one of a series of <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a>.</i></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Weapon_Modification:_Faster_Sniper_Rifle"><span class="tocnumber">2</span> <span class="toctext">Weapon Modification: Faster Sniper Rifle</span></a></li>
+<li class="toclevel-1"><a href="#FastRifle.uc"><span class="tocnumber">3</span> <span class="toctext">FastRifle.uc</span></a>
+<ul>
+<li class="toclevel-2"><a href="#class_FastRifle_extends_SniperRifle.3B"><span class="tocnumber">3.1</span> <span class="toctext">class FastRifle extends SniperRifle;</span></a></li>
+<li class="toclevel-2"><a href="#var_float_fRifleAnimRate.3B"><span class="tocnumber">3.2</span> <span class="toctext">var float fRifleAnimRate;</span></a></li>
+<li class="toclevel-2"><a href="#PlayFiring.28.29"><span class="tocnumber">3.3</span> <span class="toctext">PlayFiring()</span></a></li>
+<li class="toclevel-2"><a href="#defaultproperties"><span class="tocnumber">3.4</span> <span class="toctext">defaultproperties</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#FastRifleMutator.uc"><span class="tocnumber">4</span> <span class="toctext">FastRifleMutator.uc</span></a>
+<ul>
+<li class="toclevel-2"><a href="#class_FastRifleMutator_extends_Mutator.3B"><span class="tocnumber">4.1</span> <span class="toctext">class FastRifleMutator extends Mutator;</span></a></li>
+<li class="toclevel-2"><a href="#AddMutator.28.29"><span class="tocnumber">4.2</span> <span class="toctext">AddMutator()</span></a></li>
+<li class="toclevel-2"><a href="#AlwaysKeep.28.29"><span class="tocnumber">4.3</span> <span class="toctext">AlwaysKeep()</span></a></li>
+<li class="toclevel-2"><a href="#ModifyPlayer.28.29"><span class="tocnumber">4.4</span> <span class="toctext">ModifyPlayer()</span></a></li>
+<li class="toclevel-2"><a href="#CheckReplacement.28.29"><span class="tocnumber">4.5</span> <span class="toctext">CheckReplacement()</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Conclusion"><span class="tocnumber">5</span> <span class="toctext">Conclusion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">7</span> <span class="toctext">Comments</span></a></li>
+<li class="toclevel-1"><a href="#Newbie_notes_.28by_cla.29:"><span class="tocnumber">8</span> <span class="toctext">Newbie notes (by cla):</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>This is my first UnrealScript <a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Tutorial</a>.</p>
+<p><i>This tutorial assume that you have basic <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> knowledge.</i></p>
+<p><a name="Weapon_Modification:_Faster_Sniper_Rifle" id="Weapon_Modification:_Faster_Sniper_Rifle"></a></p>
+<h2><span class="mw-headline">Weapon Modification: Faster Sniper Rifle</span></h2>
+<p>You will learn how to modify a standard <a href="../../../../articles/w/e/a/Legacy%7EWeapon_%28UT%29_cf18.html" title="Legacy:Weapon (UT)">Weapon</a>, in this case the Sniper Rifle, for the original <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Tournament_f7eb.html" title="Legacy:Unreal Tournament">Unreal Tournament</a>. Here, we will try to enhance the Sniper Rifle to make it shoot faster. Some modifications will be made on the new weapon's ammo for conveniance.</p>
+<p>Two classes will be created:</p>
+<dl>
+<dt><a href="../../../../articles/s/n/i/Legacy%7ESniperRifle_%28UT%29_3d99.html" title="Legacy:SniperRifle (UT)">SniperRifle</a> &gt;&gt; FastRifle&#160;</dt>
+<dd>The sniper rifle modification class</dd>
+<dt><a href="../../../../articles/m/u/t/Legacy%7EMutator_%28UT%29_e55e.html" title="Legacy:Mutator (UT)">Mutator</a> &gt;&gt; FastRifleMutator&#160;</dt>
+<dd>The mutator class to replace stuff</dd>
+</dl>
+<p><a name="FastRifle.uc" id="FastRifle.uc"></a></p>
+<h2><span class="mw-headline">FastRifle.uc</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> FastRifle <span class="kw5">extends</span> SniperRifle; <span class="co1">// We are modifying the Sniper Rifle</span>
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> fRifleAnimRate; <span class="co1">// Custom rifle animation rate multiplier</span>
+ 
+ 
+<span class="co1">// Play firing sound and animation (override PlayFiring() in SniperRifle)</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayFiring<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    PlayOwnedSound<span class="br0">(</span> FireSound, SLOT_None, <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SoundDampening</span> * <span class="nu0">3.0</span> <span class="br0">)</span>;
+    PlayAnim<span class="br0">(</span> FireAnims<span class="br0">[</span><span class="kw7">Rand</span><span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span><span class="br0">]</span>, fRifleAnimRate, <span class="nu0">0.05</span> <span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span> PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span> &amp;&amp; <span class="br0">(</span> PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DesiredFOV</span> == PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DefaultFOV</span> <span class="br0">)</span> <span class="br0">)</span>
+        bMuzzleFlash++;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    fRifleAnimRate=<span class="nu0">6.0</span>   <span class="co1">// Custom rifle animation rate multiplier</span>
+    PickupAmmoCount=<span class="nu0">40</span>   <span class="co1">// Defined in SniperRifle class Default = 8</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="class_FastRifle_extends_SniperRifle.3B" id="class_FastRifle_extends_SniperRifle.3B"></a></p>
+<h3><span class="mw-headline">class FastRifle extends SniperRifle;</span></h3>
+<p>To get access to its functions and properties, we must subclass the <code>SniperRifle</code> class. Our new weapon is now the same as the <code>SniperRifle</code>.</p>
+<p><a name="var_float_fRifleAnimRate.3B" id="var_float_fRifleAnimRate.3B"></a></p>
+<h3><span class="mw-headline">var float fRifleAnimRate;</span></h3>
+<p>This is a new variable we create here to store animation rate multiplier. I will talk about it in details in the following sections.</p>
+<p><a name="PlayFiring.28.29" id="PlayFiring.28.29"></a></p>
+<h3><span class="mw-headline">PlayFiring()</span></h3>
+<p>This function is declared in <a href="../../../../articles/t/o/u/Legacy%7ETournamentWeapon_fe41.html" title="Legacy:TournamentWeapon">TournamentWeapon</a>, the parent class of the <code>SniperRifle</code>.</p>
+<p>It is overriden in the <code>SniperRifle</code> class of the <code>Botpack</code> package:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayFiring<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    PlayOwnedSound<span class="br0">(</span>FireSound, SLOT_None, <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SoundDampening*</span><span class="nu0">3.0</span><span class="br0">)</span>;
+    PlayAnim<span class="br0">(</span>FireAnims<span class="br0">[</span><span class="kw7">Rand</span><span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span><span class="br0">]</span>, <span class="nu0">0.5</span> + <span class="nu0">0.5</span> * FireAdjust, <span class="nu0">0.05</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DesiredFOV</span> == PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DefaultFOV</span><span class="br0">)</span> <span class="br0">)</span>
+        bMuzzleFlash++;
+<span class="br0">}</span>
+</pre></div>
+<p>Basically, <code>PlayFiring()</code> is called when you press the Fire button and it is called again and again as long as you hold the fire button and the current weapon still contains some ammos.</p>
+<p>The interesting part here is the <code>PlayAnim()</code> function. It is defined in the <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor</a> class:</p>
+<dl>
+<dt>PlayAnim (name Sequence, optional float Rate, optional float TweenTime)&#160;</dt>
+<dd><i>Plays an Animation</i>.</dd>
+</dl>
+<dl>
+<dt>Sequence</dt>
+<dd>
+<dl>
+<dd>Anim sequence Name.<br />
+Rate: Animation Rate multiplier.<br />
+TweenTime: Amount of Time to "tween" into the first frame of this animation sequence if in a different sequence.</dd>
+</dl>
+</dd>
+</dl>
+<p>This function plays the given Sequence. The Rate parameter is a multiplier. That means the animation will be played Rate times faster than normal. The faster the animation is played, the sooner <code>PlayFiring()</code> will be called again.&#160;:)</p>
+<p>The FireAdjust variable is defined in <code>TournamentWeapon</code> and will always be 1.0 if Pawn is not a Bot. Since we don't want the bots to shoot at a different Rate than us, we will get rid of this variable in the animation rate and replace it with 1.0. Then now, 0.5 + 0.5 * 1.0 = 1.0, the default firing rate is 1.0.</p>
+<p>So, we need to overrides <code>PlayFiring()</code> in order to modify this animation Rate multiplier. The new function will be:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayFiring<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    PlayOwnedSound<span class="br0">(</span> FireSound, SLOT_None, <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SoundDampening</span> * <span class="nu0">3.0</span> <span class="br0">)</span>;
+    PlayAnim<span class="br0">(</span> FireAnims<span class="br0">[</span><span class="kw7">Rand</span><span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span><span class="br0">]</span>, fRifleAnimRate, <span class="nu0">0.05</span> <span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span> PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span> &amp;&amp; <span class="br0">(</span> PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DesiredFOV</span> == PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">DefaultFOV</span> <span class="br0">)</span> <span class="br0">)</span>
+        bMuzzleFlash++;
+<span class="br0">}</span>
+</pre></div>
+<p>The only difference with our new function is the Rate of the <code>PlayAnim()</code> function. This was a fixed value of 1.0, and now it is set to our new fRifleAnimRate variable.</p>
+<p><a name="defaultproperties" id="defaultproperties"></a></p>
+<h3><span class="mw-headline">defaultproperties</span></h3>
+<p>Here we define a new property and we override an existing one.</p>
+<dl>
+<dt>fRifleAnimRate&#160;</dt>
+<dd><i>Modify fRifleAnimRate value to change firing speed</i>.<br />
+I do not recommend setting higher than 30.0. Anyway, number of ammo will be largely insufficient for the firing speed.</dd>
+</dl>
+<dl>
+<dt>SniperRifle</dt>
+<dd>
+<dl>
+<dd>1.0, Epic Original SniperRifle<br />
+AssaultRifle: 5.0, Zark AssaultRifle<br />
+CyberRifle: 9.0, Ramx CyberRifle</dd>
+</dl>
+</dd>
+</dl>
+<dl>
+<dt>PickupAmmoCount&#160;</dt>
+<dd><i>Modify the initial number of ammo</i>.<br />
+Since our new weapon is faster than the standard <a href="../../../../articles/s/n/i/Legacy%7ESniperRifle_%28UT%29_3d99.html" title="Legacy:SniperRifle (UT)">SniperRifle</a>, it would be wise to raise the initial number of ammos the weapon contains when picked up.<br />
+Our weapon uses <a href="../../../../articles/b/u/l/Legacy%7EBulletBox_b276.html" title="Legacy:BulletBox">BulletBox</a> ammo type, that support a <code>MaxAmmo</code> count of 50, so setting an initial ammo count higher than 50 would cause some illogical behaviors... excepts if you subclass <a href="../../../../articles/b/u/l/Legacy%7EBulletBox_b276.html" title="Legacy:BulletBox">BulletBox</a> to modify his defaultproperties.</dd>
+</dl>
+<p>For more weapon properties, see <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_For_Weapons_255f.html" title="Legacy:Default Properties For Weapons">Default Properties For Weapons</a>.</p>
+<p><a name="FastRifleMutator.uc" id="FastRifleMutator.uc"></a></p>
+<h2><span class="mw-headline">FastRifleMutator.uc</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> FastRifleMutator <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+ 
+<span class="co1">// Only allow one instance of this mutator.</span>
+<span class="kw5">function</span> AddMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> M != <span class="kw8">Self</span> <span class="br0">)</span>
+        <span class="kw6">Super</span>.<span class="me1">AddMutator</span><span class="br0">(</span>M<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// Do not allow FastRifle to be replaced or removed.</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> AlwaysKeep<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'FastRifle'</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+    <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">AlwaysKeep</span><span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// Replace the default weapon with FastRifle when a player spawn.</span>
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span> <span class="br0">{</span>
+    DeathMatchPlus<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span><span class="br0">)</span>.<span class="me1">GiveWeapon</span><span class="br0">(</span> Other, <span class="st0">"FastRifle.FastRifle"</span> <span class="br0">)</span>;
+    <span class="kw6">Super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// Replace SniperRifle with the FastRifle.</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> CheckReplacement<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other, <span class="kw6">out</span> <span class="kw4">byte</span> bSuperRelevant<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Weapon'</span><span class="br0">)</span> <span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'SniperRifle'</span><span class="br0">)</span> <span class="br0">)</span> <span class="br0">{</span>
+            ReplaceWith<span class="br0">(</span> Other, <span class="st0">"FastRifle.FastRifle"</span> <span class="br0">)</span>;
+            <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="class_FastRifleMutator_extends_Mutator.3B" id="class_FastRifleMutator_extends_Mutator.3B"></a></p>
+<h3><span class="mw-headline">class FastRifleMutator extends Mutator;</span></h3>
+<p>This is added to the mutator list and will be used to replace any <code>SniperRifle</code> in the game with our new <code>FastRifle</code>.</p>
+<p><a name="AddMutator.28.29" id="AddMutator.28.29"></a></p>
+<h3><span class="mw-headline">AddMutator()</span></h3>
+<p>This will prevent this mutator to try adding himself recursively.</p>
+<p><a name="AlwaysKeep.28.29" id="AlwaysKeep.28.29"></a></p>
+<h3><span class="mw-headline">AlwaysKeep()</span></h3>
+<p>This will prevent your new weapon to be replaced or removed by another mutator or mod and also avoid to get an endless recursive loop in <code>CheckReplacement()</code>, because our new weapon IsA <code>SniperRifle</code>.</p>
+<p><a name="ModifyPlayer.28.29" id="ModifyPlayer.28.29"></a></p>
+<h3><span class="mw-headline">ModifyPlayer()</span></h3>
+<p>This function allow to init some stuff when the player spawn. We might want to give the <code>FastRifle</code> as main weapon when spawning.</p>
+<p><i>This is not recommended behavior, but you can add some way to disable this, like configuration files or such</i>.</p>
+<p><a name="CheckReplacement.28.29" id="CheckReplacement.28.29"></a></p>
+<h3><span class="mw-headline">CheckReplacement()</span></h3>
+<p>This will Check for the presence of any Actor and allow replacement with <code>ReplaceWith()</code>. This is where we will actually replace all original <code>SniperRifle</code> in the current game with our new customized <code>FastRifle</code>.</p>
+<p><a name="Conclusion" id="Conclusion"></a></p>
+<h2><span class="mw-headline">Conclusion</span></h2>
+<p>Now compile the package that contains those 2 classes and start a game with this mutator. I'm not sure about network compatibility, i'm new to UnrealScript and need to learn more on replication.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a> – UnrealScript tutorials</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> – UnrealScript reference pages</li>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a> – Topics on mutators</li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_A_New_Weapontype_a4e2.html" title="Legacy:Creating A New Weapontype">Creating A New Weapontype</a> – more on weapon creation/modification</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Ramx:</b> OK, so it should be complete. Please correct me if I am wrong.&#160;:)</p>
+<p><a name="Newbie_notes_.28by_cla.29:" id="Newbie_notes_.28by_cla.29:"></a></p>
+<h2><span class="mw-headline">Newbie notes (by cla):</span></h2>
+<p>The needed .int must be called FastRifle.int, and have only two lines:</p>
+<pre>
+  [Public]
+  Object=(Name=FastRifle.FastRifleMutator,Class=Class,MetaClass=Engine.Mutator,Description="Fast Rifle Replacement.")
+
+</pre>
+<p>To see this mutator you must be starting a DM or TDM game. By example,It wont be visible starting a CTF game.Thats because the line DeathMatchPlus(Level.Game).GiveWeapon( Other, "FastRifle.FastRifle" );</p>
+<p>For the code to work the package must be called FastRifle, thats the same as say 'the .uc files must be under $UTdir\FastRifle\Classes'</p>
+<p>If you want to change the package name, say to 'FARifle', then</p>
+<pre>
+  put the .uc files under $UTdir\FARifle\Classes 
+  change all ocurrences of 'FastRifle.FastRifle' to 'FARifle.FastRifle' in the .uc files
+  change 'FastRifle.FastRifleMutator' to 'FARifle.FastRifleMutator' in the .int file
+  rename the .int file to 'FARifle.int'
+</pre>
+<!-- 
+NewPP limit report
+Preprocessor node count: 78/1000000
+Post-expand include size: 24/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/e/a/Legacy%7EWeapon_Modification_%28UT%29_9485.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/e/a/Legacy_talk%7EWeapon_Modification_%28UT%29_f127.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Weapon_Modification_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:27, 22 November 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Lens Flare - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Lens Flare</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A <b>lens flare</b> is a visual effect assembled of several circles/hexagons that – when the person is moving – move opposite of the light source and don't stay on one spot. So they move in the direction that the person is moving. The color of lens flares is generally related to the color of the light. A lens flare is a result of compound lens systems used in cameras and other optical devices, and so some consideration should be given to their use - lens flares do not occur on light sources viewed with the naked eye. Also, lens flares can make it harder to see, so be careful that their use does not adversely impact gameplay.</p>
+<p>The textures that are displayed around light sources, but stick at the place where the light is are <a href="../../../../articles/c/o/r/Legacy%7ECorona_d737.html" title="Legacy:Corona">coronas</a>. For some reason they're frequently erroneously called "lens flare" as well.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_corona.gif_b970.html" class="image" title="Legacy corona.gif"><img alt="" src="../../../../images/Legacy_corona.gif" width="400" height="400" border="0" /></a></span></div>
+</div>
+<p><a name="Lens_Flare_in_the_Unreal_Engine" id="Lens_Flare_in_the_Unreal_Engine"></a></p>
+<h2><span class="mw-headline">Lens Flare in the Unreal Engine</span></h2>
+<p>No support for lens flares is built in to the Unreal Engine, but lens flares can be created using UnrealScript. This should be possible with any version of the Unreal Engine, though the specific Unrealscript code required will vary. Lens flares can be created two ways - by drawing them directly onto the screen using the <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a>, or by creating non-colliding actors in the world. Using actors allows you to make better use of hardware graphics acceleration, though drawing to the <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> will require marginally less memory. Drawing to the <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> may also produce slightly better results, as actors may be clipped by nearby meshes. Both solutions should have negligible impact on performance. With either solution, Unrealscript will be needed to compute the correct positions for the lens flares.</p>
+<p><a name="Making_Lens_Flares" id="Making_Lens_Flares"></a></p>
+<h2><span class="mw-headline">Making Lens Flares</span></h2>
+<p>Here's the code I used for a proof of concept I threw together a short while back. References can be found in the comments.</p>
+<p>The idea is that a light source is creating a glare against the "lens" through which we are viewing the world – in this case the canvas. The flare effect is then created by drawing a series of coronas along a vector on the canvas which passes through both the light source and the center of the screen.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// FlareInteraction.</span>
+<span class="co1">// Adds 1337 lens flares for lights w/ coronas.</span>
+<span class="co1">// (c) 2002 jasonyu</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> FlareInteraction <span class="kw5">extends</span> Interaction;
+ 
+<span class="kw2">#exec</span> OBJ LOAD FILE=Textures\FlareTextures.<span class="me1">utx</span> PACKAGE=LensFlare
+ 
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> PlayerOwner;
+<span class="kw5">const</span> HLSMAX = <span class="nu0">240</span>;
+<span class="kw5">const</span> RGBMAX = <span class="nu0">255</span>;
+ 
+ 
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        PlayerOwner = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>;
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Lensflare interaction initialized."</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// adapted from:</span>
+<span class="co1">// http://plaza27.mbn.or.jp/~satomii/design/win32/hls2rgb.html</span>
+<span class="kw6">final</span> <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">float</span> HueToRGB<span class="br0">(</span><span class="kw4">float</span> n1, <span class="kw4">float</span> n2, <span class="kw4">float</span> hue<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> hue &lt; <span class="nu0">0</span> <span class="br0">)</span> hue += HLSMAX;
+        <span class="kw1">if</span> <span class="br0">(</span> hue &gt; HLSMAX <span class="br0">)</span> hue -= HLSMAX;
+ 
+        <span class="coMULTI">/* return r,g, or b value from this tridrant */</span>
+        <span class="kw1">if</span> <span class="br0">(</span> hue &lt; <span class="br0">(</span>HLSMAX/<span class="nu0">6</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="br0">(</span> n1 + <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>n2-n1<span class="br0">)</span>*hue + <span class="br0">(</span>HLSMAX/<span class="nu0">12</span><span class="br0">)</span><span class="br0">)</span>/<span class="br0">(</span>HLSMAX/<span class="nu0">6</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> hue &lt; <span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="kw1">return</span> n2;
+        <span class="kw1">if</span> <span class="br0">(</span> hue &lt; <span class="br0">(</span><span class="br0">(</span>HLSMAX*<span class="nu0">2</span><span class="br0">)</span>/<span class="nu0">3</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="br0">(</span> n1 + <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>n2-n1<span class="br0">)</span>*<span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>HLSMAX*<span class="nu0">2</span><span class="br0">)</span>/<span class="nu0">3</span><span class="br0">)</span>-hue<span class="br0">)</span> + <span class="br0">(</span>HLSMAX/<span class="nu0">12</span><span class="br0">)</span><span class="br0">)</span>/<span class="br0">(</span>HLSMAX/<span class="nu0">6</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>;
+        <span class="kw1">else</span>
+                <span class="kw1">return</span> n1;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">final</span> <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">Color</span> hls2rgb<span class="br0">(</span><span class="kw4">byte</span> hue, <span class="kw4">byte</span> lum, <span class="kw4">byte</span> sat<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">Color</span> C;
+        <span class="kw5">local</span> <span class="kw4">float</span> Magic1, Magic2;
+        <span class="kw5">local</span> <span class="kw4">int</span> R,G,B;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> sat==<span class="nu0">0</span><span class="br0">)</span>
+        <span class="br0">{</span>     <span class="coMULTI">/* achromatic case */</span>
+                C.<span class="me1">R</span> = <span class="br0">(</span>lum*RGBMAX<span class="br0">)</span> / HLSMAX;
+                C.<span class="me1">G</span> = C.<span class="me1">R</span>;
+                C.<span class="me1">B</span> = C.<span class="me1">R</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>       <span class="coMULTI">/* chromatic case */</span>
+                <span class="coMULTI">/* set up magic numbers */</span>
+                <span class="kw1">if</span> <span class="br0">(</span>lum &lt;= <span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>
+                        Magic2 = <span class="br0">(</span>lum*<span class="br0">(</span>HLSMAX+sat<span class="br0">)</span>+<span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> / HLSMAX;
+                <span class="kw1">else</span>
+                        Magic2 = lum+sat - <span class="br0">(</span><span class="br0">(</span>lum*sat<span class="br0">)</span>+<span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> / HLSMAX;
+ 
+                Magic1 = <span class="nu0">2</span>*lum - Magic2;
+ 
+                <span class="coMULTI">/* get RGB, change units from HLSMAX to RGBMAX */</span>
+                R = <span class="br0">(</span>HueToRGB<span class="br0">(</span>Magic1, Magic2, hue+<span class="br0">(</span>HLSMAX/<span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span>
+                                * RGBMAX + <span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> / HLSMAX;
+                G = <span class="br0">(</span>HueToRGB<span class="br0">(</span>Magic1, Magic2, hue<span class="br0">)</span>
+                                * RGBMAX + <span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> / HLSMAX;
+ 
+                B = <span class="br0">(</span>HueToRGB<span class="br0">(</span>Magic1, Magic2, hue-<span class="br0">(</span>HLSMAX/<span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span>
+                                * RGBMAX + <span class="br0">(</span>HLSMAX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> / HLSMAX;
+        <span class="br0">}</span>
+ 
+        C.<span class="me1">R</span> = R;
+        C.<span class="me1">G</span> = G;
+        C.<span class="me1">B</span> = B;
+        C.<span class="me1">A</span> = <span class="nu0">255</span>;
+        <span class="kw1">return</span> C;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="co1">// adapted from:</span>
+<span class="co1">// http://www.gamedev.net/reference/articles/article813.asp</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostRender<span class="br0">(</span> canvas Canvas <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Light Other;
+        <span class="kw5">local</span> <span class="kw4">float</span> Dist;
+        <span class="kw5">local</span> <span class="kw4">Vector</span> X,Y,Z, Dir;
+ 
+        <span class="kw5">local</span> <span class="kw4">Vector</span> V, C, L;
+        <span class="kw5">local</span> <span class="kw4">float</span> <span class="kw6">Length</span>;
+        <span class="kw5">local</span> <span class="kw4">float</span> ScaleX, ScaleY;
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> <span class="br0">)</span> PlayerOwner = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>;
+        <span class="kw1">else</span> PlayerOwner = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> PlayerOwner != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                ScaleX = Canvas.<span class="me1">SizeX</span> / <span class="nu0">640.0</span>;
+                ScaleY = Canvas.<span class="me1">SizeY</span> / <span class="nu0">480.0</span>;
+ 
+                C.<span class="me1">X</span> = Canvas.<span class="me1">ClipX</span>/<span class="nu0">2</span>;
+                C.<span class="me1">Y</span> = Canvas.<span class="me1">ClipY</span>/<span class="nu0">2</span>;
+                GetAxes<span class="br0">(</span>PlayerOwner.<span class="me1">Rotation</span>, X,Y,Z<span class="br0">)</span>;
+                <span class="kw1">ForEach</span> PlayerOwner.<span class="me1">RadiusActors</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'Light'</span>, Other, <span class="nu0">2000</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        Dir = Other.<span class="me1">Location</span> - PlayerOwner.<span class="me1">Location</span>;
+                        Dist = VSize<span class="br0">(</span>Dir<span class="br0">)</span>;
+                        Dir = Dir/Dist;
+ 
+                        <span class="co1">// find an appropriate light source (bright, in FOV)</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Dir <span class="kw3">Dot</span> X<span class="br0">)</span> &gt; <span class="nu0">0.7</span> &amp;&amp; Other.<span class="me1">bCorona</span> &amp;&amp;
+                                <span class="br0">(</span>
+                                <span class="br0">(</span>PlayerOwner.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Pawn'</span><span class="br0">)</span> &amp;&amp;  <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">LineOfSightTo</span><span class="br0">(</span>Other<span class="br0">)</span> <span class="br0">)</span> ||
+                                <span class="br0">(</span>PlayerOwner.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Controller'</span><span class="br0">)</span> &amp;&amp; Controller<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">LineOfSightTo</span><span class="br0">(</span>Other<span class="br0">)</span> <span class="br0">)</span>
+                                <span class="br0">)</span> &amp;&amp;
+                                Other.<span class="me1">LightRadius</span> &gt;= <span class="nu0">64</span> &amp;&amp; Other.<span class="me1">DrawScale</span> &gt; <span class="nu0">0.2</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="co1">//Convert 3d location to 2d for display on the Canvas</span>
+                                L = WorldToScreen<span class="br0">(</span>Other.<span class="me1">location</span><span class="br0">)</span>;
+ 
+                                V.<span class="me1">X</span> = L.<span class="me1">X</span> - C.<span class="me1">X</span>;
+                                V.<span class="me1">Y</span> = L.<span class="me1">Y</span> - C.<span class="me1">Y</span>;
+                                <span class="kw6">Length</span> = VSize<span class="br0">(</span>V<span class="br0">)</span>;
+                                V = Normal<span class="br0">(</span>V<span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">Style</span> = PlayerOwner.<span class="me1">ERenderStyle</span>.<span class="me1">STY_Additive</span>;
+ 
+                                <span class="co1">// tint the corona textures to match the hue of the light</span>
+                                Canvas.<span class="me1">DrawColor</span> = hls2rgb<span class="br0">(</span>Other.<span class="me1">LightHue</span>, <span class="nu0">15</span>, <span class="nu0">75</span><span class="br0">)</span>;
+ 
+                                <span class="co1">// place flares along directional vector</span>
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">1.2</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">1.2</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare3'</span>, <span class="nu0">64</span>*ScaleX,<span class="nu0">64</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare1'</span>, <span class="nu0">64</span>*ScaleX,<span class="nu0">64</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">0.66</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">0.66</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare1'</span>, <span class="nu0">128</span>*ScaleX,<span class="nu0">128</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">0.33</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">0.33</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare0'</span>, <span class="nu0">128</span>*ScaleX,<span class="nu0">128</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">0.125</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">0.125</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare2'</span>, <span class="nu0">128</span>*ScaleX,<span class="nu0">128</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">-0.21</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">-0.21</span><span class="br0">)</span><span class="nu0">-64</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare3'</span>, <span class="nu0">128</span>*ScaleX,<span class="nu0">128</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">-0.30</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">-0.30</span><span class="br0">)</span><span class="nu0">-32</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare4'</span>, <span class="nu0">64</span>*ScaleX,<span class="nu0">64</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+ 
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span> <span class="br0">(</span>V.<span class="me1">X*</span><span class="kw6">Length</span>*<span class="nu0">-0.5</span><span class="br0">)</span><span class="nu0">-90</span>*ScaleX+C.<span class="me1">X</span>, <span class="br0">(</span>V.<span class="me1">Y*</span><span class="kw6">Length</span>*<span class="nu0">-0.5</span><span class="br0">)</span><span class="nu0">-90</span>*ScaleY+C.<span class="me1">Y</span> <span class="br0">)</span>;
+                                Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'LensFlare4'</span>, <span class="nu0">180</span>*ScaleX,<span class="nu0">180</span>*ScaleY,<span class="nu0">0.0</span>, <span class="nu0">0.0</span>, <span class="nu0">128</span>, <span class="nu0">128</span><span class="br0">)</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+   bVisible=<span class="kw9">true</span>
+   bActive=<span class="kw9">true</span>
+<span class="br0">}</span>
+</pre></div>
+<p>A compiled .u with textures and activating mutator may be located at <a href="http://www.boilingpoint.com/~jasonyu/ut/LensFlare.zip" class="external free" title="http://www.boilingpoint.com/~jasonyu/ut/LensFlare.zip" rel="nofollow">http://www.boilingpoint.com/~jasonyu/ut/LensFlare.zip</a></p>
+<p>Enjoy.</p>
+<p><b>capt.</b></p>
+<p><a name="Links" id="Links"></a></p>
+<h2><span class="mw-headline">Links</span></h2>
+<p><a href="http://www.wildtangent.com/developer/howtos/LensFlareHowTo/" class="external free" title="http://www.wildtangent.com/developer/howtos/LensFlareHowTo/" rel="nofollow">http://www.wildtangent.com/developer/howtos/LensFlareHowTo/</a> - Explanation of how to calculate positions for lens flare effects.</p>
+<p><a href="http://www.blackpawn.com/texts/lensflare/default.html" class="external free" title="http://www.blackpawn.com/texts/lensflare/default.html" rel="nofollow">http://www.blackpawn.com/texts/lensflare/default.html</a> - Information on creating good textures for use with lens flares.</p>
+<p><a href="http://www.cambridgeincolour.com/tutorials/lens-flare.html" class="external text" title="http://www.cambridgeincolour.com/tutorials/lens-flare.html" rel="nofollow">Understanding Lens Flare</a> - Background on what causes lens flare and techniques to reduce it in photography.</p>
+<hr />
+<p><b>Ghost3021:</b> Wow! Lets combine this with realtime SquirrelZ's realtimeshadows....&#160;:D</p>
+<p><b>Wormbo:</b> Lense flares only appear when you use an optical device like a camera, that's why they are called <i>lense</i> flares. You will never see them with bare eyes, so why combine them with realistic real-time shadows? Both work independantly and that's a good thing, actually.</p>
+<p><b>GG-Xtreme:</b> It doesn't seem to come with the textures, and it doesn't use a default texture package. Does anyone have a download to LensFlares.utx?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/e/n/Legacy%7ELens_Flare_e0c6.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/e/n/Legacy_talk%7ELens_Flare_cd20.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Lens_Flare">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:30, 3 March 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

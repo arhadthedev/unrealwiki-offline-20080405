@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Pathing Kickers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Pathing Kickers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#UT200x.27s_UTJumpPad"><span class="tocnumber">1</span> <span class="toctext">UT200x's UTJumpPad</span></a></li>
+<li class="toclevel-1"><a href="#UT"><span class="tocnumber">2</span> <span class="toctext">UT</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="UT200x.27s_UTJumpPad" id="UT200x.27s_UTJumpPad"></a></p>
+<h2><span class="mw-headline">UT200x's UTJumpPad</span></h2>
+<p><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>'s <a href="../../../../articles/u/t/j/Legacy%7EUTJumpPad_a83c.html" title="Legacy:UTJumpPad">UTJumpPad</a> is much easier to use. Most of the pathing is taken care off by the engine, so LiftCenter and LiftExit actors are no longer necessary. The jumppad itself is also a <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> and will automagically be linked into the pathnetwork upon a rebuild.</p>
+<p>An UTJumpPad is basically linked to a <a href="../../../../articles/p/a/t/Legacy%7EPathNode_ad03.html" title="Legacy:PathNode">PathNode</a> or any other actor which can act as one, such as another jumppad, weapons, ammo, etc., which'll function as it's destination. This is done using the NavigationPoint -&gt; ForcedPaths[0] property. Simply set this to the name of the destination PathNode (found in the Object -&gt; Name property, such as <b>PathNode35</b>) and (partially) rebuild the path network.</p>
+<p>After the rebuild you can see the jumppad's path simply by selecting it. It'll show up as a pink parabola. If you're not satisfied with the height of the jump, then you can change this with the JumpZModifier property. Another rebuild is needed after changing this, or the change won't show up in the editor nor work ingame.</p>
+<p>Finally, you can set up a sound using the JumpSound property. Select one with the sound browser, click the property's input field and the small "Use" button. (or you can manually type it)</p>
+<p>Example maps: DM-Plunge, CTF-Face3</p>
+<p><a name="UT" id="UT"></a></p>
+<h2><span class="mw-headline">UT</span></h2>
+<p>Pathnoding kickers in UT is an abolute pain, if not a nigh impossibility - especially as there are a few quirks in the bot/kicker interaction.</p>
+<p>Generally, when putting a <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> in a level you need to get completely consistent results out of the <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> (being booted across a huge gap is great as long as you always wind up on the other side). There are two attributes of the <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> that will effect this.</p>
+<dl>
+<dt>bKillVelocity&#160;</dt>
+<dd>Setting this to true ensures that the player or bot velocity is "removed" before the kicker velocity is applied. If this property is set to false then it will appear that you are getting an element of random "kick" behaviour even though that's not the case. I reccomend setting this to true.</dd>
+<dt>bRandomise&#160;</dt>
+<dd>If this is true then you will get random behaviour from your kicker - use at your peril&#160;:)</dd>
+</dl>
+<p>Now, besides the kick velocity there is one other really useful attribute of the <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> - KickedClasses. If you have ever placed a Kicker on a map that has X and Y components you will see that every now and then the bots will simply bounce vertically upwards. For some reason the bots do not always have the horizontal velocity components applied to them. The KickedClasses property will let you get around this.</p>
+<p>Simply add another Kicker to your map directly above the "real" one and set the KickedClasses property to "Bot". This will ensure that only bots are kicked by the kicker not players. Players always interact correctly with Kickers.</p>
+<hr />
+<p>Now that we have covered off all of the basics, lets get down to actually pathing the kicker in so that the bots will use them. Typically a <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> and path is represented by these objects.</p>
+<dl>
+<dt><a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a>&#160;</dt>
+<dd>Well, you need one really don't you. Generally you need two - a primary one for players, and a secondary one to kick bots that have got "stuck" bouncing on the jump pad for eternity.</dd>
+<dt><a href="../../../../articles/s/p/e/Legacy%7ESpecialEvent_a604.html" title="Legacy:SpecialEvent">SpecialEvent</a>&#160;</dt>
+<dd>This is used to make the kicker sound.</dd>
+<dt><a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>&#160;</dt>
+<dd>Used to trigger the SpecialEvent. This should also be used as a trigger for the lift in the LiftExit object.</dd>
+</dl>
+<dl>
+<dd><i>You don't need a separate <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> to fire an event when the Kicker is touched. Just set the Kicker's <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> property... —<a href="../../../../articles/m/y/c/Legacy%7EMychaeel_0406.html" title="Legacy:Mychaeel">Mychaeel</a></i></dd>
+<dd><i>I did wonder about that, but that's the way Epic do it. However, I've found that the bots use the kicker more readily if the trigger is placed on the kicker and the bots believe they have to touch it to trigger the "lift". - <a href="../../../../articles/e/n/t/Legacy%7EEntropicLqd_4784.html" title="Legacy:EntropicLqd">EntropicLqd</a></i></dd>
+</dl>
+<dl>
+<dt><a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)</a>&#160;</dt>
+<dd>You will need two of these. One placed just in front of the lift exit, and one placed near the point the bots are supposed to land. They will both need the same <tt>LiftTag</tt> property. It's also worth while setting the <tt>LiftTrigger</tt> property to the <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> used to make the kicker sound. This ensures that the bots will run into the kicker.</dd>
+<dt><a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a>&#160;</dt>
+<dd>In this case the LiftCenter is primarily used to determine whether the bots will attempt to use the kicker or not. The LiftTag property needs to be set to the same value as the two LiftExit objects. The <tt>MaxDist2D</tt> and <tt>MaxZDiffAdd</tt> properties define how close the <a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a> needs to be before the bots will try and use/jump onto the lift. By setting the <tt>LiftTrigger</tt> property these values seem to have less of an effect. If your <a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a> needs to be in mid air then you MUST use a <a href="../../../../articles/j/u/m/Legacy%7EJumpSpot_af27.html" title="Legacy:JumpSpot">JumpSpot</a> as LiftCenters are not pathed to if they are floating. If you do use a <a href="../../../../articles/j/u/m/Legacy%7EJumpSpot_af27.html" title="Legacy:JumpSpot">JumpSpot</a> as your lift center then its well worth setting the <tt>bAlwaysAccelerate</tt> property to true.</dd>
+<dd>The most important thing about the placement of the lift center is that the bot must be able to travel through it while walking (being kicked through a lift center doesn't seem to count).</dd>
+</dl>
+<p>Essentially, the common structures are as follows:</p>
+<table>
+<tr>
+<td><a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)</a></td>
+</tr>
+<tr>
+<td style="text-align: center"><a href="../../../../articles/s/p/e/Legacy%7ESpecialEvent_a604.html" title="Legacy:SpecialEvent">SpecialEvent</a><br />
+<a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a><br />
+<a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a><br />
+<a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a></td>
+</tr>
+<tr>
+<td>Your big gap</td>
+</tr>
+<tr>
+<td><a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)</a></td>
+</tr>
+</table>
+<p>or</p>
+<table>
+<tr>
+<td><a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)</a></td>
+</tr>
+<tr>
+<td style="text-align: center"><a href="../../../../articles/s/p/e/Legacy%7ESpecialEvent_a604.html" title="Legacy:SpecialEvent">SpecialEvent</a><br />
+<a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a><br />
+<a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a></td>
+</tr>
+<tr>
+<td>Your big gap</td>
+</tr>
+<tr>
+<td><a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a></td>
+</tr>
+<tr>
+<td><a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)</a></td>
+</tr>
+</table>
+<p>If you've built the kicker this way and are still seeing strange things happening with your bots then try using two one way lifts (set the bOneWayPath property to true for your two <a href="../../../../articles/l/i/f/Legacy%7ELiftExit_%28UT%29_c415.html" title="Legacy:LiftExit (UT)">LiftExit (UT)s</a> and <a href="../../../../articles/l/i/f/Legacy%7ELiftCenter_2ff9.html" title="Legacy:LiftCenter">LiftCenter</a>) and see if that helps.</p>
+<p>Example maps: UT's DM-Morpheus, CTF3-InstaTheEyes.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Support_c519.html" title="Legacy:Bot Support">Bot Support</a> – Main topic
+<ul>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Pathing_6d68.html" title="Legacy:Bot Pathing">Bot Pathing</a> – Concepts and elements of the botpath network
+<ul>
+<li><a href="../../../../articles/b/a/s/Legacy%7EBasic_Bot_Pathing_66cc.html" title="Legacy:Basic Bot Pathing">Basic Bot Pathing</a> – A tutorial on basic bot pathing</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="../../../../articles/u/t/j/Legacy%7EUTJumpPad_a83c.html" title="Legacy:UTJumpPad">UTJumpPad</a>: UT200x's UTJumpPad page in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_bff8.html" title="Legacy:Actor Class Hierarchy">Actor Class Hierarchy</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 28/1000000
+Post-expand include size: 30/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/a/t/Legacy%7EPathing_Kickers_245f.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/a/t/Legacy_talk%7EPathing_Kickers_1c63.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Pathing_Kickers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:25, 16 November 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

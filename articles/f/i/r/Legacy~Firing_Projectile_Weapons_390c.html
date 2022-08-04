@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Firing Projectile Weapons - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Firing Projectile Weapons</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_cfe8.html" title="Legacy:How UT2003 Weapons Work">How UT2003 Weapons Work</a>: Projectile Weapons</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Easy_Way"><span class="tocnumber">1</span> <span class="toctext">Easy Way</span></a></li>
+<li class="toclevel-1"><a href="#In_English"><span class="tocnumber">2</span> <span class="toctext">In English</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_Second_Chain"><span class="tocnumber">2.1</span> <span class="toctext">The Second Chain</span></a></li>
+<li class="toclevel-2"><a href="#The_First_Chain"><span class="tocnumber">2.2</span> <span class="toctext">The First Chain</span></a>
+<ul>
+<li class="toclevel-3"><a href="#The_First_Chain:__Server"><span class="tocnumber">2.2.1</span> <span class="toctext">The First Chain: Server</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Easy_Way" id="Easy_Way"></a></p>
+<h3><span class="mw-headline">Easy Way</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_projectilefireflow.jpeg_a8e2.html" class="image" title="Projectile Fire Flowchart"><img alt="Projectile Fire Flowchart" src="../../../../images/Legacy_projectilefireflow.jpeg" width="817" height="1057" border="0" /></a></span></div>
+</div>
+<p><a name="In_English" id="In_English"></a></p>
+<h3><span class="mw-headline">In English</span></h3>
+<p>The player hits the Fire button. The engine then executes the alias attached to Fire. The alias fire is set to Button bFire, and the exec command Fire(). Check <a href="../../../../articles/b/i/n/Legacy%7EBinding_Keys_f7da.html" title="Legacy:Binding Keys">aliases</a> for more information on how this works but basically bFire is a boolean variable that is automatically set by the engine to true when the fire button is being held down, and false when the fire button is released. The engine has a native event set such that when bFire is held down the Pawn.Weapons.WeaponFire.ModeDoFire() is called. As well PlayerController.Fire() is called. It's important to note that these are two distinctly separate chains of events.</p>
+<p><a name="The_Second_Chain" id="The_Second_Chain"></a></p>
+<h4><span class="mw-headline">The Second Chain</span></h4>
+<p>The second chain is shorter, and as such will be examined first. PlayerController.Fire() checks to see if the game is currently paused, and if it is unpauses the game and returns without further action. If the game is not paused, PlayerController.Fire() calls Pawn.Fire().</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">exec</span> <span class="kw5">function</span> Fire<span class="br0">(</span> <span class="kw6">optional</span> <span class="kw4">float</span> F <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Pauser</span> == PlayerReplicationInfo <span class="br0">)</span>
+    <span class="br0">{</span>
+        SetPause<span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+    <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Fire</span><span class="br0">(</span>F<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Pawn.Fire() checks to see if there's a valid weapon, and if so executes Weapon.Fire(). You'll note the check against None; this prevents access nones from appearing when the player does not have a valid weapon. Similar error checking code should be introduced in any code you write.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Fire<span class="br0">(</span> <span class="kw6">optional</span> <span class="kw4">float</span> F <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> Weapon!=<span class="kw9">None</span> <span class="br0">)</span>
+        Weapon.<span class="me1">Fire</span><span class="br0">(</span>F<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Weapon.Fire() would seem to be the function that actually fires the weapon, but this is not true. The base Weapon.Fire() is actually empty. As an abstract class this would be expected, except that most every class that derives from Weapon fails to override Fire() with their own function. It is, effectively, blank for every weapon included with Unreal Tournament 2003.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> Fire<span class="br0">(</span><span class="kw4">float</span> F<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="The_First_Chain" id="The_First_Chain"></a></p>
+<h4><span class="mw-headline">The First Chain</span></h4>
+<p>The actual processing of the firing of the weapon occurs in the first chain of events mentioned above. There is no visible link in the UnrealScript code provided by Epic or extracted from UnrealEd from Unreal Tournament 2003 between the Fire alias and ModeDoFire(). The link is handled by the engine, natively, through the boolean variable bFire and ModeDoFire().</p>
+<p>ModeDoFire is called based upon the player's currently selected weapon, and whether or not we're in the Fire or AltFire chain of events. They proceed identically; the major difference is that FireModeClass(0).ModeDoFire() is called with Fire, and FireModeClass(1).ModeDoFire() is called with AltFire. (<i>FireModeClass(x) is defined in the weapon class, and directs the engine to the appropriate class to be called when a weapon is fired. See <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a> for more information.</i>)</p>
+<p>The first thing ModeDoFire does is check if firing is currently allowed. A variety of circumstances may exist to prevent firing: a timer may have to expire between shots, the player may not have ammunition, the player may be dead. If any of these circumstances are met ModeDoFire simply exits and acts as if fire was not pressed. Then, again, we split off into two chains of possible events.</p>
+<p><a name="The_First_Chain:__Server" id="The_First_Chain:__Server"></a></p>
+<h6><span class="mw-headline">The First Chain: Server</span></h6>
+<hr />
+<p><b>Wormbo:</b> There's a small error in the Projectile Fire Flowchart. The ProcessTouch function isn't called by the engine. Instead the engine calls the Touch function which calculates the exact hitlocation and calls ProcessTouch.</p>
+<p><b>Dante:</b> It seems as if UT is calling Weapon.ClientStartFire/Weapon.ServerStartFire which sets WeaponFire.bIsFiring = true (in Weapon.StartFire) which might be the trigger to call modeDoFire.</p>
+<p><b>Ceej:</b> Excellent flowchart, thank you. This is really the page to start with when attempting to understand weapons. The general weapon firing page still has the misleading PlayerController.Fire() call chain front and center. Maybe move the flowchart onto the general page and save this for projectile specifics?</p>
+<p><b>Solid Snake:</b> I've been dealing with the weapon code a lot now for the last 12 hours, and it seems that there is a little more complxities to this than detailed about. Other statements such as ServerStartFire(), ClientStartFire() and StartFire() all seem to play an important role into what makes the gun fire, of course you can always called DoFireMode to force fire the gun, but you miss out some other checks as well that may be important to make sure that the gun is fired properly over a network game. I'm not exactly to sure about this at the moment, but I will report back about this on my studies in this area. The one thing I can say is that Epic certainly doesn't make any easier to decipher what exactly is going on.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 15/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/i/r/Legacy%7EFiring_Projectile_Weapons_390c.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/i/r/Legacy_talk%7EFiring_Projectile_Weapons_783d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Firing_Projectile_Weapons">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:58, 10 January 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

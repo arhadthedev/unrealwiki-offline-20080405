@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:GUIController - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:GUIController</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInteractions_bcc4.html" title="Legacy:Interactions">Interactions</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a> &gt;&gt; <a href="../../../../articles/b/a/s/Legacy%7EBaseGUIController_1257.html" title="Legacy:BaseGUIController">BaseGUIController</a> &gt;&gt; GUIController (Package: XInterface)</div>
+<p>The GUIController contains a simple first-in, last-out menu stack. You have three things you can do:</p>
+<ul>
+<li><b>Open a menu</b> – adds the menu to the top of the stack.</li>
+<li><b>Replace a menu</b> – replaces the current menu with the new menu.</li>
+<li><b>Close a menu</b> – returns you to the last menu on the stack.</li>
+</ul>
+<p>The GUIController is the <a href="../../../../articles/g/u/i/Legacy%7EGUI_3dd2.html" title="Legacy:GUI">GUI</a> system's only interface to the world of <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actors</a>.</p>
+<p>A similar <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> class would probably be the <a href="../../../../articles/w/i/n/Legacy%7EWindowConsole_20e6.html" title="Legacy:WindowConsole">WindowConsole</a>, although the UWindow system in UT is more like a console extension while UT2003's GUIController and <a href="../../../../articles/c/o/n/Legacy%7EConsole_f3b2.html" title="Legacy:Console">Console</a> are both <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interactions</a> without being a subclass of eachother.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Methods"><span class="tocnumber">2</span> <span class="toctext">Methods</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Inherited_from_Interaction"><span class="tocnumber">2.1</span> <span class="toctext">Inherited from Interaction</span></a></li>
+<li class="toclevel-2"><a href="#Inherited_from_BaseGUIController"><span class="tocnumber">2.2</span> <span class="toctext">Inherited from BaseGUIController</span></a></li>
+<li class="toclevel-2"><a href="#Newly_Declared_Methods"><span class="tocnumber">2.3</span> <span class="toctext">Newly Declared Methods</span></a></li>
+<li class="toclevel-2"><a href="#Delegates"><span class="tocnumber">2.4</span> <span class="toctext">Delegates</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">3</span> <span class="toctext">Known Subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> ActiveControl&#160;</dt>
+<dd>Which control is currently active.</dd>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a> ActivePage&#160;</dt>
+<dd>Points to the currently active page.</dd>
+<dt>bool AltPressed&#160;</dt>
+<dd>Alt key is being held.</dd>
+<dt>array&lt;string&gt; AutoLoad (config)&#160;</dt>
+<dd>Any menu classes in here will be automatically loaded.</dd>
+<dt>bool bCurMenuInitialized&#160;</dt>
+<dd>Has the current Menu Finished initialization.</dd>
+<dt>bool bDesignMode&#160;</dt>
+<dd>Are we in design mode.</dd>
+<dt>bool bForceMouseCheck&#160;</dt>
+<dt>bool bHighlightCurrent&#160;</dt>
+<dd>Highlight the current control being edited.</dd>
+<dt>bool bIgnoreNextRelease&#160;</dt>
+<dd>Used to make sure discard errant releases.</dd>
+<dt>bool bIgnoreUntilPress&#160;</dt>
+<dt>bool bModAuthor (config)&#160;</dt>
+<dd>Enables interactive GUI design mode. See above for details.</dd>
+<dt>float ButtonRepeatDelay&#160;</dt>
+<dd>The amount of delay for faking button repeats.</dd>
+<dt>sound ClickSound&#160;</dt>
+<dt>bool CtrlPressed&#160;</dt>
+<dd>Ctrl key is being held.</dd>
+<dt>float CursorFade&#160;</dt>
+<dd>How visible is the cursor.</dd>
+<dt>int CursorStep&#160;</dt>
+<dd>Are we fading in or out.</dd>
+<dt>float DblClickWindow&#160;</dt>
+<dd>How long do you have for a double click.</dd>
+<dt>sound DownSound&#160;</dt>
+<dt>sound EditSound&#160;</dt>
+<dt>float FastCursorFade&#160;</dt>
+<dd>How visible is the cursor.</dd>
+<dt>int FastCursorStep&#160;</dt>
+<dd>Are we fading in or out.</dd>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> FocusedControl&#160;</dt>
+<dd>Top most Focused control.</dd>
+<dt>array&lt;<a href="../../../../articles/g/u/i/Legacy%7EGUIFont_093d.html" title="Legacy:GUIFont">GUIFont</a>&gt; FontStack (editinline)&#160;</dt>
+<dd>Holds all the possible fonts.</dd>
+<dt>string GameResolution&#160;</dt>
+<dt>float LastClickTime&#160;</dt>
+<dd>When did the last click occur.</dd>
+<dt>int LastClickX<br />
+int LastClickY&#160;</dt>
+<dd>Who was the active component</dd>
+<dt>float LastMouseX&#160;</dt>
+<dt>float LastMouseY&#160;</dt>
+<dt>bool MainNotWanted&#160;</dt>
+<dd>Set to true if you don't want main to appear.</dd>
+<dt>float MenuMouseSens (config)&#160;</dt>
+<dt>array&lt;<a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a>&gt; MenuStack (editinline, export)&#160;</dt>
+<dd>Holds the stack of menus.</dd>
+<dt>Array&lt;vector&gt; MouseCursorOffset (editinline)&#160;</dt>
+<dd>Only X,Y used, between 0 and 1. 'Hot Spot' of cursor material.</dd>
+<dt>Array&lt;<a href="../../../../articles/m/a/t/Legacy%7EMaterial_8b3a.html" title="Legacy:Material">Material</a>&gt; MouseCursors (editinline)&#160;</dt>
+<dd>Holds a list of all possible mouse coursers.</dd>
+<dt>sound MouseOverSound&#160;</dt>
+<dt>float MouseX<br />
+float MouseY&#160;</dt>
+<dd>Where is the mouse currently located.</dd>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> MoveControl&#160;</dt>
+<dd>Used for visual design.</dd>
+<dt>array&lt;<a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a>&gt; PersistentStack&#160;</dt>
+<dd>Holds the set of pages which are persistent across close/open.</dd>
+<dt>float RepeatDelta&#160;</dt>
+<dd>Data var</dd>
+<dt>byte RepeatKey&#160;</dt>
+<dd>Used to determine what should repeat.</dd>
+<dt>float RepeatTime&#160;</dt>
+<dd>How long until the next repeat.</dd>
+<dt>bool ShiftPressed&#160;</dt>
+<dd>Shift key is being held.</dd>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> SkipControl&#160;</dt>
+<dd>This control should be skipped over and drawn at the end.</dd>
+<dt>array&lt;string&gt; StyleNames&#160;</dt>
+<dd>Holds the name of all styles to use.</dd>
+<dt>array&lt;<a href="../../../../articles/g/u/i/Legacy%7EGUIStyles_4d8f.html" title="Legacy:GUIStyles">GUIStyles</a>&gt; StyleStack&#160;</dt>
+<dd>Holds all of the possible styles.</dd>
+<dt>sound UpSound&#160;</dt>
+<dt><a href="../../../../articles/m/a/t/Legacy%7EMaterial_8b3a.html" title="Legacy:Material">Material</a> WhiteBorder&#160;</dt>
+</dl>
+<p><a name="Methods" id="Methods"></a></p>
+<h2><span class="mw-headline">Methods</span></h2>
+<p><a name="Inherited_from_Interaction" id="Inherited_from_Interaction"></a></p>
+<h3><span class="mw-headline">Inherited from <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a></span></h3>
+<dl>
+<dt>NotifyLevelChange ( ) [event]&#160;</dt>
+</dl>
+<p><a name="Inherited_from_BaseGUIController" id="Inherited_from_BaseGUIController"></a></p>
+<h3><span class="mw-headline">Inherited from <a href="../../../../articles/b/a/s/Legacy%7EBaseGUIController_1257.html" title="Legacy:BaseGUIController">BaseGUIController</a></span></h3>
+<dl>
+<dt>AutoLoadMenus ( ) [event]&#160;</dt>
+<dt>bool OpenMenu (string NewMenuName, optional string Param1, optional string Param2) [event]&#160;</dt>
+<dd>Opens a new menu and places it on top of the stack.</dd>
+<dt>bool ReplaceMenu (string NewMenuName, optional string Param1, optional string Param2) [event]&#160;</dt>
+<dd>Replaces a menu in the stack. Returns true if success.</dd>
+<dt>CloseAll (bool bCancel) [event]&#160;</dt>
+<dt>bool CloseMenu (optional bool bCanceled) [event]&#160;</dt>
+<dd>Close the top menu. returns true if success.</dd>
+<dt>InitializeController ( ) [event]&#160;</dt>
+<dt>SetControllerStatus (bool On)&#160;</dt>
+<dt>SetRequiredGameResolution (string GameRes) [event]&#160;</dt>
+<dt>bool NeedsMenuResolution() [event]&#160;</dt>
+</dl>
+<p><a name="Newly_Declared_Methods" id="Newly_Declared_Methods"></a></p>
+<h3><span class="mw-headline">Newly Declared Methods</span></h3>
+<dl>
+<dt>ChangeFocus (<a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> Who) [event]&#160;</dt>
+<dt>ClearControls (<a href="../../../../articles/g/u/i/Legacy%7EGUIMultiComponent_439a.html" title="Legacy:GUIMultiComponent">GUIMultiComponent</a> Comp)&#160;</dt>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a> CreateMenu (string NewMenuName) [event]&#160;</dt>
+<dd>Attempts to create a menu. Returns none if it can't.</dd>
+<dt>string GetCurrentRes ( ) [native]&#160;</dt>
+<dd>Returns the current res as a string.</dd>
+<dt>string GetMainMenuClass ( ) [native]&#160;</dt>
+<dd>Returns GameEngine.MainMenuClass.</dd>
+<dt>GetMapList (string Prefix , GUIList list) [native]&#160;</dt>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIFont_093d.html" title="Legacy:GUIFont">GUIFont</a> GetMenuFont (string FontName) [native event]&#160;</dt>
+<dd>Finds a given font in the FontStack.</dd>
+<dt>GetOGGList (out array&lt;string&gt; OGGFiles) [native]&#160;</dt>
+<dt>GetProfileList (string Prefix, out array&lt;string&gt; ProfileList) [native]&#160;</dt>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIStyles_4d8f.html" title="Legacy:GUIStyles">GUIStyles</a> GetStyle (string StyleName) [native event]&#160;</dt>
+<dd>Find a style on the stack.</dd>
+<dt>GetTeamSymbolList (array&lt;string&gt; SymbolNames, optional bool bNoSinglePlayer) [native]&#160;</dt>
+<dt>GetWeaponList (out array&lt;class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>&gt;&gt; WeaponClass , out array&lt;string&gt; WeaponDesc) [native]&#160;</dt>
+<dt>bool HasMouseMoved ( )&#160;</dt>
+<dt>string LoadDecoText (string PackageName , string DecoTextName) [native]&#160;</dt>
+<dt>MoveFocused (<a href="../../../../articles/g/u/i/Legacy%7EGUIComponent_61d8.html" title="Legacy:GUIComponent">GUIComponent</a> Ctrl , int bmLeft, int bmTop, int bmWidth, int bmHeight, float ClipX , float ClipY) [event]&#160;</dt>
+<dt>bool RegisterStyle (class&lt;<a href="../../../../articles/g/u/i/Legacy%7EGUIStyles_4d8f.html" title="Legacy:GUIStyles">GUIStyles</a>&gt; StyleClass)&#160;</dt>
+<dt>ResetFocus()&#160;</dt>
+<dt>ResetKeyboard ( ) [native]&#160;</dt>
+<dt><a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a> TopPage ( )&#160;</dt>
+</dl>
+<p><a name="Delegates" id="Delegates"></a></p>
+<h3><span class="mw-headline">Delegates</span></h3>
+<dl>
+<dt>bool OnNeedRawKeyPress (byte NewKey)&#160;</dt>
+</dl>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li>ProGUIController – used by the UT2003 Pro GUI</li>
+<li>UT2K4GUIController</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/g/u/i/Legacy%7EGUI_3dd2.html" title="Legacy:GUI">GUI</a></li>
+<li><a href="../../../../articles/g/u/i/Legacy%7EGUI_Class_Hierarchy_4d32.html" title="Legacy:GUI Class Hierarchy">GUI Class Hierarchy</a></li>
+<li><a href="../../../../articles/i/n/t/Legacy%7EInteractive_GUI_0862.html" title="Legacy:Interactive GUI">Interactive GUI Design Mode</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 18/1000000
+Post-expand include size: 289/2097152 bytes
+Template argument size: 220/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/g/u/i/Legacy%7EGUIController_314e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/g/u/i/Legacy_talk%7EGUIController_fccd.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:GUIController">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:58, 6 October 2004 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

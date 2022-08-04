@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:SustainedDamageTrigger - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:SustainedDamageTrigger</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy">Mod ideas for UT 2003 – Sustained damage trigger (keeps track of total damage)</div>
+<p><a name="Description" id="Description"></a></p>
+<h2><span class="mw-headline">Description</span></h2>
+<p>In the original UT a trigger could be set to fire based on a minimum damage threshold. This trigger keeps track of the amonut of damage it receives and fires when the total damage it has sustained reaches the value specified.</p>
+<p><a name="Interested_Scripters" id="Interested_Scripters"></a></p>
+<h4><span class="mw-headline">Interested Scripters</span></h4>
+<p>If you are interested in developing this mod for UT2003 then add your name to the list. Once you start development you should indicate that below (and hopefully include a link to a journal page). Before you start development you should also check this section to see if anyone else has started.</p>
+<ul>
+<li><a href="../../../../articles/e/n/t/Legacy%7EEntropicLqd_4784.html" title="Legacy:EntropicLqd">EntropicLqd</a> – I'll need one of these for a map idea I've got. It's a little poly intensive for UT, but UT2003 would have no problems.</li>
+</ul>
+<p><b>Tarquin:</b> Try this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// SustainedDamageTrigger.</span>
+<span class="co1">// by Tarquin. Untested. </span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> SustainedDamageTrigger <span class="kw5">extends</span> Trigger;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span>  DamageTaken ;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> IsRelevant<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> !bInitiallyActive <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="kw1">switch</span><span class="br0">(</span> TriggerType <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">case</span> TT_PlayerProximity:
+                        <span class="kw1">return</span> <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>!=<span class="kw9">None</span> &amp;&amp; <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">bIsPlayer</span>;
+                <span class="kw1">case</span> TT_PawnProximity:
+                        <span class="kw1">return</span> <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>!=<span class="kw9">None</span> &amp;&amp; <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Intelligence</span> &gt; BRAINS_None <span class="br0">)</span>;
+                <span class="kw1">case</span> TT_ClassProximity:
+                        <span class="kw1">return</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>Other.<span class="kw5">Class</span>, ClassProximityType<span class="br0">)</span>;
+                <span class="kw1">case</span> TT_AnyProximity:
+                        <span class="kw1">return</span> <span class="kw9">true</span>;
+                <span class="kw1">case</span> TT_Shoot:
+                        <span class="kw1">if</span><span class="br0">(</span>Projectile<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> 
+                                DamageTaken += Projectile<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Damage</span> ;
+                        <span class="kw1">return</span> <span class="br0">(</span> DamageTaken &gt;= DamageThreshold <span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>even smaller:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// SustainedDamageTrigger.</span>
+<span class="co1">// by Tarquin. Untested. </span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> SustainedDamageTrigger <span class="kw5">extends</span> Trigger;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span>  DamageTaken ;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> IsRelevant<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> !bInitiallyActive <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="kw1">if</span><span class="br0">(</span> TriggerType == TT_Shoot <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span>Projectile<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> 
+                        DamageTaken += Projectile<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Damage</span> ;
+                <span class="kw1">return</span> <span class="br0">(</span> DamageTaken &gt;= DamageThreshold <span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw6">super</span>.<span class="me1">IsRelevant</span><span class="br0">(</span> Other <span class="br0">)</span>;
+        <span class="co1">// case TT_Shoot in super will never be called</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>EntropicLqd:</b> Neato&#160;:) But what about hit scan weapons? I must confess to not having done a whole lot of research (ie. none) on this one but I was sort of expecting to use a <i>TakeDamage()</i> equivalent for the Trigger.</p>
+<p><b>Tarquin:</b> being cheap, I just used the code from <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> which checks for damage. I have no idea!!</p>
+<p><b>Mychaeel:</b> You'd need to overwrite TakeDamage to deal with hitscan weapons, I suppose. For that matter, I'd think dealing with projectile weapons there instead of in IsRelevant would be neater too.</p>
+<p><b>Dr.AwkwArD:</b> I've added this sort of functionality to a new <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">mover</a> that I'm working on, imaginatively titled "AdvancedMover." Since movers already use TakeDamage() to deal with damage-triggering, it was the obvious function to override to accumulate damage. It takes damage from both projectiles and hitscan weapons. Here's a look at the code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//---------------------------------------------------------------------</span>
+<span class="co1">// new variables</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bDamageAccumulated;
+<span class="kw5">var</span>   <span class="kw4">int</span>  AccumulatedDamage;
+ 
+ 
+<span class="co1">//---------------------------------------------------------------------</span>
+<span class="co1">// TakeDamage()</span>
+<span class="co1">//</span>
+<span class="co1">// Override the TakeDamage() function from mover to include an "accumulation" mode</span>
+<span class="kw5">function</span> TakeDamage<span class="br0">(</span>
+   <span class="kw4">int</span> Damage,
+   <a href="/Pawn"><span class="kw10">Pawn</span></a> instigatedBy,
+   <span class="kw4">Vector</span> hitlocation,
+   <span class="kw4">Vector</span> momentum,
+   class&lt;DamageType&gt; <a href="/DamageType"><span class="kw10">damageType</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>bDamageAccumulated<span class="br0">)</span>                                 <span class="co1">// if we're supposed to accumulate damage, then...</span>
+   <span class="br0">{</span>
+      AccumulatedDamage += Damage;                        <span class="co1">// add the current damage inflicted to the AccumulatedDamage amount.</span>
+      Damage=AccumulatedDamage;                           <span class="co1">// set Damage to the value of AccumulatedDamage so that we can trigger the mover if Damage is equal-to or greater-than the DamageThreshold</span>
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span> bDamageTriggered &amp;&amp; <span class="br0">(</span>Damage &gt;= DamageThreshold<span class="br0">)</span> <span class="br0">)</span>  <span class="co1">// if the mover is supposed to be triggered by damage AND the amount of damage is equal-to or greater-than the DamageThreshold that was set...</span>
+   <span class="br0">{</span>
+      <span class="kw1">if</span><span class="br0">(</span> <span class="br0">(</span>AIController<span class="br0">(</span>instigatedBy.<span class="me1">Controller</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>instigatedBy.<span class="me1">Controller</span>.<span class="me1">Focus</span> == <span class="kw8">self</span><span class="br0">)</span> <span class="br0">)</span>
+      <span class="br0">{</span>
+         instigatedBy.<span class="me1">Controller</span>.<span class="me1">StopFiring</span><span class="br0">(</span><span class="br0">)</span>;
+      <span class="br0">}</span>
+      <span class="kw8">self</span>.<span class="me1">Trigger</span><span class="br0">(</span><span class="kw8">self</span>, instigatedBy<span class="br0">)</span>;                   <span class="co1">// go ahead and trigger the mover</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">//---------------------------------------------------------------------</span>
+<span class="co1">// Default Properties</span>
+<span class="kw1">Default</span> Properties
+<span class="br0">{</span>
+   AccumulatedDamage=<span class="nu0">0</span>  <span class="co1">//the amount of damage accumulated at the start of the game</span>
+<span class="br0">}</span>
+</pre></div>
+<p>(As this is my first posting, I'm not really familiar with WIKI etiquette so please feel free to move this code someplace else–or even remove it–if it doesn't belong here.)</p>
+<p>If you're interested in learning more about AdvancedMover, a design journal and, of course, the resource itself is available on my website; just follow this link, here: <a href="http://www.atomictrick.com/drawkward/games/resources/ut2003/resources/AdvancedMover.htm" class="external text" title="http://www.atomictrick.com/drawkward/games/resources/ut2003/resources/AdvancedMover.htm" rel="nofollow">AdvancedMover</a></p>
+<p><b>Tarquin:</b> Hi&#160;:) Looks interesting. Feel free to make a dedicated page for it on the wiki if you like.&#160;:)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 20/1000000
+Post-expand include size: 162/2097152 bytes
+Template argument size: 84/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/u/s/Legacy%7ESustainedDamageTrigger_67c9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/u/s/Legacy_talk%7ESustainedDamageTrigger_c14d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:SustainedDamageTrigger">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:56, 19 November 2007 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

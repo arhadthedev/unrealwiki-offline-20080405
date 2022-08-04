@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Solid Snake/CreatingPawnsRB Part2 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Solid Snake/CreatingPawnsRB Part2</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/s/o/l/Legacy%7ESolid_Snake_9799.html" title="Legacy:Solid Snake">Legacy:Solid Snake</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Creating_your_own_pawn_class_.5BAnimTree_Overview.5D_-_Part_2"><span class="tocnumber">1</span> <span class="toctext">Creating your own pawn class [AnimTree Overview] - Part 2</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Introduction"><span class="tocnumber">1.1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-2"><a href="#Skeletal_animation"><span class="tocnumber">1.2</span> <span class="toctext">Skeletal animation</span></a></li>
+<li class="toclevel-2"><a href="#Unreal_Engine"><span class="tocnumber">1.3</span> <span class="toctext">Unreal Engine</span></a></li>
+<li class="toclevel-2"><a href="#Starting_up_the_AnimTree_Editor"><span class="tocnumber">1.4</span> <span class="toctext">Starting up the AnimTree Editor</span></a></li>
+<li class="toclevel-2"><a href="#Adding_your_first_Blend_Controller"><span class="tocnumber">1.5</span> <span class="toctext">Adding your first Blend Controller</span></a></li>
+<li class="toclevel-2"><a href="#Basic_controls_in_AnimTree_Editor"><span class="tocnumber">1.6</span> <span class="toctext">Basic controls in AnimTree Editor</span></a></li>
+<li class="toclevel-2"><a href="#Creating_the_tree"><span class="tocnumber">1.7</span> <span class="toctext">Creating the tree</span></a></li>
+<li class="toclevel-2"><a href="#Using_in_skeletal_blend_controls"><span class="tocnumber">1.8</span> <span class="toctext">Using in skeletal blend controls</span></a></li>
+<li class="toclevel-2"><a href="#An_example_tree"><span class="tocnumber">1.9</span> <span class="toctext">An example tree</span></a></li>
+<li class="toclevel-2"><a href="#Conclusion"><span class="tocnumber">1.10</span> <span class="toctext">Conclusion</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Comments"><span class="tocnumber">1.10.1</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Creating_your_own_pawn_class_.5BAnimTree_Overview.5D_-_Part_2" id="Creating_your_own_pawn_class_.5BAnimTree_Overview.5D_-_Part_2"></a></p>
+<h2><span class="mw-headline">Creating your own pawn class [AnimTree Overview] - Part 2</span></h2>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h3><span class="mw-headline">Introduction</span></h3>
+<p>Animation is an important part of any game. Almost every game had some sort of animation, starting from animating pictures to sprites, then eventually to polygonal animation. Of course, with the evolution of each form of animation you had different methods. At first you just had different images that are changed on the fly to make objects appear that they are moving or doing some action. With the advent of Quake you had animating models, which were tweening between different mesh transformations (vertex animation). As poly counts increased with models, we now have skeletal animation being used real time. The newest thing to come round the corner is mixing in physics with animation, but where it stands now, its very rudimentary. There hasn't been any more significant changes in animation types, but rather the way they are managed have evolved.</p>
+<p><a name="Skeletal_animation" id="Skeletal_animation"></a></p>
+<h3><span class="mw-headline">Skeletal animation</span></h3>
+<p>The basic run down of skeletal animation is that the meshes vertices are influenced by two properties, a vector and quaternion (or rather rotator in the sense of Unreal Engine). Thus the vertex will change its position accordingly to those properties (a vector can be represented by a bone [its base], with its direction represented by two vectors ... the base and the end point of the bone. Basically, you had much smoother animations than vertex animation, used less memory (you only had to store the changes of the bones, verses storing all of the mesh transformations) and you could do other neat thing outside the 3D Editor (such as 3DSMax). Some such things we take for granted is bone blending (Which can help us do things such making a character's head look at something)</p>
+<p><a name="Unreal_Engine" id="Unreal_Engine"></a></p>
+<h3><span class="mw-headline">Unreal Engine</span></h3>
+<p>Unreal has gone through all the forms of animations from sprite animation, to mesh transformations, and finally we now use mainly skeletal animation to animate skeletal meshes. Unreal Engine 3.x supports a whole bunch of fancy things to help animators achieve the perfect animation in game, and it has a great tool to make it easier to do so. The largest difference between Unreal Engine 2.x and Unreal Engine 3.x is the fact that programmer intervention is a lot smaller now. And with the removal of a lot of tedious programming (animation is actually very tedious to me, the programming of it. Animating itself, is quite fun) it means that creating smoother and much more free flowing animation is even easier, with much better results. So without further ado, lets get started.</p>
+<p><a name="Starting_up_the_AnimTree_Editor" id="Starting_up_the_AnimTree_Editor"></a></p>
+<h3><span class="mw-headline">Starting up the AnimTree Editor</span></h3>
+<p>So from here, to start up the AnimTree Editor, simply create a new AnimTree in your package. Once it has been created, double click on it and you will be presented with something like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_NewTree.png_e453.html" class="image" title="Legacy AnimTreeTutorial NewTree.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_NewTree.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p>Set the skeletal mesh you want to see in the preview window, with the one you imported previously. From my understanding, its possibly to use the same AnimSet between different meshes, as well using several AnimSets for a single mesh. That is of course, as long as they have the same bone names and so forth (otherwise it won't animate properly). The AnimTree has a single root which is AnimTree. This will branch out with other blend controllers etc to form the final animation. This is much more controlled way of doing this. Instead of assigning blend numbers etc in script, you just assign controllers which can be enabled and disabled depending on the situations. This is a very neat way of doing things. Make sure you also set what preview AnimSet you wish the preview actor to also have. Click on 'PreviewAnimSets' and add a slot. From here, you should be able to set the AnimSet you prepared earlier.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_AnimTreeProperties.png_e6b9.html" class="image" title="Legacy AnimTreeTutorial AnimTreeProperties.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_AnimTreeProperties.png" width="1016" height="266" border="0" /></a></span></div>
+</div>
+<p><a name="Adding_your_first_Blend_Controller" id="Adding_your_first_Blend_Controller"></a></p>
+<h3><span class="mw-headline">Adding your first Blend Controller</span></h3>
+<p>Adding your first blend controller could be simplier. Simply right click anywhere in the gray area (that has the AnimTree object sitting in it) and select the Blend Controller you wish to use. In our example, lets start with the 'AnimNodeBlendBySpeed'. This blend controller does exactly what it says. It blends between different states depending on the pawn's speed of movement. Depending on your controller setup, you may want to use either the acceleration or velocity (which is used by default). Once you click on the one you want an icon will appear in the area.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_AddingANewBlendControl.png_5617.html" class="image" title="Legacy AnimTreeTutorial AddingANewBlendControl.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_AddingANewBlendControl.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p><a name="Basic_controls_in_AnimTree_Editor" id="Basic_controls_in_AnimTree_Editor"></a></p>
+<h3><span class="mw-headline">Basic controls in AnimTree Editor</span></h3>
+<p>Once you've added your first blend controller, it may not exactly be where you would like it to be. While where it is placed is not important at all (as in, it does change the outcome of what it does), for the sake of organization I would advise that you do put in an area which makes sense, and that flow of animation is easier to understand. Having a simply left to right flow, is really good when you need to go back and work on the AnimTree again after some time later. Remember, it isn't a question of <i>if</i> you will forget, it's a matter of <i>when</i> you will forget how things work.</p>
+<p>Holding down the left mouse and dragging it around moves the view window. Click on a blend controller, and it will select. Once selected, hold down Ctrl and left mouse to move it around. Holding both left and right mouse button allows you to zoom in and out, mouse wheel also does the same thing. Sometimes your AnimTree will get very large and expansive that its hard to view it all at once. The zoomed modes tend to blur the text which makes it hard to see exactly what they are, so I would recommend to pan around the view rather than zooming in and out.</p>
+<p>To connect blend controllers together, just left click on the boxes and drag to the other blend controller's boxes. It is a bit picky on where you let go of the mouse so you need to be reasonably accurate. If the connection is invalid it won't let you join them, although in AnimTree they should be able to join together.</p>
+<p>From my use, I have found AnimTree Editor to be unstable sometimes. Sometimes it will just spontaneously blow up, killing UnrealED 4.0 without letting you save your work. With like any tool, save your work often. If you have dual screens, keep the Generic Browser open in the other screen, which will allow you to save often as well look for other resources at the same time (I like my dual 19" LCD's a lot by the way).</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_MovingAndConnectingTheBlendControl.png_4b9c.html" class="image" title="Legacy AnimTreeTutorial MovingAndConnectingTheBlendControl.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_MovingAndConnectingTheBlendControl.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p>When a blend controller is active, the connection line/arrow will fade to orange. Depending on its blend amount, it will fade between orange and black. To get actual percentages, you can click on the '%' button to reveal how much blending each blend controller is receiving. AnimTree will automatically distribute control over the entire tree for you. There is no limit on how many controllers can be active at any time, hence why the Unreal Technology page saying 'n-way blend controllers'. The 'n' simply represents that it could be any number the user wants it to be (well .. that is what it means to me anyways).</p>
+<p><a name="Creating_the_tree" id="Creating_the_tree"></a></p>
+<h3><span class="mw-headline">Creating the tree</span></h3>
+<p>From here you can start to add your own nodes in. In this example, when the velocity of the pawn is zero, I have set it to an idling animation. Every branch in the Anim Tree eventually ends with an 'AnimSequence Player' node. This node basically details what animation to play back. In this case, this AnimSequence plays back the 'Idle_Rifle' animation in the AnimSet provided. If you find that your animations aren't working as expected, click on the 'Log' tab in the Generic Browser to see if something odd is occurring. It is important to actually use the boolean flags, 'bPlaying' and 'bLooping'. If you don't, your animations won't loop or play in the preview window, and ingame as well. You can also zoom, rotate and pan the preview window if you need a closer look at the animation/model to watch for things like clipping, etc.</p>
+<p>From here you can start adding other blend controllers, and in this case, I've made a basic idle -&gt; walk blend. When the velocity of the pawn increases it changes over to the 'AnimNodeBlendDirectional', which then blends different anim sequences depending on the rotation of the pawn to the direction of the movement. As the animator you don't actually have to worry how the anim blend controllers work ... you only have to make sure you select the right controller for the right job. To test the Speed blend controller, you can drag the black bar left and right to adjust the blend parameters of the controller. From here, you should be able to adjust it from an idling speed (zero velocity) to walking speed (anything above zero velocity).</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_CreatingTheTree.png_44ec.html" class="image" title="Legacy AnimTreeTutorial CreatingTheTree.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_CreatingTheTree.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p>From here you can add more and more controllers and so forth to handle the other aspects of pawn animation.</p>
+<p><a name="Using_in_skeletal_blend_controls" id="Using_in_skeletal_blend_controls"></a></p>
+<h3><span class="mw-headline">Using in skeletal blend controls</span></h3>
+<p>Now we come up to using skeletal blends. At the moment, we blend between entire animations. Using a skeletal blend we can blend animations depending on bones and their hierarchy. The hierarchy is important as this is what controls a lot of other things. For example, the hand bone is connected to the forearm bone, which is then connected to the bicep bone, which connects to the shoulder bone .. etc etc (remember the child hood song about the 'the leg bone is connected to the... hip bone, the hip bone is connected to the ...'). Anyways, so in this case, if you set the bone blend control to say the Spine, it will blend one animation to the Spine and all of its child bones, and the other animation will blend to the parent of Spine and their respective parents. You can blend many different bones to many different animations, but most of the time you may want to do small changes such as blending a idle/walk/run to a firing animation, chat animation etc. In the example below, I've just blended between the idle/walk branch to the chat animation. This is how you would set it up, creating something like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_UsingSkeletalBlends.png_d92a.html" class="image" title="Legacy AnimTreeTutorial UsingSkeletalBlends.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_UsingSkeletalBlends.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p><a name="An_example_tree" id="An_example_tree"></a></p>
+<h3><span class="mw-headline">An example tree</span></h3>
+<p>Here is an example of a tree I am currently working on for my mod. As you can see it looks reasonable complicated, but if you look at the flow (following the orange lines) its easy to dictate how each animation is being blended to create the final animation.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_AnimTreeTutorial_CompleteTreeExample.png_83fd.html" class="image" title="Legacy AnimTreeTutorial CompleteTreeExample.png"><img alt="" src="../../../../images/Legacy_AnimTreeTutorial_CompleteTreeExample.png" width="1024" height="768" border="0" /></a></span></div>
+</div>
+<p>So as you can see already this is a very powerful tool for animators to use. You can also preview the final result at any stage by using the slide controllers. You can also select a node, and click the 'eye' symbol which updates the preview according to that node only. Reselect the AnimTree root, and click the 'eye' symbol to regain the final result preview. Other than that, I think the AnimTree Editor is very self explanatory and rather intuitive to use as well. Otherwise, just play with it, and you'll see how everything clicks together.</p>
+<p><a name="Conclusion" id="Conclusion"></a></p>
+<h3><span class="mw-headline">Conclusion</span></h3>
+<p>Well thats it for this part of the tutorial. The third and final part of the tutorial will show you how to use both parts of the tutorial in game. You can of course control the AnimTree via Unrealscript, as there would be certain situations where the Blend Controllers would not be responsive enough, you can of course also create your own n-way blend controllers for your mod. This means that mods can now have very unique and different animations based on the environment or other impulses. This is a fantastic in my book. Hopefully we will see very creative and innovative animations in the future. This tool alone would also explain why 'Gears Of War' has such smooth animations (or at least, I felt so). Enjoy.</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h4><span class="mw-headline">Comments</span></h4>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 14/1000000
+Post-expand include size: 33/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/o/l/Legacy%7ESolid_Snake_CreatingPawnsRB_Part2_0224.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/o/l/Legacy_talk%7ESolid_Snake_CreatingPawnsRB_Part2_69c2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Solid_Snake/CreatingPawnsRB_Part2">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 05:23, 2 February 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

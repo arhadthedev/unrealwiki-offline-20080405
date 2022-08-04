@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:TerrainInfo - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:TerrainInfo</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; TerrainInfo</div>
+<p>This actor holds all the information required to display a terrain: layers, textures, alpha channels, heightmap etc. In <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a>, you'll see a large white grid in wireframe mode, and the textured terrain in textured mode if the TerrainInfo holds any <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture Layers</a>. (If the terrain doesn't show, hit 'T' in the <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Viewport_4e72.html" title="Legacy:UnrealEd Viewport">UnrealEd Viewport</a> to toggle terrain visibility.) Each square of the grid is called a <b>quad</b>. Groups of quads considered for rendering are called <b>sectors</b>.</p>
+<p>For terrain to be visible and to collide players, the <a href="../../../../articles/z/o/n/Legacy%7EZone_e5b7.html" title="Legacy:Zone">zone</a> this actor is in must also have the <a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a> actor with ZoneInfo -&gt; bTerrainZone set to true. The terrain in a "TerrainZone" will be visible from other "normal" zones. If the terrain overlaps into "normal" zones, then those portions will be visible from the "TerrainZone", but will vanish (and not collide) once the player is in the "normal" zone.</p>
+<p>The position of the actor determines the position of the terrain. Therefore it's a good idea to set this actor on-<a href="../../../../articles/g/r/i/Legacy%7EGrid_09a2.html" title="Legacy:Grid">grid</a>. Do <a href="../../../../articles/a/c/t/Legacy%7EActor_Context_Menu_5838.html" title="Legacy:Actor Context Menu">Actor Context Menu</a> -&gt; Reset -&gt; Move to Origin after adding it; and set its <a href="../../../../articles/a/c/t/Legacy%7EActor_Advanced_4d3a.html" title="Legacy:Actor/Advanced">Advanced</a> -&gt; bEdShouldSnap = True if you need to move it afterwards.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Notes"><span class="tocnumber">2</span> <span class="toctext">Notes</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>bool bKCollisionHalfRes&#160;</dt>
+<dd>This option means use half the graphics res for Karma collision. <a href="../../../../articles/k/a/r/Legacy%7EKarma_3d96.html" title="Legacy:Karma">Karma</a> ignores per-quad info (eg. 'invisible' and 'edge-turned') with this set to true.</dd>
+<dt>float DecoLayerOffset&#160;</dt>
+<dt>array&lt;DecorationLayer&gt; DecoLayers&#160;</dt>
+<dd>see <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Decoration_Layer_6ca4.html" title="Legacy:Terrain Decoration Layer">Terrain Decoration Layer</a></dd>
+<dt>bool Inverted&#160;</dt>
+<dd>the terrain is rendered upside-down. Used for cave ceilings etc</dd>
+<dt>array[32] Layers&#160;</dt>
+<dd>see <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture Layer</a></dd>
+<dt>Texture TerrainMap&#160;</dt>
+<dd>The heightmap of the terrain: this is a texture where the shades of grey determine the height of the terrain. One pixel represents the height of one quad of terrain. If you create the terrain in <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Mode_587e.html" title="Legacy:Terrain Mode">Terrain mode</a>, this will have been automatically set to the Texture name you gave then. When you use Terrain mode tools, you are actually editing this texture. You can change this property so the terrain uses a different texture: it will alter the terrain. You can even change to a texture of a different size, and the terrain will change accordingly.</dd>
+<dt>vector TerrainScale&#160;</dt>
+<dd>This vector determines the overall scale of the terrain. The X and Y values give the size of a sector (or "quad", or grid square). The default size is 64 <a href="../../../../articles/u/u/_/Legacy%7EUU_ae76.html" class="mw-redirect" title="Legacy:UU">UU</a> square. The Z value scales terrain vertically.</dd>
+<dt>int TerrainSectorSize&#160;</dt>
+<dd>Sets the size of sectors. The default is 16, ie each sector is a square 16 quads across. Terrain is rendered sector by sector. Changing this value may help level optimization. See also <a href="http://udn.epicgames.com/Two/LevelOptimizationTerrain" class="extiw" title="udn2:LevelOptimizationTerrain">udn2:LevelOptimizationTerrain</a>.</dd>
+<dt>Texture VertexLightMap&#160;</dt>
+</dl>
+<p><a name="Notes" id="Notes"></a></p>
+<h2><span class="mw-headline">Notes</span></h2>
+<p>If you have something like Figure1, you might want to reduce the size of the sector. The lines that are produced in that picture will magically vanish.&#160;:)</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_ZTerrainLightBug.jpeg_284e.html" class="image" title="Figure 1."><img alt="Figure 1." src="../../../../images/Legacy_ZTerrainLightBug.jpeg" width="503" height="419" border="0" /></a></span></div>
+</div>
+<p><b>Tarquin:</b> Could someone explain this bug?</p>
+<p><b>SuperApe:</b> IIRC, this artifact happens often when you change the size of the lightmap, heightmap. The resolution? Sorry, I can't rememeber exactly. I had to do with an alteration of the base texture.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/o/p/Legacy%7ETopics_On_Mapping_d4e6.html" title="Legacy:Topics On Mapping">Topics On Mapping</a></li>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerrain_Mode_587e.html" title="Legacy:Terrain Mode">Terrain mode</a></li>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerrain_7d48.html" title="Legacy:Terrain">Terrain</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Foxpaw:</b> Not sure where this should go exactly, but terrain appears to be like a blocking sheet - it has no "substance." Sometimes Ragdolls find a way to slither onto the other side of the terrain, and once something is on the other side it will just fall. As far as why that's relevant - well, things like a third person camera can end up on the underside of the terrain for instance, or anything else that moves itself without using the native physics.</p>
+<p><b>MythOpus:</b> Yep. And on certain maps, you were able to teleport yourself into them using the translocator&#160;:) I do believe this can probably be fixed up...</p>
+<p><b>King Mango</b> I'd like to do a more thorought treatment of the TerrainInfo and I'd like to completely redo this page to remove the script type references as it confuses those of us who are not familiar with floats,vectors and the like. ANyone object?</p>
+<p><b>Tarquin:</b> best if we leave them in, you never know when those coders might be around... just ignore the first word for each property&#160;;)</p>
+<p><b>King Mango</b> lol OK, how bout this then, put the script&#160;?operation? type after the entry?</p>
+<p>like <b>Layers</b> then the script thingy?&#160;:D</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 168/2097152 bytes
+Template argument size: 90/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/e/r/Legacy%7ETerrainInfo_1588.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/e/r/Legacy_talk%7ETerrainInfo_2f57.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:TerrainInfo">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:30, 16 December 2005 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

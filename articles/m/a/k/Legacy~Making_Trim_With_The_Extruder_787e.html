@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Making Trim With The Extruder - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Making Trim With The Extruder</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The <a href="../../../../articles/e/x/t/Legacy%7EExtruder_Brushbuilder_ba38.html" title="Legacy:Extruder Brushbuilder">Extruder Brushbuilder</a> can be used to make segmented trim brushes. This tutorial assumes that you're vaguely familiar with the concept of the Extruder brushbuilder. See the <a href="../../../../articles/a/r/c/Legacy%7EArchitecture_37ec.html" title="Legacy:Architecture">Architecture</a> topic page for more on trim.</p>
+<p>(BTW peeps, this tutorial I'm sure will confuse all but the l33test of quaternion-jedi, so please feel free to edit. Yes, I'll add pics later but today I'm in Grouch-mode so I'm currently inclined to say "if you can't visualise in 3D go and edit for Tetris")</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Simple_corners"><span class="tocnumber">1</span> <span class="toctext">Simple corners</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Shape"><span class="tocnumber">1.1</span> <span class="toctext">Shape</span></a></li>
+<li class="toclevel-2"><a href="#Path"><span class="tocnumber">1.2</span> <span class="toctext">Path</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#External_Corner"><span class="tocnumber">2</span> <span class="toctext">External Corner</span></a></li>
+<li class="toclevel-1"><a href="#45_degree_turns"><span class="tocnumber">3</span> <span class="toctext">45 degree turns</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Simple_corners" id="Simple_corners"></a></p>
+<h2><span class="mw-headline">Simple corners</span></h2>
+<p>Let's suppose we have a square room created by a large subtractive cube brush. Adding another cube with half the dimensions will create a raised area in one corner. We're going to add trim around the edge. Suppose the large room is 256x256x256 (although the height doesn't matter), and the shelf area is 128x128x128. A corner of the small brush is on a corner of the large one.</p>
+<p>The quick &amp; simple way to add trim to this shelf would be to whip up two brushes, 256 long with a square cross-section of 32. However, for the sake of illustration we're going to do something a little more complicated. (If this is "more complicated" why should we learn how to do it? Common sense says simpler things work better.)</p>
+<p><a name="Shape" id="Shape"></a></p>
+<h4><span class="mw-headline">Shape</span></h4>
+<p>Leave the <i>ShapeSource</i> property set to "SO_pSquare" (the preset square). This builds a square of side 1 in the Extruder's ShapePoints array, so set the <i>ShapeFactor</i> property to multiply it up to the size of trim that we want: in this example, that's 32.</p>
+<p><a name="Path" id="Path"></a></p>
+<h4><span class="mw-headline">Path</span></h4>
+<p>We'll be working with the path in Top view, so "up" &amp; "left" refer to directions in that orthogonal <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Viewport_4e72.html" title="Legacy:UnrealEd Viewport">UnrealEd Viewport</a>. Suppose the shelf occupies the lower left corner of the room. The path needs 3 points, and it needs to go right, then down. The simplest way to describe this shape is:</p>
+<ul>
+<li>[0] ( 0, 0, 0 )</li>
+<li>[1] ( 1, 0, 0 )</li>
+<li>[2] ( 1, 1, 0 )</li>
+</ul>
+<p>Things to remember:</p>
+<ul>
+<li>Unreal uses a left-handed coordinate system, so the positive y-axis goes down in top view.</li>
+<li>The cordinates of the path are in the <a href="../../../../articles/r/e/d/Legacy%7ERed_Builder_Brush_1934.html" title="Legacy:Red Builder Brush">red builder brush</a>'s personal system. In other words, they're relative to where the RBB is placed in the world. (okay, that needs a rewrite for clarity)</li>
+</ul>
+<p>The path coordinates are nice, simple numbers, that can be scaled to any size with the <i>PathFactor</i> property. An easy way to work with this is to set the grid to the same size as the value of PathFactor and then count grid squares. Here, set PathFactor to 128.</p>
+<p>Just to confuse: with the relative paths option, describing a path with vectors is even simpler. Each vector is how far to travel from the previous point. The path in relative vectors is:</p>
+<ul>
+<li>[0] ( 0, 0, 0 )r</li>
+<li>[1] ( 1, 0, 0 )r</li>
+<li>[2] ( 0, 1, 0 )r</li>
+</ul>
+<p>The <i>PathSource</i> property tells the Extruder which method you're using to describe the path.</p>
+<p>Try either method, press build, and line up the RBB to the correct spot and add it to the world. The texture may need to be rotated, depending on whether the trim texture you've selected is horizontal or vertical. If this is the case, select any of the trim brush's surfaces, press SHIFT+B and rotate them by 90 degrees. (related reading: <a href="../../../../articles/s/e/l/Legacy%7ESelecting_Surfaces_b640.html" title="Legacy:Selecting Surfaces">Selecting Surfaces</a> and <a href="../../../../articles/s/u/r/Legacy%7ESurface_Properties_Window_0ed0.html" title="Legacy:Surface Properties Window">Surface Properties Window</a>).</p>
+<p><a name="External_Corner" id="External_Corner"></a></p>
+<h2><span class="mw-headline">External Corner</span></h2>
+<p>Suppose now that we want to add trim that goes around the base of the shelf. We could use the same brush and obtain a surface that's flush with the main wall. Alternatively, we might want a brush that protrudes like a step, or a brush embedded in the floor. The current shape of the RBB is too short at each end to do this.</p>
+<p>We could simply use <a href="../../../../articles/v/e/r/Legacy%7EVertex_Editing_d580.html" title="Legacy:Vertex Editing">vertex editing</a> or <a href="../../../../articles/f/a/c/Legacy%7EFace_Drag_1def.html" title="Legacy:Face Drag">face drag</a> on each end, or we could fiddle with the path points. The first method would be fine for a simple piece of trim like this, and the second method is fiddly because with the current PathFactor we'd need to type in fractions. Far too much work.</p>
+<p>Instead, we're going to keep the path exactly as it is: it follows the edge of the shelf so from an esthetical point of view it makes sense not to change it. We're going to change the shape instead. Position the camera in the 3D viewport so you're level with the RBB and looking at the first path point. In the Top view the camera icon will be to the immediate left of the RBB. You'll see a red cross, the <a href="../../../../articles/p/i/v/Legacy%7EPivot_b071.html" title="Legacy:Pivot">pivot</a> point, in the upper left corner of the end face of the brush. The pivot point corresponds to (0,0,0) in the shape co-ordinates.</p>
+<p>This is where it gets technical. The square that make the end face of the brush is the Extruder's initial Shape. It's been tilted by 90 degrees because the first path segment travels along the x-axis and not straight up. If you find this next section totally confusing, reset the path points to (0, 0, 0), (0, 0, 1) and it will be easier to see what is happening.</p>
+<p>We want the shape to move from its current position 1 unit to the left, so the pivot point is in the upper right corner. As we're using the preset system to make the shape, we can tell it to do that very simply. The <i>PresetMetrics</i> array gives the presets module of the Extruder extra information about the shape we want.</p>
+<ul>
+<li>The first pair of values gives the width &amp; height of the square. They're currently zero, which tells the module to use default values.</li>
+<li>The second pair of values gives the offset of the shape; in other words the 2-dimensional coordinates of the top left corner of the square in Shape-space. Confused? Try setting PresetMetrics[2] to 1 and press Build. The pivot cross stays in the same place, but the rest of the brush has moved down by 32 world units.</li>
+</ul>
+<p>Now set [2] back to 0, and set [3] to -1. The brush moves back up and to the left. Looking in Top view, you can by selecting the added trim brush and the RBB in turn that their pivot point is in the same place: this is because they have the same path.</p>
+<p>All we've essentially done is told the Extruder attach the shape to the path at a different point.</p>
+<p><a name="45_degree_turns"></a></p>
+<h2><span class="mw-headline">45 degree turns</span></h2>
+<p>Now let's make the shape we're trimming a little more complex. Either delete both trim brushes, or make another room in the world by duplicating the two cubes and rebuilding.</p>
+<p>Use <a href="../../../../articles/b/r/u/Legacy%7EBrush_Clipping_1704.html" title="Legacy:Brush Clipping">brush clipping</a> to slice off a piece of the additive brush: cut diagonally across the corner that's in the center of the room – ie place a clip marker halfway along the top side and right side.</p>
+<p>To trim this new shape, we need to follow its edge with the path as before. We'll need 4 points this time. If we work with the same scale the second point will be (0.5,0,0) so to simplify the points, change the PathFactor and the Grid to 64. Counting the squares gives our path as:</p>
+<ul>
+<li>[0] ( 0, 0, 0 )</li>
+<li>[1] ( 1, 0, 0 )</li>
+<li>[2] ( 2, 1, 0 )</li>
+<li>[3] ( 2, 2, 0 )</li>
+</ul>
+<p>Note that these are absolute, so change <i>PathSource</i> back from earlier. The trim can follow the path on the inside or the outside, as above.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_extruder.trim1.gif_ada4.html" class="image" title="Legacy extruder.trim1.gif"><img alt="" src="../../../../images/Legacy_extruder.trim1.gif" width="426" height="294" border="0" /></a></span></div>
+</div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 58/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/k/Legacy%7EMaking_Trim_With_The_Extruder_787e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/k/Legacy_talk%7EMaking_Trim_With_The_Extruder_6e99.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Making_Trim_With_The_Extruder">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:14, 7 January 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

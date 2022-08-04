@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Will/Developer Journal - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Will/Developer Journal</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/w/i/l/Legacy%7EWill_fa49.html" title="Legacy:Will">Legacy:Will</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Name_Pending."><span class="tocnumber">1</span> <span class="toctext">Name Pending.</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Mod_Info"><span class="tocnumber">1.1</span> <span class="toctext">Mod Info</span></a></li>
+<li class="toclevel-2"><a href="#Starting_Off"><span class="tocnumber">1.2</span> <span class="toctext">Starting Off</span></a></li>
+<li class="toclevel-2"><a href="#Progress"><span class="tocnumber">1.3</span> <span class="toctext">Progress</span></a>
+<ul>
+<li class="toclevel-3"><a href="#07.2F03.2F03"><span class="tocnumber">1.3.1</span> <span class="toctext">07/03/03</span></a></li>
+<li class="toclevel-3"><a href="#08.2F03.2F03"><span class="tocnumber">1.3.2</span> <span class="toctext">08/03/03</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Comments"><span class="tocnumber">1.4</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Name_Pending." id="Name_Pending."></a></p>
+<h2><span class="mw-headline">Name Pending.</span></h2>
+<p><b>First Journal Evar!</b></p>
+<p>This page is going to show how I'm doing while making this mod, in no order whatsoever. I'll probably also use it as a notepad to keep some ideas on, too.</p>
+<p><i>Name suggestions are welcome.</i></p>
+<p><a name="Mod_Info" id="Mod_Info"></a></p>
+<h3><span class="mw-headline">Mod Info</span></h3>
+<p>This mod is DOM, but played DM style (no teams, all against all).</p>
+<p>But theres more.</p>
+<p>When you touch a DOM point, you will get sucked into it. Your player model (though with a DeRes effect skin) will be at the centre of the DOM point, with you in control of it. While you're in the DOM point, you are equipped with an ESR and inifinite ammo to defend yourself. People will attack you to kill you, and when you die the point becomes free again.</p>
+<p>When you jump into the point, you will have your health put up to 200, with a maximum of 300.</p>
+<p>Your health will regenerate, at a rate of +1/sec, and your score will increase every four seconds by one point.</p>
+<p>Fairly simple. It shouldn't take too long to do.</p>
+<p><a name="Starting_Off" id="Starting_Off"></a></p>
+<h3><span class="mw-headline">Starting Off</span></h3>
+<p>I will need to subclass xDeathMatch for thsi mod, and replace the DOM points with my own version. The way to do this is to find both xDOMPoint actors, and disable collision for them. I'll also want to hide xDOMPoint.DomLetter.</p>
+<p>I think now would be a good time to put in a list of what I need.</p>
+<ul>
+<li>The gametype. Changes the DOM Points, and edits ScoreKill to remove any point scoring for kills.</li>
+<li>My own DOM point actor, which, when touched, moves the pawn to the centre of the ring, prevents movement, and equips the pawn with an ESR.</li>
+<li>A HUD class, to add in a small compass at the top.</li>
+<li>A ScoreBoard class, remove 'deaths', leaving only 'score' shown.</li>
+<li>An instant action tab subclass. I need to change 'frags' to 'score', and allow the score limit a three digit number.</li>
+<li>Bot AI. Hopefully wont be too bad. I'll elaborate on this later.</li>
+</ul>
+<p><a name="Progress" id="Progress"></a></p>
+<h3><span class="mw-headline">Progress</span></h3>
+<p><a name="07.2F03.2F03"></a></p>
+<h4><span class="mw-headline">07/03/03</span></h4>
+<p>As I did while making hoard, I'm creating the mod in pieces first. Make part one, part two, and part three, then link them all together. I've found it makes creating stuff alot easier.</p>
+<p>Today I worked on the DOM point itself. Took a fair while to do, mainly because of the time I spent looking on immobilising (sp?) bots. Once I had that done, the rest was fairly easy. Increase health, set the pawns position, delete the pawns other weapons and give it an ESR.</p>
+<p>Deleting the other weapons works well, but I'm having a few problems adding the ESR. I had it, once, but now I've lost it again, and for no reason I can see. Stupid thing.</p>
+<p><a name="08.2F03.2F03"></a></p>
+<h4><span class="mw-headline">08/03/03</span></h4>
+<p>Fixed the ESR, added point scoring and health regeneration, and that's the DOM point done. I altered the scoring, because scores were growing too big too quickly with the old method. All that was left was to link it all together (HUD, DOM Point, Scoreboard, etc), and it worked!</p>
+<p>Except for the bots.</p>
+<p>These gave me a bit of a headache. I made the bots go to the point, I made the bots attack the person in the point, they would even have small fights around the map. But getting the bot in the point to react to being shot was a pain.</p>
+<p>The way I solved it was to find person P, then tell the bot to shoot at person P rather than allowing the bot to figure it out on its own. So now, when the bot is in the point, it will shoot at anyone near enough. I had to add a small check to prevent the bot aiming at carcasses, because it was picking up on them as enemies as well.</p>
+<p>The last thing I solved was preventing the player in the point picking up weapons.</p>
+<p>It's pretty much working now, I just need to do some testage.</p>
+<p>And I'm still looking for a name...</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h3><span class="mw-headline">Comments</span></h3>
+<p><b>Will:</b> I'm still looking for a name for this - suggestions are welcome.</p>
+<p><b>DJPaul:</b> SetLocation()ing the bots every tick... hmm. Try this state (which lived in a xBot subclass), which I've borrowed from teh TeamFreeze mod - hope you don't mind Gerard!</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">state</span> Frozen
+<span class="br0">{</span>
+<span class="kw6">ignores</span> WhatToDoNext, Startle, SetOrders, SeePlayer, EnemyNotVisible, HearNoise, NotifyLanded,
+        DoWaitForLanding, FightEnemy, DoRangedAttackOn, ChooseAttackMode, NotifyPhysicsVolumeChange,
+        SetAttractionState, ClearPathFor, DirectedWander, WanderOrCamp,
+        NotifyHeadVolumeChange, NotifyHitWall, NotifyBump, KilledBy, HitWall, Falling,
+        TakeDamage, ReceiveWarning;
+ 
+    <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>GoalScript != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>HoldSpot<span class="br0">(</span>GoalScript<span class="br0">)</span> == <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+            FreeScript<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> NavigationPoint<span class="br0">(</span>MoveTarget<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+            NavigationPoint<span class="br0">(</span>MoveTarget<span class="br0">)</span>.<span class="me1">FearCost</span> = <span class="nu0">2</span> * NavigationPoint<span class="br0">(</span>MoveTarget<span class="br0">)</span>.<span class="me1">FearCost</span> + <span class="nu0">600</span>;
+        Enemy = <span class="kw9">None</span>;
+        bFrustrated = <span class="kw9">false</span>;
+        BlockedPath = <span class="kw9">None</span>;
+        bInitLifeMessage = <span class="kw9">false</span>;
+        bReachedGatherPoint = <span class="kw9">false</span>;
+        bFinalStretch = <span class="kw9">false</span>;
+        bWasNearObjective = <span class="kw9">false</span>;
+        bPreparingMove = <span class="kw9">false</span>;
+        bEnemyEngaged = <span class="kw9">false</span>;
+        StopFiring<span class="br0">(</span><span class="br0">)</span>;
+        StopAnimating<span class="br0">(</span><span class="br0">)</span>;
+        SetAlertness<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;
+        SetEnemyReaction<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;
+        bGodMode = <span class="kw9">true</span>;
+        Acceleration = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw5">function</span> <span class="kw7">Endstate</span><span class="br0">(</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        SetAlertness<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>;
+        SetEnemyReaction<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>;
+        bGodMode = <span class="kw9">false</span>;
+        Restart<span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">Float</span> DeltaTime<span class="br0">)</span>
+    <span class="br0">{</span>
+        <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">RotationRate</span>.<span class="me1">Yaw</span> = <span class="nu0">0</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Will:</b> That might have worked - if I wanted the bots to not react to anything&#160;:)</p>
+<p><b>Piglet:</b> Some rediculously cheesy name suggestions... Lockdown, Crackdown, Halt, Freeze (they sound even worse now i've written them down&#160;:P oh well)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 22/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/i/l/Legacy%7EWill_Developer_Journal_2379.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/i/l/Legacy_talk%7EWill_Developer_Journal_9080.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Will/Developer_Journal">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:54, 5 August 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

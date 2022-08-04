@@ -1,0 +1,608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Will/Creating A HTTP Server List Tab - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Will/Creating A HTTP Server List Tab</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/w/i/l/Legacy%7EWill_fa49.html" title="Legacy:Will">Legacy:Will</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Creating_A_HTTP_Server_List_Tab"><span class="tocnumber">1</span> <span class="toctext">Creating A HTTP Server List Tab</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Talking_to_the_webserver"><span class="tocnumber">1.1</span> <span class="toctext">Talking to the webserver</span></a></li>
+<li class="toclevel-2"><a href="#The_tab_itself"><span class="tocnumber">1.2</span> <span class="toctext">The tab itself</span></a></li>
+<li class="toclevel-2"><a href="#Loading_the_tab"><span class="tocnumber">1.3</span> <span class="toctext">Loading the tab</span></a></li>
+<li class="toclevel-2"><a href="#The_whole_lot"><span class="tocnumber">1.4</span> <span class="toctext">The whole lot</span></a></li>
+<li class="toclevel-2"><a href="#Why.3F.3F.21"><span class="tocnumber">1.5</span> <span class="toctext">Why??!</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Creating_A_HTTP_Server_List_Tab" id="Creating_A_HTTP_Server_List_Tab"></a></p>
+<h2><span class="mw-headline">Creating A HTTP Server List Tab</span></h2>
+<p>This page basically explains the steps I've taken over the last day or so to create a server tab that will pull it's list of servers from a file on a webserver somewhere. It took me a fair while because I'd not looked at server tabs or how they all go together before at all.</p>
+<p><a name="Talking_to_the_webserver" id="Talking_to_the_webserver"></a></p>
+<h3><span class="mw-headline">Talking to the webserver</span></h3>
+<p>If you want to pull some data from a web server, you have to talk to this server. This is the part that gave me the most greif in figuring it out (mainly that my CR and LF and CRLF variables weren't set – it worked once I'd set them).</p>
+<p>This part is going to be a BufferedTCPLink subclass.</p>
+<p>You need to declare a few variables first:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Var</span> <span class="kw4">String</span> ServerAddress; <span class="co1">//the server address, ie: www.beyondunreal.com</span>
+<span class="kw5">Var</span> <span class="kw4">String</span> ServerPath; <span class="co1">//The path to connect to, ie: /index.php</span>
+<span class="kw5">Var</span> <span class="kw4">Int</span> ServerPort; <span class="co1">//The port on the server to connect to</span>
+<span class="kw5">Var</span> BYBrowser_Page BYBP; <span class="co1">//A link to the browser page itself. Used later, and set by the browser page. </span>
+<span class="kw5">Var</span> Array&lt;String&gt; LinesA; <span class="co1">//This holds the results of your query</span>
+</pre></div>
+<p>Righto. That's sorted. Now onto the function and events.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> RetrieveServers<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        LinesA.<span class="kw6">Length</span> = <span class="nu0">0</span>;
+        ResetBuffer<span class="br0">(</span><span class="br0">)</span>;
+        Resolve<span class="br0">(</span>ServerAddress<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This should be fairly self explanatory. It resets the string array, resets the buffer (which also sets the CR, LF, and CRLF variables), and tries to resolve the server address to an IP. If the resolve succeeds, event "Resolved" is fired off, which nicely brings me onto the next one...:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> Resolved<span class="br0">(</span>IpAddr Addr<span class="br0">)</span>
+<span class="br0">{</span>
+        Addr.<span class="me1">Port</span> = ServerPort;
+ 
+        <span class="kw1">If</span> <span class="br0">(</span>BindPort<span class="br0">(</span><span class="br0">)</span> == <span class="nu0">0</span><span class="br0">)</span>
+                <span class="kw1">Return</span>;
+ 
+        Open<span class="br0">(</span>Addr<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Basically, this sets the port to be used, attempts to bind a port, and opens a connection to the remote server. When the connection is opened, Event "Opened" is called.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Event</span> Opened<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">String</span> SendString;
+ 
+        SendString = <span class="st0">"GET "</span> $ <span class="st0">"http://"</span> $ ServerAddress $ ServerPath $ <span class="st0">" HTTP/1.0"</span> $ CRLF $ <span class="st0">"Host: "</span> $ ServerAddress $ CRLF $ CRLF;
+ 
+        SendBufferedData<span class="br0">(</span>SendString<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This function quite simply creates the string to be sent to the server (requesting the document), and then adds it to the send buffer.</p>
+<p>Now we're onto the processing of the data that is returned, all handled in these next two functions:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> ReceivedText<span class="br0">(</span><span class="kw4">string</span> Text<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">int</span> I;
+        SplitIntoLines<span class="br0">(</span>Text<span class="br0">)</span>;
+        <span class="kw1">For</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;linesa.<span class="kw6">length</span>;i++<span class="br0">)</span>
+                <span class="br0">{</span>
+                BYBP.<span class="me1">AddToList</span><span class="br0">(</span>BYBP.<span class="me1">IPToServer</span><span class="br0">(</span>linesa<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        BYBP.<span class="me1">RefreshFinished</span><span class="br0">(</span><span class="br0">)</span>;
+        LinesA.<span class="kw6">Length</span> = <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> SplitIntoLines<span class="br0">(</span><span class="kw4">String</span> Text<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">int</span> i;
+        <span class="kw5">Local</span> <span class="kw4">String</span> Temp;
+ 
+        Text = <span class="kw7">Mid</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, CRLF<span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>; <span class="co1">//Split off the headers</span>
+ 
+        <span class="kw1">Do</span>     <span class="br0">{</span>
+                Temp = <span class="st0">""</span>;
+                Temp = <span class="kw7">Left</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+                <span class="kw1">If</span> <span class="br0">(</span><span class="br0">(</span>Temp != <span class="st0">""</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Temp != <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Temp != <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">13</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                        LinesA.<span class="kw6">Length</span> = LinesA.<span class="kw6">Length</span> + <span class="nu0">1</span>;
+                        LinesA<span class="br0">[</span>LinesA.<span class="kw6">Length</span> <span class="nu0">-1</span><span class="br0">]</span> = Temp;
+                        <span class="br0">}</span>
+                Text = <span class="kw7">Mid</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>;
+                i++;
+                <span class="br0">}</span> <span class="kw1">Until</span> <span class="br0">(</span><span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> == <span class="nu0">-1</span><span class="br0">)</span> || <span class="br0">(</span>i &gt; <span class="nu0">200</span><span class="br0">)</span><span class="br0">)</span>; <span class="co1">//put in to stop a massive loop which might happen</span>
+<span class="br0">}</span>
+</pre></div>
+<p>RecievedText is called when, you guessed it, some text is received. It then calls the SplitIntoLines function, who's job it is to remove the headers (all before one CRLF), and then split the remainder into IP's (Seperarated by LF's). The IP's are all added into the dynamic array, and this is used back in the RecievedText function to add the IP's into the server tab's list. The array is then reset.</p>
+<p>And of course, you need the defaultproperties:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        ServerAddress=<span class="st0">"byut.net"</span>
+        ServerPath=<span class="st0">"/serverlist2k3.php"</span>
+        ServerPort=<span class="nu0">80</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="The_tab_itself" id="The_tab_itself"></a></p>
+<h3><span class="mw-headline">The tab itself</span></h3>
+<p>This is probably one of the bits that caused me the LEAST greif. I decided to subclass it from the Favourites tab, because that is closest to what I want it to be.</p>
+<p>Only one variable here:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Var</span> BYBrowser_HTTPLink BYB;
+</pre></div>
+<p>That's just a reference to the HTTPLink, which is needed to actually query the HTTP server to get the server list.</p>
+<p>InitComponent, I think this is one of the places that gave me the least greif. It's all very simple and straightforward.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> InitComponent<span class="br0">(</span>GUIController MyController, GUIComponent MyOwner<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span><span class="br0">(</span>Browser_ServerListPageBase<span class="br0">)</span>.<span class="me1">Initcomponent</span><span class="br0">(</span>MyController, MyOwner<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>SQC == <span class="kw9">None</span> <span class="br0">)</span> <span class="co1">//needed for pingage, etc</span>
+                <span class="br0">{</span>
+                SQC = PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">Spawn</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ServerQueryClient'</span><span class="br0">)</span>;
+                SQC.<span class="me1">OnReceivedPingInfo</span> = MyServersList.<span class="me1">MyReceivedPingInfo</span>;
+                SQC.<span class="me1">OnPingTimeout</span> = MyServersList.<span class="me1">MyPingTimeout</span>;
+                <span class="br0">}</span>
+ 
+        <span class="co1">//edit buttons</span>
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Caption</span> = <span class="st0">"RE-PING LIST"</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">bVisible</span>=<span class="kw9">False</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Caption</span> = <span class="st0">"REFRESH LIST"</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">OnClick</span> = RefreshClick;
+        StatusBar.<span class="me1">WinWidth</span>=<span class="nu0">0.8</span>;
+ 
+        RefreshList<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Skip out the favoutites class in the Super call, else you'll be just messing around, and server query client is something I left out at first, before I realised it was needed to actually talk to the servers themselves. The rest is just altering the buttons, as the Favourites tab leaves out one, and renames another. I changed them back to what they should be.</p>
+<p>Next bit is the RefreshList function, which handles loading and using the HTTP Link class.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> RefreshList<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">ForEach</span> PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">AllActors</span><span class="br0">(</span><span class="kw5">Class</span><span class="st0">'BYBrowser_HTTPLink'</span>, BYB<span class="br0">)</span>
+                <span class="kw1">Break</span>;
+        <span class="kw1">if</span><span class="br0">(</span>BYB == <span class="kw9">None</span><span class="br0">)</span>
+                BYB = PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">Spawn</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'BYBrowser_HTTPLink'</span><span class="br0">)</span>;
+ 
+        BYB.<span class="me1">BYBP</span> = <span class="kw8">Self</span>;
+ 
+        MyServersList.<span class="me1">Clear</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">//Clear the current list</span>
+        BYB.<span class="me1">RetrieveServers</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Basically, all that does is find (or create) the HTTP Link, set it's BYBP value (see the section above), clears the current server list, then calls RetrieveServers on the HTTP Link – which as you'll know initiates the connection, etc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> RefreshFinished<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        MyServersList.<span class="me1">AutoPingServers</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This diddy function is just called at the end of an update to force the servers to refresh, re-ping, etc.</p>
+<p>The following function was ripped right out of another class, and all it does is turn an IP into a ServerResponseLine which is needed to add it to the list.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> GameInfo.<span class="me1">ServerResponseLine</span> IPToServer<span class="br0">(</span><span class="kw4">string</span> Address<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> GameInfo.<span class="me1">ServerResponseLine</span> S;
+        <span class="kw5">local</span> <span class="kw4">string</span> ipString, portString;
+        <span class="kw5">local</span> <span class="kw4">int</span> colonPos, portNum;
+ 
+        <span class="co1">// Parse text to find IP and possibly port number</span>
+        colonPos = <span class="kw7">InStr</span><span class="br0">(</span>address, <span class="st0">":"</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>colonPos &lt; <span class="nu0">0</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                ipString = address;
+                portNum = <span class="nu0">7777</span>;
+                <span class="br0">}</span>
+        <span class="kw1">else</span>
+                <span class="br0">{</span>
+                ipString = <span class="kw7">Left</span><span class="br0">(</span>address, colonPos<span class="br0">)</span>;
+                portString = <span class="kw7">Mid</span><span class="br0">(</span>address, colonPos<span class="nu0">+1</span><span class="br0">)</span>;
+                portNum = <span class="kw4">int</span><span class="br0">(</span>portString<span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+        S.<span class="me1">IP</span> = ipString;
+        S.<span class="me1">Port</span> = portNum;
+        S.<span class="me1">QueryPort</span> = portNum;
+        S.<span class="me1">ServerName</span> = <span class="st0">"Unknown"</span>;
+ 
+        <span class="kw1">Return</span> S;
+<span class="br0">}</span>
+</pre></div>
+<p>You'll see the above function called in conjunction with the function below in the HTTP Link class.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> AddToList<span class="br0">(</span>GameInfo.<span class="me1">ServerResponseLine</span> S<span class="br0">)</span>
+<span class="br0">{</span>
+        MyServersList.<span class="me1">MyOnReceivedServer</span><span class="br0">(</span>S<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Quite simply, that just adds the server to the list. Nothing more to it.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PingServer<span class="br0">(</span> <span class="kw4">int</span> listid, ServerQueryClient.<span class="me1">EPingCause</span> PingCause, GameInfo.<span class="me1">ServerResponseLine</span> s <span class="br0">)</span>
+<span class="br0">{</span>
+ 
+        <span class="kw1">if</span><span class="br0">(</span> PingCause == PC_Clicked <span class="br0">)</span>
+                SQC.<span class="me1">PingServer</span><span class="br0">(</span> listid, PingCause, s.<span class="me1">IP</span>, s.<span class="me1">QueryPort</span>, QI_RulesAndPlayers, s <span class="br0">)</span>;
+        <span class="kw1">else</span>
+                SQC.<span class="me1">PingServer</span><span class="br0">(</span> listid, PingCause, s.<span class="me1">IP</span>, s.<span class="me1">QueryPort</span>, QI_Ping, s <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>PingServer. Pings the server. Simple huh? (this might be left over from the Favourites tab superclass, I'm not sure...).</p>
+<p>And the below functions are just set to do nothing, because that's what they should do for this tab.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> AddIPClick<span class="br0">(</span>GUIComponent Sender<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SaveFavorites<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+</pre></div>
+<p>And finally, the defaultproperties, where the caption for this tab is set.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        PageCaption=<span class="st0">"BY Servers"</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Loading_the_tab" id="Loading_the_tab"></a></p>
+<h3><span class="mw-headline">Loading the tab</span></h3>
+<p>Although this bit was very simple, I'm still kinda peeved that epic/DE didn't include any way to load the tab without having to use some silly "summon" command. Ah well, since this class is basically one simple function, I'll paste it all below and explain it.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> ServerBrowser SB;
+        <span class="kw5">local</span> Browser_ServerListPageFavorites BYServerListPage;
+ 
+        <span class="kw1">ForEach</span> AllObjects<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'ServerBrowser'</span>,SB<span class="br0">)</span>        <span class="co1">// Search to see if it is already added, if not, add it.</span>
+                <span class="br0">{</span>
+                <span class="kw1">If</span> <span class="br0">(</span>SB != <span class="kw9">None</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                        BYServerListPage = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'BYBrowser_Page'</span>;
+                        SB.<span class="me1">AddBrowserPage</span><span class="br0">(</span>BYServerListPage<span class="br0">)</span>;
+                        <span class="kw1">Break</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+        Destroy<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        bHidden=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>When this actor is spawned, it looks for the server browser. If it finds it, it adds my tab. It then kills itself. That simple, nothing more to it.</p>
+<p><a name="The_whole_lot" id="The_whole_lot"></a></p>
+<h3><span class="mw-headline">The whole lot</span></h3>
+<p>Well, for you people who just want the code so they can modify it and change it to suit their needs, I've pasted the whole three classes below.</p>
+<p><b>The HTTP Link:</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> BYBrowser_HTTPLink <span class="kw5">Extends</span> BufferedTCPLink;
+ 
+<span class="kw5">Var</span> <span class="kw4">String</span> ServerAddress;
+<span class="kw5">Var</span> <span class="kw4">String</span> ServerPath;
+<span class="kw5">Var</span> <span class="kw4">Int</span> ServerPort;
+<span class="kw5">Var</span> BYBrowser_Page BYBP;
+<span class="kw5">Var</span> Array&lt;String&gt; LinesA;
+ 
+<span class="kw5">Function</span> RetrieveServers<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        LinesA.<span class="kw6">Length</span> = <span class="nu0">0</span>;
+        ResetBuffer<span class="br0">(</span><span class="br0">)</span>;
+        Resolve<span class="br0">(</span>ServerAddress<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> Resolved<span class="br0">(</span>IpAddr Addr<span class="br0">)</span>
+<span class="br0">{</span>
+        Addr.<span class="me1">Port</span> = ServerPort;
+ 
+        <span class="kw1">If</span> <span class="br0">(</span>BindPort<span class="br0">(</span><span class="br0">)</span> == <span class="nu0">0</span><span class="br0">)</span>
+                <span class="kw1">Return</span>;
+ 
+        Open<span class="br0">(</span>Addr<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Event</span> Opened<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">String</span> SendString;
+ 
+        SendString = <span class="st0">"GET "</span> $ <span class="st0">"http://"</span> $ ServerAddress $ ServerPath $ <span class="st0">" HTTP/1.0"</span> $ CRLF $ <span class="st0">"Host: "</span> $ ServerAddress $ CRLF $ CRLF;
+ 
+        SendBufferedData<span class="br0">(</span>SendString<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> <span class="kw8">Tick</span> <span class="br0">(</span><span class="kw4">Float</span> TimeDelta<span class="br0">)</span>
+<span class="br0">{</span>
+        DoBufferQueueIO<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> ReceivedText<span class="br0">(</span><span class="kw4">string</span> Text<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">int</span> I;
+ 
+        SplitIntoLines<span class="br0">(</span>Text<span class="br0">)</span>;
+ 
+        <span class="kw1">For</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;linesa.<span class="kw6">length</span>;i++<span class="br0">)</span>
+                <span class="br0">{</span>
+                BYBP.<span class="me1">AddToList</span><span class="br0">(</span>BYBP.<span class="me1">IPToServer</span><span class="br0">(</span>linesa<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+        BYBP.<span class="me1">RefreshFinished</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        LinesA.<span class="kw6">Length</span> = <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> SplitIntoLines<span class="br0">(</span><span class="kw4">String</span> Text<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">int</span> i;
+        <span class="kw5">Local</span> <span class="kw4">String</span> Temp;
+ 
+        Text = <span class="kw7">Mid</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, CRLF<span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>; <span class="co1">//Split off the headers</span>
+ 
+        <span class="kw1">Do</span>     <span class="br0">{</span>
+                Temp = <span class="st0">""</span>;
+                Temp = <span class="kw7">Left</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+                <span class="kw1">If</span> <span class="br0">(</span><span class="br0">(</span>Temp != <span class="st0">""</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Temp != <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Temp != <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">13</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                        LinesA.<span class="kw6">Length</span> = LinesA.<span class="kw6">Length</span> + <span class="nu0">1</span>;
+                        LinesA<span class="br0">[</span>LinesA.<span class="kw6">Length</span> <span class="nu0">-1</span><span class="br0">]</span> = Temp;
+                        <span class="br0">}</span>
+                Text = <span class="kw7">Mid</span><span class="br0">(</span>Text, <span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>;
+                i++;
+                <span class="br0">}</span> <span class="kw1">Until</span> <span class="br0">(</span><span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>Text, <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span><span class="br0">)</span> == <span class="nu0">-1</span><span class="br0">)</span> || <span class="br0">(</span>i &gt; <span class="nu0">50</span><span class="br0">)</span><span class="br0">)</span>; <span class="co1">//put in to stop a massive loop which might happen</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        ServerAddress=<span class="st0">"byut.net"</span>
+        ServerPath=<span class="st0">"/serverlist2k3.php"</span>
+        ServerPort=<span class="nu0">80</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>And now, the server tab:</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> BYBrowser_Page <span class="kw5">extends</span> Browser_ServerListPageFavorites;
+ 
+<span class="kw5">Var</span> BYBrowser_HTTPLink BYB;
+ 
+<span class="kw5">function</span> InitComponent<span class="br0">(</span>GUIController MyController, GUIComponent MyOwner<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span><span class="br0">(</span>Browser_ServerListPageBase<span class="br0">)</span>.<span class="me1">Initcomponent</span><span class="br0">(</span>MyController, MyOwner<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>SQC == <span class="kw9">None</span> <span class="br0">)</span> <span class="co1">//needed for pingage, etc</span>
+                <span class="br0">{</span>
+                SQC = PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">Spawn</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ServerQueryClient'</span><span class="br0">)</span>;
+                SQC.<span class="me1">OnReceivedPingInfo</span> = MyServersList.<span class="me1">MyReceivedPingInfo</span>;
+                SQC.<span class="me1">OnPingTimeout</span> = MyServersList.<span class="me1">MyPingTimeout</span>;
+                <span class="br0">}</span>
+ 
+        <span class="co1">//edit buttons</span>
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Caption</span> = <span class="st0">"RE-PING LIST"</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">bVisible</span>=<span class="kw9">False</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Caption</span> = <span class="st0">"REFRESH LIST"</span>;
+        GUIButton<span class="br0">(</span>GUIPanel<span class="br0">(</span>Controls<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">Controls</span><span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">OnClick</span> = RefreshClick;
+        StatusBar.<span class="me1">WinWidth</span>=<span class="nu0">0.8</span>;
+ 
+        RefreshList<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> RefreshList<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">ForEach</span> PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">AllActors</span><span class="br0">(</span><span class="kw5">Class</span><span class="st0">'BYBrowser_HTTPLink'</span>, BYB<span class="br0">)</span>
+                <span class="kw1">Break</span>;
+        <span class="kw1">if</span><span class="br0">(</span>BYB == <span class="kw9">None</span><span class="br0">)</span>
+                BYB = PlayerOwner<span class="br0">(</span><span class="br0">)</span>.<span class="kw8">Level</span>.<span class="me1">Spawn</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'BYBrowser_HTTPLink'</span><span class="br0">)</span>;
+ 
+        BYB.<span class="me1">BYBP</span> = <span class="kw8">Self</span>;
+ 
+        MyServersList.<span class="me1">Clear</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">//Clear the current list</span>
+        BYB.<span class="me1">RetrieveServers</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> RefreshFinished<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        MyServersList.<span class="me1">AutoPingServers</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> GameInfo.<span class="me1">ServerResponseLine</span> IPToServer<span class="br0">(</span><span class="kw4">string</span> Address<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> GameInfo.<span class="me1">ServerResponseLine</span> S;
+        <span class="kw5">local</span> <span class="kw4">string</span> ipString, portString;
+        <span class="kw5">local</span> <span class="kw4">int</span> colonPos, portNum;
+ 
+        <span class="co1">// Parse text to find IP and possibly port number</span>
+        colonPos = <span class="kw7">InStr</span><span class="br0">(</span>address, <span class="st0">":"</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>colonPos &lt; <span class="nu0">0</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                ipString = address;
+                portNum = <span class="nu0">7777</span>;
+                <span class="br0">}</span>
+        <span class="kw1">else</span>
+                <span class="br0">{</span>
+                ipString = <span class="kw7">Left</span><span class="br0">(</span>address, colonPos<span class="br0">)</span>;
+                portString = <span class="kw7">Mid</span><span class="br0">(</span>address, colonPos<span class="nu0">+1</span><span class="br0">)</span>;
+                portNum = <span class="kw4">int</span><span class="br0">(</span>portString<span class="br0">)</span> ;
+                <span class="br0">}</span>
+ 
+        S.<span class="me1">IP</span> = ipString;
+        S.<span class="me1">Port</span> = portNum;
+        S.<span class="me1">QueryPort</span> = portNum;
+        S.<span class="me1">ServerName</span> = <span class="st0">"Unknown"</span>;
+ 
+        <span class="kw1">Return</span> S;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> AddToList<span class="br0">(</span>GameInfo.<span class="me1">ServerResponseLine</span> S<span class="br0">)</span>
+<span class="br0">{</span>
+        MyServersList.<span class="me1">MyOnReceivedServer</span><span class="br0">(</span>S<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PingServer<span class="br0">(</span> <span class="kw4">int</span> listid, ServerQueryClient.<span class="me1">EPingCause</span> PingCause, GameInfo.<span class="me1">ServerResponseLine</span> s <span class="br0">)</span>
+<span class="br0">{</span>
+ 
+        <span class="kw1">if</span><span class="br0">(</span> PingCause == PC_Clicked <span class="br0">)</span>
+                SQC.<span class="me1">PingServer</span><span class="br0">(</span> listid, PingCause, s.<span class="me1">IP</span>, s.<span class="me1">QueryPort</span>, QI_RulesAndPlayers, s <span class="br0">)</span>;
+        <span class="kw1">else</span>
+                SQC.<span class="me1">PingServer</span><span class="br0">(</span> listid, PingCause, s.<span class="me1">IP</span>, s.<span class="me1">QueryPort</span>, QI_Ping, s <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//Functions that I now want to mean nothing</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> AddIPClick<span class="br0">(</span>GUIComponent Sender<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SaveFavorites<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        PageCaption=<span class="st0">"BY Servers"</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>And finally, the loader:</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Load <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> ServerBrowser SB;
+        <span class="kw5">local</span> Browser_ServerListPageFavorites BYServerListPage;
+ 
+        <span class="kw1">ForEach</span> AllObjects<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'ServerBrowser'</span>,SB<span class="br0">)</span> <span class="co1">//add the tab.</span>
+                <span class="br0">{</span>
+                <span class="kw1">If</span> <span class="br0">(</span>SB != <span class="kw9">None</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                        BYServerListPage = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'BYBrowser_Page'</span>;
+                        SB.<span class="me1">AddBrowserPage</span><span class="br0">(</span>BYServerListPage<span class="br0">)</span>;
+                        <span class="kw1">Break</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+        Destroy<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        bHidden=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>And there it is!!</p>
+<p><a name="Why.3F.3F.21" id="Why.3F.3F.21"></a></p>
+<h3><span class="mw-headline">Why??!</span></h3>
+<p>The above was all written to create a server browser tab that will pick up servers currently running on Blueyonder games (A GSP which also happens to be part of my ISP). It took me a while to do and figure out, so I figured the wiki may like it.</p>
+<hr />
+<p><b>Will:</b> GEBUS CHRIST!! That's gotta be the biggest amount I've added to the wiki since I wrote the stuff on interactions. Please read through, point out code errors, logic errors, spelling errors, grammar errors, or any kind of errors you want.&#160;:)</p>
+<p><b>Will:</b> ARGH GODDAMNS**THEADED*****INGB*STARDS!!&#160;:|</p>
+<p>I just found out (via Wormbo), that epics latest beta patch (2179) prevents the problem of using custom server tabs as a root for a clientside hack by totally f*cking you up all together. You cant use them AT ALL. F*ck people by not including a way to add tabs automatically, f*ck people by not including a stock tab that can be used to download a server list from a wevserver, then f*ck em all again by removed the possibility for custom server tabs. GG epic. &gt;:| &gt;:| &gt;:|</p>
+<p><b>Mychaeel:</b> Chill. – So, what exactly did they change?</p>
+<p><b>Will:</b> I'm not exactly sure (I dont have the patch), but it now seems they've added those kind of packages that are loaded clientside and not preset serverside into the checks. Even the basic server tab itself will prevent you from joining a server, which is why I am hacked off - because they provide no alternative method of adding your own server tab while destroying the possibility of using one loaded yourself. Could this be a result of the email sent to DrSin about the ability to use tabs like that as a cheat?</p>
+<p><b>Mychaeel:</b> Yes, I think it could. To be honest I had expected that the client purity check worked like that all the time.</p>
+<p>What would help might be a way to have auto-creation of server tabs or other objects when the (full-screen) menu is displayed, and giving those objects some sort of notification just before the user leaves the menu to go (back) into the game to give them a chance to auto-destruct before a purity check is done. Or they could "freeze" all objects client-side from packages that aren't present on the server (no Tick, no PostRender, and generally no function calls possible).</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 64/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/i/l/Legacy%7EWill_Creating_A_HTTP_Server_List_Tab_c457.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/i/l/Legacy_talk%7EWill_Creating_A_HTTP_Server_List_Tab_5872.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Will/Creating_A_HTTP_Server_List_Tab">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:08, 15 January 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Sparrow - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Sparrow</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>boop.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Summon_Creature_Code_for_UT_.28not_working.29."><span class="tocnumber">1</span> <span class="toctext">Summon Creature Code for UT (not working).</span></a>
+<ul>
+<li class="toclevel-2"><a href="#In_weapon_class_:"><span class="tocnumber">1.1</span> <span class="toctext">In weapon class&#160;:</span></a></li>
+<li class="toclevel-2"><a href="#In_SDPlayerInfo"><span class="tocnumber">1.2</span> <span class="toctext">In SDPlayerInfo</span></a></li>
+<li class="toclevel-2"><a href="#In_GameInfo"><span class="tocnumber">1.3</span> <span class="toctext">In GameInfo</span></a></li>
+<li class="toclevel-2"><a href="#Problem"><span class="tocnumber">1.4</span> <span class="toctext">Problem</span></a></li>
+<li class="toclevel-2"><a href="#Description_from_IRC"><span class="tocnumber">1.5</span> <span class="toctext">Description from IRC</span></a></li>
+<li class="toclevel-2"><a href="#Reason_summon_is_in_Tick"><span class="tocnumber">1.6</span> <span class="toctext">Reason summon is in Tick</span></a></li>
+<li class="toclevel-2"><a href="#Notes"><span class="tocnumber">1.7</span> <span class="toctext">Notes</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Summon_Creature_Code_for_UT_.28not_working.29." id="Summon_Creature_Code_for_UT_.28not_working.29."></a></p>
+<h2><span class="mw-headline">Summon Creature Code for UT (not working).</span></h2>
+<p><a name="In_weapon_class_:" id="In_weapon_class_:"></a></p>
+<h4><span class="mw-headline">In weapon class&#160;:</span></h4>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// WizardKatana.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> WizardKatana <span class="kw5">extends</span> TournamentWeapon;
+ 
+<span class="kw6">simulated</span> <span class="kw6">exec</span> <span class="kw5">function</span> NextCategory<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="kw7">Isa</span><span class="br0">(</span><span class="st0">'SDPlayerInfo'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+    SDPlayerInfo<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">NextCategory</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw6">exec</span> <span class="kw5">function</span> NextCreature<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="kw7">Isa</span><span class="br0">(</span><span class="st0">'SDPlayerInfo'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+    SDPlayerInfo<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">NextCreature</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw6">exec</span> <span class="kw5">function</span> SDSummon<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span>.<span class="kw7">Isa</span><span class="br0">(</span><span class="st0">'SDPlayerInfo'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+    SDPlayerInfo<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">SDSummon</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">//replication {</span>
+<span class="co1">//  reliable if ( Role == ROLE_Authority )</span>
+<span class="co1">//    UpdateCatInfo,UpdateCreatureInfo,NextCategory,PreviousCategory,</span>
+<span class="co1">//    NextCreature,PreviousCreature,SDSummon;</span>
+<span class="co1">//}</span>
+ 
+<span class="kw1">defaultproperties</span><span class="br0">{</span>
+   PickupMessage=<span class="st0">"You have found a Wizard Katana."</span>
+   ItemName=<span class="st0">"Wizard Katana"</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="In_SDPlayerInfo" id="In_SDPlayerInfo"></a></p>
+<h4><span class="mw-headline">In SDPlayerInfo</span></h4>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// SDPlayerInfo</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> SDPlayerInfo <span class="kw5">extends</span> PlayerReplicationInfo;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> CreatureCategory<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>;
+ 
+<span class="co1">// ugly code to manage summons</span>
+<span class="kw5">var</span> <span class="kw4">bool</span>                AmCasting;       <span class="co1">//set to false soon as creature is summoned</span>
+<span class="kw5">var</span> <span class="kw4">int</span>                 MaxCreature;     <span class="co1">// Array count of current CreatureCategory</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>               MaxInCat<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>;        <span class="co1">// Array of Array counts, for MaxCreature</span>
+ 
+<span class="co1">// what's selected. This info should display in the HUD</span>
+<span class="kw5">var</span> <span class="kw6">travel</span> <span class="kw4">int</span>          CurrentSpell;    <span class="co1">//Summon spell is always avalible, through key bindings</span>
+<span class="kw5">var</span> <span class="kw6">travel</span> <span class="kw4">int</span>          CurrentCategory; <span class="co1">//Category of creatures which can be summoned</span>
+<span class="kw5">var</span> <span class="kw6">travel</span> <span class="kw4">int</span>               CurrentCreature; <span class="co1">//Creature that will be summoned when summon spell is called</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> NextCategory<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory &lt; <span class="br0">(</span><span class="kw6">ArrayCount</span><span class="br0">(</span>CreatureCategory<span class="br0">)</span><span class="nu0">-1</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+    CurrentCategory++;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    CurrentCategory = <span class="nu0">0</span>; 
+  <span class="br0">}</span> 
+  MaxCreature = MaxInCat<span class="br0">[</span>CurrentCategory<span class="br0">]</span>;
+  CurrentCreature = <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> NextCreature<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>CurrentCreature &lt; MaxCreature<span class="br0">)</span> <span class="br0">{</span>
+    CurrentCreature++;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    CurrentCreature = <span class="nu0">0</span>; 
+  <span class="br0">}</span> 
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> SDSummon<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  AmCasting = <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">replication</span><span class="br0">{</span>
+        <span class="co1">// Things the server should send to the client.</span>
+        <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+     NextCategory,NextCreature,PreviousCreature,PreviousCategory;
+<span class="co1">//     CurrentSpell, </span>
+<span class="co1">//     CastingCreature, </span>
+<span class="co1">//     CurrentCategory,  </span>
+<span class="co1">//     CurrentCreature, </span>
+<span class="co1">//     AmCasting;</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">replication</span><span class="br0">{</span>
+        <span class="co1">// Things the client should send to the server.</span>
+    <span class="kw6">unreliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+<span class="co1">//    reliable if ( RemoteRole == ROLE_None ||            // Covering all the bases</span>
+<span class="co1">//                 RemoteRole == ROLE_DumbProxy ||</span>
+<span class="co1">//                 RemoteRole == ROLE_SimulatedProxy ||</span>
+<span class="co1">//                 RemoteRole == ROLE_AutonomousProxy || // all player pawns are supposed to have ROLE_AutonomousProxy</span>
+<span class="co1">//                 Role == ROLE_Authority</span>
+<span class="co1">//                  ) </span>
+     CurrentSpell,  <span class="co1">//CastingCreature,</span>
+     CurrentCategory,  
+     AmCasting,  
+     CurrentCreature, CurrentUtility;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span><span class="br0">{</span>
+  CreatureCategory<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"Fly"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="nu0">5</span>
+  CreatureCategory<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"Manta"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="nu0">3</span> 
+  CreatureCategory<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"Fish"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="nu0">5</span>
+  CreatureCategory<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="st0">"Animal"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="nu0">4</span>
+  CreatureCategory<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="st0">"Spider"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="nu0">3</span>
+  CreatureCategory<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="st0">"Clone"</span>
+  MaxInCat<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="nu0">2</span>
+ 
+  AmCasting=<span class="kw9">false</span>
+  MaxCreature=<span class="nu0">5</span>
+ 
+  CurrentSpell=<span class="nu0">0</span>
+  CurrentCategory=<span class="nu0">0</span>
+  CurrentCreature=<span class="nu0">0</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="In_GameInfo" id="In_GameInfo"></a></p>
+<h4><span class="mw-headline">In GameInfo</span></h4>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// LastSummonerStanding.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> LastSummonerStanding <span class="kw5">extends</span> LastManStanding;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> MaxSpellLevel;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Fly<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Manta<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Fish<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Animal<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Clone<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Spider<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>;
+ 
+<span class="kw5">function</span> <span class="kw8">tick</span> <span class="br0">(</span><span class="kw4">float</span> dt<span class="br0">)</span><span class="br0">{</span>
+  <span class="kw5">local</span> PlayerPawn NewPawn;
+  <span class="kw5">local</span> Bot NewBot;
+  <span class="kw5">local</span> <span class="kw4">bool</span> AmCasting;
+  <span class="kw5">local</span> <span class="kw4">int</span> CurrentCategory, CurrentCreature;
+  <span class="kw5">local</span> SDPlayerInfo PlayerInfo;
+  <span class="kw5">local</span> SDBotInfo BotInfo;
+ 
+  <span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span>dt<span class="br0">)</span>;
+ 
+  <span class="co1">//yes... I know this is ugly. But dunno how else to do it.  </span>
+  <span class="kw1">foreach</span> AllActors <span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Engine.PlayerPawn'</span>, NewPawn<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>NewPawn != <span class="kw9">None</span><span class="br0">)</span><span class="br0">{</span>
+      AmCasting = <span class="kw9">false</span>;
+      CurrentCategory = <span class="nu0">0</span>;
+      CurrentCreature = <span class="nu0">0</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>NewPawn.<span class="me1">PlayerReplicationInfo</span>.<span class="kw7">Isa</span><span class="br0">(</span><span class="st0">'SDPlayerInfo'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+        PlayerInfo = SDPlayerInfo<span class="br0">(</span>NewPawn.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>;
+        CurrentCreature = PlayerInfo.<span class="me1">CurrentCreature</span>;
+        CurrentCategory = PlayerInfo.<span class="me1">CurrentCategory</span>;
+        AmCasting = PlayerInfo.<span class="me1">AmCasting</span>;
+        PlayerInfo.<span class="me1">AmCasting</span> = <span class="kw9">false</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>AmCasting<span class="br0">)</span><span class="br0">{</span>
+          NewPawn.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Current Creature is "</span>$string<span class="br0">(</span>CurrentCreature<span class="br0">)</span><span class="br0">)</span>; <span class="co1">// these lines return</span>
+          NewPawn.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Current Category is "</span>$string<span class="br0">(</span>CurrentCategory<span class="br0">)</span><span class="br0">)</span>; <span class="co1">// the wrong values</span>
+          SDMSummon<span class="br0">(</span>NewPawn,CurrentCategory, CurrentCreature<span class="br0">)</span>;
+        <span class="br0">}</span>
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+  <span class="kw1">foreach</span> AllActors <span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Botpack.Bot'</span>, NewBot<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>NewBot != <span class="kw9">None</span><span class="br0">)</span><span class="br0">{</span>
+      AmCasting = <span class="kw9">false</span>;
+      CurrentCategory = <span class="nu0">0</span>;
+      CurrentCreature = <span class="nu0">0</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>NewBot.<span class="me1">PlayerReplicationInfo</span>.<span class="kw7">Isa</span><span class="br0">(</span><span class="st0">'SDBotInfo'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+        NewBot.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"I think you're a bot"</span><span class="br0">)</span>; 
+        CurrentCategory = SDBotInfo<span class="br0">(</span>NewBot.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">CurrentCategory</span>;
+        CurrentCreature = GetCurrentCreature<span class="br0">(</span>CurrentCategory<span class="br0">)</span>;
+        AmCasting = SDBotInfo<span class="br0">(</span>NewBot.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">AmCasting</span>;
+        SDBotInfo<span class="br0">(</span>NewBot.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">AmCasting</span> = <span class="kw9">false</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>AmCasting<span class="br0">)</span><span class="br0">{</span>
+          SDMSummon<span class="br0">(</span>NewBot,CurrentCategory, CurrentCreature<span class="br0">)</span>;
+        <span class="br0">}</span>
+      <span class="br0">}</span> <span class="co1">// end if bot info</span>
+    <span class="br0">}</span> <span class="co1">// end sure bot</span>
+  <span class="br0">}</span> <span class="co1">// end loop</span>
+<span class="br0">}</span> <span class="co1">// end function</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">string</span> GetCastingCreature<span class="br0">(</span><span class="kw4">int</span> CurrentCategory, <span class="kw4">int</span> CurrentCreature<span class="br0">)</span><span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">string</span> CastingCreature;
+  CastingCreature = <span class="st0">"None"</span>;
+  <span class="kw1">if</span><span class="br0">(</span>CurrentCategory==<span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+    CastingCreature = Fly<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory==<span class="nu0">1</span><span class="br0">)</span><span class="br0">{</span>
+    CastingCreature = Manta<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory==<span class="nu0">2</span><span class="br0">)</span><span class="br0">{</span>
+    CastingCreature = Fish<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory==<span class="nu0">3</span><span class="br0">)</span><span class="br0">{</span>
+    CastingCreature= Animal<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory==<span class="nu0">4</span><span class="br0">)</span><span class="br0">{</span>
+    CastingCreature = Spider<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentCategory==<span class="nu0">5</span><span class="br0">)</span><span class="br0">{</span>
+    CastingCreature = Clone<span class="br0">[</span>CurrentCreature<span class="br0">]</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> CastingCreature;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">bool</span> SDMSummon<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Owner, <span class="kw4">int</span> pCatID, <span class="kw4">int</span> CurrentCreature<span class="br0">)</span><span class="br0">{</span>
+   <span class="kw5">local</span> class&lt;actor&gt; NewClass;
+   <span class="kw5">local</span> <span class="kw4">int</span> LCreatureCount;
+   <span class="kw5">local</span> ScriptedPawn NewCreature;
+   <span class="kw5">local</span> <span class="kw4">vector</span> NewVector;
+   <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> NewPawn;
+   <span class="kw5">local</span> <span class="kw4">string</span> ClassName;
+ 
+   ClassName = GetCastingCreature<span class="br0">(</span>pCatID,CurrentCreature<span class="br0">)</span>;
+ 
+   LCreatureCount = <span class="nu0">0</span>;
+   <span class="kw1">foreach</span> AllActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'UnrealShare.ScriptedPawn'</span>, NewCreature<span class="br0">)</span> <span class="br0">{</span>
+     <span class="kw1">if</span> <span class="br0">(</span>NewCreature.<span class="me1">Owner</span> == Owner<span class="br0">)</span> <span class="br0">{</span>
+       LCreatureCount+=<span class="nu0">1</span>;
+     <span class="br0">}</span>
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>LCreatureCount &gt; SDPlayerInfo<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">MaxSummons</span><span class="br0">)</span> <span class="br0">{</span> 
+     Owner.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"You have too many creatures still in play to summon more."</span><span class="br0">)</span>;
+   <span class="br0">}</span><span class="kw1">else</span><span class="br0">{</span>
+     NewClass = class&lt;actor&gt;<span class="br0">(</span> <span class="kw7">DynamicLoadObject</span><span class="br0">(</span>ClassName, <span class="kw5">class</span><span class="st0">'Class'</span> <span class="br0">)</span><span class="br0">)</span>;   
+     <span class="kw1">if</span><span class="br0">(</span> NewClass!=<span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+     NewVector = <span class="br0">(</span>Owner.<span class="me1">Velocity*</span><span class="nu0">0.5</span><span class="br0">)</span>+<span class="br0">(</span>Owner.<span class="me1">Location</span> + <span class="nu0">110</span> * <span class="kw4">Vector</span><span class="br0">(</span>Owner.<span class="me1">Rotation</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span> * <span class="nu0">25</span><span class="br0">)</span>;
+     Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'WeaponLight'</span>,,<span class="st0">''</span>,NewVector<span class="br0">)</span>;
+     NewPawn = Spawn<span class="br0">(</span> NewClass,Owner,,NewVector,Owner.<span class="me1">Rotation</span><span class="br0">)</span>;
+ 
+     <span class="kw1">if</span> <span class="br0">(</span>NewPawn != <span class="kw9">None</span><span class="br0">)</span><span class="br0">{</span>
+          SDPlayerInfo<span class="br0">(</span>PlayerPawn<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>.<span class="me1">CreatureCount</span><span class="br0">[</span>pCatID<span class="br0">]</span>++;
+          Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'PawnTeleportEffect'</span>,,<span class="st0">''</span>,NewVector<span class="br0">)</span>;
+          Owner.<span class="me1">PlaySound</span><span class="br0">(</span><a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'U4eTM.zapper.zapcharge'</span>, SLOT_Misc, <span class="nu0">4</span> * Owner.<span class="me1">SoundDampening</span><span class="br0">)</span>;
+          <span class="kw1">return</span> <span class="kw9">true</span>;
+        <span class="br0">}</span><span class="kw1">else</span><span class="br0">{</span>
+          Owner.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Summon Spell Failed"</span><span class="br0">)</span>;
+          <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="br0">}</span>
+     <span class="br0">}</span><span class="kw1">else</span><span class="br0">{</span>
+       Owner.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Dunno what a '"</span>$ClassName$<span class="st0">"' is."</span><span class="br0">)</span>;
+       <span class="kw1">return</span> <span class="kw9">false</span>;
+     <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span><span class="br0">{</span>
+  Fly<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.Gnat"</span>
+  Fly<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"SDCreatures.SmallFly"</span>
+  Fly<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"SDCreatures.GnatQueen"</span>
+  Fly<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="st0">"SDCreatures.StandardFly"</span>
+  Fly<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="st0">"SDCreatures.GiantFly"</span>
+ 
+  Manta<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.SmallManta"</span>
+  Manta<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"SDCreatures.StandardManta"</span>
+  Manta<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"SDCreatures.BossManta"</span>
+ 
+  Fish<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.BittyFish"</span>
+  Fish<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"SDCreatures.SmallFish"</span>
+  Fish<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"UnrealShare.DevilFish"</span>
+  Fish<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="st0">"UnrealI.Squid"</span>
+  Fish<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="st0">"SDCreatures.KillerFish"</span>
+ 
+  Animal<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.RabidRabbit"</span>
+  Animal<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"UnrealShare.BabyCow"</span>
+  Animal<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"UnrealShare.Cow"</span>
+  Animal<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="st0">"UnrealShare.Bird1"</span>
+ 
+  Spider<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.TarantulaSpider"</span>
+  Spider<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"SDCreatures.JumperSpider"</span>
+  Spider<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="st0">"SDCreatures.SpitterSpider"</span>
+ 
+  Clone<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"SDCreatures.Decoy"</span>
+  Clone<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"SDCreatures.Clone"</span>
+ 
+     MaxSpellLevel=<span class="nu0">5</span>
+     bUseTranslocator=<span class="kw9">False</span>
+     bCanViewOthers=<span class="kw9">False</span>
+     bCanChangeSkin=<span class="kw9">true</span>
+     FragLimit=<span class="nu0">50</span>
+     TimeLimit=<span class="nu0">0</span>
+     bAlwaysForceRespawn=<span class="kw9">True</span>
+     bNoMonsters=<span class="kw9">False</span>
+     StartUpMessage=<span class="st0">"Last Summoner Standing.  How long can you live?"</span>
+     gamegoal=<span class="st0">"lives to try and keep"</span>
+     HackedMessage=<span class="st0">" was hacked"</span>
+     ScoreBoardType=<span class="kw5">Class</span><span class="st0">'Botpack.LMSScoreboard'</span>
+<span class="co1">//     ScoreBoardType=Class'SDMods.LSSScoreBoard'</span>
+     RulesMenuType=<span class="st0">"UTMenu.UTLMSRulesSC"</span>
+<span class="co1">//     RulesMenuType="SDMods.SDRulesClient"</span>
+     BeaconName=<span class="st0">"LSS"</span>
+<span class="co1">//     BeaconName="LMS"</span>
+     HUDType=<span class="kw5">Class</span><span class="st0">'SDMods.SDHud'</span>
+     GameName=<span class="st0">"Last Summoner Standing"</span>
+<span class="co1">//     GameReplicationInfoClass=Class'SDMods.SDGameReplicationInfo'</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Problem" id="Problem"></a></p>
+<h4><span class="mw-headline">Problem</span></h4>
+<pre>
+ Even though category has changed in the player info, it always returns the default values in tick.
+</pre>
+<p><a name="Description_from_IRC" id="Description_from_IRC"></a></p>
+<h4><span class="mw-headline">Description from IRC</span></h4>
+<p>in the "tick" function of LastSummonerStanding</p>
+<p>I can't get it to see the actual CurrentCategory</p>
+<p>or creature</p>
+<p>at every point before that, if I put in a "My current value is" message, it seems to work fine</p>
+<p>and it works fine in the HUD</p>
+<p>which is very simplistic at this point</p>
+<p><a name="Reason_summon_is_in_Tick" id="Reason_summon_is_in_Tick"></a></p>
+<h4><span class="mw-headline">Reason summon is in Tick</span></h4>
+<p>Before it was in one of the above classes. The creatures would summon (and the right ones), but they were local copies that couldn't be seen across the network. Also, if the summoner walked through them, then they exploded. Which was funny, but not the desired effect.</p>
+<p><a name="Notes" id="Notes"></a></p>
+<h4><span class="mw-headline">Notes</span></h4>
+<p>Making the functions in the game info class simulated or not, doesn't seem to make a difference.</p>
+<p>I don't think they should be at that point. I've tried making all functions above simulated, or not simulated, to no effect.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 18/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/p/a/Legacy%7ESparrow_13d3.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/p/a/Legacy_talk%7ESparrow_9289.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Sparrow">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:59, 9 May 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

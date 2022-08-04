@@ -1,0 +1,1227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Object (UT3)/Operators - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Object (UT3)/Operators</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_3554.html" title="Legacy:Object (UT3)">Legacy:Object (UT3)</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/3/Legacy%7EUT3_675f.html" class="mw-redirect" title="Legacy:UT3">UT3</a>:: <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_3554.html" title="Legacy:Object (UT3)">Object (UT3)</a> (Operators)</div>
+<p>The following operators are declared in the Object class and thus globally available. They are conveniently grouped by the types they operate on and sorted by precedence, starting with most tightly binding. All global operators are <i>static</i>, <i>final</i> and (with the exception of the color operators) <i>native</i>. See <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Numeric_Functions_5a95.html" title="Legacy:Object (UT3)/Numeric Functions">Legacy:Object (UT3)/Numeric Functions</a> for other globally available operations on numeric values and <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Functions_a1ec.html" title="Legacy:Object (UT3)/Functions">Legacy:Object (UT3)/Functions</a> for globally available operations on other data, like colors, strings or objects.</p>
+<p>In the following tables, pre-operators have an empty operand 1 and post-operators have an empty operand 2. Operand types may be followed by one of the following modifiers:</p>
+<dl>
+<dt>coerce&#160;</dt>
+<dd>The value of the operand is subject to automatic <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">typecasting</a> to match the required operand type.<br />
+Without the <i>coerce</i> modifier only the types <b>byte</b>, <b>int</b> and <b>float</b> will be auto-casted to each other. The only exception is an <i>out</i> operand, which will not allow automatic typecasting.</dd>
+</dl>
+<dl>
+<dt>out&#160;</dt>
+<dd>Usually only applied to the first operand of a binary operator or to the single operand of certain unary operators. The operand must be an <a href="http://en.wikipedia.org/wiki/Lvalue" class="extiw" title="wikipedia:Lvalue">Wikipedia:Lvalue</a> and will be modified by the operator. Operators with an <i>out</i> operand may be used as stand-alone statements, while operators without any <i>out</i> operand would cause the compiler error "Expression has no effect."</dd>
+</dl>
+<dl>
+<dt>skip&#160;</dt>
+<dd>Only found as modifier of the second operand of a binary operator. The second operand is not evaluated if the first operand already decides the return value of the operator. This behavior is known as "short-circuiting" and is only used by the <code>&amp;&amp;</code> and <code>{|</code></dd>
+</dl>
+<p><code>|- | |}</code> boolean operators.</p>
+<p>Operators are generally <a href="http://en.wikipedia.org/wiki/left-associative" class="extiw" title="wikipedia:left-associative">Wikipedia:left-associative</a>, i.e. Operators with the same precedence are evaluated from left to right: "<code>a / b * c</code>" is the same as "<code>(a / b) * c</code>". The only exception here is the conditional operator, which is right-associative("<code>a&#160;? b&#160;: c&#160;? d&#160;: e</code>" is the same as "<code>a&#160;? b&#160;: (c&#160;? d&#160;: e)</code>") and the assignment operator, which is non-associative since it doesn't return a value.</p>
+<p>In the following descriptions the word <b>iff</b> means "if and only if."</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Pre-defined_Operators"><span class="tocnumber">1</span> <span class="toctext">Pre-defined Operators</span></a></li>
+<li class="toclevel-1"><a href="#Bool_Operators"><span class="tocnumber">2</span> <span class="toctext">Bool Operators</span></a></li>
+<li class="toclevel-1"><a href="#Byte_Operators"><span class="tocnumber">3</span> <span class="toctext">Byte Operators</span></a></li>
+<li class="toclevel-1"><a href="#Int_Operators"><span class="tocnumber">4</span> <span class="toctext">Int Operators</span></a></li>
+<li class="toclevel-1"><a href="#Float_Operators"><span class="tocnumber">5</span> <span class="toctext">Float Operators</span></a></li>
+<li class="toclevel-1"><a href="#Vector_Operators"><span class="tocnumber">6</span> <span class="toctext">Vector Operators</span></a></li>
+<li class="toclevel-1"><a href="#Rotator_Operators"><span class="tocnumber">7</span> <span class="toctext">Rotator Operators</span></a></li>
+<li class="toclevel-1"><a href="#String_Operators"><span class="tocnumber">8</span> <span class="toctext">String Operators</span></a></li>
+<li class="toclevel-1"><a href="#Object_and_Name_Operators"><span class="tocnumber">9</span> <span class="toctext">Object and Name Operators</span></a></li>
+<li class="toclevel-1"><a href="#Quaternion_Operators"><span class="tocnumber">10</span> <span class="toctext">Quaternion Operators</span></a></li>
+<li class="toclevel-1"><a href="#Color_Operators"><span class="tocnumber">11</span> <span class="toctext">Color Operators</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Pre-defined_Operators" id="Pre-defined_Operators"></a></p>
+<h2><span class="mw-headline">Pre-defined Operators</span></h2>
+<p>The following operators do not have corresponding UnrealScript declarations. They are described here only for reference.</p>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Operand&#160;3</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>struct&lt;<i>type</i>&gt;</td>
+<td>struct&lt;<i>type</i>&gt;</td>
+<td></td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff both structs' corresponding components have the same values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>struct&lt;<i>type</i>&gt;</td>
+<td>struct&lt;<i>type</i>&gt;</td>
+<td></td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>false</b> iff any of the structs' corresponding components have the different values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>?&#160;:</code></td>
+<td>bool</td>
+<td><i>type</i> (skip)</td>
+<td><i>type</i> (skip)</td>
+<td style="text-align: right">Expression</td>
+<td><i>type</i></td>
+<td>If the first operand evaluates to true, the second operand is evaluated and its value is returned, otherwise the third operand is evaluated and its value is returned.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>=</code></td>
+<td><i>type</i> (out)</td>
+<td><i>type</i></td>
+<td></td>
+<td style="text-align: right">Statement</td>
+<td></td>
+<td>Assigns the value of the second operand to the first. This is actually a statement that doesn't return any value and thus may not be used inside another expression or statement.</td>
+</tr>
+</table>
+<p><b>Note 1:</b> "<tt>struct&lt;<i>type</i>&gt;</tt>" is not actually a valid UnrealScript type declaration. It merely points out that both operands must be of the same struct type.</p>
+<p><b>Note 2:</b> The conditional operator <code>?&#160;:</code> is a ternary operator with the question mark separating the first and second operand and the colon separating the second and third operand. Its binds just a little more tightly than the assignment statement. Its second and third operand must have the same type, which is also used as the return type of this operator. Like other operators without any <i>out</i> operands, it may not be used as stand-alone statement.</p>
+<p><b>Note 3:</b> Enums are "glorified" byte value. Like bytes, enum values are compared using int operators.</p>
+<p><a name="Bool_Operators" id="Bool_Operators"></a></p>
+<h2><span class="mw-headline">Bool Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!</code></td>
+<td></td>
+<td>bool</td>
+<td style="text-align: right">preoperator</td>
+<td>bool</td>
+<td>Returns the opposite value, i.e. <b>false</b> if the operand is <b>true</b> and vice versa.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>bool</td>
+<td>bool</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff both operands have the same value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>bool</td>
+<td>bool</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>false</b> iff both operands have the same value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&amp;&amp;</code></td>
+<td>bool</td>
+<td>bool (skip)</td>
+<td style="text-align: right">30</td>
+<td>bool</td>
+<td>Returns <b>false</b> iff at least one operand is <b>false</b>.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>^^</code></td>
+<td>bool</td>
+<td>bool</td>
+<td style="text-align: right">30</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the operand have different values. Technically this is the same result as the <code>!=</code> operator, just doesn't bind as tightly.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>{|</code></td>
+</tr>
+<tr>
+<td></td>
+</tr>
+</table>
+<p>|bool |bool (skip) | style="text-align: right" |32 |bool |Returns <b>true</b> iff at least one operand is <b>true</b>. |}</p>
+<p><b>Note 1:</b> There are no bool versions of <code>&amp;&amp;</code> and <code>{|</code></p>
+<p><code>|- | |}</code> without short-circuiting. If you need both expressions to be evaluated, you will have to assign them to variables first and then pass those to the operator.</p>
+<p><a name="Byte_Operators" id="Byte_Operators"></a></p>
+<h2><span class="mw-headline">Byte Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>++</code></td>
+<td></td>
+<td>byte (out)</td>
+<td style="text-align: right">preoperator</td>
+<td>byte</td>
+<td>Increases the value of the operand by 1 and returns the previous value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td></td>
+<td>byte (out)</td>
+<td style="text-align: right">preoperator</td>
+<td>byte</td>
+<td>Decreases the value of the operand by 1 and returns the previous value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>++</code></td>
+<td>byte (out)</td>
+<td></td>
+<td style="text-align: right">postoperator</td>
+<td>byte</td>
+<td>Increases the value of the operand by 1 and returns the new value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>byte (out)</td>
+<td></td>
+<td style="text-align: right">postoperator</td>
+<td>byte</td>
+<td>Decreases the value of the operand by 1 and returns the new value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>byte (out)</td>
+<td>byte</td>
+<td style="text-align: right">34</td>
+<td>byte</td>
+<td>Multiplies the two values, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>byte (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>byte</td>
+<td>Multiplies the two values using floating point arithmetics, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/=</code></td>
+<td>byte (out)</td>
+<td>byte</td>
+<td style="text-align: right">34</td>
+<td>byte</td>
+<td>Performs division using integer arithmetics, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+=</code></td>
+<td>byte (out)</td>
+<td>byte</td>
+<td style="text-align: right">34</td>
+<td>byte</td>
+<td>Adds the two values, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-=-</code></td>
+<td>byte (out)</td>
+<td>byte</td>
+<td style="text-align: right">34</td>
+<td>byte</td>
+<td>Subtracts the second from the first value, stores the result in the first operand and returns the result.</td>
+</tr>
+</table>
+<p><b>Note:</b> Comparisons and basic arithmetic operations with byte values are done using the corresponding int operators.</p>
+<p><a name="Int_Operators" id="Int_Operators"></a></p>
+<h2><span class="mw-headline">Int Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td></td>
+<td>int</td>
+<td style="text-align: right">preoperator</td>
+<td>int</td>
+<td>Returns the arithmetic inverse value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>~</code></td>
+<td></td>
+<td>int</td>
+<td style="text-align: right">preoperator</td>
+<td>int</td>
+<td>Returns the bitwise negated value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>++</code></td>
+<td></td>
+<td>int (out)</td>
+<td style="text-align: right">preoperator</td>
+<td>int</td>
+<td>Increases the value of the operand by 1 and returns the previous value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td></td>
+<td>int (out)</td>
+<td style="text-align: right">preoperator</td>
+<td>int</td>
+<td>Decreases the value of the operand by 1 and returns the previous value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>++</code></td>
+<td>int (out)</td>
+<td></td>
+<td style="text-align: right">postoperator</td>
+<td>int</td>
+<td>Increases the value of the operand by 1 and returns the new value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>int (out)</td>
+<td></td>
+<td style="text-align: right">postoperator</td>
+<td>int</td>
+<td>Decreases the value of the operand by 1 and returns the new value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">16</td>
+<td>int</td>
+<td>Multiplies the two values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">16</td>
+<td>int</td>
+<td>Divides the first by the second value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">20</td>
+<td>int</td>
+<td>Adds the two values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">20</td>
+<td>int</td>
+<td>Subtracts the second from the first value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;&lt;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">22</td>
+<td>int</td>
+<td>Shift bits of the first operand to the left, fill with zeroes.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;&gt;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">22</td>
+<td>int</td>
+<td>Shift bits of the first operand to the right, fill with sign bit, i.e. ones for negative numbers.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;&gt;&gt;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">22</td>
+<td>int</td>
+<td>Shift bits of the first operand to the right, fill with zeroes.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically smaller than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;=</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically equal to or larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;=</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically equal to or larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands have the same value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands have different values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&amp;</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">28</td>
+<td>int</td>
+<td>Performs bitwise AND, i.e. a bit in the result is 1 iff the corresponding bit in both operands are 1.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>{|</code></td>
+</tr>
+</table>
+<p>|int |int | style="text-align: right" |28 |int |Performs bitwise OR, i.e. a bit in the result is 0 iff the corresponding bit in both operands are 0. |- | style="text-align: center" |<code>^</code> |int |int | style="text-align: right" |28 |int |Performs bitwise XOR, i.e. a bit in the result is 1 iff exactly one of the corresponding bit in both operands is 1. |- | style="text-align: center" |<code>*=</code> |int (out) |float | style="text-align: right" |34 |int |Multiplies the two values, stores the result in the first operand and returns the result. |- | style="text-align: center" |<code>/=</code> |int (out) |float | style="text-align: right" |34 |int |Divides the first by the second value, stores the result in the first operand and returns the result. |- | style="text-align: center" |<code>+=</code> |int (out) |int | style="text-align: right" |34 |int |Adds the two values, stores the result in the first operand and returns the result. |- | style="text-align: center" |<code>-=-</code> |int (out) |int | style="text-align: right" |34 |int |Subtracts the second from the first value, stores the result in the first operand and returns the result. |}</p>
+<p><b>Note 1:</b> The shift operators truncate the second operand's value to the five least significant bits (a value between 0 and 31) before applying the shifting operation to the first operand's value. This has the nice side effect that you can use negative values to specify the number of bits to <i>keep</i> instead of the number of bits to shift out.</p>
+<p><b>Note 2:</b> The operators <code>*=</code> and <code>/=</code> always perform floating point multiplication and division respectively. This means you may lose precision if your operands or the result requires more bits than a floating point mantissa can hold. Since UnrealScript's float values are single precision, their mantissa has a width of 23 bits. This means any values with 24 or more bits (generally all values with more than 9 decimal digits) are affected.<br />
+If you need full integer precision with potentially large values, use "<code>A = A * B;</code>" instead of "<code>A *= B;</code>" to get the precise value.</p>
+<p><b>Note 3:</b> There is no integer operator for remainder after division. The <code>%</code> operator converts operands to float and returns a float value, so it is not suitable when dealing with large operands and you need absolute integer precision. (see note 2 above)<br />
+If you need full integer precision with potentially large values, use "<code>A - (A / B) * B</code>" instead of "<code>A&#160;% B</code>" to get the precise value. For powers of 2 as second operand you can also use bitwise AND with the second operand reduced by 1, e.g. "<code>A &amp; 0xfff</code>" instead of "A&#160;% 4096", with 0xfff being the hexadecimal representation of 4095.</p>
+<p><a name="Float_Operators" id="Float_Operators"></a></p>
+<h2><span class="mw-headline">Float Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td></td>
+<td>float</td>
+<td style="text-align: right">preoperator</td>
+<td>float</td>
+<td>Returns the arithmetic inverse value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>**</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">12</td>
+<td>float</td>
+<td>Raises the first operand to the power of the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>float</td>
+<td>Multiplies the two values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>float</td>
+<td>Divides the first by the second value and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>%</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">18</td>
+<td>float</td>
+<td>Divides the first by the second value and returns the remainder after division.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">20</td>
+<td>float</td>
+<td>Adds the two values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">20</td>
+<td>float</td>
+<td>Subtracts the second from the first value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically smaller than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;=</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically equal to or larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;=</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first operand is arithmetically equal to or larger than the second operand.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands have the same value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>~=</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the absolute difference of the two operands is less than 0.0001.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>float</td>
+<td>float</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands have different values.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>float (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>float</td>
+<td>Multiplies the two values, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/=</code></td>
+<td>float (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>float</td>
+<td>Divides the first by the second value, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+=</code></td>
+<td>float (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>float</td>
+<td>Adds the two values, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-=-</code></td>
+<td>float (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>float</td>
+<td>Subtracts the second from the first value, stores the result in the first operand and returns the result.</td>
+</tr>
+</table>
+<p><a name="Vector_Operators" id="Vector_Operators"></a></p>
+<h2><span class="mw-headline">Vector Operators</span></h2>
+<p>Vector is a struct defined in the Object class. See <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Structs_4d54.html" title="Legacy:Object (UT3)/Structs">Legacy:Object (UT3)/Structs</a> for its definition, <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Numeric_Functions_5a95.html" title="Legacy:Object (UT3)/Numeric Functions">Legacy:Object (UT3)/Numeric Functions</a> for additional operations and <a href="../../../../articles/v/e/c/Legacy%7EVector_fa11.html" title="Legacy:Vector">Vector</a> for a general description.</p>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td></td>
+<td>vector</td>
+<td style="text-align: right">preoperator</td>
+<td>vector</td>
+<td>Returns a vector of the same length but reverse direction.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>vector</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>vector</td>
+<td>Multiplies the vector's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>float</td>
+<td>vector</td>
+<td style="text-align: right">16</td>
+<td>vector</td>
+<td>Multiplies the vector's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">16</td>
+<td>vector</td>
+<td>Multiplies the two vectors' corresponding components.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/</code></td>
+<td>vector</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>vector</td>
+<td>Divides the vector's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>Dot</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">16</td>
+<td>float</td>
+<td>Multiplies the two vectors' corresponding components and returns the sum of these products. (see <a href="http://en.wikipedia.org/wiki/dot_product" class="extiw" title="wikipedia:dot_product">Wikipedia:dot product</a>)</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>Cross</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">16</td>
+<td>vector</td>
+<td>Calculates the <a href="http://en.wikipedia.org/wiki/cross_product" class="extiw" title="wikipedia:cross_product">Wikipedia:cross product</a> of the two vectors.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">20</td>
+<td>vector</td>
+<td>Adds the two vectors.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">20</td>
+<td>vector</td>
+<td>Adds the reverse of the second vector to the first vector.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;&lt;</code></td>
+<td>vector</td>
+<td>rotator</td>
+<td style="text-align: right">22</td>
+<td>vector</td>
+<td>Rotates the vector as described by the rotator.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;&gt;</code></td>
+<td>vector</td>
+<td>rotator</td>
+<td style="text-align: right">22</td>
+<td>vector</td>
+<td>"Unrotates" the vector as described by the rotator.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two vectors have the same direction and length.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>vector</td>
+<td>vector</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two vectors differ in direction and/or length.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>vector (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>vector</td>
+<td>Multiplies the vector's components by the float value, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>vector (out)</td>
+<td>vector</td>
+<td style="text-align: right">34</td>
+<td>vector</td>
+<td>Multiplies the two vectors' corresponding components, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/=</code></td>
+<td>vector (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>vector</td>
+<td>Divides the the vector's components by the float value, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+=</code></td>
+<td>vector (out)</td>
+<td>vector</td>
+<td style="text-align: right">34</td>
+<td>vector</td>
+<td>Adds the two vectors, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-=-</code></td>
+<td>vector (out)</td>
+<td>vector</td>
+<td style="text-align: right">34</td>
+<td>vector</td>
+<td>Adds the reverse of the second vector to the first vector, stores the result in the first operand and returns the result.</td>
+</tr>
+</table>
+<p>The result of vector rotation operators <code>&lt;&lt;</code> and <code>&gt;&gt;</code> can also be described using the GetAxes() and GetUnAxes() <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Functions_a1ec.html" title="Legacy:Object (UT3)/Functions">Legacy:Object (UT3)/Functions</a>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">22</span><span class="br0">)</span> <span class="kw4">vector</span> &lt;&lt; <span class="br0">(</span><span class="kw4">vector</span> A, <span class="kw4">rotator</span> B<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">vector</span> X, Y, Z;
+  GetAxes<span class="br0">(</span>B, X, Y, Z<span class="br0">)</span>;
+  <span class="kw1">return</span> X * A.<span class="me1">X</span> + Y * A.<span class="me1">Y</span> + Z * A.<span class="me1">Z</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">22</span><span class="br0">)</span> <span class="kw4">vector</span> &gt;&gt; <span class="br0">(</span><span class="kw4">vector</span> A, <span class="kw4">rotator</span> B<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">vector</span> X, Y, Z;
+  GetUnAxes<span class="br0">(</span>B, X, Y, Z<span class="br0">)</span>;
+  <span class="kw1">return</span> X * A.<span class="me1">X</span> + Y * A.<span class="me1">Y</span> + Z * A.<span class="me1">Z</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>For <code>&lt;&lt;</code> operand A is a vector relative to a rotation with zero pitch, yaw and roll, and the result is the same vector relative to the rotation in operand B. For <code>&gt;&gt;</code> operand A is a vector relative to the rotation in operand B, and the result is the same vector relative to a rotation with zero pitch, yaw and roll. They are basically inverse operations.</p>
+<p>Operator <code>&lt;&lt;</code> could also be considered a local to global conversion as it converts a local view offset (e.g. for weapons on the HUD) to an actual global location offset from the player's view location. Conversely, operator <code>&gt;&gt;</code> could be considered a global to local conversion.</p>
+<p><a name="Rotator_Operators" id="Rotator_Operators"></a></p>
+<h2><span class="mw-headline">Rotator Operators</span></h2>
+<p>Rotator is a struct defined in the Object class. See <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Structs_4d54.html" title="Legacy:Object (UT3)/Structs">Legacy:Object (UT3)/Structs</a> for its definition, <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Numeric_Functions_5a95.html" title="Legacy:Object (UT3)/Numeric Functions">Legacy:Object (UT3)/Numeric Functions</a> for additional operations and <a href="../../../../articles/r/o/t/Legacy%7ERotator_9443.html" title="Legacy:Rotator">Rotator</a> for a general description.</p>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>rotator</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>rotator</td>
+<td>Multiplies the rotator's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>float</td>
+<td>rotator</td>
+<td style="text-align: right">16</td>
+<td>rotator</td>
+<td>Multiplies the rotator's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/</code></td>
+<td>rotator</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>rotator</td>
+<td>Divides the rotator's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>rotator</td>
+<td>rotator</td>
+<td style="text-align: right">20</td>
+<td>rotator</td>
+<td>Adds the two rotators' corresponding components.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>rotator</td>
+<td>rotator</td>
+<td style="text-align: right">20</td>
+<td>rotator</td>
+<td>Subtracts the second rotator's components from the corresponding components of the first rotator.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>rotator</td>
+<td>rotator</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two rotators have the same direction and length.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>ClockwiseFrom</code></td>
+<td>int</td>
+<td>int</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Interprets the two values as corresponding rotator components.<br />
+Returns <b>true</b> iff the shortest rotation from the first to the second operand would be in clockwise direction.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>rotator</td>
+<td>rotator</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff any of the two rotators' corresponding components are different.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*=</code></td>
+<td>rotator (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>rotator</td>
+<td>Multiplies the rotator's components by the float value, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>/=</code></td>
+<td>rotator (out)</td>
+<td>float</td>
+<td style="text-align: right">34</td>
+<td>rotator</td>
+<td>Divides the the rotator's components by the float value, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+=</code></td>
+<td>rotator (out)</td>
+<td>rotator</td>
+<td style="text-align: right">34</td>
+<td>rotator</td>
+<td>Adds the two rotators, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-=-</code></td>
+<td>rotator (out)</td>
+<td>rotator</td>
+<td style="text-align: right">34</td>
+<td>rotator</td>
+<td>Subtracts the second rotator from the first, stores the result in the first operand and returns the result.</td>
+</tr>
+</table>
+<p><a name="String_Operators" id="String_Operators"></a></p>
+<h2><span class="mw-headline">String Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first string comes before the second one in case-sensitive order.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the first string comes after the second one in case-sensitive order.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&gt;=</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two strings are identical or first string comes before the second one in case-sensitive order.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>&lt;=</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two strings are identical or first string comes before the second one in case-sensitive order.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two strings are identical.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>~=</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Compares the two strings case-insensitively and returns '<i>true</i> iff the two strings are identical.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>string</td>
+<td>string</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two strings are not identical.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>$</code></td>
+<td>string (coerce)</td>
+<td>string (coerce)</td>
+<td style="text-align: right">40</td>
+<td>string</td>
+<td>Appends the characters of the second string after those of the first and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>@</code></td>
+<td>string (coerce)</td>
+<td>string (coerce)</td>
+<td style="text-align: right">40</td>
+<td>string</td>
+<td>Same as <code>$</code>, but separates the two strings with a space characters.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>$=</code></td>
+<td>string (out)</td>
+<td>string (coerce)</td>
+<td style="text-align: right">44</td>
+<td>string</td>
+<td>Appends the characters of the second string after those of the first, stores the result in the first operand and returns the result.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>@=</code></td>
+<td>string (out)</td>
+<td>string (coerce)</td>
+<td style="text-align: right">44</td>
+<td>string</td>
+<td>Same as <code>$=</code>, but separates the two strings with a space characters.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-=-</code></td>
+<td>string (out)</td>
+<td>string (coerce)</td>
+<td style="text-align: right">45</td>
+<td>string</td>
+<td>Removes all occurrences of the second string from the first, stores the result in the first operand and returns the result.</td>
+</tr>
+</table>
+<p><b>Note 1:</b> Comparison operators and combined non-string assignment operators bind more tightly than string concatenation. Only the built-in assignment statement and conditional operator bind less tightly.</p>
+<p><b>Note 2:</b> The <code>(String -= String)</code> operator has a different precedence than arithmetic <code>-=-</code> operators.</p>
+<p><b>Note 3:</b> String order is determined by comparing the Unicode values of the individual characters from first to last. If one string is a prefix of the other (i.e. all of the first string's characters make up the beginning of the other string), then the shorter string comes first.</p>
+<p><a name="Object_and_Name_Operators" id="Object_and_Name_Operators"></a></p>
+<h2><span class="mw-headline">Object and Name Operators</span></h2>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>Object</td>
+<td>Object</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands refer to the same object.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>Object</td>
+<td>Object</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands refer to different objects.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>Interface</td>
+<td>Interface</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands refer to the same interface.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>Interface</td>
+<td>Interface</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands refer to different interfaces.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>----</code></td>
+<td>name</td>
+<td>name</td>
+<td style="text-align: right">24</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands contain the same name value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>!=</code></td>
+<td>name</td>
+<td>name</td>
+<td style="text-align: right">26</td>
+<td>bool</td>
+<td>Returns <b>true</b> iff the two operands contain different name values.</td>
+</tr>
+</table>
+<p><a name="Quaternion_Operators" id="Quaternion_Operators"></a></p>
+<h2><span class="mw-headline">Quaternion Operators</span></h2>
+<p>Quat is a struct defined in the Object class. See <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Structs_4d54.html" title="Legacy:Object (UT3)/Structs">Legacy:Object (UT3)/Structs</a> for its definition, <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Numeric_Functions_5a95.html" title="Legacy:Object (UT3)/Numeric Functions">Legacy:Object (UT3)/Numeric Functions</a> for additional operations and <a href="../../../../articles/q/u/a/Legacy%7EQuaternion_eb92.html" title="Legacy:Quaternion">Quaternion</a> for a general description.</p>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>Quat</td>
+<td>Quat</td>
+<td style="text-align: right">16</td>
+<td>Quat</td>
+<td>Adds the two quaternions' corresponding components.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>Quat</td>
+<td>Quat</td>
+<td style="text-align: right">16</td>
+<td>Quat</td>
+<td>Subtracts the second quaternion's components from the corresponding components of the first quaternion.</td>
+</tr>
+</table>
+<p>Quaternion comparison is done using the built-in struct comparison operators.</p>
+<p><a name="Color_Operators" id="Color_Operators"></a></p>
+<h2><span class="mw-headline">Color Operators</span></h2>
+<p>Color and LinearColor are structs defined in the Object class. See <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Structs_4d54.html" title="Legacy:Object (UT3)/Structs">Legacy:Object (UT3)/Structs</a> for their definition and <a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Functions_a1ec.html" title="Legacy:Object (UT3)/Functions">Legacy:Object (UT3)/Functions</a> for additional operations.</p>
+<p>Color operators are not declared <i>native</i> and are implemented in UnrealScript (as opposed to native code). They only affect the red, green and blue components of the color and return the unchanged alpha value of the first color operand.</p>
+<table>
+<tr>
+<td><i><b>Symbol</b></i></td>
+<td><b><i>Operand&#160;1</i></b></td>
+<td><b><i>Operand&#160;2</i></b></td>
+<td><b><i>Precedence</i></b></td>
+<td><b><i>Result</i></b></td>
+<td><b><i>Description</i></b></td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>Color</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>Color</td>
+<td>Multiplies the color's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>LinearColor</td>
+<td>float</td>
+<td style="text-align: right">16</td>
+<td>LinearColor</td>
+<td>Multiplies the LinearColor's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>*</code></td>
+<td>float</td>
+<td>Color</td>
+<td style="text-align: right">16</td>
+<td>Color</td>
+<td>Multiplies the color's components by the float value.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>+</code></td>
+<td>Color</td>
+<td>Color</td>
+<td style="text-align: right">20</td>
+<td>Color</td>
+<td>Adds the two colors' corresponding components.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>Color</td>
+<td>Color</td>
+<td style="text-align: right">20</td>
+<td>Color</td>
+<td>Subtracts the second color's components from the corresponding components of the first Color.</td>
+</tr>
+<tr>
+<td style="text-align: center"><code>-</code></td>
+<td>LinearColor</td>
+<td>LinearColor</td>
+<td style="text-align: right">20</td>
+<td>LinearColor</td>
+<td>Subtracts the second LinearColor's components from the corresponding components of the first LinearColor.</td>
+</tr>
+</table>
+<p><b>Note 1:</b> Color and LinearColor comparison is done using the built-in struct comparison operators, which also means you can't compare a Color value to a LinearColor value.</p>
+<p><b>Note 2:</b> There are no combined assignment operators for color types. There also is no add operator and only one multiply operator for LinearColors.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 344/1000000
+Post-expand include size: 323/2097152 bytes
+Template argument size: 69/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/o/b/j/Legacy%7EObject_%28UT3%29_Operators_b517.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/b/j/Legacy_talk%7EObject_%28UT3%29_Operators_ad1c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Object_%28UT3%29/Operators">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:19, 12 February 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

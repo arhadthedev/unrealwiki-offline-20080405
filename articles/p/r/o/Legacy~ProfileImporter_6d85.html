@@ -1,0 +1,1736 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:ProfileImporter - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:ProfileImporter</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInternetInfo_c93e.html" title="Legacy:InternetInfo">InternetInfo</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInternetLink_ba56.html" title="Legacy:InternetLink">InternetLink</a> &gt;&gt; <a href="../../../../articles/t/c/p/Legacy%7ETcpLink_d575.html" title="Legacy:TcpLink">TcpLink</a> &gt;&gt; ProfileImporter (<a href="../../../../articles/l/a/d/Legacy%7ELadder1.46_a0ee.html" title="Legacy:Ladder1.46">Ladder1.46</a>)</div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<div class="source-uscript" style="font-family: monospace;">
+<ol>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; Ladder.ProfileImporter</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// &#160; &#160; &#160;Handles all communication with foreign servers containing</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// &#160;exported profile information</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// &#160;Stores remote profile URL locations</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">class</span> ProfileImporter <span class="kw5">extends</span> TcpLink <span class="kw6">config</span><span class="br0">(</span>LadderProfiles<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">const</span> LOGTAG = <span class="st0">'ProfileImport'</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">enum</span> EImportResult</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_BadURL,&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Incorrect URL format</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; IMPORT_ResolveError,&#160; &#160; <span class="co1">// Couldn't resolve URL</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_BindError,&#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Couldn't bind port</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_InvalidProfile,&#160; <span class="co1">// File was not a profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_TimeOut,&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Timed out waiting</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_ServerError,&#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Unspecified Foreign Host Error</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; IMPORT_BadRequest,&#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Receieved 400 Error</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_Unauthorized,&#160; &#160; <span class="co1">// Receieved 401 Error</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_Forbidden,&#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Receieved 403 Error</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_NotFound,&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Receieved 404 Error</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; IMPORT_Success&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Profile Successfully Imported</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span> ImportResult;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">bool</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting;&#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">//Waiting for ImportResult</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw4">struct</span> ZipLocation</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">string</span> ProfileURL;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">string</span> ZipName;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">string</span> ZipURL;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> IpAddr&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ServerIP;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> LadderGameRules&#160; &#160; &#160;&#160; &#160; &#160; &#160; LadderRules;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> ProfileConfigSet&#160; &#160; RemoteProfile;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> LadderQuery&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; QueryPage;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> Session&#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> WebRequest&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; QueryRequest;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> WebResponse&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; QueryResponse;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Buffer;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Header;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span> &#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LF;&#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Line Feed</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CR;&#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Carriage Return</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token;&#160; <span class="co1">// Token Delimiter</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileServerAddress;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RemoteProfilePath;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Localized strings</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; BeginImportText;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Localized error messages</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorURLText;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorResolvingText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorBindingText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorTimeoutText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorFNFText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorBadRequestText;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorUnauthorizedText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorForbiddenText;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorNoSession;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; ErrorNoBuffer;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; BadImportURLText;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">config</span> array&lt;ZipLocation&gt;&#160; &#160;RemoteZips;&#160; &#160; &#160;<span class="co1">// Remote profile zips locations</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LF = <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; CR = <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">13</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Token = <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">21</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span>DeltaTime<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!bWaiting<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Finish importing profile data, let LadderQuery finish sending page</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; QueryPage.<span class="me1">RemoteImport</span><span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ErrorTimeoutText @ ProfileServerAddress,LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ImportResult = IMPORT_Timeout;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Manually close the connection since</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// we didn't receive a response</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Close<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Called from the Management Portal page</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> Connect<span class="br0">(</span><span class="kw4">string</span> ProfileURL, Session TempS<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> L, R;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; bWaiting = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> BeginImportText @ ProfileURL, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">Left</span><span class="br0">(</span>ProfileURL, <span class="nu0">7</span><span class="br0">)</span> ~= <span class="st0">"http://"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileServerAddress = ParseDelimited<span class="br0">(</span>ProfileURL,<span class="st0">"/"</span>,<span class="nu0">3</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorURLText @ <span class="st0">"<span class="es0">\"</span>http://<span class="es0">\"</span>!"</span>, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_BadURL;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ServerIP.<span class="me1">Port</span> = <span class="nu0">80</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>ProfileServerAddress, <span class="st0">":"</span><span class="br0">)</span>&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Divide</span><span class="br0">(</span>ProfileServerAddress, <span class="st0">":"</span>, L, R<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileServerAddress = L;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ServerIP.<span class="me1">Port</span> = <span class="kw4">int</span><span class="br0">(</span>R<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; RemoteProfilePath = <span class="st0">"/"</span> $ ParseDelimited<span class="br0">(</span>ProfileURL,<span class="st0">"/"</span>,<span class="nu0">4</span>,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Buffer = <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SetTimer<span class="br0">(</span><span class="nu0">20.0</span>, <span class="kw9">False</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ImportS = TempS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Resolve<span class="br0">(</span> ProfileServerAddress <span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> ResolveFailed<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorResolvingText @ ProfileServerAddress, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ImportResult = IMPORT_ResolveError;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">event</span> Resolved<span class="br0">(</span>IpAddr NumericIP<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span> NumericIP.<span class="me1">Addr</span> == <span class="nu0">0</span> <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorResolvingText @ ProfileServerAddress, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_ResolveError;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ServerIP.<span class="me1">Addr</span> = NumericIP.<span class="me1">Addr</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Bind the local port.</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span> BindPort<span class="br0">(</span><span class="br0">)</span> == <span class="nu0">0</span> <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorBindingText, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_BindError;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Everything went OK - proceed to open connection</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Open<span class="br0">(</span> ServerIP <span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> Opened<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>LinkMode&#160;!= MODE_Line<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LinkMode = MODE_Line;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SetTimer<span class="br0">(</span><span class="nu0">0.0</span>, <span class="kw9">False</span><span class="br0">)</span>;&#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Stop timeout counter</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="co1">// Check header of file first, to make sure it's a valid file</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; RequestFile<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Connection was closed by foreign host - Check header for response code</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">event</span> Closed<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Result;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// First find header and respond accordingly</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>SeperateHeaders<span class="br0">(</span>Buffer<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Result = ProcessHeaders<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_ServerError;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Result == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_ServerError;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;<span class="coMULTI">/* &#160; &#160;Possible Response Codes:</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160;&#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; "200" &#160;&#160;; OK</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "201" &#160;&#160;; Created</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "202" &#160;&#160;; Accepted</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">&#160; &#160; &#160; &#160; "204" &#160;&#160;; No Content</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "301" &#160;&#160;; Moved Permanently</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "302" &#160;&#160;; Moved Temporarily</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "304" &#160;&#160;; Not Modified</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "400" &#160;&#160;; Bad Request</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">&#160; &#160; &#160; &#160; "401" &#160;&#160;; Unauthorized</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "403" &#160;&#160;; Forbidden</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "404" &#160;&#160;; Not Found</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "500" &#160;&#160;; Internal Server Error</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "501" &#160;&#160;; Not Implemented</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">&#160; &#160; &#160; &#160; "502" &#160;&#160;; Bad Gateway</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">&#160; &#160; &#160; &#160; "503" &#160;&#160;; Service Unavailable</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">*/</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">switch</span> <span class="br0">(</span>Result<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"200"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Buffer should now only contain the actual document</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Fill ImportS from document info</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>FillSessionInfo<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_Success;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"400"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorBadRequestText, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_BadRequest;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"401"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorUnauthorizedText, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_Unauthorized;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"403"</span>:</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorForbiddenText, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_Forbidden;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">default</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorFNFText, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_NotFound;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">bool</span> FillSessionInfo<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Line;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Type;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Info;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> bValidProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Token1, Token2, Token3, Token4, Token5, Token6, Token7;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ImportS == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span> ErrorNoSession, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_ServerError;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Buffer == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ErrorNoBuffer, LOGTAG<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_ServerError;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Buffer,<span class="nu0">1</span><span class="br0">)</span> ~= CR<span class="br0">)</span> || <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Buffer,<span class="nu0">1</span><span class="br0">)</span> ~= LF<span class="br0">)</span> <span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Buffer = <span class="kw7">Mid</span><span class="br0">(</span>Buffer,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>ReadBufferedLine<span class="br0">(</span>Line<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Divide</span><span class="br0">(</span>Line,<span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">58</span><span class="br0">)</span>,Type,Info<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token1 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token2 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">2</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token3 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">3</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token4 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">4</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token5 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">5</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token6 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">6</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Token7 = ParseDelimited<span class="br0">(</span>Info,Token,<span class="nu0">7</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">switch</span> <span class="br0">(</span>Type<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"Profile"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"ProfileName"</span>,Token1,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"GameType"</span>,Token2,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"MaxMaps"</span>,Token3,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"GameName"</span>,Token4,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"ACClass"</span>,Token5,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Token6&#160;!= <span class="st0">""</span><span class="br0">)</span> ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"CustomGameLoc"</span>,Token6,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Token7&#160;!= <span class="st0">""</span><span class="br0">)</span> ImportS.<span class="me1">setValue</span><span class="br0">(</span><span class="st0">"CustomACLoc"</span>,Token7,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bValidProfile = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"Map"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setMap</span><span class="br0">(</span>Token1,<span class="kw4">int</span><span class="br0">(</span>Token2<span class="br0">)</span>,<span class="kw9">True</span>,<span class="kw4">bool</span><span class="br0">(</span>Token3<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Token4&#160;!= <span class="st0">""</span><span class="br0">)</span> AddRemoteZipLocation<span class="br0">(</span>Token1,Token4<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"Mutator"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setMutator</span><span class="br0">(</span>Token2,<span class="kw9">True</span>,<span class="kw4">bool</span><span class="br0">(</span>Token3<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Token4&#160;!= <span class="st0">""</span><span class="br0">)</span> AddRemoteZipLocation<span class="br0">(</span>Token2,Token4<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">case</span> <span class="st0">"Data"</span>:</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportS.<span class="me1">setValue</span><span class="br0">(</span>Token1,Token2,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bValidProfile<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ImportResult = IMPORT_InvalidProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> AddRemoteZipLocation<span class="br0">(</span><span class="kw4">string</span> PackageName, <span class="kw4">string</span> PackageLocation<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> ZipFound;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ZipLocation Zip;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>PackageName, <span class="st0">"."</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PackageName = <span class="kw7">Left</span><span class="br0">(</span>PackageName,i<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Zip.<span class="me1">ProfileURL</span> = ProfileServerAddress $ RemoteProfilePath;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Zip.<span class="me1">ZipName</span> = PackageName;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Zip.<span class="me1">ZipURL</span> = PackageLocation;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; RemoteZips.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>RemoteZips<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileURL</span> ~= Zip.<span class="me1">ProfileURL</span> &amp;&amp; RemoteZips<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ZipName</span> ~= Zip.<span class="me1">ZipName</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ZipFound = <span class="kw9">True</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ZipFound<span class="br0">)</span> RemoteZips<span class="br0">[</span>i<span class="br0">]</span> = Zip;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">else</span> RemoteZips<span class="br0">[</span>RemoteZips.<span class="kw6">Length</span><span class="br0">]</span> = Zip;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">string</span> FindRemoteZipLocation<span class="br0">(</span><span class="kw4">string</span> PackageName, <span class="kw4">string</span> ProfileURL, <span class="kw6">optional</span> <span class="kw4">bool</span> bAllowOtherLocations<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>PackageName, <span class="st0">"."</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i&#160;!= <span class="nu0">-1</span><span class="br0">)</span> PackageName = <span class="kw7">Left</span><span class="br0">(</span>PackageName,i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>;i &lt; RemoteZips.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>RemoteZips<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ZipName</span> ~= PackageName<span class="br0">)</span> &amp;&amp; <span class="br0">(</span><span class="br0">(</span>RemoteZips<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileURL</span> ~= ProfileURL<span class="br0">)</span> || <span class="br0">(</span>bAllowOtherLocations<span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> RemoteZips<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ZipURL</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> SeperateHeaders<span class="br0">(</span><span class="kw4">string</span> WebPage<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">//CR$LF$CR$LF seperates header and document</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>WebPage, CR$LF$CR$LF<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i == <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Header = <span class="kw7">Left</span><span class="br0">(</span>WebPage, i<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Buffer = <span class="kw7">Mid</span><span class="br0">(</span>WebPage, i + <span class="nu0">3</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">string</span> ProcessHeaders<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Header == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">//Remove all CR, leaving only LF</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Header = RemoveStr<span class="br0">(</span>Header,CR<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">//Parse Response Code from server, ex. HTTP/1.1 200 OK</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw7">Mid</span><span class="br0">(</span>ParseDelimited<span class="br0">(</span>Header,LF,<span class="nu0">1</span><span class="br0">)</span>,<span class="nu0">9</span>,<span class="nu0">3</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> ReceivedText<span class="br0">(</span><span class="kw4">string</span> Text<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Buffer = Buffer $ Text;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> ReceivedLine<span class="br0">(</span><span class="kw4">string</span> Line<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Result;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>SeperateHeaders<span class="br0">(</span>Line<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Result = ProcessHeaders<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Result == <span class="st0">"200"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Result = FindContentType<span class="br0">(</span>Line<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Result ~= <span class="st0">"text/plain"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RequestFile<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LinkMode = Mode_Text;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_InvalidProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ImportResult = IMPORT_NotFound;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaiting = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">string</span> FindContentType<span class="br0">(</span><span class="kw4">string</span> Text<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Lines;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Tmp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, j;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Buffer = Text;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>ReadBufferedLine<span class="br0">(</span>Tmp<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Lines<span class="br0">[</span>Lines.<span class="kw6">Length</span><span class="br0">]</span> = Tmp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Lines.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Lines<span class="br0">[</span>i<span class="br0">]</span>,<span class="nu0">13</span><span class="br0">)</span> ~= <span class="st0">"Content-Type:"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Tmp = <span class="kw7">Mid</span><span class="br0">(</span>Lines<span class="br0">[</span>i<span class="br0">]</span>,<span class="nu0">14</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="kw7">InStr</span><span class="br0">(</span>Tmp,<span class="st0">";"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &gt;= <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Tmp = <span class="kw7">Left</span><span class="br0">(</span>Tmp,j<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Tmp;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> RequestFile<span class="br0">(</span><span class="kw4">int</span> RequestType<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> RequestMethod, ControlText;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>RequestType == <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RequestMethod = <span class="st0">"HEAD"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ControlText = <span class="st0">"Keep-Alive"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RequestMethod = <span class="st0">"GET"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ControlText = <span class="st0">"close"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span>RequestMethod@RemoteProfilePath@<span class="st0">"HTTP/1.1"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"Host:"</span>@ProfileServerAddress<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"Accept: text/plain"</span><span class="br0">)</span>;&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Accept only plain txt files</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"User-agent: ProfileManager; UT2003"</span>@<span class="kw8">Level</span>.<span class="me1">EngineVersion</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"Pragma: no-cache"</span><span class="br0">)</span>;&#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Do not allow proxies to send cached information</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"Cache-control: no-cache"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">"Connection:"</span>@ControlText<span class="br0">)</span>;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// No further information to be sent</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; SendText<span class="br0">(</span><span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> ReadBufferedLine<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">string</span> Text<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>Buffer, LF<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span>i == <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>Buffer, i<span class="nu0">-1</span>, <span class="nu0">1</span><span class="br0">)</span> == CR<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Text = <span class="kw7">Left</span><span class="br0">(</span>Buffer, i<span class="nu0">-1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">else</span> Text = <span class="kw7">Left</span><span class="br0">(</span>Buffer, i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Buffer = <span class="kw7">Mid</span><span class="br0">(</span>Buffer, i<span class="nu0">+1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Copied from BufferedTcpLink</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">string</span> ParseDelimited<span class="br0">(</span><span class="kw4">string</span> Text, <span class="kw4">string</span> Delimiter, <span class="kw4">int</span> Count, <span class="kw6">optional</span> <span class="kw4">bool</span> bToEndOfLine<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Result;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> Found, i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> s;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Result = <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Found = <span class="nu0">1</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Len<span class="br0">(</span>Text<span class="br0">)</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; s = <span class="kw7">Mid</span><span class="br0">(</span>Text, i, <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>Delimiter, s<span class="br0">)</span>&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span>Found == Count<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span>bToEndOfLine<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> Result$Mid<span class="br0">(</span>Text, i<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> Result;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Found++;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span><span class="br0">(</span>Found &gt;= Count<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Result = Result $ s;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Result;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">string</span> RemoveStr<span class="br0">(</span><span class="kw4">string</span> Source,<span class="kw4">string</span> mask<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> <span class="kw7">left</span>,<span class="kw7">right</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>Source,mask<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>i&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Divide</span><span class="br0">(</span>Source,mask,<span class="kw7">left</span>,<span class="kw7">right</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Source = <span class="kw7">Left</span>$Right;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>Source,Mask<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Source;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+</ol>
+</div>
+</div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 323/2097152 bytes
+Template argument size: 267/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/r/o/Legacy%7EProfileImporter_6d85.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/r/o/Legacy_talk%7EProfileImporter_5da7.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:ProfileImporter">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 04:05, 18 February 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

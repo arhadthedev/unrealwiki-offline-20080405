@@ -1,0 +1,568 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Vehicles Pre2004/Passengers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Vehicles Pre2004/Passengers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/e/h/Legacy%7EVehicles_Pre2004_002d.html" title="Legacy:Vehicles Pre2004">Legacy:Vehicles Pre2004</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>Much of this is experimental code and needs a custom Controller class. Tested in multiplayer, the camera of the Passengers has the message "<code>viewing from ...</code>" I’ll look into that later. If you have any problems with this code, you should contact me at sneakeye_@hotmail.com</p>
+<p><a name="MyVehicle" id="MyVehicle"></a></p>
+<h3><span class="mw-headline">MyVehicle</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyVehicle <span class="kw5">extends</span> KVehicle;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">int</span>            MaxPassengers;  <span class="co1">//Number of Passengers (without driver)</span>
+<span class="kw5">var</span>    <a href="/Pawn"><span class="kw10">Pawn</span></a>              Passengers<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>;
+<span class="kw5">var</span>    Controller      PassengersControllers<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">bool</span>           bAllowDriver;
+ 
+<span class="kw5">function</span> TakeDamage<span class="br0">(</span><span class="kw4">int</span> Damage, <a href="/Pawn"><span class="kw10">Pawn</span></a> instigatedBy, <span class="kw4">Vector</span> hitlocation, 
+                                                <span class="kw4">Vector</span> momentum, class&lt;DamageType&gt; <a href="/DamageType"><span class="kw10">damageType</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">Local</span> <span class="kw4">int</span> i;
+ 
+        Health -= Damage;
+ 
+        <span class="co1">// The vehicle is dead!</span>
+        <span class="kw1">if</span><span class="br0">(</span>Health &lt;= <span class="nu0">0</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Controller != <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span><span class="br0">(</span> Controller.<span class="me1">bIsPlayer</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                ClientKDriverLeave<span class="br0">(</span>PlayerController<span class="br0">(</span>Controller<span class="br0">)</span><span class="br0">)</span>; <span class="co1">// Just to reset HUD etc.</span>
+                                Controller.<span class="me1">PawnDied</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>; <span class="co1">// This should unpossess the controller and let the player respawn</span>
+                        <span class="br0">}</span>
+                        <span class="kw1">else</span>
+                                Controller.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+                <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MaxPassengers;i++<span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> PassengersControllers<span class="br0">[</span>i<span class="br0">]</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                KPassengerLeave<span class="br0">(</span><span class="kw9">True</span>, MyPlayerController<span class="br0">(</span>PassengersControllers<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>; <span class="co1">// Just to reset HUD etc.</span>
+                                PassengersControllers<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PawnDied</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>; <span class="co1">// This should unpossess the controller and let the player respawn</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+                Destroy<span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Destroy the vehicle itself (see Destroyed below)</span>
+        <span class="br0">}</span>
+ 
+        <span class="co1">//KAddImpulse(momentum, hitlocation);</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Destroyed<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="co1">// If there where passengers in the vehicle, destroy them too</span>
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MaxPassengers;i++<span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Passengers<span class="br0">[</span>i<span class="br0">]</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        Passengers<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">Destroyed</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> TryToDrive<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Controller C;
+        C = p.<span class="me1">Controller</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Driver == <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>C != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; C.<span class="me1">bIsPlayer</span> &amp;&amp; !C.<span class="kw7">IsInState</span><span class="br0">(</span><span class="st0">'PlayerDriving'</span><span class="br0">)</span> &amp;&amp; p.<span class="me1">IsHumanControlled</span><span class="br0">(</span><span class="br0">)</span> &amp;&amp; bAllowDriver<span class="br0">)</span>
+        <span class="br0">{</span>
+                KDriverEnter<span class="br0">(</span>p<span class="br0">)</span>;
+        <span class="br0">}</span><span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>C != <span class="kw9">None</span> &amp;&amp; C.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'MyPlayerController'</span><span class="br0">)</span> &amp;&amp; !C.<span class="kw7">IsInState</span><span class="br0">(</span><span class="st0">'PlayerDriving'</span><span class="br0">)</span> &amp;&amp; p.<span class="me1">IsHumanControlled</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+                TryToPassenger<span class="br0">(</span>p<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> KDriverEnter<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">KDriverEnter</span><span class="br0">(</span>p<span class="br0">)</span>;
+        p.<span class="me1">bHidden</span> = <span class="kw9">True</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> KDriverLeave<span class="br0">(</span><span class="kw4">bool</span> bForceLeave<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> OldDriver;
+ 
+        OldDriver = Driver;
+ 
+        <span class="co1">// If we succesfully got out of the car, make driver visible again.</span>
+        <span class="kw1">if</span><span class="br0">(</span> <span class="kw6">Super</span>.<span class="me1">KDriverLeave</span><span class="br0">(</span>bForceLeave<span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                OldDriver.<span class="me1">bHidden</span> = <span class="kw9">false</span>;
+                <span class="kw1">return</span> <span class="kw9">true</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> TryToPassenger<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MaxPassengers;i++<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>Passengers<span class="br0">[</span>i<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        KPassengerEnter<span class="br0">(</span>p, i<span class="br0">)</span>;        <span class="co1">//Enter passenger</span>
+                        i = MaxPassengers;      <span class="co1">//Make sure not added as another passenger</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> ClientKPassengerEnter<span class="br0">(</span>PlayerController pc<span class="br0">)</span>
+<span class="br0">{</span>
+        pc.<span class="me1">myHUD</span>.<span class="me1">bCrosshairShow</span> = <span class="kw9">false</span>;
+        pc.<span class="me1">myHUD</span>.<span class="me1">bShowWeaponInfo</span> = <span class="kw9">false</span>;
+        <span class="co1">//pc.myHUD.bShowPersonalInfo = false;</span>
+        pc.<span class="me1">myHUD</span>.<span class="me1">bShowPoints</span> = <span class="kw9">false</span>;
+ 
+        pc.<span class="me1">bBehindView</span> = <span class="kw9">true</span>;
+        pc.<span class="me1">bFixedCamera</span> = <span class="kw9">false</span>;
+        pc.<span class="me1">bFreeCamera</span> = <span class="kw9">true</span>;
+ 
+        pc.<span class="me1">SetRotation</span><span class="br0">(</span><span class="kw4">rotator</span><span class="br0">(</span> <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">-1</span>, <span class="nu0">0</span>, <span class="nu0">0</span><span class="br0">)</span> &gt;&gt; Rotation <span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> KPassengerEnter<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p, <span class="kw4">int</span> i<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> MyPlayerController pc;
+ 
+        <span class="co1">//log("KVehicle KDriverEnter");</span>
+ 
+        <span class="co1">// Set pawns current controller to control the vehicle pawn instead</span>
+        Passengers<span class="br0">[</span>i<span class="br0">]</span> = p;
+ 
+        <span class="co1">// Move the driver into position, and attach to car.</span>
+        p.<span class="me1">SetCollision</span><span class="br0">(</span><span class="kw9">false</span>, <span class="kw9">false</span>, <span class="kw9">false</span><span class="br0">)</span>;
+        p.<span class="me1">bCollideWorld</span> = <span class="kw9">false</span>;
+        p.<span class="me1">bPhysicsAnimUpdate</span> = <span class="kw9">false</span>;
+        p.<span class="me1">Velocity</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+        p.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+        p.<span class="me1">SetBase</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+ 
+        pc = MyPlayerController<span class="br0">(</span>p.<span class="me1">Controller</span><span class="br0">)</span>;
+        <span class="co1">//pc.ClientSetBehindView(true);</span>
+        <span class="co1">//pc.ClientSetFixedCamera(false);</span>
+ 
+        <span class="co1">// Disconnect PlyaerController from Driver and connect to KVehicle.</span>
+        pc.<span class="me1">Unpossess</span><span class="br0">(</span><span class="br0">)</span>;
+        Passengers<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">SetOwner</span><span class="br0">(</span>pc<span class="br0">)</span>; <span class="co1">// This keeps the driver relevant.</span>
+        pc.<span class="me1">PossessPassenger</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+        PassengersControllers<span class="br0">[</span>i<span class="br0">]</span> = pc;
+ 
+        pc.<span class="me1">ClientSetViewTarget</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>; <span class="co1">// Set playercontroller to view the vehicle</span>
+ 
+        <span class="co1">// Change controller state to driver</span>
+        pc.<span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'PlayerPassenger'</span><span class="br0">)</span>;
+ 
+        ClientKPassengerEnter<span class="br0">(</span>pc<span class="br0">)</span>;
+ 
+        p.<span class="me1">bHidden</span> = <span class="kw9">True</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> ClientKPassengerLeave<span class="br0">(</span>PlayerController pc<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">//local vector exitLookDir;</span>
+ 
+        <span class="co1">//log("Leave: "$pc.Pawn);</span>
+ 
+        pc.<span class="me1">bBehindView</span> = <span class="kw9">false</span>;
+        pc.<span class="me1">bFixedCamera</span> = <span class="kw9">true</span>;
+        pc.<span class="me1">bFreeCamera</span> = <span class="kw9">false</span>;
+        <span class="co1">// This removes any 'roll' from the look direction.</span>
+        <span class="co1">//exitLookDir = Vector(pc.Rotation);</span>
+        <span class="co1">//pc.SetRotation(Rotator(exitLookDir));</span>
+ 
+        pc.<span class="me1">myHUD</span>.<span class="me1">bCrosshairShow</span> = pc.<span class="me1">myHUD</span>.<span class="kw1">default</span>.<span class="me1">bCrosshairShow</span>;
+        pc.<span class="me1">myHUD</span>.<span class="me1">bShowWeaponInfo</span> = pc.<span class="me1">myHUD</span>.<span class="kw1">default</span>.<span class="me1">bShowWeaponInfo</span>;
+        <span class="co1">//pc.myHUD.bShowPersonalInfo = pc.myHUD.default.bShowPersonalInfo;</span>
+        pc.<span class="me1">myHUD</span>.<span class="me1">bShowPoints</span> = pc.<span class="me1">myHUD</span>.<span class="kw1">default</span>.<span class="me1">bShowPoints</span>;
+ 
+        <span class="co1">// Reset the view-smoothing</span>
+        NextHistorySlot = <span class="nu0">0</span>;
+        bHistoryWarmup = <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// Called from the PlayerController when player wants to get out.</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> KPassengerLeave<span class="br0">(</span><span class="kw4">bool</span> bForceLeave, MyPlayerController pc<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i, PassengerNum;
+        <span class="kw5">local</span> <span class="kw4">bool</span> havePlaced;
+        <span class="kw5">local</span> <span class="kw4">vector</span> HitLocation, HitNormal, tryPlace;
+ 
+        PassengerNum = <span class="nu0">-1</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MaxPassengers;i++<span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span>PassengersControllers<span class="br0">[</span>i<span class="br0">]</span> == pc<span class="br0">)</span>
+                        PassengerNum = i;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>PassengerNum == <span class="nu0">-1</span><span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+        <span class="co1">// Before we can exit, we need to find a place to put the driver.</span>
+        <span class="co1">// Iterate over array of possible exit locations.</span>
+ 
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">bCollideWorld</span> = <span class="kw9">true</span>;
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetCollision</span><span class="br0">(</span><span class="kw9">true</span>, <span class="kw9">true</span>, <span class="kw9">true</span><span class="br0">)</span>;
+ 
+        havePlaced = <span class="kw9">false</span>;
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i &lt; ExitPositions.<span class="kw6">Length</span> &amp;&amp; havePlaced == <span class="kw9">false</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="co1">//Log("Trying Exit:"$i);</span>
+ 
+                tryPlace = Location + <span class="br0">(</span>ExitPositions<span class="br0">[</span>i<span class="br0">]</span> &gt;&gt; Rotation<span class="br0">)</span>;
+ 
+                <span class="co1">// First, do a line check (stops us passing through things on exit).</span>
+                <span class="kw1">if</span><span class="br0">(</span> Trace<span class="br0">(</span>HitLocation, HitNormal, tryPlace, Location, <span class="kw9">false</span><span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        <span class="kw1">continue</span>;
+ 
+                <span class="co1">// Then see if we can place the player there.</span>
+                <span class="kw1">if</span><span class="br0">(</span> !Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetLocation</span><span class="br0">(</span>tryPlace<span class="br0">)</span> <span class="br0">)</span>
+                        <span class="kw1">continue</span>;
+ 
+                havePlaced = <span class="kw9">true</span>;
+ 
+                <span class="co1">//Log("SUCCESS!");          </span>
+        <span class="br0">}</span>
+ 
+        <span class="co1">// If we could not find a place to put the driver, leave driver inside as before.</span>
+        <span class="kw1">if</span><span class="br0">(</span>!havePlaced &amp;&amp; !bForceLeave<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Could not place driver."</span><span class="br0">)</span>;
+ 
+                Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">bCollideWorld</span> = <span class="kw9">false</span>;
+                Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetCollision</span><span class="br0">(</span><span class="kw9">false</span>, <span class="kw9">false</span>, <span class="kw9">false</span><span class="br0">)</span>;
+ 
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="br0">}</span>
+ 
+        ClientKPassengerLeave<span class="br0">(</span>pc<span class="br0">)</span>;
+ 
+        <span class="co1">// Reconnect PlayerController to Driver.</span>
+        pc.<span class="me1">UnpossessPassenger</span><span class="br0">(</span><span class="br0">)</span>;
+        pc.<span class="me1">Possess</span><span class="br0">(</span>Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span><span class="br0">)</span>;
+ 
+        pc.<span class="me1">ClientSetViewTarget</span><span class="br0">(</span>Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span><span class="br0">)</span>; <span class="co1">// Set playercontroller to view the persone that got out</span>
+ 
+        PassengersControllers<span class="br0">[</span>PassengerNum<span class="br0">]</span> = <span class="kw9">None</span>;
+ 
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">PlayWaiting</span><span class="br0">(</span><span class="br0">)</span>;
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">bPhysicsAnimUpdate</span> = Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="kw1">Default</span>.<span class="me1">bPhysicsAnimUpdate</span>;
+ 
+        <span class="co1">// Do stuff on client</span>
+        <span class="co1">//pc.ClientSetBehindView(false);</span>
+        <span class="co1">//pc.ClientSetFixedCamera(true);</span>
+ 
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">Acceleration</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">24000</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">TouchingWaterVolume</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Swimming<span class="br0">)</span>;
+        <span class="br0">}</span><span class="kw1">else</span><span class="br0">{</span>
+                Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+        <span class="br0">}</span>
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">SetBase</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span>;
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span>.<span class="me1">bHidden</span> = <span class="kw9">False</span>;
+ 
+        <span class="co1">// Car now has no Passenger[Num]</span>
+        Passengers<span class="br0">[</span>PassengerNum<span class="br0">]</span> = <span class="kw9">None</span>;
+ 
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PossessedByPassenger<span class="br0">(</span>Controller C<span class="br0">)</span>
+<span class="br0">{</span>
+        NetPriority = <span class="nu0">3</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> C.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerController'</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_Standalone</span> <span class="br0">)</span>
+                        <span class="kw8">RemoteRole</span> = <span class="kw9">ROLE_AutonomousProxy</span>;
+                BecomeViewTarget<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+                <span class="kw8">RemoteRole</span> = <span class="kw1">Default</span>.<span class="kw8">RemoteRole</span>;
+ 
+<span class="co1">//    The real controller is already owner</span>
+<span class="co1">//    SetOwner(C);    // for network replication</span>
+        Eyeheight = BaseEyeHeight;
+        ChangeAnimation<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> deltaSeconds<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>bGetOut &amp;&amp; <span class="kw8">ROLE</span>==<span class="kw9">Role_Authority</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MaxPassengers;i++<span class="br0">)</span>
+                <span class="kw1">if</span><span class="br0">(</span>Passengers<span class="br0">[</span>i<span class="br0">]</span> != <span class="kw9">None</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        KPassengerLeave<span class="br0">(</span><span class="kw9">false</span>, MyPlayerController<span class="br0">(</span>PassengersControllers<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span>deltaSeconds<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">bool</span> SpecialCalcView<span class="br0">(</span><span class="kw6">out</span> <a href="/Actor"><span class="kw10">actor</span></a> ViewActor, <span class="kw6">out</span> <span class="kw4">vector</span> CameraLocation, <span class="kw6">out</span> <span class="kw4">rotator</span> CameraRotation <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">vector</span> CamLookAt, HitLocation, HitNormal;
+        <span class="kw5">local</span> <span class="kw4">int</span> i, averageOver;
+ 
+        ViewActor = <span class="kw8">self</span>;
+        CamLookAt = Location + <span class="br0">(</span><span class="kw4">vect</span><span class="br0">(</span><span class="nu0">-100</span>, <span class="nu0">0</span>, <span class="nu0">100</span><span class="br0">)</span> &gt;&gt; Rotation<span class="br0">)</span>; 
+ 
+        <span class="co1">//////////////////////////////////////////////////////</span>
+        <span class="co1">// Smooth lookat position over a few frames.</span>
+        CameraHistory<span class="br0">[</span>NextHistorySlot<span class="br0">]</span> = CamLookAt;
+        NextHistorySlot++;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>bHistoryWarmup<span class="br0">)</span>
+                averageOver = NextHistorySlot;
+        <span class="kw1">else</span>
+                averageOver = FilterFrames;
+ 
+        CamLookAt = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;averageOver; i++<span class="br0">)</span>
+                CamLookAt += CameraHistory<span class="br0">[</span>i<span class="br0">]</span>;
+ 
+        CamLookAt /= <span class="kw4">float</span><span class="br0">(</span>averageOver<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>NextHistorySlot == FilterFrames<span class="br0">)</span>
+        <span class="br0">{</span>
+                NextHistorySlot = <span class="nu0">0</span>;
+                bHistoryWarmup=<span class="kw9">false</span>;
+        <span class="br0">}</span>
+        <span class="co1">//////////////////////////////////////////////////////</span>
+ 
+        CameraLocation = CamLookAt + <span class="br0">(</span><span class="kw4">vect</span><span class="br0">(</span><span class="nu0">-600</span>, <span class="nu0">0</span>, <span class="nu0">0</span><span class="br0">)</span> &gt;&gt; CameraRotation<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> Trace<span class="br0">(</span> HitLocation, HitNormal, CameraLocation, CamLookAt, <span class="kw9">false</span>, <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">10</span>, <span class="nu0">10</span>, <span class="nu0">10</span><span class="br0">)</span> <span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                CameraLocation = HitLocation;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        MaxPassengers = <span class="nu0">1</span>;
+        bAllowDriver = <span class="kw9">True</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="MyPlayerController" id="MyPlayerController"></a></p>
+<h3><span class="mw-headline">MyPlayerController</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyPlayerController <span class="kw5">extends</span> xPlayer;
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> Destroyed<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="kw5">local</span> MyVehicle Vehicle;
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> Passenger;
+        <span class="co1">//Don't destroy driver if in vehicle, could also be passenger!</span>
+        <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'MyVehicle'</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">//Now you've done it, your in a vehicle</span>
+                <span class="br0">{</span>
+                        Vehicle = MyVehicle<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+                        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Vehicle.<span class="me1">MaxPassengers</span>;i++<span class="br0">)</span>    <span class="co1">//If find self in vehicle, throw out, and destroy the pawn.</span>
+                                <span class="kw1">if</span> <span class="br0">(</span>Vehicle.<span class="me1">PassengersControllers</span><span class="br0">[</span>i<span class="br0">]</span> == <span class="kw8">Self</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        Passenger = Vehicle.<span class="me1">Passengers</span><span class="br0">[</span>i<span class="br0">]</span>;
+                                        Vehicle.<span class="me1">KPassengerLeave</span><span class="br0">(</span><span class="kw9">true</span>, <span class="kw8">Self</span><span class="br0">)</span>; <span class="co1">// Force the driver out of the car</span>
+                                        Passenger.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+                                        <a href="/Pawn"><span class="kw10">Pawn</span></a> = <span class="kw9">None</span>;
+                                <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw6">Super</span>.<span class="me1">Destroyed</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// Possess a pawn</span>
+<span class="kw5">function</span> PossessPassenger<span class="br0">(</span>MyVehicle aPawn<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> PlayerReplicationInfo.<span class="me1">bOnlySpectator</span> <span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    SetRotation<span class="br0">(</span>aPawn.<span class="me1">Rotation</span><span class="br0">)</span>;
+    aPawn.<span class="me1">PossessedByPassenger</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    <a href="/Pawn"><span class="kw10">Pawn</span></a> = aPawn;
+    <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bStasis</span> = <span class="kw9">false</span>;
+    PlayerReplicationInfo.<span class="me1">bIsFemale</span> = <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bIsFemale</span>;
+    Restart<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// unpossessed a pawn (not because pawn was killed)</span>
+<span class="kw5">function</span> UnPossessPassenger<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        SetLocation<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> Viewtarget == <a href="/Pawn"><span class="kw10">Pawn</span></a> <span class="br0">)</span>
+            SetViewTarget<span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <a href="/Pawn"><span class="kw10">Pawn</span></a> = <span class="kw9">None</span>;
+    <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Spectating'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> PlayerPassenger
+<span class="br0">{</span>
+<span class="kw6">ignores</span> SeePlayer, HearNoise, Bump;
+ 
+        <span class="kw5">function</span> ProcessMove<span class="br0">(</span><span class="kw4">float</span> DeltaTime, <span class="kw4">vector</span> NewAccel, eDoubleClickDir DoubleClickMove, <span class="kw4">rotator</span> DeltaRot<span class="br0">)</span>
+        <span class="br0">{</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw6">exec</span> <span class="kw5">function</span> Fire<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">float</span> F<span class="br0">)</span>
+        <span class="br0">{</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw6">exec</span> <span class="kw5">function</span> AltFire<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">float</span> F<span class="br0">)</span>
+        <span class="br0">{</span>
+        <span class="br0">}</span>
+ 
+        <span class="co1">// Set the throttle, steering etc. for the vehicle based on the input provided</span>
+        <span class="kw5">function</span> ProcessDrive<span class="br0">(</span><span class="kw4">float</span> InForward, <span class="kw4">float</span> InStrafe, <span class="kw4">bool</span> InJump<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw5">local</span> MyVehicle DrivenVehicle;
+ 
+                DrivenVehicle = MyVehicle<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+ 
+                <span class="kw1">if</span><span class="br0">(</span>DrivenVehicle == <span class="kw9">None</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"PlayerPassenger.PlayerMove: No Vehicle"</span><span class="br0">)</span>;
+                        <span class="kw1">return</span>;
+                <span class="br0">}</span>
+ 
+                <span class="co1">// check for 'jump' to throw the driver out.</span>
+                <span class="kw1">if</span><span class="br0">(</span>InJump &amp;&amp; <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Passenger tries to leave"</span><span class="br0">)</span>;
+                        DrivenVehicle.<span class="me1">KPassengerLeave</span><span class="br0">(</span><span class="kw9">False</span>, <span class="kw8">Self</span><span class="br0">)</span>;
+                        <span class="kw1">return</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw5">function</span> PlayerMove<span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw5">local</span> KVehicle DrivenVehicle;
+ 
+                <span class="co1">// Only servers can actually do the driving logic.</span>
+                <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+                        ServerDrive<span class="br0">(</span>aForward, aStrafe, bPressedJump<span class="br0">)</span>;
+                <span class="kw1">else</span>
+                        ProcessDrive<span class="br0">(</span>aForward, aStrafe, bPressedJump<span class="br0">)</span>;
+ 
+                <span class="co1">// If the vehicle is being controlled here - set replicated variables.</span>
+                DrivenVehicle = KVehicle<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+ 
+                <span class="co1">// update 'looking' rotation - no affect on driving</span>
+                UpdateRotation<span class="br0">(</span>DeltaTime, <span class="nu0">2</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                CleanOutSavedMoves<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw5">function</span> <span class="kw7">EndState</span><span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                CleanOutSavedMoves<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>mosquito</b> What does the second one do? I looks like an extendion of the first</p>
+<p><b>Highlander:</b> First one is the actual code for the vehicle, second one looks like it handles the players inside the vehicle. (new controller class)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 27/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/e/h/Legacy%7EVehicles_Pre2004_Passengers_b86f.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/e/h/Legacy_talk%7EVehicles_Pre2004_Passengers_089a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Vehicles_Pre2004/Passengers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:07, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

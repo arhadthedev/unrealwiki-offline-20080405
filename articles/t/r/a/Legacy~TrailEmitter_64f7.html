@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:TrailEmitter - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:TrailEmitter</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_f021.html" title="Legacy:ParticleEmitter">ParticleEmitter</a> &gt;&gt; TrailEmitter</div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Description"><span class="tocnumber">1</span> <span class="toctext">Description</span></a>
+<ul>
+<li class="toclevel-2"><a href="#General"><span class="tocnumber">1.1</span> <span class="toctext">General</span></a></li>
+<li class="toclevel-2"><a href="#Particle_Life"><span class="tocnumber">1.2</span> <span class="toctext">Particle Life</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Description" id="Description"></a></p>
+<h2><span class="mw-headline">Description</span></h2>
+<p><a name="General" id="General"></a></p>
+<h3><span class="mw-headline">General</span></h3>
+<p>A Trail emitter is used when creating some sort of effect that 'follows' a specific object as it moves. The way the effect is accomplished is by taking the desired texture and stretching it to the desired length and then following the projectile at that given length untill the projectile is no longer flying.</p>
+<p>Additional effects are applied to the texture, ColorScale and SizeScale (see <a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_f021.html" title="Legacy:ParticleEmitter">ParticleEmitter</a>) are two you'll likely want to play with first.</p>
+<p>The behaviour of TrailEmitters in UT2003 and earlier builds behaves differently, however. Instead of trailing behind the Emitter, the trails are more like a thrown ball of toilet paper - the individual particle moves, and a trail follows IT - this means that the movement of the thing to be trailed has to be defined when the particle is created. The rest of the text on this page refers to TrailEmitters in UT2004 and later builds.</p>
+<p><a name="Particle_Life" id="Particle_Life"></a></p>
+<h3><span class="mw-headline">Particle Life</span></h3>
+<p>This is affected by a number of things. It would be best to think of each unit worth of trail to cost x points in the total trail length. Therefore when MaxPointsPerTrail is exceeded by x*(somedistance) the first point get's removed to make room for new points.</p>
+<p>Providing this does not come into play we have to deal with PointLifeTime and it's very similar cousin LifetimeRange. Both specify a specific amount of time that pieces of the trail exist. Therefore, the smaller value between these two variables is going to be the one that defines the life of your trail points.</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>var ETrailShadeType TrailShadeType&#160;</dt>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">enum</span> ETrailShadeType
+<span class="br0">{</span>
+        PTTST_None,                             <span class="co1">// Full particle color</span>
+        PTTST_RandomStatic,             <span class="co1">// particle color * random opacity set once</span>
+        PTTST_RandomDynamic,    <span class="co1">// particle color * random opacity, updated every tick</span>
+        PTTST_Linear,                   <span class="co1">// smooth linear fade out (begining = 100%, end = 0%)</span>
+        PTTST_PointLife                 <span class="co1">// linear fade relative to point's life</span>
+<span class="br0">}</span>;
+</pre></div>
+<dl>
+<dt>var ETrailLocation TrailLocation&#160;</dt>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">enum</span> ETrailLocation
+<span class="br0">{</span>
+        PTTL_AttachedToParticle,        <span class="co1">// Attached to Particle</span>
+        PTTL_FollowEmitter                      <span class="co1">// Attached to Particle, with added emitter's velocity</span>
+<span class="br0">}</span>;
+</pre></div>
+<dl>
+<dt>var int MaxPointsPerTrail&#160;</dt>
+<dd>This defines the 'complexity' of the emitter, the lower the value is, the smaller the MAXIMUM distance is from the projectile to the end of the trail.</dd>
+<dt>var float DistanceThreshold&#160;</dt>
+<dd>The maximum length of any given segment of the trail. If you set it to zero, the engine will hang.</dd>
+<dt>var it MaxTrailTwistAngle&#160;</dt>
+<dt>var float PointLifeTime&#160;</dt>
+<dd>This controls the amount of time *in seconds?* that pieces of the trail will stay visible. This is not an ultimate definition of the life of pieces of the trail, however.</dd>
+<dt>var bool UseCrossedSheets&#160;</dt>
+<dd>Although this is a guess, it looks like this applies the texture 2 times, one at a *rotation* 90 degrees from that of the first. This both makes the trail look a little more complex but increases overall trail brightness as well.</dd>
+<dt>var transient array&lt;ParticleTrailData&gt; TrailData&#160;</dt>
+<dt>var transient array&lt;ParticleTrailInfo&gt; TrailInfo&#160;</dt>
+<dt>var transient vertexbuffer VertexBuffer&#160;</dt>
+<dt>var transient indexbuffer IndexBuffer&#160;</dt>
+<dt>var transient int VerticesPerParticle&#160;</dt>
+<dt>var transient int IndicesPerParticle&#160;</dt>
+<dt>var transient int PrimitivesPerParticle&#160;</dt>
+</dl>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 171/2097152 bytes
+Template argument size: 115/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/a/Legacy%7ETrailEmitter_64f7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/a/Legacy_talk%7ETrailEmitter_987f.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:TrailEmitter">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:40, 13 October 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

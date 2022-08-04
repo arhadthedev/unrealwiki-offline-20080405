@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Working With Volumes - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Working With Volumes</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><b>Volumes</b> are a concept new to <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>. A <a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">Volume</a> defines an area of space whose properties, such as gravity, friction, and area level velocity (zone velocity in UT) can be altered from the level defaults. This approach has been taken because <a href="../../../../articles/z/o/n/Legacy%7EZone_Portal_e679.html" title="Legacy:Zone Portal">zone portals</a> are used far more to break up a level for performant rendering. Using zone portals to define things like water and areas of differing gravity was seen as a waste. Volumes may also be used to name areas of the map (e.g. Blue flag room, Red flag room).</p>
+<p><a href="../../../../articles/z/o/n/Legacy%7EZone_e5b7.html" title="Legacy:Zone">Zones</a> enclosed by <a href="../../../../articles/z/o/n/Legacy%7EZone_Portal_e679.html" title="Legacy:Zone Portal">zone portals</a> are still used within levels to enclose named areas (Blue base, Red base for example), and they are heavily used for level optimization (see also <a href="../../../../articles/a/n/t/Legacy%7EAntiportal_c9ef.html" title="Legacy:Antiportal">Antiportals</a>). The <a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a> class is still used to name areas enclosed by zone portals.</p>
+<p>A Volume can be any 3D shape, from a cube right through to a hollow cylinder. Making volumes overly complex should be avoided if possible as it will increase the load on the engine for no real benefit.</p>
+<p>Volumes may overlap into solid space (stick passed the edge of the world) without any adverse effects. However, if you want a volume within your level it must touch at least part of the subtracted space otherwise it will be discarded when the level is built. If you put antiportals in solid space, they will not go away when the level is built. Volumes also have a priority number assigned to them. This is used to determine which volume should take precedence should two volumes overlap.</p>
+<p>The properties of the Volume are applied to all objects contained within it. See <a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">Volume</a> for info on the class properties, subclasses, and events it recieves (such as entry and exit events).</p>
+<p><a name="Volume_Techniques" id="Volume_Techniques"></a></p>
+<h2><span class="mw-headline">Volume Techniques</span></h2>
+<ul>
+<li>Volumes can overlap. The volume with the higher priority is effective where they do.</li>
+</ul>
+<ul>
+<li>Volumes cannot be attached to movers unless you first set their bStatic property to false, which may cause problems in net play (see <a href="../../../../articles/a/t/t/Legacy%7EAttaching_Actors_cb6b.html" title="Legacy:Attaching Actors">Attaching Actors</a>).</li>
+</ul>
+<ul>
+<li>See <a href="../../../../articles/f/l/u/Legacy%7EFluid_Surfaces_5f88.html" title="Legacy:Fluid Surfaces">Fluid Surfaces</a> for how to set the texture a lava or water volume displays.</li>
+</ul>
+<ul>
+<li>You can associate an actor (a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>, for instance) with a Volume by connecting the Volume and the actor via the Volume's AssociatedActorTag and the actor's Event property. The associated actor gets Touch and UnTouch events when something enters or leaves the Volume. To do this, set the volume's AssociatedActor property to the Events -&gt; <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a> of the trigger to fire.</li>
+</ul>
+<ul>
+<li>Unlike zones, volumes don't fundamentally change the way the <a href="../../../../articles/b/s/p/Legacy%7EBSP_Tree_1b61.html" title="Legacy:BSP Tree">BSP tree</a> is built. Use zones for level optimization and volumes for effects.</li>
+</ul>
+<ul>
+<li>You can use a shape created in an external 3D editing application like Maya PLE as a volume by importing it as a static mesh, converting it to BSP, <a href="../../../../articles/i/n/t/Legacy%7EIntersect_03e9.html" title="Legacy:Intersect">intersecting</a> it and adding the intersected builder brush as a volume. Keep in mind though that you'll hardly ever need high-poly volumes in the first place.</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li>Basic procedure tutorial: <a href="../../../../articles/a/d/d/Legacy%7EAdd_A_Volume_a668.html" title="Legacy:Add A Volume">Add A Volume</a></li>
+</ul>
+<hr />
+<p>old discussion: please pick out info &amp; refactor</p>
+<p><b>EntropicLqd:</b> Please note that the above comments are speculative and based largely on the contents of the <a href="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636.html" class="external text" title="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636.html" rel="nofollow">UT modelling thread</a> over at polycount.</p>
+<p><b>the G.o.a.T:</b> <a href="../../../../articles/x/i/i/Legacy%7EXIIIEd_7e30.html" title="Legacy:XIIIEd">XIIIEd</a> has volumes. To be specific, it has these:</p>
+<ul>
+<li>LadderVolume</li>
+<li>PhysicsVolume</li>
+<li>Volume</li>
+<li>DefaultPhysicsVolume</li>
+<li>AudioTrigger</li>
+<li>BlockingVolume (allegedly used to make complex static meshes solid (e.g. those on slants or to give complex meshes simple collision boundaries). This has the effect of allowing players to travel through parts of a mesh. NOTE: Apparently the solidity of meshes is optional - some are, some are not. See Mapping_With_Static_Meshes for a bit more information.</li>
+<li>WaterVolume</li>
+<li>SixSenseForcedVolume</li>
+<li>LethalVolume</li>
+</ul>
+<p>So far I've only tested BlockingVolume and WaterVolume though&#160;;)</p>
+<p><b>DJPaul:</b> Explain how I add one.</p>
+<p><b>the G.o.a.T:</b> It's quite simple actually. Assume for example you want to add water somewhere. Make the <a href="../../../../articles/r/e/d/Legacy%7ERed_Builder_Brush_1934.html" title="Legacy:Red Builder Brush">red builder brush</a> take the general shape of what need to be filled with water. I used simple cubes in my test maps as they seem to cause no trouble in passing trough level-construct&#160;:). Click the button "Add Volume" -&gt; select WaterVolume. Done&#160;:)</p>
+<p>You'll have to add a <a href="../../../../articles/s/h/e/Legacy%7ESheet_cbf6.html" title="Legacy:Sheet">sheet</a> if you want the water to have a visible water-surface&#160;:/ A watervolume just contains the physics of water, nothing more.</p>
+<p><b>Birelli:</b> I noticed when I tried adding one it colored the sides of the area it was filling slightly blue. It made it look more like it was underwater. Does anyone know if this is an actual effect in the game or is it just a way for the Ed to show you you're in a volume?</p>
+<p><b>the G.o.a.T:</b> A watervolume might show up blueish due to the fact of the blue fogging they use in the water.</p>
+<p><b>Tarquin:</b> Is the old zoning method still possible? This is going to be such a pain with things like curved pipes. It's Quake1-style.</p>
+<p><b>EntropicLqd:</b> I have a source that claims that it is ... I've put the question to eepers on the Polycount message board so we'll see what he comes back with. He is a modelling/prefab guru by default btw. And indeed Tarquin - it is very reminiscient of Quake 1 mapping (oh the pain).</p>
+<p><b>the G.o.a.T:</b> Not without scripting. I found no <a href="../../../../articles/w/a/t/Legacy%7EWaterZone_bd8f.html" title="Legacy:WaterZone">WaterZone</a>Info in there. The only zone-actors in there are <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a>, SkyInfo and <a href="../../../../articles/w/a/r/Legacy%7EWarpZoneInfo_5de4.html" title="Legacy:WarpZoneInfo">WarpZoneInfo</a>.</p>
+<p><b>Mychaeel:</b> If you manage to have a hollow curved pipe, you obviously have the inside of that pipe as a shape already (de-/intersect). Using that as a base for a volume shouldn't be a problem. Never forget that we're still working with CSG here, not purely additive geometry like Quake does...</p>
+<p><b>Highlander:</b> And if this tube is a static mesh would it act like BSP that it uh.. "blocks" zones&#160;? (hmmm theres a thought do static meshes act as zone boundarys? ) so making a water pipe would be hard in that respect. You would need to model the static mesh, then create the water inside the static mesh as a volume.</p>
+<p><b>Tarquin:</b> Yes, I see – if architecture is made with static meshes, then that can't be divided up into zones – because they are a <a href="../../../../articles/b/s/p/Legacy%7EBSP_220f.html" title="Legacy:BSP">BSP</a> construction.</p>
+<p><b>Mychaeel:</b> Highlander: Static meshes don't work as zone portals; as tarquin says, only BSP does. (And since zones are much more heavily relied on for level optimization than ever before, "wasting" them for water effects and the like doesn't seem appropriate.)</p>
+<p><b>EntropicLqd:</b> Mychaeel - that may not be the case if your hollow pipe is actually constructed from a static mesh. You may then additionally have to add a "pipe shaped" BlockingVolume taking up the space of your pipe, and still have to "model" the pipe interior for your WaterVolume.</p>
+<p><b>Mychaeel:</b> That's right, but firstly you couldn't have used your static mesh pipe for zoning anyway and secondly you <i>can</i> convert static meshes to BSP, at least temporarily, deintersect to get your WaterVolume's shape and remove the temporary BSP afterwards again.</p>
+<p><b>SaxxonPike</b> Physics volumes are for defining gravity and other physics. I'm not quite sure about the DefaultPhysicsVolume thing yet.</p>
+<p><b>Highlander:</b> The Default Physics volume is the volume that controls the gravity etc when your not in a regular physics volume... it is the default settings.</p>
+<p><b>Ragdoll:</b> Ive found some very interesting uses for physics volumes. Say you have an open manhole cover and you want players that fall into it to die, simply add a physics volume (about 500 units in height is usually suffice) and set its "damagepersec" option (under physics volume) to 1000 or something. Also very useful if you have a tank of acid that should slowly degrade the health of players who fall in, you can make a physics volume the same size as the water volume and set the damge per sec to 20 or something, depending on how quickly you want them to die.</p>
+<p><b>Wormbo:</b> A <a href="../../../../articles/w/a/t/Legacy%7EWaterVolume_bd5c.html" title="Legacy:WaterVolume">WaterVolume</a> already is a subclass of <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolume</a>, so why add two things of the same kind if one can do the trick as well? You can even use that WaterVolume to give the tank's inside area a location name and trigger an event when a player enters it.</p>
+<p><b>Ragdoll:</b> Ok thanks for that, im sure it will come in very handy (open holes in the ground are always a laugh in multiplayer, so are tanks of acid)</p>
+<hr />
+<p><b>KungFu Hampster:</b> Can someone who knows how to track playerposition using volumes please post some info on this? I've found a lack of info out there about this and I've had a heck of a time figureing it out. I'm sure there are other people who are having the same problem.</p>
+<p><b>Solid Snake:</b> Boo hoo, so what if there is NO info on this. All you do is add a pawn to an array, and then do log the changes to its location. Surely it can't be *that* hard.</p>
+<p><b>KungFu Hampster:</b> It becomes more difficult when you want to track the location and have something appear that diplays the player location on the HUD</p>
+<p><b>KungFu Hampster:</b> I've just written a bsic tutorial on using a <a href="../../../../articles/c/a/p/Legacy%7ECaptureVolume_0d61.html" title="Legacy:CaptureVolume">CaptureVolume</a>. Click the link ta check it out!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 3/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/o/r/Legacy%7EWorking_With_Volumes_57cd.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/o/r/Legacy_talk%7EWorking_With_Volumes_be1d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Working_With_Volumes">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:33, 7 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

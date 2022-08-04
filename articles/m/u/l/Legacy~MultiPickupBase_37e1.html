@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MultiPickupBase - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MultiPickupBase</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/x/p/i/Legacy%7EXPickUpBase_4761.html" title="Legacy:XPickUpBase">xPickUpBase</a> &gt;&gt; MultiPickupBase (Package: MultiPickup)</div>
+<p>The MultiPickupBase is an <a href="../../../../articles/x/p/i/Legacy%7EXPickUpBase_4761.html" title="Legacy:XPickUpBase">xPickUpBase</a> subclass similar to the <a href="../../../../articles/w/i/l/Legacy%7EWildcardBase_d603.html" title="Legacy:WildcardBase">WildcardBase</a> which can spawn different types of <a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">pickups</a>.</p>
+<p>It was made for Chaos UT 2: Evolution by <a href="../../../../articles/w/o/r/Legacy%7EWormbo_2470.html" title="Legacy:Wormbo">Wormbo</a> to replace the limited <a href="../../../../articles/m/u/l/Legacy%7EMultiItem_a330.html" title="Legacy:MultiItem">MultiItem</a> used in the UT version and add features similar to those available in the <a href="../../../../articles/e/n/h/Legacy%7EEnhancedItems_d000.html" title="Legacy:EnhancedItems">MultiPickupPlus</a> class. All pickup types are supported and you can add as many as you like.</p>
+<p>By default the first pickups is selected randomly, but you can also specify one of the pickups in the list. A new pickup will always be spawned after the current one has been picked up (after that pickup's RespawnTime), but you can also enable respawning after a certain time interval. In this case every pickup can have its own interval or use the default interval. The pickups can either be spawned in sequential or random order. In random order every pickup can have different chances to spawn. Pickups with a higher rating will spawn more often than those with a lower rating.</p>
+<p>The MultiPickupBase is designed to work when placed in a map and when created by a mutator. See <i>Using the MultiPickupBase In A Mutator</i> below.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Download"><span class="tocnumber">1</span> <span class="toctext">Download</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#PickUpBase_Group_.28inherited_from_xPickUpBase.29"><span class="tocnumber">2.1</span> <span class="toctext">PickUpBase Group (inherited from xPickUpBase)</span></a></li>
+<li class="toclevel-2"><a href="#MultiPickupBase_Group"><span class="tocnumber">2.2</span> <span class="toctext">MultiPickupBase Group</span></a></li>
+<li class="toclevel-2"><a href="#Internal_Variables"><span class="tocnumber">2.3</span> <span class="toctext">Internal Variables</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Structs"><span class="tocnumber">3</span> <span class="toctext">Structs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#PickupType"><span class="tocnumber">3.1</span> <span class="toctext">PickupType</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Methods"><span class="tocnumber">4</span> <span class="toctext">Methods</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Static_Methods"><span class="tocnumber">4.1</span> <span class="toctext">Static Methods</span></a></li>
+<li class="toclevel-2"><a href="#Public_Methods"><span class="tocnumber">4.2</span> <span class="toctext">Public Methods</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Using_the_MultiPickupBase"><span class="tocnumber">5</span> <span class="toctext">Using the MultiPickupBase</span></a>
+<ul>
+<li class="toclevel-2"><a href="#...in_a_Map"><span class="tocnumber">5.1</span> <span class="toctext">...in a Map</span></a></li>
+<li class="toclevel-2"><a href="#...in_a_Mutator"><span class="tocnumber">5.2</span> <span class="toctext">...in a Mutator</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">6</span> <span class="toctext">Known Subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">7</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Download" id="Download"></a></p>
+<h2><span class="mw-headline">Download</span></h2>
+<p>Just extract the files to your UT2003\System directory and you're ready to use it.</p>
+<p><a href="http://www.koehler-homepage.de/Wormbo/downloads/UT2003/MultiPickup.zip" class="external free" title="http://www.koehler-homepage.de/Wormbo/downloads/UT2003/MultiPickup.zip" rel="nofollow">http://www.koehler-homepage.de/Wormbo/downloads/UT2003/MultiPickup.zip</a> (15 kB)</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p><a name="PickUpBase_Group_.28inherited_from_xPickUpBase.29" id="PickUpBase_Group_.28inherited_from_xPickUpBase.29"></a></p>
+<h3><span class="mw-headline">PickUpBase Group (inherited from <a href="../../../../articles/x/p/i/Legacy%7EXPickUpBase_4761.html" title="Legacy:XPickUpBase">xPickUpBase</a>)</span></h3>
+<dl>
+<dt>class&lt;<a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a>&gt; PowerUp&#160;</dt>
+<dd>The initial value of this property is not used by the MultiPickupBase.</dd>
+<dt>float SpawnHeight&#160;</dt>
+<dd>With bNoVisibleBase=False pickups are spawned this distance above the pickup base. With bNoVisibleBase=True pickups are spawned this distance <i>plus their CollisionHeight</i> above the base.</dd>
+<dt>class&lt;<a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a>&gt; SpiralEmitter&#160;</dt>
+<dd>This emitter is spawned for the pickup base unless bNoVisibleBase is set to True.</dd>
+</dl>
+<p><a name="MultiPickupBase_Group" id="MultiPickupBase_Group"></a></p>
+<h3><span class="mw-headline">MultiPickupBase Group</span></h3>
+<dl>
+<dt>bool bAllowReset&#160;</dt>
+<dd>Advanced. Allows the gametype to reset the MultiPickupBase to its initial state when it resets the map.</dd>
+<dt>bool bChangeOnlyOnPickup (protected)&#160;</dt>
+<dd>Setting this to True will cause a behavior similar to the WildcardBase: A new pickup will only be spawned after the previous one was picked up. Setting it to False means that the pickup will be replaced after a certain amount of time if it didn't get picked up.</dd>
+<dt>bool bNoVisibleBase&#160;</dt>
+<dd>Hides the MultiPickupBase. Setting this to true causes the MultiPickupBase to be invisible and the SpiralEmitter will not be used. Also SpawnHeight works a bit differently. (see above)</dd>
+<dt>bool bRandomAfterPickup&#160;</dt>
+<dd>If set to True this will override the bSequential property if the previous pickup was picked up by a player. The next pickup will be selected randomly then. Using this only makes sense when bChangeOnlyOnPickup is set to False.</dd>
+<dt>bool bSequential&#160;</dt>
+<dd>This specifies whether new pickups should be spawned in the order they were listed. This doesn't affect the first pickup spawned.</dd>
+<dt>bool bTriggerable&#160;</dt>
+<dd>Allows the mapper to trigger this MultiPickupBase. It will spawn a new pickup when triggered, regardless whether the previous pickup is still there (that pickup will be removed first) or was picked up.</dd>
+<dt>float DefaultDuration&#160;</dt>
+<dd>The default duration for each pickup to stay around before another pickup is spawned. This has no effect if bChangeOnlyOnPickup is set to True.</dd>
+<dt>float DefaultSpawnRating&#160;</dt>
+<dd>The default spawn rating for each pickup. This will affect both the random initial pickup selection and the random selection after pickup or timeout.</dd>
+<dt>array&lt;PickupType&gt; PickupTypes&#160;</dt>
+<dd>Contains a list of pickups to spawn. You can set the PickupClass, Duration and SpawnRating for each pickup in the list. Both Duration and SpawnRating can be set to 0 to use the default duration or spawn rating respectively. See PickupType struct below.</dd>
+<dt>class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; RespawnEffectClass&#160;</dt>
+<dd>This Actor will be spawned right before a new pickup is spawned. The default is UT2003's default respawn effect for pickups.</dd>
+<dt>float RespawnEffectTime&#160;</dt>
+<dd>After spawning the respawn effect the MultiPickupBase will wait for this amount of time to pass before actually spawning the pickup.</dd>
+<dt>int StartingItem&#160;</dt>
+<dd>Specifies, which pickup from the list is spawned when the map starts. Setting this to a negative value will randomly select a pickup from the list.</dd>
+</dl>
+<p><a name="Internal_Variables" id="Internal_Variables"></a></p>
+<h3><span class="mw-headline">Internal Variables</span></h3>
+<dl>
+<dt>float AdditionalRespawnWait (protected)&#160;</dt>
+<dd>Used to store the remaining sleeping time of the old pickup if it is in Sleeping state when it should be replaced.</dd>
+<dt>bool bDebugMode (localized)&#160;</dt>
+<dd>The MultiPickupBase has a built-in debug mode which causes log file output for its more important functionality. To enable this mode simply create or open the file MultiPickup.int in your UT2003\System directory and put the following two lines in it:</dd>
+</dl>
+<p>[MultiPickupBase] bDebugMode=True</p>
+<dl>
+<dt>bool bInitialized (protected)&#160;</dt>
+<dd>Whether the first pickup was spawned.</dd>
+<dt>bool bWasPickedUp (protected)&#160;</dt>
+<dd>Set to true if the pickup should be replaced but was picked up already.</dd>
+<dt>int CurrentClass (protected)&#160;</dt>
+<dd>Currently selected pickup list index.</dd>
+<dt>int NumClasses (protected)&#160;</dt>
+<dd>Number of classes in the pickup list.</dd>
+<dt><a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a> oldPickup (protected)&#160;</dt>
+<dd>Temporary reference to the old pickup before it gets destroyed.</dd>
+</dl>
+<p><a name="Structs" id="Structs"></a></p>
+<h2><span class="mw-headline">Structs</span></h2>
+<p><a name="PickupType" id="PickupType"></a></p>
+<h3><span class="mw-headline">PickupType</span></h3>
+<dl>
+<dt>float Duration&#160;</dt>
+<dd>This specifies the duration in seconds the pickup stays available before it is replaced by another pickup if the MultiPickupBase is in "timed pickup change" mode. (bChangeOnlyOnPickup = False) Leave this 0 to use the DefaultDuration.</dd>
+<dt>class&lt;<a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a>&gt; PickupClass&#160;</dt>
+<dd>The Pickup class to spawn.</dd>
+<dt>float SpawnRating&#160;</dt>
+<dd>A value greater than 0 that specifies, how often the pickup should be selected. A higher value (relative to the SpawnRatings of other pickups) means "spawn more often". Set this to 0 to use the DefaultSpawnRating.</dd>
+</dl>
+<p><a name="Methods" id="Methods"></a></p>
+<h2><span class="mw-headline">Methods</span></h2>
+<p><a name="Static_Methods" id="Static_Methods"></a></p>
+<h3><span class="mw-headline">Static Methods</span></h3>
+<p>These functions are designed to be called from other classes, e.g. <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutators</a>, to create a new MultiPickupBase.</p>
+<dl>
+<dt>MultiPickupBase ConvertToMPB (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Other, optional string MPBClassName) [final]&#160;</dt>
+<dd>Takes a Pickup or xPickupBase actor and converts it into a MultiPickupBase, which is returned. If the name of a MultiPickupBase class is specified, then that MultiPickupBase class is spawned and the original Pickup or the content of the xPickupBase is added to the new MultiPickupBase. This also works with a WildcardBase.<br />
+If no MultiPickupBase class is specified, then a MultiPickup.xMultiPickupBase is spawned.</dd>
+<dt>MultiPickupBase ReplaceWithMPB (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Other, optional string MPBClassName) [final]&#160;</dt>
+<dd>Takes a Pickup or xPickupBase actor and replaces it with a MultiPickupBase, which is returned. If the name of a MultiPickupBase class is specified, then that MultiPickupBase class is spawned, otherwise a MultiPickup.xMultiPickupBase is spawned.<br />
+If no MultiPickupBase class is specified, then a MultiPickup.xMultiPickupBase is spawned.</dd>
+</dl>
+<p><a name="Public_Methods" id="Public_Methods"></a></p>
+<h3><span class="mw-headline">Public Methods</span></h3>
+<dl>
+<dt>bool AddPickup (coerce string NewClassName, optional float NewDuration, optional float NewRating)&#160;</dt>
+<dd>Adds an item to this MultiPickupBase. A new item will only be added if it isn't present in the list.<br />
+Returns true if the item already was in the list or was added successfully. (Used by mutators.)</dd>
+<dt>bool ItemIsIn (class&lt;<a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a>&gt; TestClass)&#160;</dt>
+<dd>Returns, whether a pickup class is already in this MultiPickupBase's list. Can be used by mutators to prevent adding items twice.</dd>
+<dt>SetChangeOnlyOnPickup (bool bNewChangeMode)<br />
+bool GetChangeOnlyOnPickup ( )&#160;</dt>
+<dd>Accessor methods for bChangeOnlyOnPickup.</dd>
+<dt>Trigger (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Other, <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> EventInstigator)&#160;</dt>
+<dd>Inherited from <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>. The MultiPickupBase can be triggered to immediately spawn a new pickup.</dd>
+<dt>Reset ( )&#160;</dt>
+<dd>Inherited from <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>. Resets the MultiPickupBase to its initial state.</dd>
+</dl>
+<p><a name="Using_the_MultiPickupBase" id="Using_the_MultiPickupBase"></a></p>
+<h2><span class="mw-headline">Using the MultiPickupBase</span></h2>
+<p><a name="...in_a_Map"></a></p>
+<h3><span class="mw-headline">...in a Map</span></h3>
+<p>First make sure the MultiPickup package is loaded by either adding it to the EditPackage list in UT2003.ini or by manualy loading MultiPickup.u from the <a href="../../../../articles/a/c/t/Legacy%7EActor_Classes_eb42.html" class="mw-redirect" title="Legacy:Actor Classes">Actor Classes</a> browser.</p>
+<p>To use MultiPickupBase just place it in the map like you would place any other pickup base. Unlike the <a href="../../../../articles/w/i/l/Legacy%7EWildcardBase_d603.html" title="Legacy:WildcardBase">WildcardBase</a> a MultiPickupBase initialy doesn't have any pickups in its list, so open its <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_0115.html" class="mw-redirect" title="Legacy:Actor Properties">Actor Properties</a> and go to the MultiPickupBase group to add pickups and change other options.</p>
+<p><a name="...in_a_Mutator"></a></p>
+<h3><span class="mw-headline">...in a Mutator</span></h3>
+<p>MultiPickupBases have their bStatic property set to true, i.e. they can't be spawned from a mutator. The MultiPickup package offers a special notplaceable subclass (xMultiPickupBase) with bStatic set to false which can be spawned from mutators, but won't work if directly placed in a map.</p>
+<p>You should extract the MultiPickup package's source code and have a look at the MPBMutator class. The functions CheckPickupBase and CheckPickup illustrate the usage of basic features of the MultiPickupBase class. You can see that the MultiPickupBase can also be used for pickups that didn't have a pickup base.</p>
+<p>To test the MPBMutator just create or open the file MultiPickup.int in your UT2003\System directory and add</p>
+<pre>
+[Public]
+Object=(Class=Class,MetaClass=Engine.Mutator,Name=MultiPickup.MPBMutator)
+</pre>
+<p>to make the mutator appear in the mutator list. It will change three things:</p>
+<ul>
+<li>Add the Redeemer to the pickup base spawning the Ion Painter</li>
+<li>Minigun ammo and grenade ammo will both spawn at both pickups' locations</li>
+<li>The Shock Rifle will also spawn at the Link Gun's location (to demonstrate WeaponsStay behavior)</li>
+</ul>
+<p>You might want to enable the MultiPickupBase's debug mode when making mods using the MultiPickupBase to get additional information about what's going on.</p>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li>xMultiPickupBase (only used for mutators)</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/h/i/Legacy%7EThird-Party_Components_8ca4.html" title="Legacy:Third-Party Components">Third-Party Components</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 33/1000000
+Post-expand include size: 202/2097152 bytes
+Template argument size: 131/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2003%29_8e02.html" title="Category:Legacy Custom Class (UT2003)">Legacy Custom Class (UT2003)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/u/l/Legacy%7EMultiPickupBase_37e1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/u/l/Legacy_talk%7EMultiPickupBase_7b31.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MultiPickupBase">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 16:51, 19 November 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

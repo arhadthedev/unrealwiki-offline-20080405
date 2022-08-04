@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:3ds2unr - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:3ds2unr</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page follows on from where the <a href="../../../../articles/3/d/_/Legacy%7E3D_Studio_Max_Weapon_Modeling_And_Import_d18f.html" title="Legacy:3D Studio Max Weapon Modeling And Import">3D Studio Max Weapon Modeling And Import</a> tutorial ends.</p>
+<p><a name="Download" id="Download"></a></p>
+<h3><span class="mw-headline">Download</span></h3>
+<p><a href="http://unreal.epicgames.com/Files/3ds2unr.zip" class="external text" title="http://unreal.epicgames.com/Files/3ds2unr.zip" rel="nofollow">Latest version of 3ds2unr (119)</a></p>
+<p><a name="HowTo" id="HowTo"></a></p>
+<h3><span class="mw-headline">HowTo</span></h3>
+<p>Once you have the *.3ds files ready (from the above tutorial) place them all into a new empty directory. Copy the 3ds2unr.exe file into the same directory.</p>
+<p>Now you need to decide on what your output file will be called. For my grenade weapon first person view I used grenadefp which is what I will continue using here.</p>
+<p>The 3ds files I ended up with after animation and export were:</p>
+<ul>
+<li>sel_desel.3ds - the de-select/select animation</li>
+<li>pinpull_fire.3ds - animation for pulling the pin and then throwing</li>
+</ul>
+<p>That was it actually. You might have more. My pin pull and fire were in the same file because at the end of the pin pull the arm is drawn back for the throw and not in the rest position so I thought it was simpler this way.</p>
+<p>Open up a DOS box, cd to your new directory that contains 3ds2unr and type in the following command:</p>
+<pre>
+3ds2unr.exe grenadefp sel_desel.3ds pinpull_fire.3ds
+</pre>
+<p>Replacing the command arguments with your output name and input 3ds files.</p>
+<p>If this is the first time you have run 3ds2unr it will prompt you for a project directory. I selected the directory in which we currently were (where 3ds2unr was). If this is not the first time you have run the util it will carry on with whatever setting it was originally given. This is OK if you know where it is but you do have the option of redefining it by typing the following command:</p>
+<pre>
+3ds2unr.exe -setproj
+</pre>
+<p>Assuming this is the first time the utility has been run it will create 2 sub-directories in the project directory (does it or do you have to manually create them? It was all of yesterday I did this):</p>
+<ul>
+<li>Classes</li>
+<li>Models</li>
+</ul>
+<p>If there were no problems with the conversion you will find, after the utility has completed, a new *.uc file in the classes directory, and new *_d.3d and *_a.3d files in the Models directory. In my case I had a grenadefp.uc, grenadefp_d.3d and grenade_a.3d files.</p>
+<p>You have now finished with 3ds2unr.</p>
+<p>If you get an error that you don't understand or want to learn how to use transparent/two-sided object materials etc. then the easiest thing is to read the .DOC file that comes with the 3ds2unr download above. It contains a lot of good information on model/material restrictions and advice on how to achieve different effects.</p>
+<p><a name="What_Now" id="What_Now"></a></p>
+<h3><span class="mw-headline">What Now</span></h3>
+<p>Once you have the output files it's time to get them into the game. Since my 3ds2unr project directory was nowhere near my UT directory I manually copied the model files into the Models sub-directory of my mods package directory under UT. You will then also need to copy the texture files you used in Max into your models directory. (make sure they are 8bit colour depth and are a power of 2 in resolution - 128*128 or 128*256 or 256*256 etc)</p>
+<p>Then open the generated .uc file in notepad and copied all of the #<a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">exec directive</a> statements that this contained and paste them at the top of your new weapon class.</p>
+<p>The first thing you will need to change is the texture import lines. Example code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=Jgrenade FILE=MODELS\hand.<span class="me1">bmp</span> GROUP=Skins FLAGS=<span class="nu0">2</span> <span class="co1">// skins</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=Jgrenade1 FILE=MODELS\grenbody.<span class="me1">bmp</span> GROUP=Skins FLAGS=<span class="nu0">2</span> <span class="co1">// skins</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=Jgrenade2 FILE=MODELS\grenarm.<span class="me1">bmp</span> GROUP=Skins FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> MESHMAP <span class="kw6">NEW</span>   MESHMAP=grenadehn MESH=grenadehn
+<span class="kw2">#exec</span> MESHMAP <span class="kw4">SCALE</span> MESHMAP=grenadehn X=<span class="nu0">0.1</span> Y=<span class="nu0">0.1</span> Z=<span class="nu0">0.2</span>
+ 
+<span class="kw2">#exec</span> MESHMAP SETTEXTURE MESHMAP=grenadehn NUM=<span class="nu0">1</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a>=Jgrenade
+<span class="kw2">#exec</span> MESHMAP SETTEXTURE MESHMAP=grenadehn NUM=<span class="nu0">2</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a>=Jgrenade1
+<span class="kw2">#exec</span> MESHMAP SETTEXTURE MESHMAP=grenadehn NUM=<span class="nu0">3</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a>=Jgrenade2
+</pre></div>
+<p>The TEXTURE IMPORT lines will contain texture files that dont exist. Replace the FILE setting with the correct bitmap or pcx file name.</p>
+<p>Ensure that in the SETTEXTURE lines that the correct texture is set to the correct NUM value. The NUM value refers to the material ID of the polys in your scene. So for example my arm models all have material ID of 1. My grenade body and ring pull have material ID 2 and the grenade arm has a material ID of 3 (done this way to allow a 2 sided material for the grenade arm)</p>
+<p>Next, you may need to change is the placement and orientation of the model. The line for this on my model ended up like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH ORIGIN MESH=grenadehn X=<span class="nu0">100</span> Y=<span class="nu0">0</span> Z=<span class="nu0">70</span> YAW=<span class="nu0">128</span>
+</pre></div>
+<p>The origin (X=100 Y=0 Z=70) tells unreal where on the screen the model will appear (X is into the screen, Y is left/right and Z is up/down). Play with the numbers until it looks right. YAW, PITCH and ROLL can also be defined to rotate the model as required (128 is equivalent to 180deg). My model was facing the wrong way initially.</p>
+<p>You will also find that the model may be too small or too large on import. To modify this add (or modify) the line</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PlayerViewScale=<span class="nu0">0.4</span>
+</pre></div>
+<p>in the default properties of the class. A value of 1 keeps the model dimensions as they are. Smaller numbers reduce the size...</p>
+<p>It can take quite some time to get the model exactly as you want it on screen.</p>
+<p>One thing to be careful of is numbers used for the origin. If the model gets moved away too far from the players point of view it will start to clip into walls when you get close.</p>
+<p>Next come the animation sequences.</p>
+<p>My final code looked like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=All STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">59</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=down STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">11</span> rate=<span class="nu0">6</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=select STARTFRAME=<span class="nu0">10</span> NUMFRAMES=<span class="nu0">11</span> rate=<span class="nu0">6</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=still STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=idle STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=loading STARTFRAME=<span class="nu0">21</span> NUMFRAMES=<span class="nu0">21</span> rate=<span class="nu0">8</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=fire STARTFRAME=<span class="nu0">41</span> NUMFRAMES=<span class="nu0">8</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=grenadehn SEQ=downempty STARTFRAME=<span class="nu0">48</span> NUMFRAMES=<span class="nu0">11</span> rate=<span class="nu0">6</span>
+</pre></div>
+<p>The ALL sequence should be done for you. You will need to list out all the other animation sequences specifying the exact frame they start on and how many frames they last. The RATE keyword at the end of some of the lines allows you to speed up or slow down the animation. You will need to play with it until it feels right.</p>
+<p>Finally, write the code to call the animations and make your weapon work&#160;:)</p>
+<p>One last thing. The above code assumes a right handed weapon. Once you have this finished you can copy all of the #exec statements and paste them below the originals. All you have to do is change the MESH IMPORT MESH line so that it has unmirror=1 at the end. i.e.:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH <span class="kw6">IMPORT</span> MESH=grenadehn ANIVFILE=MODELS\grenfp_a.3d DATAFILE=MODELS\grenfp_d.3d X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span> unmirror=<span class="nu0">1</span>
+</pre></div>
+<p>Then replace all occurances of the mesh name (grenadehn here) with a different name (I used grenadehnl). You can also remove the TEXTURE IMPORT lines since we have already imported the required textures.</p>
+<p>Now for an annoying bit. After getting everything spot on for the right hand view you may find that left hand view is out. Again it is just a question of playing with the origin of the mesh and <b>also</b> the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PlayerViewOffset=<span class="br0">(</span>X=<span class="nu0">1.500000</span>,Y=<span class="nu0">-1.000000</span>,Z=<span class="nu0">-1.650000</span><span class="br0">)</span>
+</pre></div>
+<p>Which can be found (or added) to the default properties of the class.</p>
+<p>This allows for a model to be mirrored for left/right hand views and be placed exactly where the author wants it. It makes for a lot of tweaking but you can always get the effect you want eventually.</p>
+<hr />
+<p><b>Wang:</b> This could do with being a bit more detailed and is "fluffy" in a few areas. Anyone who knows more about the subject should add on/modify where necessary.</p>
+<p><b>Col Kassad:</b> Very nice!&#160;:)</p>
+<p><b>Wang:</b> There is something I should add to this that I found out later that only applies to this type of 2 stage firing. On the client in a network game if a weapon is not animating it will be sent to the idle state. When my animation for pulling the pin finished I held the weapon at the last frame of this animation until the user released the fire button. At this point the throw animation ran. Holding the weapon at a specific frame meant it wasn't animating so off it went out of the ClientFiring state. I had to add a 2 frame static animation that could loop in the ready to throw position.</p>
+<p><b>Shuriken:</b> Hey - can anyone tell me if this and the previous tutorial are the same method still used for importing models and animations into UT2003? I've found it really hard to find tutorials about the subject for UT2003... can anyone point me to some if it uses a different method?</p>
+<p><b>Chip:</b> Shuri, this method <i>can</i> be used for getting vertex animations into UT2003, but that type of animation isn't used for "modern" UT2K3 character models and weapons – they're exported/imported as skeletal meshes, using either <a href="../../../../articles/a/c/t/Legacy%7EActorX_5f30.html" title="Legacy:ActorX">ActorX</a> (for Max and <a href="../../../../articles/m/a/y/Legacy%7EMaya_c3bf.html" title="Legacy:Maya">Maya</a> full apps) or with the <a href="../../../../articles/u/n/e/Legacy%7EUnEditor.Mll_175c.html" title="Legacy:UnEditor.Mll">unEditor</a> plug-in for Maya 4.0.1 PLE. The difference between the animation types can be seen if you've ever played the Invasion game type – all the Unreal1 monsters are vertex anims (the method used for Unreal1 characters),and their limited anims are obvious.</p>
+<p>In UEd, check the Animations browser to see the extent of skeletal anims used in UT2K3 (File&gt;Open will shows how many .ukx files are used), and the Meshes browser will show the vertex anims. Note that some objects like waving flags are still best done with vertex animation due to the complexity of the motion, or because the mesh shape changes (goop blobs).</p>
+<p>So a full answer to your question means you have to define what type of <a href="../../../../articles/a/n/i/Legacy%7EAnimation_81ae.html" title="Legacy:Animation">Animation</a> you're planning. Some links that might help: <a href="http://udn.epicgames.com/Two/ModelingTableOfContents" class="extiw" title="udn2:ModelingTableOfContents">udn2:ModelingTableOfContents</a>, <a href="http://udn.epicgames.com/Two/ActorX" class="extiw" title="udn2:ActorX">udn2:ActorX</a>, <a href="http://udn.epicgames.com/Two/UnrealVertexAnimation" class="extiw" title="udn2:UnrealVertexAnimation">udn2:UnrealVertexAnimation</a>, <a href="../../../../articles/m/a/y/Legacy%7EMaya_PLE_Character_Model_Tutorial_0410.html" title="Legacy:Maya PLE Character Model Tutorial">Maya PLE Character Model Tutorial</a></p>
+<p><b>Shuriken:</b> Wow, thanks - detailed reply&#160;:) (this is all new to me, so I need all the help I can get...)</p>
+<p>From what I've been working with today, I've realised that I'll definately need bones in the model to attach emitters to. So I assume I have to go the ActorX route (I'm working in Max btw)... but I'm confused about Skeletal Animation. Is it completely different form of animation? Or can I do the regular 'move+rotate' animation that is detailed in the first part of this tutorial.. all I need is some simple recoil effects + select/down.</p>
+<p>Also, every weapon mutator I have comes with a .ukx. Is this necessary for skeletal meshes? I know with vertex animating the models you can embed it in the code, which is what I wish to do - possible for skeletal animation?</p>
+<p><b>Chip:</b> Hmmm...hard to answer succinctly, but basically vertex animation &amp; skeletal animation are significantly different methods of accomplishing the same task – animating a mesh. Vertex animation draws on more system resources (from what I've read) during game play, and can be harder to animate for some types of movement (like humanoid stuff.) For weapons, I don't know that it makes much diff, but all "stock" UT2K3 weps are .ukx files, which are skeletal mesh anims. Here's another UDN page to study – it makes the .ukx package a bit more understandable: <a href="http://udn.epicgames.com/Two/AnimBrowserTutorial" class="extiw" title="udn2:AnimBrowserTutorial">udn2:AnimBrowserTutorial</a></p>
+<p>I haven't done any weapons yet, so the "embed it in the code" question I can't speak to, but just from the standpoint of ease of animation, export &amp; import, the skeletal route seems better to me. Check out the ShockRifle_1st model &amp; anims in Weapons.ukx (use the Animations browser) – a good recoil anim example, among others.</p>
+<p><b>*Someone*:</b> Do you know if I can just clone the objects and move them into their individual frames?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 23/1000000
+Post-expand include size: 7/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/3/d/s/Legacy%7E3ds2unr.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/3/d/s/Legacy_talk%7E3ds2unr.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:3ds2unr">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:22, 2 November 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

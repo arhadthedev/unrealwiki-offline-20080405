@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Using LocalMessages - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Using LocalMessages</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#What_Are_LocalMessages.3F"><span class="tocnumber">1</span> <span class="toctext">What Are LocalMessages?</span></a></li>
+<li class="toclevel-1"><a href="#Getting_to_know_LocalMessages"><span class="tocnumber">2</span> <span class="toctext">Getting to know LocalMessages</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Setting_up_a_testing_environment"><span class="tocnumber">2.1</span> <span class="toctext">Setting up a testing environment</span></a></li>
+<li class="toclevel-2"><a href="#Broadcasting_a_LocalMessage"><span class="tocnumber">2.2</span> <span class="toctext">Broadcasting a LocalMessage</span></a>
+<ul>
+<li class="toclevel-3"><a href="#The_Switch_Parameter"><span class="tocnumber">2.2.1</span> <span class="toctext">The Switch Parameter</span></a></li>
+<li class="toclevel-3"><a href="#The_Related_PRIs"><span class="tocnumber">2.2.2</span> <span class="toctext">The Related PRIs</span></a></li>
+<li class="toclevel-3"><a href="#The_Optional_Object"><span class="tocnumber">2.2.3</span> <span class="toctext">The Optional Object</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Sending_Messages_To_Individual_Players"><span class="tocnumber">2.3</span> <span class="toctext">Sending Messages To Individual Players</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Creating_New_LocalMessages"><span class="tocnumber">3</span> <span class="toctext">Creating New LocalMessages</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Related_Classes"><span class="tocnumber">5</span> <span class="toctext">Related Classes</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="What_Are_LocalMessages.3F" id="What_Are_LocalMessages.3F"></a></p>
+<h2><span class="mw-headline">What Are LocalMessages?</span></h2>
+<p>The short description would be: All the messages in the game (e.g. "You have the flag, return to base!") are LocalMessage classes. LocalMessages have two important advantages over string messages: They use less network bandwidth and they can be displayed in different languages, regardless of the language the server uses. The classes can dynamically create the displayed strings from the parameters that were passed to them.</p>
+<p><a name="Getting_to_know_LocalMessages" id="Getting_to_know_LocalMessages"></a></p>
+<h2><span class="mw-headline">Getting to know LocalMessages</span></h2>
+<p><a name="Setting_up_a_testing_environment" id="Setting_up_a_testing_environment"></a></p>
+<h3><span class="mw-headline">Setting up a testing environment</span></h3>
+<p>To get into LocalMessages we'll try using some of the existing message classes from a simple <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a> first. Make a new mutator like the one below and <a href="../../../../articles/c/r/e/Legacy%7ECreate_An_INT_File_c2d2.html" title="Legacy:Create An INT File">create an INT File</a> for it, so it shows up in the game.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MutLocalMessageTest <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// call next mutator's ModifyPlayer, so we don't break other mutators</span>
+  <span class="kw6">Super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+ 
+  <span class="co1">// we'll put our code here soon</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Default properties neccessary for UT2003 mutators.</span>
+<span class="co1">// Don't add this section if you're coding for earlier engine versions,</span>
+<span class="co1">// it'll only cause compiler warnings.</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  FriendlyName=<span class="st0">"LocalMessage Test"</span>
+  Description=<span class="st0">"Test mutator for LocalMessage classes."</span>
+  GroupName=<span class="st0">"LocalMessage Test"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now we have a testing environment we can use to play with the features of LocalMessage classes.</p>
+<p><a name="Broadcasting_a_LocalMessage" id="Broadcasting_a_LocalMessage"></a></p>
+<h3><span class="mw-headline">Broadcasting a LocalMessage</span></h3>
+<p>The first method to send LocalMessages we'll try is broadcasting them to all players. This sounds much more difficult than it is, because every <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> (e.g. our mutator) has a function which does exactly that.</p>
+<dl>
+<dt>BroadcastLocalizedMessage (class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessage</a>&gt; MessageClass, optional int Switch, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_1, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_2, optional <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> OptionalObject)</dt>
+</dl>
+<p>The MessageClass parameter specifies the LocalMessage class that should be broadcasted and is the only required parameter. We'll get back to the optional parameters later.</p>
+<p>Let's broadcast a simple message whenever a player respawns by adding the following code to the mutator's ModifyPlayer function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+BroadcastLocalizedMessage<span class="br0">(</span><span class="kw5">class</span><span class="st0">'CTFHUDMessage'</span><span class="br0">)</span>; <span class="co1">// in UT use CTFMessage2 instead</span>
+</pre></div>
+<p>Compile the mutator, start a Practice Session/Instant Action game and add the LocalMessage Test mutator. Now every time a player or bot respawns you get the "You have the flag, return to base!" message. If you open the UnrealGame.CTFHUDMessage (or Botpack.CTFMessage2) class you'll notice that this string isn't hard-coded, but instead stored in a localized variable. Localization happens client-side, so on a client with the German version the message would appear as "Sie haben die Flagge! Zurück zur Basis!", while the French version displays "Vous avez le drapeau, regagnez la base&#160;!" even though both may be connected to a server that runs the Spanish version. (which in case of a listen server would see "Tienes la bandera, ¡regresa a la base!")&#160;:)</p>
+<p><a name="The_Switch_Parameter" id="The_Switch_Parameter"></a></p>
+<h4><span class="mw-headline">The Switch Parameter</span></h4>
+<p>The CTFHUDMessage class also contains the "The enemy has your flag, recover it!" message. To display it we have to use the first optional parameter of the BroadcastLocalizedMessage function, the Switch parameter. This is an integer value and by not specifying it the value 0 is used. Change the BroadcastLocalizedMessage call to this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+BroadcastLocalizedMessage<span class="br0">(</span><span class="kw5">class</span><span class="st0">'CTFHUDMessage'</span>, <span class="nu0">1</span><span class="br0">)</span>; <span class="co1">// in UT use CTFMessage2 instead</span>
+</pre></div>
+<p>After recompiling you now see the new message each time somebody respawns.</p>
+<p>Most LocalMessage classes use the Switch parameter for displaying completely different messages. Some examples are the CTF messages ("Player x picked up/dropped/captures/etc. the flag") or the game status messages. ("Press FIRE to start!", "The match is about to begin...3/2/1", etc.) You could say the Switch parameter specifies the type of message that should be displayed from a given class of LocalMessages.</p>
+<p><a name="The_Related_PRIs" id="The_Related_PRIs"></a></p>
+<h4><span class="mw-headline">The Related PRIs</span></h4>
+<p>PRI is short for <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>. PRIs are actors holding information about a player. LocalMessages build their display strings client-side. However, due to optimization in the <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">replication</a> code not every bit of information about the players is sent to the clients in a network game. The things a client might want to know about even if the player isn't visible are saved in a PRI which is always available on all clients. (unlike the player's <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> or <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> actors)</p>
+<p>Some messages require information about one or two players. This could be a player's name (think "A's killing spree was ended by B."), a player's team or other player-specific information. The LocalMessages use their RelatedPRI_1 and RelatedPRI_2 parameters to specify up to two PRIs.</p>
+<p>Let's try the "You were killed by ..." message. This message uses the RelatedPRI_1 parameter to get the killer's name. We will just let the respawned player be the "killer" here. Every Pawn and Controller actor has a PlayerReplicationInfo property which can be used to access the player's PRI. Change the broadcast line to this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+BroadcastLocalizedMessage<span class="br0">(</span><span class="kw5">class</span><span class="st0">'xVictimMessage'</span>,, Other.<span class="me1">PlayerReplicationInfo</span><span class="br0">)</span>; <span class="co1">// use class'VictimMessage' in UT</span>
+</pre></div>
+<p>The victim message doesn't use the Switch parameter, that's why it isn't specified here.</p>
+<p><a name="The_Optional_Object" id="The_Optional_Object"></a></p>
+<h4><span class="mw-headline">The Optional Object</span></h4>
+<p>The fourth optional parameter when broadcasting LocalMessages is of type Object. You can specify every kind of object here (Classes, Actors, Textures, Sounds, etc.), but you have to make sure that the object exists on all clients. This might only be a problem with Actors, since they have to be replicated before they can be used as the optional object parameter of a LocalMessage. In CTF and Bombing Run messages the optional object is either the flag/ball or a <a href="../../../../articles/t/e/a/Legacy%7ETeamInfo_bf91.html" title="Legacy:TeamInfo">TeamInfo</a>.</p>
+<p>For this tutorial we will use the item pickup message. The pickup message is stored in the PickupMessagePlus class (same name for UT and UT2003) and only checks the <a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a> class or <a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a> class passed as the optional object. To get the Sniper Rifle's/Lightning Gun's pickup message we use the following line:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+BroadcastLocalizedMessage<span class="br0">(</span><span class="kw5">class</span><span class="st0">'PickupMessagePlus'</span>,,, <span class="kw5">class</span><span class="st0">'SniperRiflePickup'</span><span class="br0">)</span>; <span class="co1">// use just class'SniperRifle' in UT</span>
+</pre></div>
+<p>This will display the message "You got the Lightning Gun." in UT2003 or "You got a Sniper Rifle." in UT.</p>
+<p><a name="Sending_Messages_To_Individual_Players" id="Sending_Messages_To_Individual_Players"></a></p>
+<h3><span class="mw-headline">Sending Messages To Individual Players</span></h3>
+<p>Sending messages to individual players is a little more complicated (but not much) than broadcasting it. All we need is a reference to a <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> in UT or a <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a> in UT2003. The PlayerPawn and PlayerController classes have a ReceiveLocalizedMessage function which is also used by the BroadcastMessage function. BroadcastMessage calls all players' ReceiveLocalizedMessage functions to broadcast the message, we'll only call it for one player for now.</p>
+<dl>
+<dt>ReceiveLocalizedMessage (class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessage</a>&gt; Message, optional int Switch, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_1, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_2, optional <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> OptionalObject)</dt>
+</dl>
+<p>As you can see ReceiveLocalizedMessage has the same parameters as BroadcastLocalizedMessage. There's no need to explain scomething fundamentally new here, so let's jump right into an example.</p>
+<p>For this example we will use the Mutate function of our test mutator because it already gives us a reference to a player and we don't have to go look for one. First we'll extend out testing environment. Add the following code below the ModifyPlayer function or replace that function with it.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// in UT write PlayerPawn Sender instead</span>
+<span class="kw5">function</span> Mutate<span class="br0">(</span><span class="kw4">string</span> MutateString, PlayerController Sender<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// call next mutator's Mutate, so we don't break other mutators</span>
+  <span class="kw6">Super</span>.<span class="me1">Mutate</span><span class="br0">(</span>MutateString, Sender<span class="br0">)</span>;
+ 
+  <span class="co1">// our code will go here</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Let's send a headshot announcement to everyone who types "mutate headshot" at the console. Add the following lines in the Mutate function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// case-insensitive</span>
+  <span class="kw1">if</span> <span class="br0">(</span> MutateString ~= <span class="st0">"headshot"</span> <span class="br0">)</span>
+    Sender.<span class="me1">ReceiveLocalizedMessage</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'SpecialKillMessage'</span><span class="br0">)</span>; <span class="co1">// use class'DecapitationMessage' in UT</span>
+</pre></div>
+<p>The headshot message doesn't need any parameters, it's always the same regardless of switch, related PRIs or optional object.</p>
+<p>Now compile the mutator and start a game with it. Whenever you type "mutate headshot" you will see (and hear) "Headshot!", and in network games <i>only</i> the player who types it can see and hear it.</p>
+<p><a name="Creating_New_LocalMessages" id="Creating_New_LocalMessages"></a></p>
+<h2><span class="mw-headline">Creating New LocalMessages</span></h2>
+<p>For scripters, an easy way to get into creating your own localmessages is simply to steal an existing one. I wanted some onscreen debug messages so I copied <a href="../../../../articles/c/t/f/Legacy%7ECTFHUDMessage_cb76.html" title="Legacy:CTFHUDMessage">CTFHUDMessage</a>, saved it into a file called MyScratchMessage.uc, and tweaked it to return my required messages.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyScratchMessage <span class="kw5">extends</span> LocalMessage;
+ 
+<span class="co1">// Switch 0: Checkreset said Die</span>
+<span class="co1">// Switch 1: Checkreset said vehicle not empty</span>
+<span class="co1">// Switch 2: Checkreset found a collidingactor required ten more seconds</span>
+<span class="co1">// Switch 3: Checkreset Destroyed!</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span>Message<span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> string0;
+<span class="kw5">var</span><span class="br0">(</span>Message<span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> string1;
+<span class="kw5">var</span><span class="br0">(</span>Message<span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> string2;
+<span class="kw5">var</span><span class="br0">(</span>Message<span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> string3;
+<span class="kw5">var</span><span class="br0">(</span>Message<span class="br0">)</span> <span class="kw4">color</span> YellowColor;
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">color</span> GetColor<span class="br0">(</span>
+        <span class="kw6">optional</span> <span class="kw4">int</span> <span class="kw1">Switch</span>,
+        <span class="kw6">optional</span> PlayerReplicationInfo RelatedPRI_1, 
+        <span class="kw6">optional</span> PlayerReplicationInfo RelatedPRI_2
+        <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="kw1">Default</span>.<span class="me1">YellowColor</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">string</span> GetString<span class="br0">(</span>
+        <span class="kw6">optional</span> <span class="kw4">int</span> <span class="kw1">Switch</span>,
+        <span class="kw6">optional</span> PlayerReplicationInfo RelatedPRI_1, 
+        <span class="kw6">optional</span> PlayerReplicationInfo RelatedPRI_2,
+        <span class="kw6">optional</span> <a href="/Object"><span class="kw10">Object</span></a> OptionalObject
+        <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">Switch</span> == <span class="nu0">0</span><span class="br0">)</span>
+            <span class="kw1">return</span> <span class="kw1">Default</span>.<span class="me1">string0</span>;
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">Switch</span> == <span class="nu0">1</span><span class="br0">)</span>
+            <span class="kw1">return</span> <span class="kw1">Default</span>.<span class="me1">string1</span>;
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">Switch</span> == <span class="nu0">2</span><span class="br0">)</span>
+            <span class="kw1">return</span> <span class="kw1">Default</span>.<span class="me1">string2</span>;
+        <span class="kw1">else</span> 
+            <span class="kw1">return</span> <span class="kw1">Default</span>.<span class="me1">string3</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     string0=<span class="st0">"Checkreset said Die"</span>
+     string1=<span class="st0">"Checkreset said vehicle not empty"</span>
+     string2=<span class="st0">"Checkreset found a collidingactor required ten more seconds"</span>
+     string3=<span class="st0">"Checkreset Destroyed!"</span>
+ 
+     YellowColor=<span class="br0">(</span>G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span>
+ 
+     bIsPartiallyUnique=<span class="kw9">True</span>
+     bIsConsoleMessage=<span class="kw9">False</span>
+     bFadeMessage=<span class="kw9">True</span>
+     bBeep=<span class="kw9">True</span>
+     Lifetime=<span class="nu0">2</span>
+     DrawColor=<span class="br0">(</span>G=<span class="nu0">160</span>,R=<span class="nu0">0</span><span class="br0">)</span>
+     StackMode=SM_Down
+     PosY=<span class="nu0">0.100000</span>
+     FontSize=<span class="nu0">1</span>
+<span class="br0">}</span>
+</pre></div>
+<p>As a scripter, I found I could just compile that into my package and it was available using <code>BroadcastLocalizedMessage(class'MyScratchMessage',1);</code></p>
+<p><b>Sweavo:</b> I don't know how to then localize this for different regions, though. I guess you need to have separate source codes that compile into classes of the same name.</p>
+<p><b>Tarquin:</b> Suppose I create and embed a LocalMessage class in <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a>... now how do I refer to it somewhere in the map so it's saved properly? Making it placeable seems to work.&#160;:)</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/l/o/c/Legacy%7ELocalization_c983.html" title="Legacy:Localization">Localization</a></li>
+<li><a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT File</a></li>
+</ul>
+<p><a name="Related_Classes" id="Related_Classes"></a></p>
+<h2><span class="mw-headline">Related Classes</span></h2>
+<ul>
+<li><a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessage</a>, <a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_%28UT%29_c539.html" title="Legacy:LocalMessage (UT)">LocalMessage (UT)</a></li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a>, <a href="../../../../articles/h/u/d/Legacy%7EHUD_%28UT%29_e73f.html" title="Legacy:HUD (UT)">HUD (UT)</a></li>
+<li><a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a>, <a href="../../../../articles/c/a/n/Legacy%7ECanvas_%28UT%29_f2ed.html" title="Legacy:Canvas (UT)">Canvas (UT)</a></li>
+</ul>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> → Add info about creating new LocalMessage classes.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 41/1000000
+Post-expand include size: 38/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/i/Legacy%7EUsing_LocalMessages_e0d2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/i/Legacy_talk%7EUsing_LocalMessages_2c8c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Using_LocalMessages">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 06:24, 3 September 2005 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

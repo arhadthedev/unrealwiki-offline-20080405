@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Terrain Texture Layer - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Terrain Texture Layer</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A <a href="../../../../articles/t/e/r/Legacy%7ETerrain_7d48.html" title="Legacy:Terrain">Terrain</a> can contain a large number of <b>texture layers</b>. These allow different textures to be visible (and blended!) in different areas of a terrain. For example, a mountain might have snow on the tops; or a hillside might have gravel paths across it.</p>
+<p>A texture layer therefore is really just two pieces of information: the name of the texture to display on the layer, and the name of the texture that is the alpha map for the layer's visibility. This second texture is what determines where the first texture is visible.</p>
+<p>Layers have a stacking order, so newer layers cover up the older ones. You can change the order of layers after you've created them.</p>
+<p>The list of layers is shown in two places:</p>
+<ul>
+<li>in the Terrain Editing Window, where you can edit how much and where each layer is visible. Note that the top layer in the list is the bottom-most in the rendering order (or the one rendered first if you prefer...)</li>
+<li>in the <a href="../../../../articles/t/e/r/Legacy%7ETerrainInfo_1588.html" title="Legacy:TerrainInfo">TerrainInfo</a>'s <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_0115.html" class="mw-redirect" title="Legacy:Actor Properties">Actor Properties</a>, where you can change the other settings.</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Add_a_terrain_layer"><span class="tocnumber">1</span> <span class="toctext">Add a terrain layer</span></a>
+<ul>
+<li class="toclevel-2"><a href="#...in_terrain_mode"><span class="tocnumber">1.1</span> <span class="toctext">...in terrain mode</span></a></li>
+<li class="toclevel-2"><a href="#...in_the_TerrainInfo"><span class="tocnumber">1.2</span> <span class="toctext">...in the TerrainInfo</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Editing_the_layer"><span class="tocnumber">2</span> <span class="toctext">Editing the layer</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Visibility"><span class="tocnumber">2.1</span> <span class="toctext">Visibility</span></a></li>
+<li class="toclevel-2"><a href="#Properties"><span class="tocnumber">2.2</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-2"><a href="#Known_bugs.2Fnicks"><span class="tocnumber">2.3</span> <span class="toctext">Known bugs/nicks</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">3</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Add_a_terrain_layer" id="Add_a_terrain_layer"></a></p>
+<h2><span class="mw-headline">Add a terrain layer</span></h2>
+<p>You'll need to start by <a href="../../../../articles/c/r/e/Legacy%7ECreating_A_Terrain_e19c.html" title="Legacy:Creating A Terrain">Creating A Terrain</a>&#160;:)</p>
+<p>There are two ways to add a new layer to your terrain:</p>
+<ul>
+<li>use <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Mode_587e.html" title="Legacy:Terrain Mode">Terrain mode</a> if you don't have a alpha map you wish to apply: it will create one for you which you can then edit with the <a href="../../../../articles/p/a/i/Legacy%7EPainting_Terrain_Tool_0716.html" title="Legacy:Painting Terrain Tool">Painting Terrain Tool</a>.</li>
+<li>use the <a href="../../../../articles/t/e/r/Legacy%7ETerrainInfo_1588.html" title="Legacy:TerrainInfo">TerrainInfo</a>'s <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_Window_aeb0.html" title="Legacy:Actor Properties Window">actor properties window</a> if you have an existing texture for the alpha map: for example, one you've made in an image editing <a href="../../../../articles/a/p/p/Legacy%7EApplication_9f21.html" title="Legacy:Application">application</a> and imported; or a duplicate of the alpha map of another layer. (Of course you can edit this alpha map too once the layer is made. But remember that this edits the alpha map texture, so if it's in use elsewhere, that will reflect the changes too.)</li>
+</ul>
+<p><a name="...in_terrain_mode"></a></p>
+<h3><span class="mw-headline">...in terrain mode</span></h3>
+<ol>
+<li>In the <a href="../../../../articles/t/e/x/Legacy%7ETexture_Browser_1a4e.html" title="Legacy:Texture Browser">Texture Browser</a>, select a texture to be applied to the new layer. See the <a href="../../../../articles/t/e/x/Legacy%7ETexture_Package_6f58.html" title="Legacy:Texture Package">Texture Package</a> list for suggestions. We'll call this the <i>display texture</i>.</li>
+</ol>
+<ol>
+<li>Click on the <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Mode_587e.html" title="Legacy:Terrain Mode">Terrain Mode</a> button. The Terrain Mode window opens.</li>
+</ol>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_interface-Ed3-TerrainTool.png_d1dc.html" class="image" title="Legacy interface-Ed3-TerrainTool.png"><img alt="" src="../../../../images/Legacy_interface-Ed3-TerrainTool.png" width="648" height="430" border="0" /></a></span></div>
+</div>
+<ol>
+<li>In the 'Terrains' tab (halfway down the window), select from the list of TerrainInfos the one that represents the terrain you wish to add a layer to.</li>
+</ol>
+<ol>
+<li>Click on the 'Layers' tab. You might need to click on the first empty layer in the list to wake it up, but not always (and note that this part of the window is a bit buggy and doesn't always react the first time to clicks). Click the 'New...' button to the right. The New Layer window will open. You're about to create a new <a href="../../../../articles/t/e/x/Legacy%7ETexture_7ee5.html" title="Legacy:Texture">texture</a> that will represent the alpha map for the layer – where the layer is visible and how it is tinted.</li>
+</ol>
+<dl>
+<dt><a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">Package</a>&#160;</dt>
+<dd>Where to store the alpha map texture. <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a> works here of course, to allows you to store the texture inside your map file. It's a good idea to place all the texture associated with your terrain in the same place.</dd>
+<dt>Group&#160;</dt>
+<dd>whatever you like. It's a good idea to use something meaningful like 'Terrain', which will keep the textures used by your terrain apart from everything else.</dd>
+<dt>Name&#160;</dt>
+<dd>whatever you want, but it's a good idea to use a name which reflects the layer you're going to make. Later on in the Terrain Mode window, this name is what will be the name of your layer. 'Layer1' will do, or 'RockLayer' or 'SandLayer' for example. If you're using several different terrains in your map, you might want thee name to reflect that too, eg 'SandDune-Pebbles', 'Hill-Path', 'BlueBase-Rocky'.</dd>
+<dt>Alpha Height &amp; Alpha Width&#160;</dt>
+<dd>The height &amp; width of the texture you're about to create. These values must match the dimensions of the heightmap for your terrain, unless you are using UScale &amp; VScale to scale up. These are listed in the wrong order: the 'y' dimension before the 'x', but since non-square layers make UnrealEd crash, it doesn't really matter.</dd>
+<dt>Alpha fill&#160;</dt>
+<dd>colour to fill in the alpha map initially. Pick black to start with a totally invisible layer, white for a totally visible one.</dd>
+<dt>Color Fill&#160;</dt>
+<dd>For color fill, I believe this is the color that will 'Fade' in to the other layers when you paint the texture on. This must be a different color for each layer. (Example: A layer's color fill cannot be the same as another layers color fill. Ie. Red-Red is wrong and Red-Blue will work great )&#160;?????</dd>
+</dl>
+<p>Frankie C: Not a bad thought...but actually, the first texture layer color should be white, with other layer colors typically being black. The concept revolves around opacity (alpha channels, for those familiar), similar to making a displacement map in other applications (i.e., white is opaque, black is transparent, and the gray scale works as a varying level of transparency).</p>
+<dl>
+<dt>UScale &amp; VScale&#160;</dt>
+<dd>These determine how the display texture is scaled when it is applied to the terrain. It works exactly like the <a href="../../../../articles/s/u/r/Legacy%7ESurface_Properties_767d.html" class="mw-redirect" title="Legacy:Surface Properties">surface properties</a> under the tab Pan/Rot/Scale. You can also apply a pan to the display texture in the layer properties once you've created it.</dd>
+</dl>
+<p>Finally, when you are satisfied with your new layer's settings, click OK.</p>
+<p>There should now be a new layer in the list. It should be visible in UnrealEd immediately, though you might need to move around, or make a change to the terrain such as painting the height or the layer for UnrealEd to "wake up".</p>
+<p><a name="...in_the_TerrainInfo"></a></p>
+<h3><span class="mw-headline">...in the TerrainInfo</span></h3>
+<p>In the TerrainInfo's <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_0115.html" class="mw-redirect" title="Legacy:Actor Properties">Actor Properties</a>, expand the TerrainInfo -&gt; Layers array, and find the first empty array element. We'll refer to it as Layers[i] below.</p>
+<p><a href="../../../../articles/s/e/t/Legacy%7ESet_The_Following_Properties_ae9e.html" title="Legacy:Set The Following Properties">Set the following properties</a>:</p>
+<ul>
+<li><a href="../../../../articles/s/e/t/Legacy%7ESet_The_Resource_Property_a9ef.html" title="Legacy:Set The Resource Property">Set the resource property</a> TerrainInfo -&gt; Layers[i] -&gt; AlphaMap = whatever alpha map you want to use.</li>
+<li><a href="../../../../articles/s/e/t/Legacy%7ESet_The_Resource_Property_a9ef.html" title="Legacy:Set The Resource Property">Set the resource property</a> TerrainInfo -&gt; Layers[i] -&gt; Texture = the <a href="../../../../articles/t/e/x/Legacy%7ETexture_7ee5.html" title="Legacy:Texture">texture</a> the layer should display. (for example snow, grass, rocks, etc. See <a href="../../../../articles/t/e/x/Legacy%7ETexture_Package_6f58.html" title="Legacy:Texture Package">Texture Package</a> for suggestions of what to use)</li>
+<li>TerrainInfo -&gt; Layers[i] -&gt; UScale and VScale = however you want to scale the texture on the layer. 1 will do for now.</li>
+</ul>
+<p><b>FreshMeat:</b> Correct me if I'm wrong, but this is set by default, correct?</p>
+<p><a name="Editing_the_layer" id="Editing_the_layer"></a></p>
+<h2><span class="mw-headline">Editing the layer</span></h2>
+<p><a name="Visibility" id="Visibility"></a></p>
+<h3><span class="mw-headline">Visibility</span></h3>
+<p>Now click on the layer and then click on the <a href="../../../../articles/p/a/i/Legacy%7EPainting_Terrain_Tool_0716.html" title="Legacy:Painting Terrain Tool">Painting Terrain Tool</a> under the ' Terrain Editing Tools ' Menu. Now, on your terrain in your level. Use the paint controls (CTR+LMB to erase the texture and CTR-RMB to add the texture) on the area you want to change the texture to. depending on the ' Strength ' you set, the texture will ' fade ' in covering the older texture.</p>
+<p>In the layer tab, you can right-click on a layer in the list, and do:</p>
+<ul>
+<li>Set alpha map from the current texture</li>
+<li>Set display texture from the current texture</li>
+<li>Toggle grid display for the layer</li>
+</ul>
+<p><a name="Properties" id="Properties"></a></p>
+<h3><span class="mw-headline">Properties</span></h3>
+<p>These are in the <a href="../../../../articles/t/e/r/Legacy%7ETerrainInfo_1588.html" title="Legacy:TerrainInfo">TerrainInfo</a> -&gt; Layers array.</p>
+<dl>
+<dt><a href="../../../../articles/t/e/x/Legacy%7ETexture_7ee5.html" title="Legacy:Texture">Texture</a> AlphaMap&#160;</dt>
+<dd>the alpha map texture.</dd>
+<dt>float KFriction&#160;</dt>
+<dt>float KRestitution&#160;</dt>
+<dt>Rotator LayerRotation&#160;</dt>
+<dt><a href="../../../../articles/m/a/t/Legacy%7EMaterial_8b3a.html" title="Legacy:Material">Material</a> Texture&#160;</dt>
+<dd>the displayed texture</dd>
+<dt>ETexMapAxis TextureMapAxis&#160;</dt>
+<dt>float TextureRotation&#160;</dt>
+<dt>float UPan&#160;</dt>
+<dt>float UScale&#160;</dt>
+<dt>float VPan&#160;</dt>
+<dt>float VScale&#160;</dt>
+</dl>
+<p><a name="Known_bugs.2Fnicks" id="Known_bugs.2Fnicks"></a></p>
+<h3><span class="mw-headline">Known bugs/nicks</span></h3>
+<p><b>When making the layers you can get a result like this:</b></p>
+<p>[[Image:Legacy_la_terrain_trouble.jpeg|]] @inline@la_terrain_trouble_grid</p>
+<p>As you can see in the grid image it just fills the middle of every quad. To solve this you have to make sure all the layers' alpha maps heightmap is the same size. This means that if your terrain is 256x256, the size of that layer's alpha has to be 256x256, or if it's 128x128, make sure the alpha of that texture layer is 128x128, etc...</p>
+<p><b>Tarquin:</b> I have no idea what these images are supposed to show. If nobody can explain, I'll delete them.</p>
+<p><b>Anonymous:</b> Whomever wrote this was trying to say that if you don't set the Alpha Height and Width to an appropriate number when creating a new layer, the fade out from the centre of the grid coordinate to the edge won't be what you're expecting. You can see that in the images above, where the grass texture only shows up as a dot in the middle. I could be wrong, but I'm pretty sure the best bet is to match the alpha size of the layer you're painting with to the same number as the terrain sector size. I think they also try to say that here, but not very clearly.</p>
+<p>This means you <b>can not</b> have different sizes despite the obvious reason for having them (optimizing).</p>
+<p><b>Anonymous:</b> Yes this is very important and something that I just encountered..... You must set the alpha height of the the texture to the same as the terrain otherwise when you paint textures they will come up strangely spotty.</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p>Could someone please clarify these steps with some screenshots? I'm totally confused. I tried to paint a texture on to my terrain, but I still only see the terrain in wireframe view. How do I know it's working?</p>
+<p><b>Tarquin:</b> How's that? I've cleaned up the instructions, going through it myself in the ed.</p>
+<p>Make sure the texture is RGB8, it wont show up otherwise.</p>
+<p><b>Bob_The_Beheader:</b> I think that it would be a good idea to have some tips on exactly how to go about painting the terrain. I mean, what looks good asthetically, how much blending there should be, that sort of think. I think this may apply to other topics as well.</p>
+<p><b>Oddsuds:</b> I have been following the tutorials to learn UEd3.0 recently and have encountered a problem painting texture layers. My textures paint onto the terrain in large blocks that are solid and not blended at all around the edges. It's almost like pixel editing with really huge regions. I was wondering if you could explain here or on the <a href="../../../../articles/p/a/i/Legacy%7EPainting_Terrain_Tool_0716.html" title="Legacy:Painting Terrain Tool">Painting_Terrain_Tool</a> page how to go about making smoothly blended texture layers.</p>
+<p><b>FreshMeat:</b> I don't understand. How do you make sure the lower points have, for instance, a road like texture while the ones slightly higher than that would be dirt, and the ones higher than that would be grass? Specifically, how do you controll how high a surface has to be in order to be a road?</p>
+<p><b>Still Freshmeat:</b> hm.. are there 16 layers to match with each of the 16 colors in your grayscale heightmap?</p>
+<p><b>Tarquin:</b> You've got it all wrong. The height has nothing to do with the texture. Each layer texture has its OWN alpha map that shows how visible it is.</p>
+<p><b>FreshMeat:</b> Alright, I've followed this step by step... but ctrl-right clicking seems to not paint a thing onto my terrain at all... I think it has something to do with the alpha heightmap? Can someone please edit this page to explain how things actually work and what they do, rather than just saying "for this example let's do this and this"? I'm not following along on a tutorial. I'm learning how to use the editor, not this specific map. See, I had someone else make my greyscale so I could see one in action (and I suck at photo editing), so how do you determine what your alpha height and width should be?</p>
+<p><b>Tarquin:</b> painting terrain can be buggy. The size of your terrain alpha map (and it's NOT a height map, if you say that I can't be sure of what you mean) should match the size of the terrain height map (which IS a height map).</p>
+<p><b>Fresh:</b> So then Alpha height and width refer to the alpha map in 2 dimensions. The two dimensions of a flat texture, and not the three dimensions of the actuall wireframe you're trying to paint? That makes alot more sense. Hmmmm, no, that crashed my editor. someone please kindly further explain Alpha Height and Alpha Width.</p>
+<p><b>Tarquin:</b> Ok, it seems Uscale and VScale (edited – sorry, I got this wrong) have been defined differently in parts of this page. These variables affect how the visible texture is stretched on the terrain. There is nowhere to tell UnrealEd how to scale the texture layer alpha map – it figures that out automatically. Eg, if I add a 32x32 texture layer to a 128x128 terrain, there is no problem. it just means you won't have as fine a resolution for your layer.</p>
+<p><b>FreshMeat:</b> So if my texture is 512x512, that's what i should put into the alpha?</p>
+<p><b>Tarquin:</b> Er... hang on, I think I've messed up even more. Uscale and VScale stretch the visible texture. What texture are you talking about? AlphaHeight and AlphaWidth have nothing to do with the visible texture. They define the size of the visibility map you are about to create in the dialog box. If you already have a visibility map, then you're not going to give an AlphaHeight and AlphaWidth.</p>
+<p><b>FreshMeat:</b> someone apparently needs to go through and redo this page with consistant terms and clear instructions. I have no idea what a "visibility map" is. All I know is I have a wireframe view of my terrain from a heightmap, and I would sincerly love to texture it, but I am hopelessly confused at this section. My heightmap is 512x256. I have textures I wish to use, and I know how to import them. I would like to make some grass, and a dirt path. I have no idea how, and I begin to wonder if this is even possible. I can't even get textures ON my wireframe, let alone on my wireframe where I want them. If someone could kindly redo this page for someone who has essentially no idea what any of the terms actually mean, I would be eternaly grateful.</p>
+<p><b>Tarquin:</b> "A texture layer therefore really just two pieces of information: which texture is the alpha map for the layer's visibility, and which texture is displayed on the layer." What part of this don't you get? I've tried to make it clearer.</p>
+<p><b>Tinn:</b> Well, the lack of a verb before the colon makes the sentence itself a bit confusing...</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 21/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/e/r/Legacy_talk%7ETerrain_Texture_Layer_1cd5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Terrain_Texture_Layer">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:19, 30 August 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

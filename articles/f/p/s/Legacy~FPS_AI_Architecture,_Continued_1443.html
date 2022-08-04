@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:FPS AI Architecture, Continued - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:FPS AI Architecture, Continued</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i>(Continued from, <a href="../../../../articles/f/i/r/Legacy%7EFirst_Person_Shooter_AI_Architecture_32dc.html" title="Legacy:First Person Shooter AI Architecture">First Person Shooter AI Architecture</a>)</i></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#The_Simulation_of_Realistic_AI_Spatial_Comprehension:"><span class="tocnumber">1</span> <span class="toctext">The Simulation of Realistic AI Spatial Comprehension:</span></a></li>
+<li class="toclevel-1"><a href="#Combat_AI_Tactics_during_Gameplay"><span class="tocnumber">2</span> <span class="toctext">Combat AI Tactics during Gameplay</span></a></li>
+<li class="toclevel-1"><a href="#The_Integrated_Agent_Behavior_Control_Component"><span class="tocnumber">3</span> <span class="toctext">The Integrated Agent Behavior Control Component</span></a></li>
+<li class="toclevel-1"><a href="#The_UnrealScript_Language_and_the_Event-Trigger_System"><span class="tocnumber">4</span> <span class="toctext">The UnrealScript Language and the Event-Trigger System</span></a></li>
+<li class="toclevel-1"><a href="#Perceptual_Modeling"><span class="tocnumber">5</span> <span class="toctext">Perceptual Modeling</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="The_Simulation_of_Realistic_AI_Spatial_Comprehension:" id="The_Simulation_of_Realistic_AI_Spatial_Comprehension:"></a></p>
+<h2><span class="mw-headline">The Simulation of Realistic AI Spatial Comprehension:</span></h2>
+<p>The primary problem for AIs attempting to perform spatial and pathfinding reasoning and determining strategy, is that the raw geometry of the level itself is incredibly difficult to parse. Attempting to perform reasoning with the raw geometry at runtime would be prohibitively expensive, because the geometry often contains so many extraneous and irrelevant details. A section of Solid Constructive Geometry (SCG), for example, might be composed of numerous aggregate polygons, but the AI is only concerned with its collision characteristic as a barrier to travel.</p>
+<p>As with the global pathfinding problem, the most often employed solution is to build an optimized structural database. Developers can construct a very simple, streamlined database of spatial tactical data that contains only the key information the combat AI will require to understand the tactical significance of various spatial configurations of the level.</p>
+<p>Customized Graphical User Interfaces can automatically analyze a given level?s static geometry, determine the tactical significance of different areas, and automatically generate a detailed tactical database that will be used to direct game agent mobility. Level designers also are required to embed specific indicator objects into their navigation systems, designating certain areas as ambush points, defense points, patrolling and event-driven activity, and other command options. (See also, <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a>)</p>
+<p>The only major drawback to a precomputed database is that it can sometimes work poorly in environments with a large number of dynamic obstacles.</p>
+<p><a name="Combat_AI_Tactics_during_Gameplay" id="Combat_AI_Tactics_during_Gameplay"></a></p>
+<h2><span class="mw-headline">Combat AI Tactics during Gameplay</span></h2>
+<p>With the generation of a CSG tactical database, we need to direct the game AIs to access it. A combat AI component will typically draw from a structured library of tactics, in which each tactic is responsible for executing a specific behavior in combat. Prospective tactics must communicate with the movement and animation subsystems to ensure that it exhibits the appropriate behaviors.</p>
+<p>Another critical problem is the tactic selection problem. Given an arbitrary situation in combat, we need to pick the best tactic with which to attack our opponents so that the game is continually challenging. This decision will depend on three major factors: the nature of the tactic under consideration, the relative tactical significance of all the combatants? various locations (as determined by the tactical database), and the current tactical situation (the AI agents health, weapon, ammo, and location, plus the values of those characteristics for all of its allies and opponents).</p>
+<p>A related problem is the opponent-selection problem. Given a number of potential opponents, the combat AI needs to select one as the current&#160;?target?. Although it does not necessarily ignore all of its other adversaries, we need to designate a&#160;?target? to represent the fact that the AI will engage a single enemy at a time.</p>
+<p>In complex game situations, it is usually easy to find a good target-picking heuristic by considering the relative tactical situation of the AI against every potential opponent. An AI is primarily concerned with defending itself first, and then attempting to identify whether any particular opponent is immediately threatening. If not, it can identify the most vulnerable target nearest to itself. A simple ranking function can easily make this determination and call the appropriate combat command.</p>
+<p>After an AI has selected a target and initiated combat, it should consider changing its target whenever its tactical situation changes significantly. Obviously, if the AI or its target dies, that?s a good time to reconsider the current target.</p>
+<p>Finally, there?s the weapon-firing problem. Most FPS weapons are high-velocity ranged (or hit-scan) weapons, so the key problem is determining where and along which line of sight to fire.</p>
+<p><a name="The_Integrated_Agent_Behavior_Control_Component" id="The_Integrated_Agent_Behavior_Control_Component"></a></p>
+<h2><span class="mw-headline">The Integrated Agent Behavior Control Component</span></h2>
+<p>At the top of the AI system hierarchy is the dominant control component called the behavior controller. This controller is responsible for determining the AI agent?s current state and a range of high-level goals. It determines the AIs overall behavior&#160;? how it animates, what audio files it plays, where it moves, and when and how it enters combat.</p>
+<p>There are any number of ways to model a behavior controller, depending on your game?s design requirements. Most FPS games use a finite-state machine (FSM) for this part of the AI.<br /></p>
+<p>The list below provides some typical states in the FSM for a typical FPS:</p>
+<dl>
+<dt>Idle&#160;</dt>
+<dd>The AI is standing guard, or not engaged in combat or movement.</dd>
+<dt>Patrolling&#160;</dt>
+<dd>The AI is following a designer-specified patrol path.</dd>
+<dt>Combat&#160;</dt>
+<dd>The AI is engaged in combat and has passed most of the responsibility for character control over to the combat controller.</dd>
+<dt>Wandering&#160;</dt>
+<dd>Probably a fugue state, maybe even suffering romantic difficulties.</dd>
+<dt>Fleeing&#160;</dt>
+<dd>The AI is attempting to flee its opponent or any perceived threat.</dd>
+<dt>Searching&#160;</dt>
+<dd>The AI is looking for an opponent to fight or searching for an opponent who fled during combat.</dd>
+</dl>
+<p>These behaviors are each represented by an object that is responsible for communicating with the movement, animation, and combat subsystems in order to represent the behaviors appropriately. Developing these behaviors will typically be very easy, since the movement, animation, and combat subsystems already do most of the work and provide a rich palette of basic behaviors for the behavioral component to assimilate.</p>
+<p><a name="The_UnrealScript_Language_and_the_Event-Trigger_System" id="The_UnrealScript_Language_and_the_Event-Trigger_System"></a></p>
+<h2><span class="mw-headline">The UnrealScript Language and the Event-Trigger System</span></h2>
+<p>Level designers will inevitably need some way to specify their design intentions in certain ambiguous or confusing sectors of the game. They need a way to take some degree of control over the AI for triggered gameplay sequences, cut scenes, or other&#160;?triggered? or&#160;?scripted? events that should happen during the game under certain circumstances. In order to make this happen, it?s necessary to design an interface for communication between the trigger/scripting system and the agent AI.</p>
+<p>This communication will typically take two forms. First, the triggered events can set AI parameters. For example, an event might enable or disable certain states of the behavior controller?s finite-state machine, or modify various aggressiveness parameters to change the priority of various potential combat tactics.</p>
+<p>The more common form of communication consists of sending commands to any of the AI subsystems from a triggered event. For example, the trigger system can tell an AI to move to a given point or to flee from its current target by issuing a command to its behavior controller. This command changes the current state of the FSM to one that will execute the appropriate behaviors.</p>
+<p><a name="Perceptual_Modeling" id="Perceptual_Modeling"></a></p>
+<h2><span class="mw-headline">Perceptual Modeling</span></h2>
+<p>A game player's perception (data input) is broken down into different subsystems. Different types of perception work differently, so we model our character's visual, auditory, and tactile subsystems seperately.</p>
+<p>The visual subsystem should take into account such factors as the distance to a given visual stimulus, the angle of the stimulus relative to the AIs field of view, and the current visibility level at the location of the stimulus (lighting and fog, and obstructions).</p>
+<p>In order to ensure that the AI can actually see the object, it's also essential to use a Ray-Tracing network. The AI should query the underlying game engine to ensure that there's a clear line-of-sight between the AIs eyes and the object its attempting to see.</p>
+<p>The final sensory subsystem is the tactile subsystem. This system is responsible for anything the AI feels. This includes damage notifications (whenever the AI is wounded) as well as collision notifications (whenever the AI bumps into something, or some other object bumps into it).</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">Artificial Intelligence</a></li>
+<li><a href="../../../../articles/i/n/t/Legacy%7EIntroduction_To_Game_AI_a529.html" title="Legacy:Introduction To Game AI">Introduction to Game AI</a></li>
+<li><a href="../../../../articles/f/i/r/Legacy%7EFirst_Person_Shooter_AI_Architecture_32dc.html" title="Legacy:First Person Shooter AI Architecture">First Person Shooter AI Architecture</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SuperApe:</b> Heady stuff. Nice addition to the wiki.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 9/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/p/s/Legacy%7EFPS_AI_Architecture%2C_Continued_1443.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/p/s/Legacy_talk%7EFPS_AI_Architecture%2C_Continued_ccfa.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:FPS_AI_Architecture%2C_Continued">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:00, 7 April 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

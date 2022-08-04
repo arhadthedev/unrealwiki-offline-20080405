@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:TriggerJumpPad - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:TriggerJumpPad</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> &gt;&gt; <a href="../../../../articles/j/u/m/Legacy%7EJumpPad_c593.html" title="Legacy:JumpPad">JumpPad</a> &gt;&gt; <a href="../../../../articles/u/t/j/Legacy%7EUTJumpPad_a83c.html" title="Legacy:UTJumpPad">UTJumpPad</a> &gt;&gt; TriggerJumpPad (Custom Class)</div>
+<p>This is a custom JumpPad that switches on and off when triggered. Use Object -&gt; InitialState to set its initial behaviour.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Simple_version"><span class="tocnumber">1</span> <span class="toctext">Simple version</span></a></li>
+<li class="toclevel-1"><a href="#Once_only_version"><span class="tocnumber">2</span> <span class="toctext">Once only version</span></a></li>
+<li class="toclevel-1"><a href="#Once_only_version:_cleaner"><span class="tocnumber">3</span> <span class="toctext">Once only version: cleaner</span></a></li>
+<li class="toclevel-1"><a href="#Homework"><span class="tocnumber">4</span> <span class="toctext">Homework</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Simple_version" id="Simple_version"></a></p>
+<h2><span class="mw-headline">Simple version</span></h2>
+<p>This toggles between active and dormant each time it is triggered. This is accomplished with two <a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">states</a>.</p>
+<p>The <b>Dormant</b> state overrides the Touch() and PostTouch events with empty functions. These are what caused the actual jumping behaviour in the parent class <a href="../../../../articles/j/u/m/Legacy%7EJumpPad_c593.html" title="Legacy:JumpPad">JumpPad</a>.</p>
+<p>Both states have their own version of the Trigger() function which handles the switch to the other state and displays a message on the <a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a> for testing purposes.</p>
+<p>The variable bBlocked is flipped for <a href="../../../../articles/b/o/t/Legacy%7EBot_Support_c519.html" title="Legacy:Bot Support">bot support</a>.</p>
+<div class="hidden-block">
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="hint">&lt;/span&gt;&lt;div <span class="kw5">class</span>=<span class="st0">"hidden"</span>&gt;<span class="co1">//=============================================================================</span>
+<span class="co1">// TriggerJumpPad</span>
+<span class="co1">// MUST have default property bStatic set to False</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> TriggerJumpPad <span class="kw5">extends</span> UTJumppad
+        <span class="kw6">placeable</span>;
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Dormant <span class="br0">{</span>
+        <span class="kw5">event</span> Touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+        <span class="kw5">event</span> PostTouch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+ 
+        <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+                        EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and woken up"</span><span class="br0">)</span>;
+          bBlocked = <span class="kw9">false</span>;
+          <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Active'</span><span class="br0">)</span>;    
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Active <span class="br0">{</span>
+        <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+          EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and sent to sleep"</span><span class="br0">)</span>;
+        bBlocked = <span class="kw9">true</span>;
+        <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Dormant'</span><span class="br0">)</span>;    
+        <span class="br0">}</span>
+<span class="br0">}</span></span>
+</pre></div>
+</div>
+<p>To use this actor:</p>
+<ol>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">create a subclass</a></li>
+<li>paste in the code and compile</li>
+</ol>
+<p>Because NavigationPoint sets bStatic = True in its <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a>, you'll need to change this for the subclass: in the <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Console_a1ec.html" title="Legacy:UnrealEd Console">UnrealEd console</a> type</p>
+<pre>
+editdefault class=TriggerJumpPad
+</pre>
+<ol>
+<li>A pseudo-properties window opens. Set None -&gt; bStatic = False. This will enable the class to change states and repond to being triggered</li>
+<li><a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an actor</a> of this class to you map, and set it up as you would a <a href="../../../../articles/u/t/j/Legacy%7EUTJumpPad_a83c.html" title="Legacy:UTJumpPad">UTJumpPad</a>.</li>
+<li><a href="../../../../articles/s/e/t/Legacy%7ESet_The_Following_Properties_ae9e.html" title="Legacy:Set The Following Properties">Set the following properties</a>:
+<ul>
+<li>Object -&gt; InitialState to either Active or Dormant</li>
+<li>Events -&gt; Tag to match your <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>'s Events -&gt; Event</li>
+</ul>
+</li>
+<li>Set your Trigger's ReTriggerDelay to something like 1 or 2 seconds, otherwise when you test it you'll probably trigger it twice each time you walk into the Trigger.</li>
+</ol>
+<p><a name="Once_only_version" id="Once_only_version"></a></p>
+<h2><span class="mw-headline">Once only version</span></h2>
+<p><a href="../../../../articles/s/u/p/Legacy%7ESuperApe_f74a.html" title="Legacy:SuperApe">SuperApe</a> originally requested this script, and also asked for a version that could be only be triggered once (for example, in a single-player game you might want to blow up a jump pad).</p>
+<p>If you're following this page as a tutorial, you can use the class you've already made: in UnrealEd's <a href="../../../../articles/s/c/r/Legacy%7EScript_Editor_20a7.html" title="Legacy:Script Editor">script editor</a>, erase the earlier code, paste in this code, and recompile.</p>
+<div class="hidden-block">
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="hint">&lt;/span&gt;&lt;div <span class="kw5">class</span>=<span class="st0">"hidden"</span>&gt;<span class="co1">//=============================================================================</span>
+<span class="co1">// TriggerJumpPad.</span>
+<span class="co1">// MUST have default property bStatic set to False</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> TriggerJumpPad <span class="kw5">extends</span> UTJumppad
+  <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bTriggerOnceOnly;
+<span class="kw5">var</span>   <span class="kw4">bool</span> bTriggered;
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Dormant <span class="br0">{</span>
+  <span class="kw5">event</span> Touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+  <span class="kw5">event</span> PostTouch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+ 
+  <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> bTriggered <span class="br0">)</span> 
+      <span class="kw1">return</span>; <span class="co1">// already been used? Go away!</span>
+    <span class="kw1">if</span><span class="br0">(</span> bTriggerOnceOnly <span class="br0">)</span>
+      bTriggered = <span class="kw9">true</span>; <span class="co1">// if one-shot, mark as used</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+      EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and woken up"</span><span class="br0">)</span>;
+    bBlocked = <span class="kw9">false</span>;
+    <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Active'</span><span class="br0">)</span>;    
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Active <span class="br0">{</span>
+  <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> bTriggered <span class="br0">)</span> 
+      <span class="kw1">return</span>; <span class="co1">// already been used? Go away!</span>
+    <span class="kw1">if</span><span class="br0">(</span> bTriggerOnceOnly <span class="br0">)</span>
+      bTriggered = <span class="kw9">true</span>; <span class="co1">// if one-shot, mark as used</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+      EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and sent to sleep"</span><span class="br0">)</span>;
+    bBlocked = <span class="kw9">true</span>;
+    <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Dormant'</span><span class="br0">)</span>;    
+    <span class="br0">}</span>
+<span class="br0">}</span></span>
+</pre></div>
+</div>
+<p>We've added two variables and a check section in each Trigger() function. For a one-shot TriggerJumpPad, the mapper sets bTriggerOnceOnly to True. Now this is what happens each time it is triggered:</p>
+<ol>
+<li>First Trigger:
+<ul>
+<li>bTriggered is False, so this check is skipped</li>
+<li>if bTriggerOnceOnly is True, set the bTriggered flag so next time we'll catch the first test. If bTriggerOnceOnly is False, do nothing.</li>
+</ul>
+</li>
+<li>Second Trigger:
+<ul>
+<li>if bTriggered is True, return. The Trigger function will never again go past this point. Note that the bTriggered flag will <i>never</i> be set to True if bTriggerOnceOnly is False.</li>
+</ul>
+</li>
+</ol>
+<p>This works, but is somewhat convoluted code. There's also the matter that we've got a certain amount of redundancy: the checking block is duplicated in the two state Trigger() functions. This could in theory be placed in a non-state version of Trigger(), but then there is the problem that the only thing it does is <b>return</b>. In a sub-call of Global.Trigger(), a return statement would just take us back to the state version – so not terribly good.</p>
+<p><a name="Once_only_version:_cleaner" id="Once_only_version:_cleaner"></a></p>
+<h2><span class="mw-headline">Once only version: cleaner</span></h2>
+<p>Here's the third and final version. We've removed the bTriggered flag and added a third state, <b>Dead</b>. This overrides Touch() and PostTouch() in the same way as the state Dormant, but it has no Trigger() function. Note that this state is not configurable: it's defined without parentheses after the <b>state</b> keyword. This is because there is no reason for the mapper to have the actor begin in this state: the actor simply won't do anything at all, apart from function as a <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a>!</p>
+<p>At first view, we seem to be a state short, since the actor can have four configurations: Dormant, Active, Dead, and Permanently Active. However, we've made clever use of the "null" state. This class has nothing defined outside of state code, but it inherits all of its parents' functions. So in the null state, it will behave exactly like <a href="../../../../articles/u/t/j/Legacy%7EUTJumpPad_a83c.html" title="Legacy:UTJumpPad">UTJumpPad</a>: a jump pad that is always active and can't be triggered, which is exactly what we want for "Permanently Active".</p>
+<p>There's still the bTriggerOnceOnly variable to be set by the mapper. Now we simply test against this before switching states. If it's True, Dormant goes to Null, and Active goes to Dead. If it's False, the actor will keep flipping between Active and Dormant each time it's triggered.</p>
+<div class="hidden-block">
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="hint">&lt;/span&gt;&lt;div <span class="kw5">class</span>=<span class="st0">"hidden"</span>&gt;<span class="co1">//=============================================================================</span>
+<span class="co1">// TriggerJumpPad.</span>
+<span class="co1">// MUST have default property bStatic set to False</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> TriggerJumpPad <span class="kw5">extends</span> UTJumppad
+  <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bTriggerOnceOnly;
+ 
+<span class="kw5">state</span> Dead <span class="br0">{</span>
+  <span class="kw5">event</span> Touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+  <span class="kw5">event</span> PostTouch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Dormant <span class="br0">{</span>
+  <span class="kw5">event</span> Touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+  <span class="kw5">event</span> PostTouch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+ 
+  <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+      EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and woken up"</span><span class="br0">)</span>;
+    bBlocked = <span class="kw9">false</span>;
+    <span class="kw1">if</span><span class="br0">(</span> bTriggerOnceOnly <span class="br0">)</span> 
+      <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">''</span><span class="br0">)</span>; <span class="co1">// if one-shot, go to permanently live</span>
+    <span class="kw1">else</span>
+      <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Active'</span><span class="br0">)</span>;    
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> Active <span class="br0">{</span>
+  <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> EventInstigator != <span class="kw9">None</span> <span class="br0">)</span>
+      EventInstigator.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"TriggerJumpPad triggered and sent to sleep"</span><span class="br0">)</span>;
+    bBlocked = <span class="kw9">true</span>;
+    <span class="kw1">if</span><span class="br0">(</span> bTriggerOnceOnly <span class="br0">)</span> 
+      <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Dead'</span><span class="br0">)</span>; <span class="co1">// if one-shot, go to dead</span>
+    <span class="kw1">else</span>
+      <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Dormant'</span><span class="br0">)</span>;    
+  <span class="br0">}</span>
+<span class="br0">}</span></span>
+</pre></div>
+</div>
+<p><a name="Homework" id="Homework"></a></p>
+<h2><span class="mw-headline">Homework</span></h2>
+<p>Try modifying this class so it can be triggered a certain number of times.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 34/1000000
+Post-expand include size: 278/2097152 bytes
+Template argument size: 194/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2003%29_8e02.html" title="Category:Legacy Custom Class (UT2003)">Legacy Custom Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/i/Legacy%7ETriggerJumpPad_66a8.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/i/Legacy_talk%7ETriggerJumpPad_e674.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:TriggerJumpPad">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:39, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

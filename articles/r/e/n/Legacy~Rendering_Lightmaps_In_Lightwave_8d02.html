@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Rendering Lightmaps In Lightwave - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Rendering Lightmaps In Lightwave</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#Setting_up"><span class="tocnumber">2</span> <span class="toctext">Setting up</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Creating_a_second_UV_map"><span class="tocnumber">2.1</span> <span class="toctext">Creating a second UV map</span></a></li>
+<li class="toclevel-2"><a href="#Adding_a_.27surface_baker.27_shader"><span class="tocnumber">2.2</span> <span class="toctext">Adding a 'surface baker' shader</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Rendering"><span class="tocnumber">3</span> <span class="toctext">Rendering</span></a></li>
+<li class="toclevel-1"><a href="#Importing_into_Unreal_Tournament"><span class="tocnumber">4</span> <span class="toctext">Importing into Unreal Tournament</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_meshugly.jpeg_11d1.html" class="image" title="This static mesh is in need of some better lighting. By contrast, the floor (a normal BSP brush) has much better defined lighting, making the bland lighting on the mesh look out of place."><img alt="This static mesh is in need of some better lighting. By contrast, the floor (a normal BSP brush) has much better defined lighting, making the bland lighting on the mesh look out of place." src="../../../../images/Legacy_fatm_meshugly.jpeg" width="391" height="209" border="0" /></a></span></div>
+</div>
+<p>You've probably noticed (or read in <a href="../../../../articles/t/h/e/Legacy%7EThe_Curse_Of_Static_Meshes_e9eb.html" title="Legacy:The Curse Of Static Meshes">The Curse of Static Meshes</a>) that static mesh lighting is not very good in Unreal Tournament. To a certain extent this can be improved by tweaking the design of the static mesh (presumably by increasing the number of points in the mesh – since vertex lighting is used – and/or by creating more uniformly shaped polygons – long thin triangles seem to result in particularly bad lighting). However, often the only solution is to create your own lighting off-line (by rendering the object in Lightwave) and then to overlay it on the static mesh.</p>
+<p>This section concerns creating your own lightmap in Lightwave, with particular emphasis on the steps needed to get the resulting lightmap overlaid on your static mesh in the Unreal Tournament editor. It is assumed that the reader is familiar with the basic raytracing/modelling concepts used in Lightwave.</p>
+<p><a name="Setting_up" id="Setting_up"></a></p>
+<h2><span class="mw-headline">Setting up</span></h2>
+<p><a name="Creating_a_second_UV_map" id="Creating_a_second_UV_map"></a></p>
+<h3><span class="mw-headline">Creating a second UV map</span></h3>
+<p>Once your model is complete and textured (using a UV map to align materials and skins with the object), create another UV map called 'UV2' (you must use this exact name). Then map all of your polygons into this UV2 map such that there are no overlapping polygons in the UV space. An atlas UV mapping (selected in the Map-&gt;Make UVs tool window) usually achieves this, although some tweaking (merging of points, unwelding of points and manual manipulation of the UV mapping) is often required to ensure it.</p>
+<p>It doesn't matter how you set up this UV map, although you'll probably get best results by ensuring that the relative proportions of surface areas are maintained with respect to the polygons of the object and their mapping in the 'UV2' plane.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_uvs.gif_14b0.html" class="image" title="This is the 'base' UV map used for applying materials such as the walkway metal texture (flr03ha from the HumanoidArchitecture texture set). And what a nice UV map it is too (cough)."><img alt="This is the 'base' UV map used for applying materials such as the walkway metal texture (flr03ha from the HumanoidArchitecture texture set). And what a nice UV map it is too (cough)." src="../../../../images/Legacy_fatm_uvs.gif" width="389" height="351" border="0" /></a></span></div>
+</div>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_UV2.gif_4192.html" class="image" title="This is the 'UV2' UV map for aligning the lightmap with the object. Note the lack of overlapping UVs. I suspect this map could be improved somewhat."><img alt="This is the 'UV2' UV map for aligning the lightmap with the object. Note the lack of overlapping UVs. I suspect this map could be improved somewhat." src="../../../../images/Legacy_fatm_UV2.gif" width="313" height="323" border="0" /></a></span></div>
+</div>
+<p>If there are any overlapping UVs, you'll notice because you'll get some strange lighting artifacts on your object.</p>
+<p><a name="Adding_a_.27surface_baker.27_shader" id="Adding_a_.27surface_baker.27_shader"></a></p>
+<h3><span class="mw-headline">Adding a 'surface baker' shader</span></h3>
+<p>Select any of the visible surfaces in the object (it doesn't matter which one) and add a 'Surface baker' shader to that surface (select the 'shaders' tab in the surface browser, and click the 'Add Shader' button). In the surface baker properties, select 'UV2' as the UV map, and ensure that 'Bake Entire Object', 'Bake Diffuse' (although possibly not) and 'Bake Illumination' are selected, and that 'Bake Colour' is deselected. You may want to select a small bitmap size and no antialising for the first few passes just to make sure everything is working ok.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_surfacebaker.gif_e9bd.html" class="image" title="Typical (final) settings for the 'Surface baker' shader. Antialiasing really slows things down, but looks much nicer."><img alt="Typical (final) settings for the 'Surface baker' shader. Antialiasing really slows things down, but looks much nicer." src="../../../../images/Legacy_fatm_surfacebaker.gif" width="346" height="429" border="0" /></a></span></div>
+</div>
+<p>Now any time you render the object in the Layout program, Lightwave will also (re)generate a lightmap for the object.</p>
+<p><a name="Rendering" id="Rendering"></a></p>
+<h2><span class="mw-headline">Rendering</span></h2>
+<p>Get your object into the Layout program and add lights in the appropriate places, bearing in mind that you may want/need to tile your object with itself or other objects. As mentioned above, all you need to do now is to render a frame (F9) and a lightmap will automatically be generated and saved to the specified location.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_lightmap.jpeg_a2f2.html" class="image" title="The lightmap generated by the Lightwave Layout program"><img alt="The lightmap generated by the Lightwave Layout program" src="../../../../images/Legacy_fatm_lightmap.jpeg" width="256" height="256" border="0" /></a></span></div>
+</div>
+<p><a name="Importing_into_Unreal_Tournament" id="Importing_into_Unreal_Tournament"></a></p>
+<h2><span class="mw-headline">Importing into Unreal Tournament</span></h2>
+<p>You may need to vertically flip the generated image before it can be imported into the Texture browser via the normal method (i.e. via .tga files). You may want to put lightmaps into the MyLevel package to keep things clean. You can use different layouts with the same object in Lightwave to create different lightmaps for the same static mesh placed in different parts of the same level, for example. You can also compress the lightmap into a DXT5 texture, for example, to save space.</p>
+<p>To apply the lightmap, select the static mesh in question (after importing it from Lightwave), select the lightmap texture, then apply it to the Display-&gt;<a href="../../../../articles/u/v/2/Legacy%7EUV2Texture_5188.html" title="Legacy:UV2Texture">UV2Texture</a> property. You should then get a beautifully lit static mesh. You may also need to set Display-&gt;bUnlit to true, and/or set Display-&gt;bStaticLighting to false.</p>
+<p>Rebuild your level to ensure the texture sticks around in MyLevel, then you should be done.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_fatm_meshnice.jpeg_96fb.html" class="image" title="The same static mesh as before, with a lightmap on it. Note that the rendering wasn't perfect (the dark patches above the doorway), probably due to bad mesh design. The lighting is more dramatic, and the mesh looks a little nicer, and there is now a much better match with the lighting on the floor."><img alt="The same static mesh as before, with a lightmap on it. Note that the rendering wasn't perfect (the dark patches above the doorway), probably due to bad mesh design. The lighting is more dramatic, and the mesh looks a little nicer, and there is now a much better match with the lighting on the floor." src="../../../../images/Legacy_fatm_meshnice.jpeg" width="391" height="209" border="0" /></a></span></div>
+</div>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Fat Marrow:</b>If anyone can tell me how to avoid that crappy lighting above the doorway, I'd be grateful. I don't get it if I unweld the points, but then I don't get smoothing either. (I am a bit of a Lightwave noob)</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/o/p/Legacy%7ETopics_On_Modeling_0f33.html" title="Legacy:Topics On Modeling">Topics On Modeling</a></li>
+<li><a href="../../../../articles/l/i/g/Legacy%7ELightwave_397f.html" title="Legacy:Lightwave">Lightwave</a></li>
+<li><a href="../../../../articles/t/h/e/Legacy%7EThe_Curse_Of_Static_Meshes_e9eb.html" title="Legacy:The Curse Of Static Meshes">The Curse Of Static Meshes</a></li>
+<li><a href="../../../../articles/b/u/i/Legacy%7EBuilding_With_Static_Meshes_38ae.html" title="Legacy:Building With Static Meshes">Building With Static Meshes</a></li>
+<li><a href="../../../../articles/l/i/g/Legacy%7ELightwave_UV_Mapping_b949.html" title="Legacy:Lightwave/UV Mapping">Lightwave/UV_Mapping</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 32/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Modeling_2a21.html" title="Category:Legacy Modeling">Legacy Modeling</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/n/Legacy%7ERendering_Lightmaps_In_Lightwave_8d02.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/n/Legacy_talk%7ERendering_Lightmaps_In_Lightwave_defe.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Rendering_Lightmaps_In_Lightwave">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:05, 30 July 2005 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

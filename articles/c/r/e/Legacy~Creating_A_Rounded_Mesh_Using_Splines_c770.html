@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Creating A Rounded Mesh Using Splines - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Creating A Rounded Mesh Using Splines</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial will cover creating a 90 degree pipe that goes with the T-Section pipe we created in the <a href="../../../../articles/c/r/e/Legacy%7ECreating_A_Simple_Mesh_Using_Splines_9261.html" title="Legacy:Creating A Simple Mesh Using Splines">Creating_A_Simple_Mesh_Using_Splines</a> tutorial.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Preface"><span class="tocnumber">1</span> <span class="toctext">Preface</span></a>
+<ul>
+<li class="toclevel-2"><a href="#What_are_these_Bezier_Lines_you_speak_of.3F"><span class="tocnumber">1.1</span> <span class="toctext">What are these Bezier Lines you speak of?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Setting_it_Up"><span class="tocnumber">2</span> <span class="toctext">Setting it Up</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Spicing_up_the_pipe"><span class="tocnumber">2.1</span> <span class="toctext">Spicing up the pipe</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Wrapping_it_Up"><span class="tocnumber">3</span> <span class="toctext">Wrapping it Up</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Preface" id="Preface"></a></p>
+<h2><span class="mw-headline">Preface</span></h2>
+<p>I will only be introducing one new element into spline modeling: <b>Bezier lines</b>. Bezier lines allow you to control the shape of a line, which is exactly what we want to do to create rounded objects.</p>
+<p>Also, all of the cloning/edits I mention are done in the top view unless otherwise stated.</p>
+<p><a name="What_are_these_Bezier_Lines_you_speak_of.3F" id="What_are_these_Bezier_Lines_you_speak_of.3F"></a></p>
+<h3><span class="mw-headline">What are these Bezier Lines you speak of?</span></h3>
+<p>See also <a href="http://en.wikipedia.org/wiki/Bezier_curve" class="extiw" title="wikipedia:Bezier_curve">Wikipedia:Bezier curve</a></p>
+<p>You've been working with them all along, just not knowingly. Circles are a form of Bezier splines. If you ever clicked on the vertex of a circle you would of noticed that two little green squares with a yellow line connecting them would of appeared around the vertex. These are called <b>handles</b>. By moving these handles you can change the shape of the curve on the spline.</p>
+<p><a name="Setting_it_Up" id="Setting_it_Up"></a></p>
+<h2><span class="mw-headline">Setting it Up</span></h2>
+<p>Use the same settings as stated in the Simple Mesh tutorial (<i>16 Grid, Grid snap on</i>).</p>
+<p>Lets start off by creating a circle with a radius of 64 (Same radius as the pipe in the previous tutorial). Convert it to an editable spline and go into element. Select the circle and clone it over and up 256 Units (<i>256 units right, 256 units up</i>). Now rotate it 90 degrees. We have now created the beginning and end of the 90 degree pipe.</p>
+<p>Now, lets create the splines to connect the two pieces. Since this is an even 90 degree piece, this will be very easy. Draw 3 circles from the midpoint of the existing circles(From the left circle go up until it is parallel with the other circle, draw the new cirles from there) Create the circles so that they line up with the existing circles. Take the circle in the middle and clone it down so it lines up with the bottom of the circle, and move the circle that you clone from up so it lines up with the top of the pipe beginning / end. You should now have something like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_spine_rpipe_1.jpeg_31d4.html" class="image" title="Note the extra part of the circles, they need to be removed to leave just a 90 degree section"><img alt="Note the extra part of the circles, they need to be removed to leave just a 90 degree section" src="../../../../images/Legacy_spine_rpipe_1.jpeg" width="537" height="383" border="0" /></a></span></div>
+</div>
+<p>Now you'll need to shave off the extra parts of the circles. First you should select the pipe beginning/end object and attatch all the loose circles to it (<i>The surface tool only works on a single object</i>). Now go into segment select mode and select all those extra loose segmenets and delete them. Hmm it looks like a rounded pipe to me&#160;:). Lets make a <b>Referenced</b> clone and apply the surface modifier so we can see our curved pipe.</p>
+<p><a name="Spicing_up_the_pipe" id="Spicing_up_the_pipe"></a></p>
+<h3><span class="mw-headline">Spicing up the pipe</span></h3>
+<p>Right now, the pipe is pretty boring, so lets add rounded flanges on the end. This is a lot easier than it sounds. Remember, you don't have to do anything to make the referenced surface update, it'll do it by itself as you edit. You need to be in element edit mode(with the spline object selected) while doing the following.</p>
+<p>Lets start by cloning the end circle over twice, 16 units each time. Now lets uniformly scale the circle upwards by 120 (<i>Look at the XYZ fields at the bottom of the screen for the scale factor</i>). You should now have this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_spine_rpipe_2.jpeg_2314.html" class="image" title="Legacy spine rpipe 2.jpeg"><img alt="" src="../../../../images/Legacy_spine_rpipe_2.jpeg" width="537" height="383" border="0" /></a></span></div>
+</div>
+<p>The next part is a little tricky. We need to look in the front view and draw a circle using the edge creation method, and drag from left to right to connect the two shorter circles. Now attatch the newly created circle. As you may of noticed, the top of the is slightly taller then the circle we scaled by 120 earlier. To remedy this, cut endpoint snapping on and drag the small circle's vert to the top of the largest circle's vert. If done correctly they will snap and line up exactly(<i>Cut endpoint snapping off when you aren't using it</i>). Now is a good time to delete the extra lower half of the circle.</p>
+<p>You may of noticed that the circle may not be in a shape you exactly like. You can change the shape by moving the handles on the circle's verts. Play around with them and you will get the shape you want. Mine turned out looking like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_spine_rpipe_3.jpeg_f12a.html" class="image" title="Keeping the small piece lined up is the hardest part, but EndPoint snapping makes it a lot easier"><img alt="Keeping the small piece lined up is the hardest part, but EndPoint snapping makes it a lot easier" src="../../../../images/Legacy_spine_rpipe_3.jpeg" width="537" height="383" border="0" /></a></span></div>
+</div>
+<p>Now, clone the circle we just made to the other parts of the circle. (<i>3 times in all, the left, right, and bottom</i>) Remember to rotate it 90 degrees each time to line it up, and if you have problems lining it up, use endpoint snapping to snap the small piece like you did on the top. (<i>Select the top vert at the top of the half-circle, drag it to the vert of the big circle</i>). If everything went well, you should be able to look at your referenced mesh and see the flange at the end of it. As you may of noticed, the concentration of polygons on the flange is very high. Lets use a less polygon intensive method on the other side.</p>
+<p>Lets begin making our lower-poly flange by copying the top circle end up 32 units. Next use create line tool to draw a line between the top two verts of the two circles. "But that doesn't look very round to me, and when I click on the verts of the line I don't see any handles?". Right you are, we are about to do something about that. You need to select both verts of JUST the line we created. To make this easier, under <b>Selection</b> in the <b>Editable Spline</b> check <b>Segment End</b>. This allows you to click on the segment and it selects the nearest vert that belongs to it. Hold control and select both verts of the line. After doing so, hold control and right click <b>ON</b> one of the verts. This will pop of a new menu. Go to <b>Edit/Edit Spline Menu-&gt;Bezier</b>. This converts the verts from corner to Bezier. Now you will be able to give the spline a nice curve by dragging the handles. Mine ended up like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_spine_rpipe_4.jpeg_ed0b.html" class="image" title="Handles do not make the line go exactly to their position, they only make the line 'lean' that way"><img alt="Handles do not make the line go exactly to their position, they only make the line 'lean' that way" src="../../../../images/Legacy_spine_rpipe_4.jpeg" width="537" height="383" border="0" /></a></span></div>
+</div>
+<p>All thats left to do is clone / rotate it like you did for the other end. The entire scene ended up looking like this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_spine_rpipe_5.jpeg_c0c8.html" class="image" title="The flange on the right side is much more reasonable to be used"><img alt="The flange on the right side is much more reasonable to be used" src="../../../../images/Legacy_spine_rpipe_5.jpeg" width="537" height="383" border="0" /></a></span></div>
+</div>
+<p>Notice how the second spline method we used resulted in less polys, and fits better with the polygon concentration of the rest of the object. Some would even suggest adding in second circle in the middle of the bend so the bend would be smoother. I'll leave that to you as a bonus exercise&#160;:) (<i>Hint, you'll have to divide the long splines that make the bend</i>)</p>
+<p><a name="Wrapping_it_Up" id="Wrapping_it_Up"></a></p>
+<h2><span class="mw-headline">Wrapping it Up</span></h2>
+<p>In this tutorial we created a curved pipe and added rounded flanges using the basics of Bezier splines. I hope you learned much from this tutorial. Remember, using Max is a learning experience. I learn something almost every time I use it. For example, I never knew that you could convert Spline types using a menu until today. (Holding Control, Shift, or Alt all pop up different right click menus)</p>
+<p>Sorry if the tutorial was a little vauge in places. The subject is a little hard to explain. As usual, I'm open to suggestions / comments →<a href="../../../../articles/d/r/2E/Legacy%7EDr.Nick_5792.html" title="Legacy:Dr.Nick">Dr.Nick</a></p>
+<p><b>Legal:</b> Suggestion moderators (GodKings): Move this page to the 3DSM part of the Wiki.</p>
+<p><b>Wormbo:</b> Just link it from there.</p>
+<p><b>Tarquin:</b> Not sure what '3dsm' is – link it from Modeling</p>
+<p><b>Legal:</b> Neither am I, but I got confused (thought it was another fancy UED3 thing) so move to Modelling/Spline... please.</p>
+<p><b>Tarquin:</b> I prefer not to have subpages unless they're clearly related. There aren't any "areas" of the wiki – you create strcture by making links.</p>
+<p><b>Foogod:</b> I assume that "3DSM" is <a href="../../../../articles/3/d/_/Legacy%7E3D_Studio_Max_5e8e.html" title="Legacy:3D Studio Max">3D Studio Max</a>, which is pretty clearly the specific modelling program this tutorial is geared at. Given the required context, I actually think this would make sense as a subpage for that modelling program, since it's probably not that useful (and potentially rather confusing) for anybody using other software. At the very least, there should be some mention somewhere of what program this thing is assuming the reader is using..</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 37/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/r/e/Legacy%7ECreating_A_Rounded_Mesh_Using_Splines_c770.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/r/e/Legacy_talk%7ECreating_A_Rounded_Mesh_Using_Splines_93bc.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Creating_A_Rounded_Mesh_Using_Splines">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 06:16, 1 December 2004 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Image Conversion - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Image Conversion</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is another one of those "because I needed it" files. It's not well written, it doesn't do much error checking or have many user options. It's a very short program in C to convert files between different image formats, including dds (<a href="../../../../articles/d/x/t/Legacy%7EDXT_d85c.html" title="Legacy:DXT">DXT</a> texture files). It requires DevIL, which you can get from <a href="http://openil.sf.net/" class="external free" title="http://openil.sf.net/" rel="nofollow">http://openil.sf.net/</a>, and probably also from your Linux distribution if you are using Linux.</p>
+<p>Compile it like this:</p>
+<pre>
+gcc -o devilconvert -lIL -lILU devilconvert.c
+</pre>
+<p>and use it like this:</p>
+<pre>
+devilconvert file1.ext file2.ext
+</pre>
+<p>DevIL's load and save functions autodetect file formats, so you can fairly easily convert a bmp or png to a dds, tga, or pcx for use with your mod.</p>
+<p>I have it online at <a href="http://chshrcat.homelinux.net/devilconvert.c" class="external free" title="http://chshrcat.homelinux.net/devilconvert.c" rel="nofollow">http://chshrcat.homelinux.net/devilconvert.c</a>, but here it is in the Wiki as well:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#include</span> &lt;IL/il.<span class="me1">h</span>&gt;
+<span class="kw2">#include</span> &lt;IL/ilu.<span class="me1">h</span>&gt;
+ 
+<span class="kw4">int</span> main<span class="br0">(</span><span class="kw4">int</span> argc, char *argv<span class="br0">[</span><span class="br0">]</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw4">int</span> i;
+        <span class="kw1">if</span> <span class="br0">(</span>argc != <span class="nu0">3</span><span class="br0">)</span>
+                exit<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+ 
+        ilInit<span class="br0">(</span><span class="br0">)</span>;
+        iluInit<span class="br0">(</span><span class="br0">)</span>;
+        ilBindImage<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+ 
+        ilLoadImage<span class="br0">(</span>argv<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>;
+        i = ilGetError<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>i != IL_NO_ERROR<span class="br0">)</span> <span class="br0">{</span>
+                printf<span class="br0">(</span><span class="st0">"%s<span class="es0">\n</span>"</span>,iluErrorString<span class="br0">(</span>i<span class="br0">)</span><span class="br0">)</span>;
+                exit<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        ilSaveImage<span class="br0">(</span>argv<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span><span class="br0">)</span>;
+        i = ilGetError<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>i != IL_NO_ERROR<span class="br0">)</span> <span class="br0">{</span>
+                printf<span class="br0">(</span><span class="st0">"%s<span class="es0">\n</span>"</span>,iluErrorString<span class="br0">(</span>i<span class="br0">)</span><span class="br0">)</span>;
+                exit<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Yes, this is crap code. It is exactly good enough for what I need it to do&#160;;-)</p>
+<p><b>G-LiTe:</b>: <a href="http://www.imagemagick.org/" class="external text" title="http://www.imagemagick.org/" rel="nofollow">ImageMagick</a> includes a commandline program called "convert" which (at the time of writing) supports 87 image formats. It's got lots of options, but unfortunatly cannot read or save DXT files. Just thought it was worth mentioning here, maybe someone in here can write a DXT thingy for it. I'm too lazy.&#160;;) Most linux distributions include it or even have it installed by default.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/i/m/a/Legacy%7EImage_Conversion_4e69.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/i/m/a/Legacy_talk%7EImage_Conversion_1cb2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Image_Conversion">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:08, 14 May 2004 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

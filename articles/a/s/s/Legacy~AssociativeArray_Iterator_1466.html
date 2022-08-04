@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:AssociativeArray/Iterator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:AssociativeArray/Iterator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/a/s/s/Legacy%7EAssociativeArray_5544.html" title="Legacy:AssociativeArray">Legacy:AssociativeArray</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Iterator" id="Iterator"></a></p>
+<h2><span class="mw-headline">Iterator</span></h2>
+<p>A script-only iterator must use a different syntax from the built-in <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterators</a>. The syntax used here is "close" to that used in C++'s STL. Traversing an unthreaded binary search tree in order requires keeping track of the progress of the traversal; this is done in the activation stack in a recursive solution. It must be done explicitly with an iterator.</p>
+<p><a name="AssociativeArrayIterator" id="AssociativeArrayIterator"></a></p>
+<h3><span class="mw-headline">AssociativeArrayIterator</span></h3>
+<p><b>Warning</b> this code is not insertion safe. That is, if elements are added to the associative array during a traversal, there is no way of knowing whether the nodes will be visited in the traversal. It is even less deletion save but this implementation of associative arrays doesn't support deletion.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> AssociativeArrayIterator
+    <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+<span class="coMULTI">/* A forward, read-only, in-order iterator for traversing an associative
+   array (a binary search tree (BST)). The iterator is associated with a
+   particular associative array, keeping track of its current position and
+   a stack of "open" nodes.
+ 
+   An in-order traversal visits the nodes of a BST in sorted order by their
+   keys. The typical description of the traversal is recursive: "left
+   subtree, current node, right subtree". This means: do an in-order
+   traversal of the left subtree, then visit the current node, then do an
+   in-order traversal of the right subtree. Called on the root node of the
+   tree, this will visit each node in sorted key order.
+ 
+   An iterator cannot be recursive: each call to next should return the
+   next element in the collection being interated over. Thus the iterator
+   must capture the state of one step in the recursive, in-order
+   traversal. The iterator uses a stack to keep a collection of "opened"
+   but not yet visited nodes. These are exactly the nodes that would have
+   been current in each recursive call down to the node being visited
+   (curr_); the stack simulates the calling stack for the recursive version
+   of the function and we can push and pop "activation records", one at a
+   time, to complete a traversal of the BST.
+*/</span>
+ 
+<span class="coMULTI">/* The state of an iterator is captured in the binary tree being traversed,
+   the current node, and the collection of open but not visited nodes.
+*/</span>
+<span class="kw5">var</span> <span class="kw6">private</span> AssociativeArray tree_;
+<span class="kw5">var</span> <span class="kw6">private</span> AssociativeArrayNode curr_;
+<span class="kw5">var</span> <span class="kw6">private</span> AssociativeArrayNodeStack stack_;
+<span class="coMULTI">/* Traversal order is determined by the contents of stack; the iterator must
+   know when to push the root node onto the stack */</span>
+<span class="kw5">var</span> <span class="kw6">private</span> <span class="kw4">bool</span> started_;
+ 
+<span class="coMULTI">/* Initialize the iterator. aaTree is the associative array this iterator
+   is iterating across. bSetCurrentNodeNone is set true if the current node
+   should NOT be set to the first node in the tree. This backward logic is
+   required to handle the "optionalness" of the parameter; if no parameter
+   is provided on the call, the boolean value is false.
+*/</span>
+<span class="kw5">function</span> init<span class="br0">(</span>AssociativeArray aaTree, <span class="kw6">optional</span> <span class="kw4">bool</span> bSetCurrentNodeNone<span class="br0">)</span> 
+<span class="br0">{</span>
+  started_ = <span class="kw9">false</span>;
+  tree_ = aaTree;
+  stack_ = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'AssociativeArrayNodeStack'</span>;
+  <span class="kw1">if</span> <span class="br0">(</span>!bSetCurrentNodeNone<span class="br0">)</span>
+    next<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span> <span class="co1">// init</span>
+ 
+<span class="coMULTI">/* Get the first value from the current iterator position, the key in the
+   key/value pair. */</span>
+<span class="kw5">function</span> <span class="kw4">string</span> first<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw1">return</span> curr_.<span class="me1">key</span>;
+<span class="br0">}</span> <span class="co1">// first</span>
+ 
+<span class="coMULTI">/* get the second value from the current iterator position, the value in
+   the key/value pair. */</span>
+<span class="kw5">function</span> <span class="kw4">string</span> second<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw1">return</span> curr_.<span class="me1">value</span>;
+<span class="br0">}</span> <span class="co1">// second</span>
+ 
+<span class="kw5">function</span> AssociativeArray getCollection<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> tree_;
+<span class="br0">}</span> <span class="co1">// getCollection</span>
+ 
+<span class="kw5">function</span> <span class="kw4">string</span> getIndex<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> curr_.<span class="me1">key</span>;
+<span class="br0">}</span> <span class="co1">// getIndex</span>
+ 
+<span class="kw5">function</span> dump<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">string</span> dumpString;
+ 
+  dumpString = <span class="kw4">Name</span>$<span class="st0">".dump(): "</span>
+               $<span class="st0">"started_ = "</span>$started_
+               $<span class="st0">", tree_ = "</span>$tree_
+               $<span class="st0">", stack_ = "</span>$stack_
+               $<span class="st0">", curr_ = "</span>$curr_;
+  <span class="kw1">if</span> <span class="br0">(</span>curr_ != <span class="kw9">None</span><span class="br0">)</span>
+    dumpString = dumpString
+                 $<span class="st0">", curr_.key = "</span>$curr_.<span class="me1">key</span>
+                 $<span class="st0">", curr_.value = "</span>$curr_.<span class="me1">value</span>;
+  <span class="kw7">log</span><span class="br0">(</span>dumpString, <span class="st0">'DevAssociativeArray'</span><span class="br0">)</span>;
+<span class="br0">}</span> <span class="co1">// dump</span>
+ 
+ 
+<span class="coMULTI">/* Comparison operator calls this function */</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> same<span class="br0">(</span>AssociativeArrayIterator other<span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw1">return</span> <span class="br0">(</span><span class="br0">(</span>tree_ == other.<span class="me1">tree_</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>curr_ == other.<span class="me1">curr_</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span> <span class="co1">// same</span>
+ 
+<span class="coMULTI">/* advance to the next element. The next element is the left-most child of
+   the root (first time through) or the left-most child of the right
+   subtree (think about BST deletion routines and finding successor of a
+   node to be deleted). */</span>
+<span class="kw5">function</span> next<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw5">local</span> AssociativeArrayNode p;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>!started_<span class="br0">)</span> <span class="br0">{</span>
+    p = tree_.<span class="me1">root</span>;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    p = curr_;
+    <span class="kw1">if</span> <span class="br0">(</span>p != <span class="kw9">None</span><span class="br0">)</span>
+      p = p.<span class="me1">right_child</span>;
+  <span class="br0">}</span>
+ 
+  <span class="kw1">do</span> <span class="br0">{</span>
+    <span class="kw1">while</span> <span class="br0">(</span>p != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+      stack_.<span class="me1">push</span><span class="br0">(</span>p<span class="br0">)</span>;
+      p = p.<span class="me1">left_child</span>;
+    <span class="br0">}</span> <span class="co1">// push all the left children</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>!stack_.<span class="me1">isEmpty</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+      p = stack_.<span class="me1">pop</span><span class="br0">(</span><span class="br0">)</span>;
+      started_ = <span class="kw9">true</span>;
+      curr_ = p;
+      <span class="kw1">return</span>;
+    <span class="br0">}</span>
+  <span class="br0">}</span> <span class="kw1">until</span> <span class="br0">(</span>stack_.<span class="me1">isEmpty</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+  curr_ = <span class="kw9">None</span>;
+<span class="br0">}</span> <span class="co1">// next()</span>
+ 
+<span class="kw1">defaultproperties</span> 
+<span class="br0">{</span>
+  started_ = <span class="kw9">false</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="AssociativeArrayNodeStack" id="AssociativeArrayNodeStack"></a></p>
+<h3><span class="mw-headline">AssociativeArrayNodeStack</span></h3>
+<p>The explicit state of an iteration in progress. A stack of <tt>AssociativeArrayNode</tt>s.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> AssociativeArrayNodeStack
+    <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+<span class="coMULTI">/* A stack of array nodes; used to implement iterators. */</span>
+ 
+ 
+<span class="coMULTI">/* Implementation of the stack itself. Top of the stack is at
+   impl[impl.Length-1]
+*/</span>
+<span class="kw5">var</span> <span class="kw6">private</span> array&lt;AssociativeArrayNode&gt; impl;
+ 
+<span class="coMULTI">/* is the stack currently empty? */</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> isEmpty<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw1">return</span> <span class="br0">(</span>impl.<span class="kw6">Length</span> == <span class="nu0">0</span><span class="br0">)</span>;
+<span class="br0">}</span> <span class="co1">// isEmpty</span>
+ 
+<span class="coMULTI">/* Push the given AssociateArrayNode on the top of the stack. */</span>
+<span class="kw5">function</span> push<span class="br0">(</span>AssociativeArrayNode a<span class="br0">)</span>
+<span class="br0">{</span>
+  impl<span class="br0">[</span>impl.<span class="kw6">Length</span><span class="br0">]</span> = a;
+<span class="br0">}</span> <span class="co1">// push</span>
+ 
+<span class="coMULTI">/* Pop and top together: Return and remove the top element from the stack.
+   If there is no such node, return None. */</span>
+<span class="kw5">function</span> AssociativeArrayNode pop<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw5">local</span> AssociativeArrayNode retval;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>!isEmpty<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+    retval = impl<span class="br0">[</span>impl.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span>;
+    impl.<span class="kw6">Remove</span><span class="br0">(</span>impl.<span class="kw6">Length</span> - <span class="nu0">1</span>, <span class="nu0">1</span><span class="br0">)</span>;
+    <span class="kw1">return</span> retval;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    <span class="kw1">return</span> <span class="kw9">None</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span> <span class="co1">// pop</span>
+<span class="co1">// AssociativeArrayNodeStack</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/s/s/Legacy%7EAssociativeArray_Iterator_1466.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/s/s/Legacy_talk%7EAssociativeArray_Iterator_7517.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:AssociativeArray/Iterator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:49, 4 September 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

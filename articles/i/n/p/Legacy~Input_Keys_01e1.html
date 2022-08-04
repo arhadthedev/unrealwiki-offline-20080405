@@ -1,0 +1,380 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Input Keys - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Input Keys</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>So its time to create a class that requires the user to press a key? You've come to the right place. I'll walk you through the steps here.</p>
+<p>For <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> and newer, see <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">interaction</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Step_1:__Setting_up_the_Key_Binding"><span class="tocnumber">1</span> <span class="toctext">Step 1: Setting up the Key Binding</span></a></li>
+<li class="toclevel-1"><a href="#Step_2:__Creating_the_mutator_to_process_your_key_input"><span class="tocnumber">2</span> <span class="toctext">Step 2: Creating the mutator to process your key input</span></a></li>
+<li class="toclevel-1"><a href="#Step_3:__Creating_your_actor.21"><span class="tocnumber">3</span> <span class="toctext">Step 3: Creating your actor!</span></a></li>
+<li class="toclevel-1"><a href="#My_Working_.28we_hope.29_Example.21"><span class="tocnumber">4</span> <span class="toctext">My Working (we hope) Example!</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Step_1:__Setting_up_the_Key_Binding" id="Step_1:__Setting_up_the_Key_Binding"></a></p>
+<h2><span class="mw-headline">Step 1: Setting up the Key Binding</span></h2>
+<p>This is the easiest step. Start by creating a new class, something like ExtraWordBindings (please replace Word with something descriptive, thanks!) and make it look something like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> ExtraWordBindings <span class="kw5">extends</span> UTExtraKeyBindings;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     SectionName=<span class="st0">"YourSection"</span> <span class="co1">// Enter a descriptive section name here</span>
+     LabelList<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"First Binding Caption"</span> <span class="co1">// Something Descriptive, Please.</span>
+     LabelList<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"Second Binding Caption"</span>
+     AliasNames<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"mutate Word"</span> <span class="co1">// Change Word to something that describes the action this key will do</span>
+     AliasNames<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="st0">"mutate Word"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Compile the script and create an entry in the [Public] section of your package's int file:</p>
+<p>Object=(Name=MyPackage.MyKeyBindingsClass,Class=Class,MetaClass=UTMenu.UTExtraKeyBindings)</p>
+<p>Now you should have a working option in the "Controls" option panel.</p>
+<p><a name="Step_2:__Creating_the_mutator_to_process_your_key_input" id="Step_2:__Creating_the_mutator_to_process_your_key_input"></a></p>
+<h2><span class="mw-headline">Step 2: Creating the mutator to process your key input</span></h2>
+<p>Okay now you can use one <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a> to parse all your key bindings, or one mutator for each binding. I like one mutator for each binding, because these mutators should be automatically added into the mutatorlist if the associated actor is present in the map. DO NOT CREATE AN INT ENTRY FOR THESE MUTATORS!</p>
+<p>They should look something like this. (Once again, PLEASE replace "Word" with something DESCRIPTIVE!)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> WordKeyMut <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">function</span> AddMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> M.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'WordKeyMut'</span><span class="br0">)</span> <span class="br0">)</span> <span class="co1">// This mutator's name!</span>
+        <span class="br0">{</span>
+                <span class="kw1">return</span>; <span class="co1">//only allow one mutator</span>
+        <span class="br0">}</span>
+        <span class="kw6">Super</span>.<span class="me1">AddMutator</span><span class="br0">(</span>M<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Mutate<span class="br0">(</span><span class="kw4">string</span> MutateString, PlayerPawn Sender<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> YourClass Other; <span class="co1">// YourClass will be the name of the class that we</span>
+                               <span class="co1">// will create in the next step - the actual actor </span>
+                               <span class="co1">// that this mutator is processing key input for.</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>MutateString ~= <span class="st0">"SomeString"</span><span class="br0">)</span> <span class="co1">// SomeString should be equal to an AliasName set in the class above,</span>
+                                          <span class="co1">//without "mutate".  i.e., if your AliasName was "mutate Activate",</span>
+                                          <span class="co1">//SomeString should be "Activate"</span>
+        <span class="br0">{</span>
+                <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'YourClass'</span>, Other<span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'YourClass'</span><span class="br0">)</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"YourClass Detected"</span><span class="br0">)</span>;
+                                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">BooleanValue</span> <span class="br0">)</span> <span class="co1">// Change BooleanValue to a descriptive variable name!</span>
+                                                          <span class="co1">// It will be set in the class we will create in the next</span>
+                                                          <span class="co1">// step, to see if the actor is actually in a state that</span>
+                                                          <span class="co1">// it can be activated.</span>
+                                <span class="br0">{</span>
+                                        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"YourClass Active"</span><span class="br0">)</span>;
+                                        Other.<span class="me1">FunctionName</span><span class="br0">(</span> <span class="br0">)</span>; <span class="co1">// Change FunctionName to something descriptive!</span>
+                                                               <span class="co1">// It will be created in the next step as well,</span>
+                                                               <span class="co1">// and it will contain everything we want to happen</span>
+                                                               <span class="co1">//when the user presses a key.</span>
+ 
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> NextMutator != <span class="kw9">None</span> <span class="br0">)</span>
+                NextMutator.<span class="me1">Mutate</span><span class="br0">(</span>MutateString, Sender<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Step_3:__Creating_your_actor.21" id="Step_3:__Creating_your_actor.21"></a></p>
+<h2><span class="mw-headline">Step 3: Creating your actor!</span></h2>
+<p>Create your map actor as you otherwise would create any other map actor. How to create them is beyond the scope of this article. Once its created, you want to add the following near the beginning of the class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">AddMutator</span><span class="br0">(</span>Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Package.Mutator'</span><span class="br0">)</span><span class="br0">)</span>; <span class="co1">// Replace Package with your package name,</span>
+                                                                          <span class="co1">// and Mutator with the name of the mutator</span>
+                                                                          <span class="co1">// we created above.</span>
+        <span class="kw6">Super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Right at the very beginning, define a boolean variable called whatever you replaced "BooleanValue" with in the class above. You may also want another variable (as an Actor), to store who is allowed to actually activate the object.</p>
+<p>Now you code a function with its name set to whatever you made "FunctionName", which will be what you want to happen when a player activates the object. You will also need to put in the code to set your boolean to true when someone is allowed to activate it.</p>
+<p>Now you're set! Below is an example of what I've done, to create a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">trigger</a> that requires the user to activate it before use.</p>
+<p><a name="My_Working_.28we_hope.29_Example.21" id="My_Working_.28we_hope.29_Example.21"></a></p>
+<h2><span class="mw-headline">My Working (we hope) Example!</span></h2>
+<p>Here is the trigger class, it works like any other trigger:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//</span>
+<span class="co1">// UseTrigger:  Almost identical to Trigger except requires user to press</span>
+<span class="co1">// activate to spawn the event.</span>
+<span class="co1">// By Nick Bowler (Draconx), http://www.deadjunkie.com/~draconx/</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> UseTrigger <span class="kw5">extends</span> Trigger;
+ 
+ 
+<span class="co1">//-----------------------------------------------------------------------------</span>
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> Activatable;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> ActivatedBy;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> OtherBkp;
+ 
+<span class="co1">//</span>
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">AddMutator</span><span class="br0">(</span>Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Package.ActivateMut'</span><span class="br0">)</span><span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// Called when something touches the trigger.</span>
+<span class="co1">//</span>
+<span class="kw5">function</span> Touch<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Activated"</span><span class="br0">)</span>;
+                OtherBkp = Other;
+                Activatable = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UsePressed<span class="br0">(</span> <span class="br0">)</span>
+<span class="br0">{</span>
+ 
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Used"</span><span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">Touch</span><span class="br0">(</span> OtherBkp<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// When something untouches the trigger.</span>
+<span class="co1">//</span>
+<span class="kw5">function</span> UnTouch<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Deactivated"</span><span class="br0">)</span>;
+                Activatable = <span class="kw9">false</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        Activatable=<span class="kw9">false</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Here is the mutator which processes the key input:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//</span>
+<span class="co1">// ActivateMut - Required for UseTrigger to function correctly.  Placing a</span>
+<span class="co1">// UseTrigger in your map automatically adds this mutator, so it should not</span>
+<span class="co1">// be added manually.</span>
+<span class="co1">// By Nick Bowler (Draconx), http://www.deadjunkie.com/~draconx/</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ActivateMut <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">function</span> AddMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> M.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ActivateMut'</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">return</span>; <span class="co1">//only allow one mutator</span>
+        <span class="br0">}</span>
+        <span class="kw6">Super</span>.<span class="me1">AddMutator</span><span class="br0">(</span>M<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Mutate<span class="br0">(</span><span class="kw4">string</span> MutateString, PlayerPawn Sender<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> UseTrigger Other;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>MutateString ~= <span class="st0">"activate"</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'UseTrigger'</span>, Other<span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'UseTrigger'</span><span class="br0">)</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Detected"</span><span class="br0">)</span>;
+                                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Activatable</span> <span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Active"</span><span class="br0">)</span>;
+                                        Other.<span class="me1">UsePressed</span><span class="br0">(</span> <span class="br0">)</span>;
+ 
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+ 
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> NextMutator != <span class="kw9">None</span> <span class="br0">)</span>
+                NextMutator.<span class="me1">Mutate</span><span class="br0">(</span>MutateString, Sender<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>And here is the class which adds to the keybindings:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> UseTriggerBindings <span class="kw5">extends</span> UTExtraKeyBindings;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     SectionName=<span class="st0">"Miscellaneous"</span>
+     LabelList<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"Activate"</span>
+     AliasNames<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"mutate activate"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>And there you have it. I hope you found this tutorial useful!</p>
+<hr />
+<p><b>Foxpaw:</b> This is a clever workaround, but wouldn't exec functions/input variables be more elegant and easier, too?</p>
+<p><b>Wormbo:</b> Exec functions can only be executed by the player who is the owner of the actor and I don't see how input variables would work in this case.</p>
+<p><b>Foxpaw:</b> Don't mutators have full access to exec functions and input variables for the local viewport?</p>
+<p><b>Wormbo:</b> No, mutators are serverside. They only have a Mutate function which is called by the PlayerController's exec function Mutate which in turn is always replicated to the server.</p>
+<p><b>Foxpaw:</b> Oh. I thought mutators were loaded on both the client and the server and followed the normal replication rules.</p>
+<p><b>Wormbo:</b> They follow replication rules, that's why they aren't replicated at all unless you change RemoteRole, bAlwaysRelevant, etc.</p>
+<p><b>ToJo:</b> Does anyone know if there is a simplier way to do this in UT 2003?</p>
+<p><b>Foxpaw:</b> An <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">interaction</a> should work.</p>
+<p><b>Draconx:</b> UT 2003 already has a UseTrigger, it works just like mine (unfortunately, the Activate key doesnt seem to appear in the normal key bindings screen, and must be set manually.</p>
+<p><b>MythOpus:</b> Are you refering to the Activate key for the UseTrigger? That is set to the Use key which is by default 'U'...</p>
+<p><b>Draconx:</b> Yeah but the control doesnt appear on the controls screen ingame. I used the rawkeybindings thing to change it on my own install.</p>
+<p><b>Xian:</b> Interesting concept. But this is buggy, as if we have 2 PlayerPawns activating 2 separate Triggers, we'd have both of them activatable. This in turn would make the foreach iterator execute even the trigger which the Player running the command isn't touching. i'd say this would be a better workaround:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Touch<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Activated"</span><span class="br0">)</span>;
+                PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">HitActor</span> = <span class="kw8">Self</span>;
+                OtherBkp = Other;
+                Activatable = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UnTouch<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Deactivated"</span><span class="br0">)</span>;
+                Activatable = <span class="kw9">false</span>;
+                PlayerPawn<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">HitActor</span> = <span class="kw9">None</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>... and...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>MutateString ~= <span class="st0">"activate"</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Sender.<span class="me1">HitActor</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; Sender.<span class="me1">HitActor</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'UseTrigger'</span><span class="br0">)</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Detected"</span><span class="br0">)</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span> UseTrigger<span class="br0">(</span>Sender.<span class="me1">HitActor</span><span class="br0">)</span>.<span class="me1">Activatable</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"UseTrigger Active"</span><span class="br0">)</span>;
+                                UseTrigger<span class="br0">(</span>Sender.<span class="me1">HitActor</span><span class="br0">)</span>.<span class="me1">UsePressed</span><span class="br0">(</span> <span class="br0">)</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 30/1000000
+Post-expand include size: 10/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/i/n/p/Legacy%7EInput_Keys_01e1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/i/n/p/Legacy_talk%7EInput_Keys_66f0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Input_Keys">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:15, 7 May 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

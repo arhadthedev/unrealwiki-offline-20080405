@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Pseudo-Bumpmapped Texture - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Pseudo-Bumpmapped Texture</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page explains how to make a pseudo bump mapped texture.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Credits"><span class="tocnumber">1</span> <span class="toctext">Credits</span></a></li>
+<li class="toclevel-1"><a href="#Limitations"><span class="tocnumber">2</span> <span class="toctext">Limitations</span></a></li>
+<li class="toclevel-1"><a href="#Benefits"><span class="tocnumber">3</span> <span class="toctext">Benefits</span></a></li>
+<li class="toclevel-1"><a href="#Method_.5BSolidsnake.5D.28to_madness.29"><span class="tocnumber">4</span> <span class="toctext">Method [Solidsnake](to madness)</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Part_1"><span class="tocnumber">4.1</span> <span class="toctext">Part 1</span></a></li>
+<li class="toclevel-2"><a href="#Part_2"><span class="tocnumber">4.2</span> <span class="toctext">Part 2</span></a></li>
+<li class="toclevel-2"><a href="#Part_3"><span class="tocnumber">4.3</span> <span class="toctext">Part 3</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Method_.5BXabora.2FProject_Torlan.5D"><span class="tocnumber">5</span> <span class="toctext">Method [Xabora/Project Torlan]</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Part_1_2"><span class="tocnumber">5.1</span> <span class="toctext">Part 1</span></a></li>
+<li class="toclevel-2"><a href="#Part_2_2"><span class="tocnumber">5.2</span> <span class="toctext">Part 2</span></a></li>
+<li class="toclevel-2"><a href="#Part_3_2"><span class="tocnumber">5.3</span> <span class="toctext">Part 3</span></a></li>
+<li class="toclevel-2"><a href="#What_else_from_here.3F"><span class="tocnumber">5.4</span> <span class="toctext">What else from here?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">7</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Credits" id="Credits"></a></p>
+<h2><span class="mw-headline">Credits</span></h2>
+<p>First of all, I would like to say thank you to these people who helped me to figure this thing out:</p>
+<ul>
+<li>elmuerte: He had some ideas which led to final compilation of what goes and where.</li>
+<li>Plouj: He showed me a screenshot of what UArchitect had in his Texture Browser.</li>
+<li>UArchitect: He made the said screenshot which displayed what he used for this technique.</li>
+</ul>
+<p><a name="Limitations" id="Limitations"></a></p>
+<h2><span class="mw-headline">Limitations</span></h2>
+<p>While this may or may not be the way that <a href="http://torlan.forerunners.org/" class="external text" title="http://torlan.forerunners.org/" rel="nofollow">Project Torlan</a> used, there are severe limitations to this method that are not immediately apparent when first thinking about this. First of all, this is not in any form bump mapping of even remotely close to it. It simply looks like it to a certain extent but nothing close to it at all. Thus there are some restrictions that I encountered:</p>
+<ol>
+<li>Light direction is assumed by LightMap</li>
+<li>Use of a lot of textures - About 5 textures for 1 result</li>
+<li>It is not affected by lights</li>
+<li>Increased CPU usage - I'm not sure what the percentage is, but because I used a realtime texture it does use CPU to an extentas it is rendered per frame.</li>
+<li>Limited light palette - The method used, must use a 256 color texture</li>
+<li>Small resultant textures - The maximum texture size is 256 x 256. While I don't know what the result is like if the bump map overlay is stretched over a large surface, 256 X 256 is rather small.</li>
+<li>Possible texture errors - Some complex shaders do not render well on certain cards, so a fallback option is recommended.</li>
+<li>Texture creation is at first trial and error</li>
+</ol>
+<p><a name="Benefits" id="Benefits"></a></p>
+<h2><span class="mw-headline">Benefits</span></h2>
+<p>So after all those possible limitations, there are some benefits however.</p>
+<ol>
+<li>If you mimic the movement of anything nearby to the lightmap movement, you may simulate proper bump mapping.</li>
+<li>There isn't a real noticeable slow down when using this technique</li>
+<li>It is not scripted, thus artists/mappers can do it</li>
+<li>The resultant texture is a shader, thus, it can be further modified for other purposes</li>
+<li>More possibilites exist with this and bump mapping is only 1 possibilty, more tinkering will result more issues</li>
+<li>It is possible to mimic actual light with the introduction of scripting [More on that in the future]</li>
+<li>It does enhance textures to look a bit better than just standard Phong shading</li>
+</ol>
+<p><a name="Method_.5BSolidsnake.5D.28to_madness.29" id="Method_.5BSolidsnake.5D.28to_madness.29"></a></p>
+<h2><span class="mw-headline">Method [Solidsnake](to madness)</span></h2>
+<p><a name="Part_1" id="Part_1"></a></p>
+<h3><span class="mw-headline">Part 1</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Page1.png_59c2.html" class="image" title="Importing the textures"><img alt="Importing the textures" src="../../../../images/Legacy_Page1.png" width="610" height="674" border="0" /></a></span></div>
+</div>
+<p>First you have to make your textures. You will need a minimum of 3 textures with a possibility of a 4th for an opacity control.</p>
+<dl>
+<dt>Diffuse&#160;</dt>
+<dd>This is just a normal texture that you see normally in the game.</dd>
+</dl>
+<dl>
+<dt>Lightmap&#160;</dt>
+<dd>This is gradient map that you use to simulate the lighting on the wall or mesh. You can use a pregenerated lightmap from 3DSMax6 I believe. The darkest color should be (0, 0, 0) while the brightest color should be (128, 128, 128) ... experiement a little although I found that using that as the highest light brightness did not overwash my diffuse in the end. This texture *must* be 256 colors and 256 X 256 or the same texture size as you input for the IceTexture.</dd>
+</dl>
+<dl>
+<dt>Bumpmap&#160;</dt>
+<dd>This is basically a texture which depicts the height of things you want on the texture. The darkest color should be (1, 1, 1) and not (0, 0, 0) and the brightest can be anything but (255, 255, 255). I found that using a flat 128, 128, 128 of the middle of the height map and then I beleved and embossed in Adobe to produce the height map. It is not the best method, but by far the quickest. This texture *must* be 256 colors and 256 X 256 or the same texture size as you input for the IceTexture. It is best to use a grayscale image for this.</dd>
+</dl>
+<dl>
+<dt>Optional Opacity&#160;</dt>
+<dd>This controls the opacity of the resultant bump map. It is this textures alpha which controls it, so it can be merged with say the diffuse. But it is up to you. This allows some extra control in the resultant effects.</dd>
+</dl>
+<p><a name="Part_2" id="Part_2"></a></p>
+<h3><span class="mw-headline">Part 2</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Page2.png_418c.html" class="image" title="Setting up the IceTexture..."><img alt="Setting up the IceTexture..." src="../../../../images/Legacy_Page2.png" width="610" height="674" border="0" /></a></span></div>
+</div>
+<p>This is where you create the Ice Texture. Click on File -&gt; New. Select Real-Time Texture and select IceTexture. Enter the size of the texture, 256 X 256 is usually what you want since it offers the highest resolution. I'm not sure if this is just a code limit or an actual engine limit. It could be possible to edit that value for some large ice textures ...</p>
+<p>In the appropriate fields enter the textures as shown in the image (Glass=Bumpmap, Source=Lightmap). To test your bump map effect, click MoveIce to false so that it moves your 'light map' instead. Play with the values. To set your lightmap, turn off the moving and adjust the Amplitude to shift the lightmap around.</p>
+<p><a name="Part_3" id="Part_3"></a></p>
+<h3><span class="mw-headline">Part 3</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Page3.png_8b56.html" class="image" title="Bringing it all together."><img alt="Bringing it all together." src="../../../../images/Legacy_Page3.png" width="610" height="674" border="0" /></a></span></div>
+</div>
+<p>This is where we bring everything together. Make a new <a href="../../../../articles/s/h/a/Legacy%7EShader_9692.html" title="Legacy:Shader">shader</a>, and put the diffuse texture into diffuse, and then add the ice texture to specular and then finally if you wish an alpha into the specular mask.</p>
+<p>Use the shader in a map and you have your result.</p>
+<p>I am sure there is many other things that you can toy with to get better results such as the use of combiners and texture modifiers, but this is simply the result.</p>
+<p>To get matching bump map movements, adjust the Ice Texture to simulate the movement.</p>
+<p><a name="Method_.5BXabora.2FProject_Torlan.5D" id="Method_.5BXabora.2FProject_Torlan.5D"></a></p>
+<h2><span class="mw-headline">Method [Xabora/Project Torlan]</span></h2>
+<p><a name="Part_1_2" id="Part_1_2"></a></p>
+<h3><span class="mw-headline">Part 1</span></h3>
+<p>Importing of the Textures</p>
+<p>(Borrowed These)</p>
+<dl>
+<dt>Lightmap&#160;</dt>
+<dd>This is gradient map that you use to simulate the lighting on the wall or mesh. You can use a pregenerated lightmap from 3DSMax6 I believe. The darkest color should be (0, 0, 0) while the brightest color should be (128, 128, 128) ... experiement a little although I found that using that as the highest light brightness did not overwash my diffuse in the end. This texture *must* be 256 colors and 256 X 256 or the same texture size as you input for the IceTexture.</dd>
+</dl>
+<p>Added Note: For a neutral color/closest to the diffuse texture use (127,127,127).</p>
+<dl>
+<dt>Bumpmap&#160;</dt>
+<dd>This is basically a texture which depicts the height of things you want on the texture. The darkest color should be (1, 1, 1) and not (0, 0, 0) and the brightest can be anything but (255, 255, 255). I found that using a flat 128, 128, 128 of the middle of the height map and then I beleved and embossed in Adobe to produce the height map. It is not the best method, but by far the quickest. This texture *must* be 256 colors and 256 X 256 or the same texture size as you input for the IceTexture. You can also use standard bumpmaps also (Must be 256 colors), along with greyscale.</dd>
+</dl>
+<p><a name="Part_2_2" id="Part_2_2"></a></p>
+<h3><span class="mw-headline">Part 2</span></h3>
+<p>Setting up the IceTexture...</p>
+<p>(This is the same)</p>
+<p>This is where you create the Ice Texture. Click on File -&gt; New. Select Real-Time Texture and select IceTexture. Enter the size of the texture, 256 X 256 is usually what you want since it offers the highest resolution. I'm not sure if this is just a code limit or an actual engine limit. It could be possible to edit that value for some large ice textures ...</p>
+<p>In the appropriate fields enter the textures as shown in the image (Glass=Bumpmap, Source=Lightmap). To test your bump map effect, click MoveIce to false so that it moves your 'light map' instead. Play with the values. To set your lightmap, turn off the moving and adjust the Amplitude to shift the lightmap around.</p>
+<p><a name="Part_3_2" id="Part_3_2"></a></p>
+<h3><span class="mw-headline">Part 3</span></h3>
+<p>Combiners</p>
+<p>Make a new <a href="../../../../articles/c/o/m/Legacy%7ECombiner_c4be.html" title="Legacy:Combiner">combiner</a>, have the CombineOperation set to CO_Multiply.</p>
+<p>Have Material1 set as your Diffuse Texture and Material2 as your Lightmap.</p>
+<p>Apply the Combiner to a texture add a light... bingo... you have more control over the lighting around the bumpmap.</p>
+<p><a name="What_else_from_here.3F" id="What_else_from_here.3F"></a></p>
+<h3><span class="mw-headline">What else from here?</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_FinalRender.png_a255.html" class="image" title="Bingo!"><img alt="Bingo!" src="../../../../images/Legacy_FinalRender.png" width="781" height="413" border="0" /></a></span></div>
+</div>
+<p>This is a very elementry approach. There is still more things that are doable such as the creation of bumpmapped models. While it is not possible to use a scripted texture within the IceTexture (Otherwise it is possible to do a lot more things), it may be possible to adjust other paramaters within IceTexture through Unrealscript which leads to other such possibilities.</p>
+<p>You can use colors in your light maps, and they do produce pleasing results.</p>
+<p>Other possibilities are the introduction of larger texture for IceTexture. It'd be nice but I'm not holding my breath on that one.</p>
+<p>Well, I hope this it! I spent an entire day and a sleepless night figuring this one out.</p>
+<p>Almost forgot, here is the link to download my texture that I created for this: <a href="http://forums.beyondunreal.com/attachment.php?attachmentid=86563" class="external free" title="http://forums.beyondunreal.com/attachment.php?attachmentid=86563" rel="nofollow">http://forums.beyondunreal.com/attachment.php?attachmentid=86563</a></p>
+<p>Enjoy, <b>Solid Snake</b></p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/l/e/g/Category%7ELegacy_Basic_Procedure_8702.html" title="Category:Legacy Basic Procedure">Category:Legacy Basic Procedure</a> tutorials:
+<ul>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Material_c106.html" title="Legacy:Create A Material">Create A Material</a></li>
+<li><a href="../../../../articles/i/m/p/Legacy%7EImport_The_Texture_57ec.html" title="Legacy:Import The Texture">Import The Texture</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>OlympusMons:</b> Good work snake, Ive seen the torlan version of this while browsing through the quake 2 evolved forums. Anyways I would love to see some scripted textures start happening, if at all possible. Here's a suggestion, have you tried using a normal map as a detail texture?? Im not too sure but this may give you some interesting results. Ive actually been wondering if its possible to use a normal map as a decal so when you shoot a wall you get the impression that you made a dent not just a flat looking thing.</p>
+<p><b>Xabora:</b> Nice work on the tut... although the major diffrences by mine and your way was that the diffuse ca be any size. I used 1 combiner layer for your 1 shader.</p>
+<p>Added some missing info that you forgot or didn't know.</p>
+<p><b>Solid Snake:</b> I do not see how using a Shader matters or not. In fact when using a Shader you can still use any sized Diffuse texture you want, it does not matter. Only in my example did I decide to use the same sized texture. The actual end combination doesn't play any role what so ever, and it is only the IceTexture part which matters. It is the IceTexture that does all the work and whether or not I used a Shader or you used a Combiner play any significant factor. In the end however, it doesn't really matter as it was just detailing that using an IceTexture in this method and combining it with a standard texture is all that mattered.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 15/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/s/e/Legacy%7EPseudo-Bumpmapped_Texture_97dc.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/s/e/Legacy_talk%7EPseudo-Bumpmapped_Texture_1353.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Pseudo-Bumpmapped_Texture">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:40, 30 December 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UIScript Structure - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UIScript Structure</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/u/s/e/Legacy%7EUser_Interface_6ff8.html" title="Legacy:User Interface">User Interface</a> scripts appear to be quite complicated at first, but they have quite a simple hierarchical structure. It appears to be quite straightforward to define any kind of interface function, but the work is in figuring out what all the commands mean!</p>
+<p>The whole of the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_2_4742.html" title="Legacy:Unreal 2">Unreal 2</a> UI seems to derive from a single root object, defined like this:</p>
+<pre>
+[Root]
+Class=FixedSizeContainer
+Component=SomeComponent
+</pre>
+<p>and so on. At this level, the "Component" is something like the main menu, the objectives screen, or the main HUD.</p>
+<p>I shall pick a relatively simple component to illustrate the main points of the UIScript functionality.</p>
+<hr />
+<p>I've been working on UIScripts for a while, and thought I'd write out how to create your own HUD element in <a href="../../../../articles/u/n/r/Legacy%7EUnreal_2_4742.html" title="Legacy:Unreal 2">Unreal 2</a>. This is my first try at editing a Wiki, so bear with me. With that said, let's get to it.</p>
+<p>First, let me say one thing; The UIScript interface isn't as illogical as it may seem at first...it's nature is just really counter-intuitive. This is because UIScripts, while robust and logical, are a quite separate entity from the UnrealScript hierarchy. Indeed, it appears Legend had some problems with the HUD, and the UIScript is a hacked-out system that happened to stay in for the final version...</p>
+<p>Quoth HUD.uc from U2's source...</p>
+<blockquote class="legacyquote">
+<p>//NEW: disabled because it doesn't compile. Currently using UIConsole, etc to do all drawing so we really don't need this anyway.</p>
+</blockquote>
+<p>Ugh. Okay, anyway, let's make a UI component. We'll create a health bar, so that we don't have to tangle with extra functionality, and focus on the intricacies of UIScripting.</p>
+<p>Our UIScript will define two textures: one to serve as the background for our component, and one to serve as a visual meter of the remaining health. We'll use two different "subcomponents" to accomplish this: one to hold the textures, and one to be the actual health bar.</p>
+<p>Open up Notepad (or WOTgreal, etc.) and create a file in the UIScripts subdirectory called "PVNNinjaHUD.ui" (if you want to follow the nomenclature of my mod, Pirates versus Ninjas):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Root<span class="br0">]</span>
+<span class="kw5">Class</span>=FixedSizeContainer
+Component=NinjaHUDTextures
+Component=NinjaHealth
+ 
+<span class="br0">[</span>NinjaHUDTextures<span class="br0">]</span>
+<span class="kw5">Class</span>=Image
+<a href="/Material"><span class="kw10">Material</span></a>=khakiPVN.<span class="me1">HUD</span>.<span class="me1">PVNNinjaHUD</span>
+Image2=HealthMeter,<span class="nu0">0</span>,<span class="nu0">32</span>,<span class="nu0">134</span>,<span class="nu0">37</span>
+Image2=NinjaHealthTex,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">81</span>,<span class="nu0">27</span>
+ 
+<span class="br0">[</span>NinjaHealth<span class="br0">]</span>
+<span class="kw5">Class</span>=FixedSizeContainer
+Component=ImageComponent
+        Image=NinjaHealthTex
+Component=ImageWipe
+        TopImage=HealthMeter
+        Access=Player,GetHealthPct
+        AutoSize=<span class="kw9">true</span>
+        Location=<span class="nu0">30</span>,<span class="nu0">5</span>
+Component=LabelShadow
+        Access=Player,GetHealthString
+        Font=HUD_Fonts.<span class="me1">Micro12</span>
+        Location=<span class="nu0">-5</span>,<span class="nu0">6</span>
+Align=HardLeft,HardTop
+Location=<span class="nu0">100</span>,<span class="nu0">100</span>
+</pre></div>
+<p>UIScripts consist of a bunch of "component" definitions. At the very least, the component must be named (accomplished in the first line), and given a type (accomplished in the second line, "Class="). Following that, what attributes are assigned depends on the component's nature.</p>
+<p>So, let's deconstruct what's going on here, section by section.</p>
+<p>[Root] defines, well, the "root" component, which is actually named after the text file. Thus, [Root] defines the UI component named "PVNNinjaHUD", whose prototype is the filename of the very UIScript we're editing. [Root]'s type is always FixedSizeContainer...it appears to be pointless to use any other types here. Now you provide "prototypes," as it were, for each of your subcomponents, just to let Unreal 2 know what's going to be built. In this file, we declare the two aforementioned components for textures and a health bar.</p>
+<p>Now, you create a subsection that is named after each one of your subcomponents, and define them. NinjaHUDTextures's type is image, to signify that it holds images for your other components. The source of your textures, defined in the "Material=" line, must be a texture that exists in an Unreal package. For mine, the HUD images for this particular HUD are stored in khakiPVN.HUD.PVNNinjaHUD. After that, you simply have to split the image into pieces, using "Image2=" lines to declare individual components. First, you name the subcomponent, then give the Cartesian coordinates of the object's upper-leftmost pixel, then the Cartesian coordinates of the object's lower-rightmost pixel. Simple, eh? Yeah, I thought so too.</p>
+<p>Now we're getting to the most important part; the subcomponent definition of the actual health bar. "Class=FixedSizeContainer" defines the health bar's type. The health bar consists of three different "sub-subcomponents." The "Component=" lines are not names that you invent here, as they were in the [Root] definition–instead, they are predefined types that you instanciate and modify. We'll have three parts: The background, the health meter, and the numeric health value. The background is defined by the "ImageComponent" section. The "ImageWipe" line declares an image whose size changes depending on a value of some sort. First, you define the image that will be used, then how the object will be accessed. "GetHealthPct" is a member function of Player's class (which is U2Controller). Next, AutoSize will do just that; automatically resize itself whenever the GetHealthPct value changes. The "Location=" line establishes Cartesian coordinates relative to the upper-leftmost pixel of the entire object. Finally, LabelShadow is an object that displays text. To get its text, it calls Player's GetHealthString function, and renders using the Micro12 font that is part of a HUD_Fonts package. The Location represents, again, relative Cartesian coordinates.</p>
+<p>After that, you establish absolute screen coordinates for the object, and you're set!</p>
+<p>...But, how do you use it? Well, here's the approach I used. Create a custom gametype...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> PVNGameInfo <span class="kw5">extends</span> U2GameInfo;
+ 
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">Import</span> File=Textures\khakiPVN.<span class="me1">UIMisc</span>.<span class="me1">Common</span>.<span class="me1">tga</span> Group=UIMisc <span class="kw4">name</span>=Common
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">Import</span> File=Textures\khakiPVN.<span class="me1">HUD</span>.<span class="me1">PVNNinjaHUD</span>.<span class="me1">tga</span> Group=HUD <span class="kw4">name</span>=PVNNinjaHUD
+<span class="co1">//#exec OBJ LOAD FILE=Textures\khakiPVN.utx</span>
+ 
+<span class="kw5">var</span> ComponentHandle NinjaHealth;
+ 
+<span class="kw5">event</span> NotifyHack<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        NinjaHealth = <span class="kw5">class</span><span class="st0">'UIConsole'</span>.<span class="kw6">static</span>.<span class="me1">LoadComponent</span><span class="br0">(</span> <span class="st0">"PVNNinjaHUD"</span> <span class="br0">)</span>;
+        <span class="kw5">class</span><span class="st0">'UIConsole'</span>.<span class="kw6">static</span>.<span class="me1">AddComponent</span><span class="br0">(</span>NinjaHealth<span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">NotifyHack</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    bDisplayHud=<span class="kw9">true</span>
+    GameName=<span class="st0">"Pirates Versus Ninjas"</span>
+        AirControl=<span class="nu0">0.850000</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The NotifyHack() function is what matters here. You make a ComponentHandle variable, and that variable holds a loaded instance of your UI. To instanciate your UI, use the LoadComponent() function, as shown. The argument is a string that represents the name of your UIScript file (without the ".ui" on the end). If you want, you can use an optional second argument that only loads a subcomponent out of that script. That wouldn't work here, as we have to load both the textures AND the health bar. After that, you pass the newly-loaded NinjaHealth object into the AddComponent() function, and you have yourself a working UI! Just create a map in UnrealEd that specifies your new GameType in its LevelInfo.</p>
+<hr />
+<p><b>scumble:</b> working on it. I'm just trying to put some stuff down and build it up...</p>
+<p>please provide backlinks!</p>
+<p>I don't know what else I can link that's relevant at the moment.</p>
+<p>Well... <a href="../../../../articles/u/s/e/Legacy%7EUser_Interface_6ff8.html" title="Legacy:User Interface">User Interface</a>, the page that comes here.</p>
+<p><b>Khakionion:</b> Decided to contribute what I've learned thus far. What'd be really useful is a listing of all possible class/component types...</p>
+<p><b>Foxpaw:</b> Eek. I made a system like this for my UT2003 mod. And here I thought I was being original.&#160;:P Uhmmm, welll.... Mines better! Fahahahaha!&#160;:P</p>
+<hr />
+<p>category to do</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 178/2097152 bytes
+Template argument size: 133/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/i/s/Legacy%7EUIScript_Structure_0790.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/i/s/Legacy_talk%7EUIScript_Structure_6462.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UIScript_Structure">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 05:39, 25 December 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

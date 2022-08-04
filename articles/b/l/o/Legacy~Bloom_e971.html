@@ -1,0 +1,659 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Bloom - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Bloom</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A <b>bloom</b> is a lenticular halo. This page shows how to implement this visual effect in <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>.</p>
+<p>Blooms are another type of effect seen around lights. While <a href="../../../../articles/c/o/r/Legacy%7ECorona_d737.html" title="Legacy:Corona">coronas</a> form the fuzzy glow you see around a light at night, or the rays which seem to shoot out from the light of the sun, blooms are a color-banded halo which is usually visible surrounding the corona. They are only seen when a person's pupils are dilated enough. (And <a href="../../../../articles/l/e/n/Legacy%7ELens_Flare_e0c6.html" title="Legacy:Lens Flare">lens flares</a> are a natural phenomena that occurs when light is refracted many times by some sort of lens, creating several images of geometric shapes to appear from a single light source. Given that fact, you'll find that lens flares are often over used and appear where they ought not to in 3D graphics. In other words, you need a compund lens system for a lens flare. They aren't seen purely with the naked eye.)</p>
+<p>See the result on the <a href="../../../../articles/b/l/o/Legacy%7EBloom_Screenshots_247d.html" title="Legacy:Bloom/Screenshots">Legacy:Bloom/Screenshots</a> page, or <a href="http://files.ego-creations.de/ut2004/BloomEffect_Mutator.zip" class="external text" title="http://files.ego-creations.de/ut2004/BloomEffect_Mutator.zip" rel="nofollow">Download here</a> (don't post public, please). Use for whatever you want, but it would be nice if you let <a href="../../../../articles/j/a/r/Legacy%7EJarronis%2C_The_Vampiric_Unicorn_1fdf.html" title="Legacy:Jarronis, The Vampiric Unicorn">me</a> know and add me in the credits (at least for the idea).</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Code"><span class="tocnumber">1</span> <span class="toctext">Code</span></a></li>
+<li class="toclevel-1"><a href="#Notes"><span class="tocnumber">2</span> <span class="toctext">Notes</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Problems"><span class="tocnumber">2.1</span> <span class="toctext">Problems</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">3</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Code" id="Code"></a></p>
+<h2><span class="mw-headline">Code</span></h2>
+<p>At first, let take a look at the mutator:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Bloom Mutator</span>
+<span class="co1">// Creates Interaction and handles</span>
+<span class="co1">// rendering of the bloom-texture</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw2">#exec</span> OBJ LOAD FILE=DreamTex.<span class="me1">utx</span>
+<span class="kw5">class</span> Bloom <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bAffectSpectators; <span class="co1">// If this is set to true, an interaction will be created for spectators</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bAffectPlayers; <span class="co1">// If this is set to true, an interaction will be created for players</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasInteraction;
+<span class="kw5">var</span> ScriptedTexture st;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> bMesh;
+<span class="kw5">var</span> BloomInteraction BI;
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">//Log("ICU Mutator Started"); // Always comment out your logs unless they're errors</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> PlayerController PC;
+ 
+ 
+    <span class="co1">// If the player has an interaction already, exit function.</span>
+    <span class="kw1">if</span> <span class="br0">(</span>bHasInteraction<span class="br0">)</span>
+        <span class="kw1">Return</span>;
+    PC = <span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="co1">// Run a check to see whether this mutator should create an interaction for the player</span>
+    <span class="kw1">if</span> <span class="br0">(</span> PC != <span class="kw9">None</span> &amp;&amp; <span class="br0">(</span><span class="br0">(</span>PC.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">bIsSpectator</span> &amp;&amp; bAffectSpectators<span class="br0">)</span> || <span class="br0">(</span>bAffectPlayers &amp;&amp; !PC.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">bIsSpectator</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        st=ScriptedTexture<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">ObjectPool</span>.<span class="me1">AllocateObject</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'ScriptedTexture'</span> <span class="br0">)</span> <span class="br0">)</span>;
+        st.<span class="me1">Client</span>=<span class="kw8">self</span>;
+        <span class="co1">//change this for different 'bloom-map' qualities</span>
+        st.<span class="me1">SetSize</span><span class="br0">(</span><span class="nu0">256</span>,<span class="nu0">256</span><span class="br0">)</span>;
+ 
+        PC.<span class="me1">Player</span>.<span class="me1">InteractionMaster</span>.<span class="me1">AddInteraction</span><span class="br0">(</span><span class="st0">"Dreamland.BloomInteraction"</span>, PC.<span class="me1">Player</span><span class="br0">)</span>; <span class="co1">// Create the interaction</span>
+        bHasInteraction = <span class="kw9">True</span>; <span class="co1">// Set the variable so this lot isn't called again</span>
+        bMesh=Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'BloomMesh'</span><span class="br0">)</span>;
+        <span class="co1">//A FinalBlend with FB_Brighten</span>
+        FinalBlend<span class="br0">(</span>bMesh.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>.<a href="/Material"><span class="kw10">Material</span></a>=st;
+ 
+        BloomInteraction<span class="br0">(</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span>.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">St</span>=st;
+        BloomInteraction<span class="br0">(</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span>.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">BMesh</span>=bMesh;
+        BI=BloomInteraction<span class="br0">(</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span><span class="br0">[</span>PC.<span class="me1">Player</span>.<span class="me1">LocalInteractions</span>.<span class="me1">Length</span><span class="nu0">-1</span><span class="br0">]</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> RenderTexture<span class="br0">(</span>ScriptedTexture Tex<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> PlayerController PC;
+    <span class="kw5">local</span> <span class="kw4">vector</span> camloc;
+    <span class="kw5">local</span> <span class="kw4">Rotator</span> camrot;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> camactor;
+    <span class="kw5">local</span> <span class="kw4">Color</span> tAlpha;
+ 
+ 
+ 
+    talpha.<span class="me1">R</span>=<span class="nu0">238</span>;
+    talpha.<span class="me1">G</span>=<span class="nu0">238</span>;
+    talpha.<span class="me1">B</span>=<span class="nu0">238</span>;
+ 
+ 
+    PC = <span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+    PC.<span class="me1">PlayerCalcView</span><span class="br0">(</span>camactor,camloc,camrot<span class="br0">)</span>;
+    <span class="co1">//log("RenderEvent");</span>
+ 
+    Tex.<span class="me1">DrawPortal</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Tex.<span class="me1">USize</span>,Tex.<span class="me1">VSize</span>,camactor,camloc,camrot,PC.<span class="me1">DefaultFOV</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    <span class="co1">//Lightfilter is a FinalBlend with FB_Darken</span>
+    <span class="co1">//The Light-threshold is controlled via talpha;</span>
+    <span class="co1">//Colored Bloom should be possible with unequal RGB values (untested)</span>
+    Tex.<span class="me1">DrawTile</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Tex.<span class="me1">USize</span>,Tex.<span class="me1">VSize</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">16</span>,<span class="nu0">16</span>,FinalBlend<span class="st0">'DreamTex.Lightfilter'</span>,talpha<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+     bAffectSpectators=<span class="kw9">true</span>
+     bAffectPlayers=<span class="kw9">true</span>
+     <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+     bAlwaysRelevant=<span class="kw9">true</span>
+     FriendlyName=<span class="st0">"Bloom"</span>
+     Description=<span class="st0">"Adds Bloom to the gameplay."</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This mutator creates an interaction, which i'll discuss later. Additionally a simple rectangle mesh is spawned. The only spcial thing aboput this mesh is, that its UV-Coordinates do not cover the whole range, but only a horizontal 4:3 part of it. It took some time to figure out that a mesh with a full UV-Range will squeeze the bloom.</p>
+<p>This mutator also is responsible for rendering the ScriptedTexture which is uses as the material for the FinalBlend which is in turn the skin of the bloom mesh.</p>
+<p>The basic idea is to render the whole frame again into the ScriptedTexture and then filter the bright parts with a FinalBlend (FB_Darken). But that just the first part.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Renders the bloom-mesh several times to create a blur effect</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> BloomInteraction <span class="kw5">extends</span> Interaction;
+ 
+<span class="kw5">var</span> ScriptedTexture St;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> BMesh;
+<span class="kw5">var</span> <span class="kw4">float</span> dist;
+<span class="kw5">var</span> <span class="kw4">float</span> fov;
+<span class="kw5">var</span> <span class="kw4">float</span> dev;
+<span class="kw5">var</span> <span class="kw4">bool</span> bEnableBloom,bXBloom;
+<span class="kw5">var</span> <span class="kw4">float</span> devX;
+<span class="kw5">var</span> <span class="kw4">vector</span> CamPos,X,Y,Z;
+<span class="kw5">var</span> <span class="kw4">Rotator</span> CamRot;
+ 
+<span class="kw5">event</span> NotifyLevelChange<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        Master.<span class="me1">RemoveInteraction</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+        <span class="kw1">assert</span><span class="br0">(</span> St != <span class="kw9">None</span> <span class="br0">)</span>;
+        ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="kw8">Level</span>.<span class="me1">ObjectPool</span>.<span class="me1">FreeObject</span><span class="br0">(</span> St <span class="br0">)</span>;
+ 
+    <span class="co1">//  (destroy any actors spawned by this interaction)</span>
+    <span class="co1">//  (clean up any uscript objects that have been loaded)</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> KeyEvent<span class="br0">(</span>EInputKey Key, EInputAction Action, <span class="kw4">FLOAT</span> Delta <span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_PageUp<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span><span class="br0">)</span> devX+=<span class="nu0">0.25</span>;
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_PageDown<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>devX&gt;<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> devX-=<span class="nu0">0.25</span>;
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_Home<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span><span class="br0">)</span>bEnableBloom=!bEnableBloom;
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_End<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span><span class="br0">)</span>bXBloom=!bXBloom;
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_Insert<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span><span class="br0">)</span> dev+=<span class="nu0">0.05</span>;
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Key == IK_Delete<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Action == IST_Release<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>dev&gt;<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> dev-=<span class="nu0">0.05</span>;
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"dev"</span><span class="br0">)</span>;
+    <span class="kw7">log</span><span class="br0">(</span>dev<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//not used currently</span>
+<span class="kw5">function</span> RenderBloomLayer<span class="br0">(</span>Canvas c, <span class="kw4">float</span> devX, <span class="kw4">float</span> mZ, <span class="kw4">float</span> mY, <span class="kw4">float</span> dev<span class="br0">)</span>
+<span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>mZ*Z+mY*Y<span class="br0">)</span>*dev<span class="br0">)</span>;
+    C.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span>canvas Canvas<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+ 
+    <span class="kw5">local</span> Font UsedFont;
+    <span class="kw1">if</span><span class="br0">(</span>!bEnableBloom<span class="br0">)</span><span class="kw1">return</span>;
+        <span class="kw1">if</span><span class="br0">(</span>UsedFont==<span class="kw9">None</span><span class="br0">)</span><span class="br0">{</span>
+        UsedFont = Font<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span><span class="st0">"SECFonts.Arial"</span>, <span class="kw5">class</span><span class="st0">'Font'</span><span class="br0">)</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+        Canvas.<span class="me1">Font</span> = UsedFont;
+        Canvas.<span class="me1">FontScaleX</span> = <span class="nu0">1</span>;
+        Canvas.<span class="me1">FontScaleY</span> = <span class="nu0">1</span>;
+    Canvas.<span class="me1">Style</span>=ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ERenderStyle</span>.<span class="me1">STY_Normal</span>;
+ 
+ 
+    Canvas.<span class="me1">DrawColor</span>.<span class="me1">R</span>=<span class="nu0">255</span>;
+    Canvas.<span class="me1">DrawColor</span>.<span class="me1">G</span>=<span class="nu0">255</span>;
+    Canvas.<span class="me1">DrawColor</span>.<span class="me1">B</span>=<span class="nu0">255</span>;
+    <span class="co1">//calc this frame</span>
+    st.<span class="me1">Revision</span>++;
+ 
+    Canvas.<span class="me1">GetCameraLocation</span><span class="br0">(</span>campos,camrot<span class="br0">)</span>;
+ 
+ 
+    bMesh.<span class="me1">SetRotation</span><span class="br0">(</span>camrot<span class="br0">)</span>;
+    ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">GetAxes</span><span class="br0">(</span>camrot,X,Y,Z<span class="br0">)</span>;
+ 
+    <span class="co1">//moved to init</span>
+    <span class="co1">//FinalBlend(bMesh.Skins[0]).Material=st;</span>
+ 
+ 
+    Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">10</span>,<span class="nu0">240</span><span class="br0">)</span>;
+ 
+ 
+ 
+ 
+    <span class="kw1">if</span><span class="br0">(</span>!bXBloom<span class="br0">)</span>
+    <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+Z*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>-Z*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+Y*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>-Y*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"XBloom"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>Z+Y<span class="br0">)</span>*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-Z+Y<span class="br0">)</span>*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-X-Y<span class="br0">)</span>*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX<span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-Y+Z<span class="br0">)</span>*dev<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"DoubleBloom"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">10</span>,<span class="nu0">200</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"Bloom Active"</span><span class="br0">)</span>;
+ 
+    <span class="co1">//innerglow</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span>!bXBloom<span class="br0">)</span>
+    <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+Z*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>-Z*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+Y*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>-Y*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+ 
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>Z+Y<span class="br0">)</span>*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-Z+Y<span class="br0">)</span>*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-Y-Z<span class="br0">)</span>*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>campos+<span class="br0">(</span>dist-devX/<span class="nu0">2</span><span class="br0">)</span>*<span class="kw4">vector</span><span class="br0">(</span>camrot<span class="br0">)</span>+<span class="br0">(</span>-Y+Z<span class="br0">)</span>*dev/<span class="nu0">2</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+ 
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    bVisible=<span class="kw9">true</span>
+    bActive=<span class="kw9">true</span>
+    dist=<span class="nu0">40</span>
+    fov=<span class="nu0">90</span>
+    dev=<span class="nu0">0.28</span>
+    devX=<span class="nu0">1.6</span>
+    bEnableBloom=<span class="kw9">true</span>
+    bXBloom=<span class="kw9">false</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Well, as it says, it renders the mesh at different positions to create a blur effect. The "Dev"-Property will just move the mesh the blur along the axis of the screen, while "DevX" will create a perspective-blur.</p>
+<p>This is the BloomMesh-class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> BloomMesh <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    DrawType =              DT_StaticMesh
+    StaticMesh =            StaticMesh<span class="st0">'DreamStat.BlurMesh'</span>
+    bUnlit =                <span class="kw9">true</span>
+    bStatic =               <span class="kw9">false</span>
+    bAlwaysRelevant =       <span class="kw9">true</span>
+    bNoDelete =             <span class="kw9">false</span>
+    bHardAttach =           <span class="kw9">true</span>
+    bHidden=                <span class="kw9">true</span>
+    Skins<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=               FinalBlend<span class="st0">'DreamTex.BloomFB'</span>
+    DrawScale =             <span class="nu0">1</span>;
+    bAcceptsProjectors =    <span class="kw9">false</span>;
+    <span class="kw8">RemoteRole</span> =            <span class="kw9">ROLE_None</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The Material "BloomFB" is a FinalBlend with FB_Brighten, but no material assigned to it, this is done in the code. "Lightfilter" is a Finalblend with FB_Darken an a pure white, or bright gray texture assigned to it.</p>
+<p><a name="Notes" id="Notes"></a></p>
+<h2><span class="mw-headline">Notes</span></h2>
+<p>Recently I had the idea to use the BloomMesh for both filtering the lights and for the bloom-effect itself. Maybe this could solve the terrain, banding and overlit problems, as no redundant RGB data is stored in the texture. This method would apply the Lightfilter to the BloomMesh and not to the ScriptedTexture itself, as long as RenderTexture is called, after this, the material is switched back to BloomFB.</p>
+<p>For larger mods, or TC's this could be made map, or even zone-dependant, to create individual effects. It could be even possibly to create distant-dependant bloom-effects, by changing the zone fog values to a near black before rendering and applying the scripted texture several times.</p>
+<p>Objects nearer at the camera can receive a larger glow than objects more away.</p>
+<p>I'm honestly not the one who is made to understand UScript-Replication, so if you see any issues that make my code network-incompatible, please let me know here.</p>
+<p><a name="Problems" id="Problems"></a></p>
+<h3><span class="mw-headline">Problems</span></h3>
+<p>Sometimes, a ScriptedTexture does not render ParticleSystems correctly, displaying them boxes. Maybe this is an Z-Buffer Issue, or, the ScriptedTexture does not like certain Rendertypes of Particles, Subtractive, f.i.</p>
+<p>It seems, a scripted Texture renders Terrain completely different as normally, making terrain extremely blurry with the bloom-effect.</p>
+<p>Because the ScriptedTexture, rendering all the level again(and filtering the bright parts), has to be applied several times on canvas, dealing a hard punch on the framerate.</p>
+<p>Actors, that are rendered via PostRender/DrawOverlay calls, are not visible for any calls of DrawPortal, of course. They still show up when the bloom is active, but they become transparent. I think i can solve this problem by creating a 'real' actor, giving it the same mesh/animation as the desired 1stPV-Actor(most commonly weapons models)</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>j3rky:</b> Interesting idea, and the screenshot looks promising... i'd like to see some code snippets&#160;:)</p>
+<p><b>MythOpus:</b> Looks rather beautiful. Good Job!&#160;:tup:</p>
+<p><b>El Muerte:</b> looks nice, but, is it worth it&#160;?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Well, if you have around 80FPS and you don't know where to put them, why not? Of course, my hardware isn't good enough to manage this, but i'm working on a 'light versions' too.</p>
+<p><b>Foxpaw:</b> Hmm, I like the way that looks. It's almost like high dynamic range lighting.</p>
+<p><b>DJPaul:</b> Can I/we get the code for this? It'll be useful for a project that I am working on.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Of course, i'll make this open source, once i cleaned up the code, and added enough configurable properties.</p>
+<p><b>j3rky:</b> Actually, I think it would be more usefull to see some code that doesn't feature a lot of extras. That way the basic idea behind the implementation becomes more obvious. It shouldn't be your goal to provide a working does-it-all library - that's something the individual programmer can and should do.</p>
+<p><b>Foxpaw:</b> I'm finding it somewhat difficult to understand how this works from your code. What is the code for the BloomMesh class? It apparently must have some as it has something in it's Skins array which doesn't appear to be put there by the interaction or the mutator.</p>
+<p>As best I can tell, you render the world onto your scripted texture, then LightFilter is drawn on top of it. Lightfilter I'm guessing is an all-white texture, so since it has FB_Darken, and is drawn mostly opaque, all but the most brightly lit parts of the scripted texture will be wiped out and made completely black.</p>
+<p>Then, you draw the mostly-black-but-dim-in-areas-that-should-get-brightened mesh with FB_Brighten, to brighten only the areas that remain on the scriptedtexture. The mesh appears to be drawn several times with slight offsets, which I'm guessing is so that instead of directly brightening only the brighter areas, (with hard edges) the bloommesh is shifted around to make the lightening "spill over" onto nearby areas.</p>
+<p>Is that correct? The BloomMesh class is missing and of course there's little information on what the materials used contain, so I'm guessing at how it works.</p>
+<p><b>Graphik:</b> I'm drooling. Added this to <a href="../../../../articles/f/e/a/Legacy%7EFeatured_Pages_cbed.html" title="Legacy:Featured Pages">Featured Pages</a>.</p>
+<p><b>El Muerte:</b> A little note: never use the <code>assert()</code> function. It will trigger an engine shutdown when the expression is false. UnrealScript should never do this.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Of course, i wouldn't do that normally, but interactions sometimes show strange behavior when handling Null-Objects. Sometimes they tend to crash anyway if you even attempt to check if they are "None" with an if expression.</p>
+<p>Foxpaw is right concerning how the code works. The BloomMesh(derived from Actor) class has no code, just some defaultproperties, that make sure this thing isn't replicated, unlit, etc. It's Skin is a predefined FinalBlend with FB_Brighten, but no Material assigned, because i'm doing that in the code.</p>
+<p>I'll add Material descriptions and the missing class later, of course.</p>
+<p><b>Tarquin:</b> This is now on <a href="../../../../articles/f/e/a/Legacy%7EFeatured_Pages_cbed.html" title="Legacy:Featured Pages">Featured Pages</a> – so could we bring it out of walled garden space please and into the main project namespace? Thanks&#160;:)</p>
+<p><b>DJPaul:</b> The BloomMesh is client-side only, I presume? Also, have you made any progress fixing this from a first person view? And whilst I plan to add this to my project in the next few days, is there any chance of screenshots that demonstrate the transparent-meshes-whilst-in-first-person so that I can appreciate how distracting this effect is a s a signifcant part of my mod is first-person.</p>
+<p><b>Foxpaw:</b> Unfortunately, I don't see how the first-person could be fixed without resorting to a hack. The issue is that the first person weapon is not drawn in DrawPortal because it is not drawn normally as part of the world - it is itself drawn in PostRender(). So, it would be more accurate to say that your first person weapon is like a part of the HUD, rather than being a part of the world.</p>
+<p>This can be solved, as Jarronis mentioned, by having the first person weapon be part of the world. However, that of course is going to be a hack and won't work for mods that use something different for their first person weapons. It would also involve replacing some other classes, which would be somewhat invasive and prone to incompatibilities with other mods.</p>
+<p>You might be able to work around it by copying the same code that draws the weapon onto the canvas, to have the weapon itself drawn onto the scriptedtexture after drawing the world onto it. However, now that I think about it some more, the bloommesh should be getting drawn beneath the weapon, and so should not be visible over top of it, so maybe the cause is soemthing different from what I was thinking. Hrmm. I'll see if I can get this working and see if I can figure out what's going on there.</p>
+<p>Also, what mesh did you use for the bloommesh, or did you create your own? Also, does the bloommesh compensate in any way for different resolutions (and hence, different aspect ratios on the monitor) or different POV settings? If not it seems like it might look funny when zoomed in on the sniper rifle, for example.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> I created my own mesh, though it is nothing more than a rectangle with an 4:3, so it should work on resolution that have the same ratio. Not that the UV-Coords must be map in the same way, this means, not the whole UV-"Square" but the biggest 4:3 part of it.</p>
+<p>As long as you zoom in(decreasing the FOV), everything is just fine, because the mesh floats in front of the camera as a virtual canvas. Increasing FOV will make the bordes become visible.</p>
+<p>Drawing the weapon directly onto the ScriptedTexture is not possible i think, because ScriptedTextures unfortunately don't have a DrawActor-Function. As said, another solution can be an actor that has the same Mesh, Animation und position like the FPV-Weapon, but this one is only visible during the RenderTexture event of the texture. So, copying code from the Postrender/DrawOverlay-Function might be a good idea for determining the position, the rest must be done via animation-replication.</p>
+<p>In general, i would suggest mod-authors to modify the code, as is fit to them, such as implenting the routines in a HUD instead of Interaction, which always draws ontop of the HUD.</p>
+<p><b>DJPaul:</b> I've been away too long to remember how these functions interact and how things are rendered; for simplicity's sake, on my part, I think I will wait to see if anyone comes up with a fix for this and otherwise leave it out of my code.</p>
+<p><b>Foxpaw:</b> Hrmm, I tried the code above, substituting in a mesh of my own and making the appropriate materials, but the effect I get isn't as nice. The "bloom" effect has visible contours on my setup, like the kind you get when you convert a colorful image to 256 color palettized. Is there any other settings you changed on the materials that are pertinent to making the effect look good?</p>
+<p><b>Foxpaw:</b> Actually it looks like I spoke too soon. It only does that in my mod. In UT2004 it doesn't do that. Wierd. (Actually, I would speculate that it probrably still exists in UT2004, but UT2004 doesn't have the same smooth gradient background that would make such an effect noticeable. Hmmm.</p>
+<p>Also it should be mentioned that the bloommesh has to have bHidden=true, otherwise it will look wierd when moving - because otherwise the bloommesh from the last frame gets rendered onto the scriptedtexture.</p>
+<p>Also I see what is going on with the weapons. My initial speculation was correct. Your bloommesh is getting drawn after the weapon, so it gets drawn on top of it. This causes it to appear "translucent" when in reality a translucent version of the world is being applied to it. I believe this because it seems logical and the transparency is greater over brighter objects, which would be the objects doing more brightening on the bloommesh. The least invasive workaround would be to draw the weapon on after drawing the bloommesh - so it would end up getting drawn twice, which is less than ideal but that way you don't have to have a custom controller or anything to work around it.</p>
+<p><b>DJPaul:</b> What sort of function would you use for that? HUD.Postrender/DrawOverlay as was mentioned in Jarronis' post above?</p>
+<p><b>Foxpaw:</b> PostRender. The exact same place as the bloommesh is drawn in - just draw it after drawing the bloommesh. This won't prevent the first drawing, but then you can draw over the "translucent" version with a new one that won't have the bloommesh on top of it. This may look a bit strange for weapons with transparent bits, though, I haven't tried.</p>
+<p>Also, I haven't had any problems with emitters, like you had Jarronis. I had them at first, but setting bHidden to true on the bloommesh fixed them.</p>
+<p><b>DJPaul:</b> It would be appreciated if someone would upload the missing class that is mentioned, and the bloomesh as I cannot model anything. Thanks.</p>
+<p><b>Foxpaw:</b> Also I found a line that I think is a typo. One of the bloom offset thingies references X, when I think you meant to type Z.</p>
+<p>The comment about zooming in with the sniper rifle is, the "zoom" on the sniper rifle does not affect the location of the camera - it alters the FOV. However, I tried that and it doesn't seem to hurt anything when the FOV is tightened. I did notice that the overlay when zooming in with the lightning gun ends up being very bright, but again, there's not much that can be done about that.</p>
+<p>I've also noticed some glitchy behaviour when moving with the bloom on - sometimes the apparent light level makes a sudden shift. I'm guessing that this is related to the "deviation" of the glow.</p>
+<p>Okay, I'm also changing my stance on the emitters again - Emitters seem fine, but some xEmitters seem to have a kind of square around them. This is probrably simply an imperfect texture, and the imperfection is amplified. (Most modulated textures, for example, start to look wierd if you put a lot of them on top of each other.)</p>
+<p>Also, it turns out my speculation was right in that UT2004 does suffer from the same issue of looking like an indexed image, it's just not as noticeable because there isn't much in the way of color gradients. However, I did notice a color gradient (the sky in DM-Antalus) and it had the same "banding" issue.</p>
+<p>Also, I've noticed that the bloom effect varies a lot on different levels. I don't really know if anything can be done about that as it is likely related to the level's general brightness. For instance, in DM-Antalus it's very bright, kind of overdone-looking. However, on DM-TrainingDay, it's barely visible. (Except for some wierd artifacts visible out the windows.) On ONS-Torlan, the distance fog is lit up like a Christmas tree.</p>
+<p>Also, I optimized the code in the interaction slightly, which may also increase readability somewhat. Here's what I changed it to:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PostRender<span class="br0">(</span>canvas Canvas<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">vector</span> BaseDisplacement;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>!bEnableBloom<span class="br0">)</span>
+    <span class="kw1">return</span>;
+ 
+  st.<span class="me1">Revision</span>++;
+ 
+  Canvas.<span class="me1">Reset</span><span class="br0">(</span><span class="br0">)</span>;
+  Canvas.<span class="me1">GetCameraLocation</span><span class="br0">(</span>campos,camrot<span class="br0">)</span>;
+ 
+  BMesh.<span class="me1">SetRotation</span><span class="br0">(</span>Rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">-16384</span><span class="br0">)</span> CoordRot Camrot<span class="br0">)</span>;
+  BMesh.<span class="me1">GetAxes</span><span class="br0">(</span>Camrot,X,Y,Z<span class="br0">)</span>;
+ 
+  BaseDisplacement = CamPos + <span class="br0">(</span>dist-devX<span class="br0">)</span> * <span class="kw4">vector</span><span class="br0">(</span>CamRot<span class="br0">)</span>;
+  Y *= dev;
+  Z *= dev;
+ 
+  <span class="kw1">if</span><span class="br0">(</span>!bXBloom<span class="br0">)</span>
+  <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Z<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">else</span>
+  <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Z+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>-Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Y<span class="br0">)</span>+Z<span class="br0">)</span>;
+  <span class="br0">}</span>
+ 
+ 
+  BaseDisplacement = CamPos + <span class="br0">(</span>Dist-<span class="br0">(</span>DevX/<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>*<span class="kw4">Vector</span><span class="br0">(</span>CamRot<span class="br0">)</span>;
+  Y *= <span class="nu0">0.5</span>;
+  Z *= <span class="nu0">0.5</span>;
+ 
+  <span class="kw1">if</span><span class="br0">(</span>!bXBloom<span class="br0">)</span>
+  <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Z<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement-Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">else</span>
+  <span class="br0">{</span>
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span>BaseDisplacement+Z+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>+Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Z<span class="br0">)</span>-Y<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+    bMesh.<span class="me1">SetLocation</span><span class="br0">(</span><span class="br0">(</span>BaseDisplacement-Y<span class="br0">)</span>+Z<span class="br0">)</span>;
+    Canvas.<span class="me1">DrawActor</span><span class="br0">(</span>bMesh,<span class="kw9">false</span>,<span class="kw9">true</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Graphik:</b> See tarquin's comment above. May I please move this to a public page (a subpage of <a href="../../../../articles/l/i/g/Legacy%7ELighting_5d80.html" title="Legacy:Lighting">Lighting</a> perhaps) rather than your personal page?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Of course move it into project name space, or into <a href="../../../../articles/l/i/g/Legacy%7ELighting_5d80.html" title="Legacy:Lighting">Lighting</a> as you desire.</p>
+<p>Thank you, Foxpaw, for the typo. I mixed them up before, so i probably just forgot to change that.</p>
+<p>I noticed the color-banding and overlit issue too, if you you look close to screenshots you can see them there too. That's why i mentionend that especially talpha(the light treshold) cannot be the same maps. Dark maps can handle a lower talpha, resulting in brighter bloom-maps, but especially outdoor maps are overlit easily, so the threshhold must be higher.</p>
+<p>A general problem is that FB_Darken don't work that i want too, i think. It seems that the textures stores kind of 'negative' RGB-Values. So when you add them up, by drawing them ontop of each other several times, the colors that should be 'zero' show up again. That's also where the banding-effect takes place.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> I found a hack for the FPV Problem. Just add <code>ViewportOwner.Actor.Pawn.Weapon.RenderOverlays(Canvas);</code> at the end of the posternder - routine of the interaction. This will prevent the weapon becoming translucent. However, the weapon still won't be included into the bloom-lighting. I tried to set the weapons bHidden to false, when calling RenderTexture, because everytime RenderOverlay is called, the weapon's Rotation/Location is recalculated and drawn directly. In theory, when calling RenderOverlay in the interaction(although is shouldn't be necessary because the HUD already did it the same frame), setting bHidden to false, and then rendering the texture, the weapon should be visible in the bloom layer.</p>
+<p>My result was that the weapon actually shows up but in a wrong position. For some strange reasons, the weapons position seems to be reset, after RenderOverlay has been called.</p>
+<p><b>Graphik:</b> Moved.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b>Thank you. I found the problem. I was wrong, the position stays same, but the FPV-Weapons are drawn at a different FOV, which is weird for my purpose.</p>
+<p>I tried it with this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> RenderTexture<span class="br0">(</span>ScriptedTexture Tex<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> PlayerController PC;
+    <span class="kw5">local</span> <span class="kw4">vector</span> camloc;
+    <span class="kw5">local</span> <span class="kw4">Rotator</span> camrot;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> camactor;
+    <span class="kw5">local</span> <span class="kw4">Color</span> tAlpha;
+ 
+ 
+ 
+    talpha.<span class="me1">R</span>=<span class="nu0">238</span>;
+    talpha.<span class="me1">G</span>=<span class="nu0">238</span>;
+    talpha.<span class="me1">B</span>=<span class="nu0">238</span>;
+ 
+ 
+    PC = <span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+    PC.<span class="me1">PlayerCalcView</span><span class="br0">(</span>camactor,camloc,camrot<span class="br0">)</span>;
+    <span class="co1">//log("RenderEvent");</span>
+    <span class="co1">//make weapons visible</span>
+    PC.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Weapon</span>.<span class="me1">bHidden</span>=<span class="kw9">false</span>;
+    Tex.<span class="me1">DrawPortal</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Tex.<span class="me1">USize</span>,Tex.<span class="me1">VSize</span>,camactor,camloc,camrot,PC.<span class="me1">DefaultFOV</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    <span class="co1">//Lightfilter is a FinalBlend with FB_Darken</span>
+    <span class="co1">//The Light-threshold is controlled via talpha;</span>
+    <span class="co1">//Colored Bloom should be possible with unequal RGB values (untested)</span>
+    Tex.<span class="me1">DrawTile</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Tex.<span class="me1">USize</span>,Tex.<span class="me1">VSize</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">16</span>,<span class="nu0">16</span>,FinalBlend<span class="st0">'DreamTex.Lightfilter'</span>,talpha<span class="br0">)</span>;
+    <span class="co1">//hide weapon</span>
+    PC.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Weapon</span>.<span class="me1">bHidden</span>=<span class="kw9">true</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>It works just fine, except when the weapon-bloom disappears when you are too close to a wall, because of the z-buffer, but that's another problem. Well, in the RenderOverlay-function, DrawActor is called with a weapon-specific FOV which lies around 60 to 70. Well, Standard-Player-FOV is around 90, and that's the whole problem. So mod-makers: Match you FPV-Weapon's FOV to the Player-FOV and it will work fine.</p>
+<p><b>Foxpaw:</b> Did some more experimentation today. I was noticing a slight glitchiness, but when you posted your BloomMesh I thought I'd compare it to mine to see if there was any differences. I had forgotten to make mine bUnlit. This resolved some glitchiness with the apparent amount of bloom varying at different areas in the level.</p>
+<p>I had an idea regarding the banding but it was a no-go. I was thinking to myself. I thought, "It looks like what you get when you convert a 24 bit color image to 8-bit palletized." I responded by thinking, "maybe that's because the color compression of the scripted texture is 8-bit palletized, seing as how that's the default compression type." I deftly replied with "Holy Compression Batman, you're right!", while doing my best mental impression of err. that guy that played batman.</p>
+<p>Long story short, I changed the texture compression type, I tried a bunch of the options, but it didn't fix the banding. It seems like that might be a piece of the puzzle though, so to speak.</p>
+<p>I'm also a little unclear on what exactly you are planning with the lightfilter in your recent edit. Do you mean as in, putting the lightmap on the scripted texture, making it visible, then doing DrawPortal again with the filter over top?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> I used this code as an alternative RenderTexture:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PC = <span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+    PC.<span class="me1">PlayerCalcView</span><span class="br0">(</span>camactor,camloc,camrot<span class="br0">)</span>;
+    bMesh.<span class="me1">bHidden</span>=<span class="kw9">false</span>;
+    bMesh.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=FinalBlend<span class="st0">'DreamTex.Lightfilter'</span>;
+    Tex.<span class="me1">DrawPortal</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Tex.<span class="me1">USize</span>,Tex.<span class="me1">VSize</span>,camactor,camloc,camrot,PC.<span class="me1">DefaultFOV</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    bMesh.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=FinalBlend<span class="st0">'DreamTex.BloomFB'</span>;
+    FinalBlend<span class="br0">(</span>bMesh.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>.<a href="/Material"><span class="kw10">Material</span></a>=st;
+    bMesh.<span class="me1">bHidden</span>=<span class="kw9">true</span>;
+</pre></div>
+<p>Unfortunately it didn't work. It seems that DrawPortal has problems with rendering FinalBlends.</p>
+<p>I don't think that the band-problem can be resolved completely. Because all colors are added up more or less, the difference between to colors become greater.</p>
+<p><b>Foxpaw:</b> Hrm.. That actually worked fairly well on my mod. The sun was nicely brightened as was my white spacecraft, but the nebula background wasn't all bandy. It doesn't seem to work well in UT2004 though. I have to go to class now, but I'll experiment more when I return.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Cool. Let me know if you got it working in UT2004, unless i don't get it. This solution don't creates redundant RGB-Data, which add up and create the banding-effect.</p>
+<p>It think it might be a z-buffer issue, because if Standard-UT2004 clears the z-buffer while rendering the HUD.</p>
+<p>When you use this solution you should'nt use a pure white texture, because then the FB would suctract everything, all light gray should do the trick, but i guess you already figured this out.</p>
+<p><b>Mosquito:</b> could this effect be intensified, sorta like the blur effect in farcry? If it causes such a performance hit, it could just be a hit effect or a shell effect.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Variations of this effect are nearly limitless. You can play with different Blendmodes, Filters and offsets to achieve different effects.</p>
+<p><b>Foxpaw:</b> Actually, I was using an all-white texture. Now I know why the scriptedtexture was ending up completely black in UT2004.&#160;;)</p>
+<p>However, there's a new problem posed by using this method. Because you are using something that exists in world space as your light filter, it can get clipped by other objects. That means that if you are really close to some grass or something, the grass doesn't get filtered and as such is blindingly bright. This turned out to be why my mod was working.. because my entire ship was between the clipping plane and the bloom mesh. This problem should be fixable by simply reducing the drawscale of the bloommesh and moving it closer to the camera, until it's right next to the clipping plane.</p>
+<p>However, erm... All of that is fairly irrelevant, as now that I got it working using the bloommesh as a light filter, it still has the banding.&#160;:(</p>
+<p>I did get a strange insight though - the darkening light filter doesn't appear to actually push all pixels down a set amount (thus causing anything below a certain threshold to bottom out at 0, as one would think.) I set the scriptedtexture's FinalBlend to FB_Overwrite instead of FB_Brighten, and noticed that, while the scriptedtexture is darker than the scene, it still seems to have all of the same detail, even at very high "light thresholds." I now believe that the entire scene is being patterned around when the bloommesh is drawn, but is 'most noticeable' around brighter objects, as they cause the most brightening. I think we need to find a new way of filtering out the bright parts, but I'm not sure how we can go about doing that. It's possible but unlikely that the CO_Subtract of a combiner would behave the way we though that FB_Darken was. Maybe that's worth a try.</p>
+<p>Curses, now you've got me thinking about all kinds of things I might try with these filtering techniques. Previously I couldn't think of any way to implement a pixel-shader-esque effect like this in UScript because I didn't know of any way to get color data of pixels - now that I see how you've done this the possibilities seem endless. Hrmm.</p>
+<p>And Mosquito, I've already nicknamed the bloom effect, "drunken mode" or "hangover mode" because I have the blur and the light threshold fairly high.&#160;;) The effect at high levels of dev is quite comparable to far cry's hit effect.</p>
+<p><b>Foxpaw:</b> Using Combiners for any texture math is probrably a good idea regardless as they are handled by the video card and will somewhat reduce the speed penalty.</p>
+<p>But erm... Combiners apparently do have different behaviour on their subtract than does Darken. But, err.. it appears that large subtractions (subtracting 240 for instance) actually produces a 'negative' of the view.</p>
+<p><b>Foxpaw:</b> Scratch that. Apparently CO_Subtract subtracts the FIRST material from the SECOND, so the order is reversed. No more negatives&#160;;)</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> If you want to know, what a "drunken" effect is, combine bloom with motionblur...</p>
+<p>I had the same idea on using a combiner, but i wasn't sure about it, because a Combiner demands at least one constant texture. Using combiners also produces more 'overhead', it think, because the materials have more complex hierarchy.</p>
+<p>By the way, this "project" just was meant to be hobby-coding-project from me, and now it turned this large thing... I'm drooling....</p>
+<p><b>Foxpaw:</b> Err, well, you see, using Combiners actually produces drastically less overhead. To make a long story short, the overhead of combining the LightFilter and the scriptedtexture is effectively trivial. The transformation is reliably predictable, so the video card can be fed a little program that executes very quickly on purpose built hardware (the shader pipeline) instead of interpreting instructions and blitting textures in RAM.</p>
+<p>Plus the Combiner method actually does the filtering we want, completely wiping out any light below a certain threshold.&#160;:D</p>
+<p>However, we have a new problem: Now that we have something that's actually subtracting 238 from each pixel and bottoming out at 0, even the brightest of bright things is now only a brightness of 17, which is pretty dim. So now, I can't even see the bloom effect. (Though if I set the finalblend to FB_Overwrite I can see that it's there.) We now need a way to increase the brightness of non-zero pixels without increasing the brightness of zero pixels. Unfortunately, CO_Multiply won't work, as it interprets 255 as 1.0 and everything less as some fraction. We could just draw the additive texture a bunch of times, but that's probrably not the ideal solution. Any ideas on how we can control the brightness of the bloom effect, without changing the lightfilter?</p>
+<p><b>Foxpaw:</b> Another idea, we might be able to get better control over the effects and reduce the performance hit to almost nothing if we can find a way to prevent the world from being rendered by default, and then drawing our DrawPortal result + the Bloom effect as FB_Overwrite. Highly modified TCs like mine might be able to do this as I can have the playercontroller reside in a box way out in the middle of nowhere so everything will be occluded, and then have the playercontroller basically "watch TV" which would be the DrawPortal taken from the Pawn's first person view. However, that won't work for any mod using UT2004s default Pawn behaviour.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> We could reverse the texture using another combiner, then multiply, and then reverse again... "negative multiplication."</p>
+<p><b>Foxpaw:</b> Hrrmmm. I don't think that will work. If we take the negative of the texture using another combiner, the 0s become 255s, which will then get multiplied by some fraction, so when we take the negative again, they won't be zeros anymore..</p>
+<p><b>Foxpaw:</b> Err.. hemm. I've hit a brick wall. Apparently, the Unreal Engine doesn't like certain combinations of Materials. If I put the scriptedtexture directly into a finalblend I can use FB_Brighten with no problems. If I put it into a combiner with CO_Subtract, then put that into a final blend, all the blend modes <i>except</i> for FB_Brighten and FB_Darken work. I tried to get around this by simply using DrawTile to put the Combiner onto a second scriptedtexture, but that seems to cause GPFs.</p>
+<p>FB_Translucent does work, but it's not quite the same effect. I've tried using a combiner to add the combiner to the original st, and then displaying that with FB_Overwrite, which works, but there doesn't appear to be any way to get the "blur" effect, which is of course essential, otherwise it just makes the bright areas look washed out. I tried just using a ton of combiners and TexOscillators to get the blur effect, but that just gave me the default texture, which says to me that the maximum length of a shader program has been reached. (255 lines in Shader Model 2.0, which is what UnrealEngine2 uses.)</p>
+<p>So, I'm somewhat at a loss for what to do there. The FB_Brighten is important to get the desired effect. FB_Translucent gives hard edges and some of the detail on the light for instance (detail textures and such) spill over onto the "glow" area.</p>
+<p><b>Foxpaw:</b> Blech. I had an idea to work around the previous issue by taking another DrawPortal of the partially filtered image.. but that didn't work out. It appeared to be working, but it turns out that only the coronas were working because the coronas take time to fade out and so were getting in the frame unintentionally.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Eureka, i got the Combiner working by turning on Modulate2X and Modulate4X. The effect is certainly there even with FB_Brighten, but it is quite dim.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Hm, strike that maybe, i'm not sure if it was this, or some other changes in the code, that made it running.</p>
+<p><b>Tarquin:</b> it's best to generall avoid subpages. 'Bloom' is a perfectly good title – 'lighting bloom' or 'bloom effect' if you guys think that's better. Could someone with a decent text editor please promote all the headings by one level? thanks&#160;:)</p>
+<p><b>DJPaul:</b> Clever chaps, if I implement this code as is from the top of the page, if you come up with any changes to improve it or fix issues, will I end up ripping it all out or will it most likely be a change of just one class? I'm deciding whether to implement it now or put it in later.</p>
+<p><b>Foxpaw:</b> The current system I've been using is quite different from the original code, but the original code is enough to see how it is done. The original code used a finalblend with FB_Darken, which doesn't work the way we expected, and produced bands of color on areas that should have had smooth contours. The Combiner method I've used so far didn't seem to be working, and a slightly different method "worked" but made the colors look washed out. So, I'm still experimenting.</p>
+<p>I'll try playing around with Modulate2X and Modulate4X. I don't see why that would make any difference to the not drawing, but it might be useful anyway. The UDN says that it only works with CO_Multiply, and makes the result brighter. So, we may be able to multiply the filtered out light with a straight white texture and Modulate4X to make it brighter. I'll give it a shot.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> I'm currently cleaning up my code, so i can make an demonstration mutator. In case major spread is desired, someone should upload this to an official mirror, because my ISP's have limited bandwith.</p>
+<p><b>Foxpaw:</b> Modulate2X and Modulate4X was perfect for increasing the brightness of the filtered image, but I still can get it to actually draw onto the screen. Turns out that the problem I was having before that I attributed to the max shader length being reached was actually due to something else - I was using a ConstantColor material instead of a white bitmap, and mistakenly assumed that a ConstantColor still counted as a constant bitmap material. Now that I've fixed that I got a stage further, but FB_Brighten still doesn't seem to want to work. FB_Darken works though, so I'm left wondering if this is some bizarre behaviour of FB_Brighten (as in, remember how FB_Darken didn't actually directly subtract RGB values like we thought? Maybe FB_Brighten is doing something funny that's making it impossible to see.)</p>
+<p>Did you get your working using a combiner for the filter? If so I'd be interested to see where your code differs from mine.</p>
+<p><b>Foxpaw:</b> Huzzah! FinalBlend wouldn't draw FB_Brighten for me but using a Shader with OB_Brighten seems to. Now I'll see if I can tweak the dev and such to get the desired effect.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Yeah, i got it working with a combiner(and without a shader). Well maybe your bitmap is just to bright, did you try a darker one?</p>
+<p><b>Foxpaw:</b> Well, when you upload the demo mutator I'll see how that effect compares to the one I got. The final effect that I got with the combiner and shader seems technically correct but looks a little exact for my liking, so I'm eager to see what you came up with.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Well, used both approaches. The brighter one(which formerly uses only the FB) i called PowerBloom, but it also used the combiner with a black texture, which should make no difference, than using the FB alone. For a strange reason, the combiner eliminated all particle-errors, even if used with the pure black texture.</p>
+<p>The other method used the combiner with a very light gray, which makes a more "selective" bloom.</p>
+<p>I'd plan to implement a configuration menu for the mutator, where you can choose which method shall be used, along other options.</p>
+<p><b>Foxpaw:</b> I'm confused. You used only the FinalBlend, no combiners? How did you get rid of the banding?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Of course i used combiners, but, when using PowerBloom, they are "disabled", by using a black texture. Yet, PowerBloom should only be used on maps where the banding-effect is not clearly visible, as DM-CBP2-Achilles (as in the screenshots.)</p>
+<p><b>Foxpaw:</b> So.. err, if you use a black texture with the combiner, no filtering would take place at all, so wouldn't you then end up with just a really blurry and very bright view?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Yeah, but i still used the old Lightfilter on the ScriptedTexture too, so the bloom does not look "capped". So by using the both techniques it's a matter of the right individual settings for each map to look good.</p>
+<p><b>T1:</b> Up there it says something about needing a lens for a lens flare. It's true you can't see lens flares with the naked eye, but eyes still have lenses, so that's kind of inaccurate. Sorry for being nitpicky.</p>
+<p><b>Foxpaw:</b> Fixed.&#160;:D</p>
+<p><b>Graphik:</b> Glad you added a link to a demo mutator, but why so hidden in the page?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Well, i didn't want it to post here in the comment area...</p>
+<p><b>Foxpaw:</b> Hmm. I like the demonstration mutator, though it looks a lot like the initial finalblend method you posted up here. The mutator still has the "see-through" weapons and has the banding, even with the "power bloom" turned off.</p>
+<p>As best I can tell, any FinalBlend using FB_Darken is going to cause that banding, as FB_Darken appears to do more of a division instead of a subtraction. This results in rounding making similar colors appear to be the same color. Maybe the banding could be fixed by hiding the skybox when you do the DrawPortal, that might cause HOMs, but it might not. Skyboxes seem to be the area where the banding is most noticeable as they often have smooth color gradients.</p>
+<p>Also the bloommesh doesn't adjust for different aspect ratios. This is <i>probrably</i> easy to accomplish, as I think that the Canvas has a function to get the resolution of the screen, so it'd be something like BloomMesh.SetDrawScale3D( Canvas.SizeX / 800, Canvas.SizeY / 600, 1 ); or something very similar. 800x600 is of course, only an example resolution, I don't know what resolution you designed it for.</p>
+<p>Also I noticed with the PowerBloom off the terrain gets all blotchy. (I noticed this with my own experimentations as well.) Maybe you could keep a linked list of terraininfos and make them all bHidden before doing the drawportal? That might cause HOMs or other undesireable behaviour though, but it's a shot.</p>
+<p>Except for the terrain issue and the banding in the skybox though, I think the bloom is very cool.</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Thanks. Hm, i think i can solve the transluent weapon problem, by disabling general HUD-Rendering and then use the interaction to call the HUD's PostRender() function. The Mesh was designed 1024*768.</p>
+<p><b>Mosquito:</b> With powerbloom it seems to had a level of desaturation and realism to the image, and the unsual effect on the terrain is actually very interesting, Could it could be recreated to create a kind of <a href="http://www.cs.wisc.edu/graphics/Gallery/NPRQuake/" class="external text" title="http://www.cs.wisc.edu/graphics/Gallery/NPRQuake/" rel="nofollow">NPR</a> (Non-PhotoRealistic Rendering) effect?</p>
+<p><b>Jarronis, The Vampiric Unicorn:</b> Interresting idea. I'm sure, NPR could be done this way. But i think the (usually) terrain issue is a bug of the DrawPortal-function of ScriptedTexture. Maybe it will be fixed in an future patch.</p>
+<p><b>Foxpaw:</b> The stuff on that NPR quake example would probrably be a little trickier to do. Pretty much all three methods rely on drawing things in wireframe mode (though with occlusion) and then tweaking the way that the wireframes are drawn. You might be able to do something like that with materials, but I'm not sure if you'd be able to do it on-the-fly like this, primarily as I don't know any way that you could get both wireframes drawn and still have proper z-buffering. The rendering methods used there look relatively simple to do, if you had access to the renderer, but unfortunately we don't. It might be possible to do that if you had the native headers.</p>
+<p>Not that I'm saying for sure that it's not possible, as it's always possible that someone might come up with a clever scheme to get a visual effect without accessing the renderer directly. (as was done here.)</p>
+<p><b>T1:</b> Is there anyway to make it so that those screenshots need a link to open up, here on 56k I hate to wait for them to load.</p>
+<p><b>Graphik:</b> The majority have broadband and would likely prefer things as they are. If you have a 56k you're going to be doing a lot of waiting. Get used to it.&#160;;)</p>
+<p><b>Tarquin:</b> you could feasibly crop the screenshots to show just a portion of the image. would say about 300x300 pixels, and perhaps glue the before / after images side by side. The big advantage of this page not being a subpage any more is that we can make a <a href="../../../../articles/b/l/o/Legacy%7EBloom_Screenshots_247d.html" title="Legacy:Bloom/Screenshots">Legacy:Bloom/Screenshots</a> page.&#160;:) I'll repeat my request for the heading levels to be corrected&#160;:)</p>
+<p><b>T1:</b> Thanks.</p>
+<p><b>Graphik:</b> Heading levels corrected.</p>
+<p><b>Uncommon:</b> The download link seems broken.</p>
+<p><b>Wormbo:</b> Works fine for me.</p>
+<p><b>Uncommon:</b> Ah, I see. My downloads window was in back, and the link also took me to an incomplete-looking page, so I got confused. Cool effects&#160;:) I'm kind of surprised how little impact the motion blur has on performance.</p>
+<p><b>OlympusMons:</b> Havent read all of this, is it all relevant could use a <a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a></p>
+<p><b>Moron:</b> This is pretty good, I use a setting of 20 for the threshold and turn on the power bloom (it has nasty FX on the terrain for me otherwise). The only problem is that it seems to blur the terrain layers, regardless of whether whether they are bright or not. Has there been a fix for this yet (I'm not a coder, I only downloaded the mutator) or is it not possible?</p>
+<p><b>Jan:</b> Is there an alternate download?</p>
+<p><b>SuperApe:</b> Added category custom class tag. The download link is broken. ("404 page not found") It looks like we'd only need some specific info on the BloomMesh and DreamTex to reproduce the latest version. On <a href="http://wiki.beyondunreal.com/wiki/Jarronis,_The_Vampiric_Unicorn" class="external text" title="http://wiki.beyondunreal.com/wiki/Jarronis,_The_Vampiric_Unicorn" rel="nofollow">Jarronis' page</a>, it's mentioned the BloomMesh is a rectangle, so I assume a plane mesh. It would be nice to see a download of the latest version. This effect sure looks like what is being done in the next gen games; all the launch titles for XBox360 seems to have this effect (Call of Duty2, Quake4, Killzone, etc) Really neat stuff.&#160;:)</p>
+<p><b>Jan:</b> Reproduced version:</p>
+<p><a href="http://files.ego-creations.de/ut2004/BloomEffect_Mutator.zip" class="external free" title="http://files.ego-creations.de/ut2004/BloomEffect_Mutator.zip" rel="nofollow">http://files.ego-creations.de/ut2004/BloomEffect_Mutator.zip</a></p>
+<p><b>Olga</b> Updated download link. <a href="http://www.websamba.com/Jarronis/Dreamland.rar" class="external text" title="http://www.websamba.com/Jarronis/Dreamland.rar" rel="nofollow">Original Link</a></p>
+<p><b>GG-Xtreme:</b> For some reason, I can only use XBloom and DoubleBloom, but I would like to use the bloom shown in the screenshots. Is it the same one with a different name, or is that a different version of the mutator? I would really like the bloom in the screenshots because XBloom and DoubleBloom don't look anything like it.</p>
+<p><b>Ambershee:</b> It's pretty impressive. I find it amusing how it also applies it to the GUI though =p</p>
+<p><b>Xaklse:</b> Just a note to let you all know that colored Bloom is possible and looks nice; just modify tAlpha RGB values of RenderTexture function. Thanks for your effort, Jarronis.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 33/1000000
+Post-expand include size: 32/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/l/o/Legacy%7EBloom_e971.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/l/o/Legacy_talk%7EBloom_ae10.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Bloom">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 16:52, 18 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

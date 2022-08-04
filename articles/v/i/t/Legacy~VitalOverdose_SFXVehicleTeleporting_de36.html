@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VitalOverdose/SFXVehicleTeleporting - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VitalOverdose/SFXVehicleTeleporting</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">Legacy:VitalOverdose</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> &gt;&gt;SFXVehicleTeleporting (Package: custom)</div>
+<p>by <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">VitalOverdose</a></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a>
+<ul>
+<li class="toclevel-2"><a href="#BotLock"><span class="tocnumber">1.1</span> <span class="toctext">BotLock</span></a></li>
+<li class="toclevel-2"><a href="#AntiTelefrag"><span class="tocnumber">1.2</span> <span class="toctext">AntiTelefrag</span></a></li>
+<li class="toclevel-2"><a href="#Optimization."><span class="tocnumber">1.3</span> <span class="toctext">Optimization.</span></a></li>
+<li class="toclevel-2"><a href="#Listed_Features"><span class="tocnumber">1.4</span> <span class="toctext">Listed Features</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Script"><span class="tocnumber">2</span> <span class="toctext">The Script</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topcs"><span class="tocnumber">3</span> <span class="toctext">Related Topcs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#More_custom_SFX_emitter_scipts"><span class="tocnumber">3.1</span> <span class="toctext">More custom SFX emitter scipts</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h3><span class="mw-headline">Overview</span></h3>
+<p>This custom emitter actor has 20 live particles that teleport vehicles on contact. The emitter scans the level on creation for actor with 'TP' in their tag field and record them in a dynamic array. When the vehicle is teleported it will reaper at the location of one of theses tp points (navigation points are good for this). Also it is possible to set the emitter to RE-scan the tp points at regular intervals continuously or even for a set amount of times. This means that it is possible to have moving TP points to some degree.</p>
+<p><a name="BotLock" id="BotLock"></a></p>
+<h4><span class="mw-headline">BotLock</span></h4>
+<p>There is a bot lock system build in as the vehicles receive a certain amount of boost when they exit the telporter at the tp side and this can cause the bots to panic and bail from the vehicle. With the bot lock system any vehicle that gets teleported with a bot driver will be locked so the bot cant escape for a certain amount of time (setable by the mapper in unrealed). There is also a vec 'tagging' system that can hardattach an emitter randomly chosen from a 'spawnpool' of emitters that can be set by the mapper in unreal ed.</p>
+<p><a name="AntiTelefrag" id="AntiTelefrag"></a></p>
+<h4><span class="mw-headline">AntiTelefrag</span></h4>
+<p>The teleporter will try very hard to find a safe place for the vehicle to spawn so that nothing gets telefragged. It does this by scanning the destination tp point using an iterator and if there is a possibility of a telefrage it moves on to the next random spawn point. if in the unlikely event of all the spawn spawnpoints are unsuitable then it will got through another random list but adding 128 in height each time the list gets looped.</p>
+<p><a name="Optimization." id="Optimization."></a></p>
+<h4><span class="mw-headline">Optimization.</span></h4>
+<p>Although this actor is completely self contained it has been design in a way that some of the work load by the actor doing the spawning.</p>
+<p><a name="Listed_Features" id="Listed_Features"></a></p>
+<h4><span class="mw-headline">Listed Features</span></h4>
+<ul>
+<li>Scans level on creation for actors with tp in the tag field and uses them as random span points</li>
+<li>Tracks 20 particles from an emitter specified by the mapper or emitters[0] by default.</li>
+<li>Teleports all vehicles on contact with an 'active particle' to a random destination marked out by the tp points</li>
+<li>VecBoost on Teleport exit.</li>
+<li>By using the Rescan time its possible to have moving spawn Points.</li>
+<li>Botlock System.</li>
+<li>VecTagFX that can tag random emitters from a random spawnpool.</li>
+<li>Anti Telefrag system.</li>
+<li>Adjustable scan timing for level optimization.</li>
+<li>Adjustable scan radius on the particles.</li>
+<li>Possible to relive the strain on the cpu with a custom spawner.</li>
+<li>Rescans can be set to a certain amount;</li>
+</ul>
+<p><a name="The_Script" id="The_Script"></a></p>
+<h3><span class="mw-headline">The Script</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> SFXVehicleTeleporting <span class="kw5">Extends</span> Emitter
+<span class="kw6">placeable</span>;
+ 
+<span class="kw4">struct</span>                                Vec_Rec
+<span class="br0">{</span>
+<span class="kw5">Var</span> <span class="kw4">Float</span>                             Rec_Time;
+<span class="kw5">Var</span> Onsvehicle                        Vec_Ref;
+<span class="br0">}</span>;var <span class="kw6">array</span> &lt; Vec_Rec &gt;               Bot_Lock;
+ 
+<span class="kw5">Var</span>       <span class="kw4">int</span>                         TotalParticles;
+<span class="kw5">var</span>       <span class="kw4">int</span>                         RescansLeft;
+<span class="kw5">Var</span>       <span class="kw4">int</span>                         TimeTil;
+<span class="kw5">var</span> Array&lt; <a href="/Actor"><span class="kw10">Actor</span></a> &gt;                    TPActors;
+<span class="kw5">var</span> Array&lt; <span class="kw5">class</span> &lt;emitter&gt; &gt;          TagFxPool;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">float</span>                       ScanRadius,capturetime;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">bool</span>                        Teleport_VecBot;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">Bool</span>                        Teleport_VecPlayer;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <a href="/sound"><span class="kw10">Sound</span></a>                       Tagspawnsound;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">int</span>                         ActiveEmitterNo;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">int</span>                         TimerFrequency;
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">int</span>                         RescanTelpoints;
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span>    <span class="kw4">int</span>                         Rescans;
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span>    Tp_Counter                  TPCounter;
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span>TimerFrequency &lt; <span class="nu0">0.1</span> <span class="br0">)</span>             <span class="co1">// 0.1 is the min but its better to set this value a high as possible</span>
+    <span class="br0">{</span>
+     TimerFrequency = <span class="nu0">0.1</span>;
+     <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"The timerfrequency for this actor ("</span>$timerfrequency$<span class="st0">") is set to LOW and has been set to the min (0.1) as a result."</span><span class="br0">)</span>;
+     <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"If you are experiencing any problems with game speed them this may be something might want to address..."</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ SetTimer<span class="br0">(</span> TimerFrequency , <span class="kw9">true</span> <span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> tpcounter != <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="kw1">return</span>;
+ 
+ ScanTPActors<span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> TPActors.<span class="kw6">length</span> == <span class="nu0">0</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+    <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"The initial scan for actors TP (actors with TP in their tag fields) came up with nothing."</span><span class="br0">)</span>;
+    <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"This actor cannot function with out a TP list and had to be destroyed to avoid any other unexpected complications during game play"</span><span class="br0">)</span>;
+     destroyed<span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ <span class="kw1">if</span> <span class="br0">(</span> Emitters<span class="br0">[</span>ActiveEmitterNo<span class="br0">]</span>.<span class="me1">MaxParticles</span> &gt; <span class="nu0">20</span><span class="br0">)</span>
+    <span class="br0">{</span>
+     <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"The  active emitter (Emitters["</span>$ActiveEmitterNo$<span class="st0">"] ) has its MaxParticle rate set TO high."</span><span class="br0">)</span>;
+    destroy<span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ RescansLeft = Rescans;
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">function</span> ScanTPActors<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">Local</span> <a href="/Actor"><span class="kw10">Actor</span></a> FoundTelPoint;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span> TPActors.<span class="kw6">Length</span> !=<span class="nu0">0</span> <span class="br0">)</span>
+      TPActors.<span class="kw6">Remove</span><span class="br0">(</span> <span class="nu0">0</span>,TPActors.<span class="kw6">Length</span> <span class="br0">)</span>;
+ 
+ <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">Class</span><span class="st0">'Actor'</span> , FoundTelPoint, <span class="st0">'TP'</span> <span class="br0">)</span>
+                  <span class="br0">{</span>
+                   TPActors.<span class="kw6">Insert</span><span class="br0">(</span> <span class="nu0">0</span>,<span class="nu0">1</span> <span class="br0">)</span>;
+                   TPActors<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FoundTelPoint;
+                  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>TPCounter==<span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span> timetil &gt; <span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>
+    <span class="br0">{</span>
+     ProcessRescantime<span class="br0">(</span><span class="br0">)</span>;
+     ScanPartLocs<span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ <span class="kw1">if</span> <span class="br0">(</span> Bot_Lock.<span class="kw6">length</span> &gt; <span class="nu0">1</span> <span class="br0">)</span>
+     ProcessBotLockTime<span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw6">Super</span>.<span class="me1">Timer</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> EnterVec_Ref<span class="br0">(</span>ONSVehicle NewVec<span class="br0">)</span>
+<span class="br0">{</span>
+ Bot_Lock.<span class="kw6">insert</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>;
+ Bot_Lock<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Vec_Ref</span>   = NewVec;
+ Bot_Lock<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Rec_Time</span>  = Capturetime;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> ScanPartLocs<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">Local</span>    onsvehicle      FoundOnsVec;
+ <span class="kw5">Local</span>    <span class="kw4">Int</span>             Counter;
+ 
+ <span class="kw1">for</span> <span class="br0">(</span> Counter = <span class="nu0">0</span> ; Counter &lt; Emitters<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Particles</span>.<span class="kw6">Length</span> ; Counter++ <span class="br0">)</span> <span class="co1">// this will be run every time the Timer is called</span>
+     <span class="br0">{</span>
+      <span class="kw1">foreach</span> visiblecollidingActors<span class="br0">(</span> <span class="kw5">Class</span><span class="st0">'ONSVehicle'</span>,FoundOnsVec,ScanRadius,Emitters<span class="br0">[</span>ActiveEmitterNo<span class="br0">]</span>.<span class="me1">Particles</span><span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Location</span> <span class="br0">)</span>
+                                    <span class="br0">{</span>
+                                     EnterVec_Ref<span class="br0">(</span>FoundOnsVec<span class="br0">)</span>;
+                                     VecTel<span class="br0">(</span>FoundOnsVec<span class="br0">)</span>;
+                                    <span class="br0">}</span>
+     <span class="br0">}</span>
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> ProcessBotLockTime<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">local</span> <span class="kw4">int</span> counter;
+ <span class="kw1">for</span> <span class="br0">(</span> Counter = <span class="nu0">0</span> ; Counter &lt; Bot_Lock.<span class="kw6">length</span> ; Counter++ <span class="br0">)</span>         <span class="co1">// this only gets run if the vec array has soemthing in it</span>
+     <span class="br0">{</span>
+      Bot_Lock<span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Rec_Time</span> -= TimerFrequency;
+      <span class="kw1">if</span> <span class="br0">(</span> Bot_Lock<span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Rec_Time</span> &lt; TimerFrequency <span class="br0">)</span>
+         <span class="br0">{</span>
+          Bot_Lock<span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Vec_Ref</span>.<span class="me1">bDriverCannotLeaveVehicle</span> = <span class="kw9">false</span>;
+          Bot_Lock.<span class="kw6">remove</span><span class="br0">(</span>Counter,<span class="nu0">1</span><span class="br0">)</span>;
+         <span class="br0">}</span>
+      <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> ProcessRescanTime<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ TimeTil -= TimerFrequency;
+ <span class="kw1">if</span> <span class="br0">(</span> TimeTil &lt; <span class="nu0">0</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+     ScanTPActors<span class="br0">(</span><span class="br0">)</span>;
+     <span class="kw1">if</span> <span class="br0">(</span> RescansLeft &gt; <span class="nu0">0</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+         RescansLeft--;
+         <span class="kw1">if</span> <span class="br0">(</span> RescansLeft == <span class="nu0">0</span> <span class="br0">)</span>
+              TimeTil = <span class="nu0">0</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">function</span>  TagFx<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> SpawnPosactor, Array&lt; Class&lt; Emitter &gt; &gt; AvailableFx<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+ <span class="kw5">Local</span> <span class="kw4">int</span>              RNDPickedNumb;
+ <span class="kw5">local</span> Class&lt; Emitter &gt; RNDPickedEmitter;
+ <span class="kw5">Local</span> Emitter          SpawnedEmitter;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span> AvailableFx.<span class="kw6">Length</span> == <span class="nu0">0</span> <span class="br0">)</span>
+      <span class="kw1">Return</span>;
+ 
+ RNDPickedNumb    = <span class="kw7">Rand</span><span class="br0">(</span>AvailableFx.<span class="kw6">Length</span><span class="br0">)</span>;
+ RNDPickedEmitter = AvailableFx<span class="br0">[</span>RNDPickedNumb<span class="br0">]</span>;
+ <span class="kw1">while</span><span class="br0">(</span> SpawnedEmitter == <span class="kw9">none</span><span class="br0">)</span>
+      <span class="br0">{</span>                
+       SpawnedEmitter   = Spawn<span class="br0">(</span>RNDPickedEmitter,<span class="kw8">Self</span>,,SpawnPosactor.<span class="me1">Location</span> ,SpawnPosactor.<span class="me1">Rotation</span> <span class="br0">)</span>;
+      <span class="br0">}</span>
+ setbase<span class="br0">(</span>SpawnPosactor<span class="br0">)</span>;
+ <span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> VecTel<span class="br0">(</span>Vehicle Teleporting<span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">Local</span> <span class="kw4">Rotator</span>       OldRot;
+ <span class="kw5">Local</span> <span class="kw4">Rotator</span>       Newrot;
+ <span class="kw5">local</span> <span class="kw4">rotator</span>       pointrotation;
+ <span class="kw5">Local</span> <span class="kw4">Vector</span>        AppliedBoostForce;
+ <span class="kw5">Local</span> <span class="kw4">Vector</span>        PointOfBoostForce;
+ <span class="kw5">Local</span> EPhysics      Entryphysics;
+ <span class="kw5">Local</span> <span class="kw4">int</span>           Pickednumber;
+ <span class="kw5">Local</span> <span class="kw4">float</span>         HightOffSet;
+ <span class="kw5">local</span> <span class="kw4">vector</span>        pickedvector;
+ 
+ NewRot              = Teleporting.<span class="me1">Rotation</span>;
+ EntryPhysics        = Teleporting.<span class="me1">Physics</span>;
+ AppliedBoostForce   = Teleporting.<span class="me1">Velocity</span> * <span class="nu0">500</span>;
+ <span class="kw1">if</span> <span class="br0">(</span>tpcounter!=<span class="kw9">None</span><span class="br0">)</span>
+    <span class="br0">{</span>
+    Pickedvector     = tpcounter.<span class="me1">FindSafeSpawnLoc</span><span class="br0">(</span>HightOffSet,pointrotation<span class="br0">)</span>;
+    Pickedvector.<span class="me1">z</span>  += HightOffSet;
+    <span class="br0">}</span>
+ <span class="kw1">else</span>
+    <span class="br0">{</span>
+     Pickednumber    = <span class="kw7">rand</span><span class="br0">(</span>tpactors.<span class="me1">length</span><span class="nu0">-1</span><span class="br0">)</span><span class="nu0">+1</span>;
+     PickedVector    = tpactors<span class="br0">[</span>Pickednumber<span class="br0">]</span>.<span class="me1">location</span>;
+     PointRotation   = tpactors<span class="br0">[</span>Pickednumber<span class="br0">]</span>.<span class="me1">Rotation</span>;
+    <span class="br0">}</span>
+ 
+ Teleporting.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+ Teleporting.<span class="me1">SetLocation</span><span class="br0">(</span>PickedVector<span class="br0">)</span>;
+ OldRot              = Teleporting.<span class="me1">Rotation</span>;
+ NewRot.<span class="me1">Yaw</span>          = PointRotation.<span class="me1">Yaw</span>
+                     + Teleporting.<span class="me1">Rotation</span>.<span class="me1">Yaw</span>
+                     - <span class="kw8">Self</span>.<span class="me1">Rotation</span>.<span class="me1">Yaw</span>;
+ Teleporting.<span class="me1">SetPhysics</span><span class="br0">(</span>EntryPhysics<span class="br0">)</span>;
+ Teleporting.<span class="me1">Controller</span>.<span class="me1">MoveTimer</span> = <span class="nu0">-1.0</span>;
+ Teleporting.<span class="me1">SetmoveTarget</span><span class="br0">(</span> <span class="kw8">Self</span> <span class="br0">)</span>;
+ Teleporting.<span class="me1">Controller</span>.<span class="me1">SetRotation</span><span class="br0">(</span>newRot<span class="br0">)</span>;
+ Teleporting.<span class="me1">SetRotation</span><span class="br0">(</span>newRot<span class="br0">)</span>;
+ <span class="kw1">If</span> <span class="br0">(</span> Teleporting.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ONSChopperCraft'</span><span class="br0">)</span> || Teleporting.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ONSHoverCraft'</span><span class="br0">)</span>   ||  Teleporting.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ONSPlaneCraft'</span><span class="br0">)</span> <span class="br0">)</span>
+     Teleporting.<span class="me1">KSetStayUpright</span><span class="br0">(</span> <span class="kw9">True</span>,<span class="kw9">True</span><span class="br0">)</span>;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span>AppliedBoostForce != PointOfBoostForce<span class="br0">)</span>
+     Teleporting.<span class="me1">KAddImpulse</span><span class="br0">(</span> AppliedBoostForce &gt;&gt; Rotation, PointOfBoostForce &gt;&gt; Rotation <span class="br0">)</span>;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span> TagFxPool.<span class="kw6">length</span> &gt;<span class="nu0">0</span><span class="br0">)</span>
+      tagfx<span class="br0">(</span> Teleporting , TagFxPool <span class="br0">)</span>;    
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+bNoDelete=<span class="kw9">False</span>
+<span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topcs" id="Related_Topcs"></a></p>
+<h2><span class="mw-headline">Related Topcs</span></h2>
+<ul>
+<li><a href="../../../../articles/v/e/h/Legacy%7EVehicles_acc3.html" title="Legacy:Vehicles">Vehicles</a></li>
+<li><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticle_System_a2c3.html" title="Legacy:Particle System">Particle System</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_f021.html" title="Legacy:ParticleEmitter">ParticleEmitter</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_Cookbook_2a69.html" title="Legacy:ParticleEmitter Cookbook">ParticleEmitter Cookbook</a></li>
+<li><a href="http://udn.epicgames.com/Two/EmittersReference" class="extiw" title="udn2:EmittersReference">udn2:EmittersReference</a></li>
+<li><a href="http://udn.epicgames.com/Two/EmittersExamples" class="extiw" title="udn2:EmittersExamples">udn2:EmittersExamples</a></li>
+</ul>
+<p><a name="More_custom_SFX_emitter_scipts" id="More_custom_SFX_emitter_scipts"></a></p>
+<h3><span class="mw-headline">More custom SFX emitter scipts</span></h3>
+<ul>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXPainful_ca54.html" title="Legacy:VitalOverdose/SFXPainful">SFXPainful</a></li>
+<li><strong class="selflink">SFXVehicleTeleporting</strong></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXPawnTeleporting_0aa2.html" title="Legacy:VitalOverdose/SFXPawnTeleporting">SFXPawnTeleporting</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXTriggering_8ba0.html" title="Legacy:VitalOverdose/SFXTriggering">SFXTriggering</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXBoosting_8c8a.html" title="Legacy:VitalOverdose/SFXBoosting">SFXBoosting</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_InventoryFlare_0354.html" title="Legacy:VitalOverdose/InventoryFlare">InventoryFlare</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 20/1000000
+Post-expand include size: 214/2097152 bytes
+Template argument size: 123/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXVehicleTeleporting_de36.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/i/t/Legacy_talk%7EVitalOverdose_SFXVehicleTeleporting_cde1.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VitalOverdose/SFXVehicleTeleporting">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:53, 8 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

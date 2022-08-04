@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Rotator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Rotator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <dl>
+<dd><i>Copied and modified from a <a href="http://chimeric.beyondunreal.com/" class="external text" title="http://chimeric.beyondunreal.com/" rel="nofollow">CHiMERiC</a> tutorial (<a href="http://chimeric.beyondunreal.com/tutorials/rotators.html" class="external free" title="http://chimeric.beyondunreal.com/tutorials/rotators.html" rel="nofollow">http://chimeric.beyondunreal.com/tutorials/rotators.html</a> .)</i></dd>
+<dd><i>Includes <a href="http://www.sorcerydesign.com/jeremyt/quicksand/ut%20engine%20experience.htm" class="external text" title="http://www.sorcerydesign.com/jeremyt/quicksand/ut%20engine%20experience.htm" rel="nofollow">Jeremy T's info</a> about loss of roll when converting to a vector.</i></dd>
+</dl>
+<p><b>Rotator</b>s are one of the <a href="../../../../articles/b/u/i/Legacy%7EBuilt-In_Struct_1f60.html" title="Legacy:Built-In Struct">Built-In Struct</a>. But what the hell are they? Think angles. But instead of 360 degrees, a full circle is 65536 R<a href="../../../../articles/u/u/_/Legacy%7EUU_ae76.html" class="mw-redirect" title="Legacy:UU">UUs</a> (Rotational Unreal Units). Every <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> has a Movement -&gt; Rotation variable that determines (gasp) what direction the actor is pointing. Here's exactly what a rotator is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">struct</span> <span class="kw4">Rotator</span>
+ <span class="br0">{</span>
+    <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> <span class="kw4">int</span> Pitch, Yaw, Roll;
+ <span class="br0">}</span>;
+</pre></div>
+<p>Rotators have 3 parts:</p>
+<ul>
+<li>Pitch (think up/down... like nodding your head "yes")</li>
+<li>Yaw (think left/right... like shaking your head "no")</li>
+<li>Roll (tilt your head to one side, so you're still looking the same direction, but one ear is pointing up and the other down).</li>
+</ul>
+<p>You can modify the angles just by changing each of the values, but you can not modify an actor's rotation directly, you must use the SetRotation(newRotation) function, as shown below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ChangeRotation<span class="br0">(</span><span class="br0">)</span>
+ <span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">Rotator</span> newRot;    <span class="co1">// This will be our new Rotation</span>
+    newRot = Rotation;       <span class="co1">// Set newRot to our current Rotation</span>
+    newRot.<span class="me1">Pitch</span> += <span class="nu0">32768</span>;   <span class="co1">// Since 65536 = 0 = 360, half of that equals 180, right?</span>
+    newRot.<span class="me1">Yaw</span> -= <span class="nu0">16384</span>;     <span class="co1">// And half of that equals 90 and so on...</span>
+    SetRotation<span class="br0">(</span>newRot<span class="br0">)</span>;     <span class="co1">// After we've done our tweaking go ahead and set the new rotation</span>
+ <span class="br0">}</span>
+</pre></div>
+<p>So what did we just do? We made something pitch 32768 RUU (180 degrees), and then turn 16384 RUU (90 degrees). Make sense? To get a vector of length one that points in the direction of the rotator:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">rotator</span> myRot;
+   <span class="kw5">local</span> <span class="kw4">vector</span> myVec;
+   ...
+   <span class="me1">myVec</span> = <span class="kw4">vector</span><span class="br0">(</span>myRot<span class="br0">)</span>;
+   ...
+</pre></div>
+<p>Always remember: the "roll" angle would rotate a vector about its own axis. But a vector is a mathematical line, if you do that it doesn't change at all. Therefore, myVec in the example above doesn't have any roll information. There's no way to figure out the roll component of myRot by looking at myVec. See also <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">Typecasting</a>.</p>
+<p>To get a rotator that corresponds to a vector, type:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+...
+   <span class="me1">myRot</span> = <span class="kw4">rotator</span><span class="br0">(</span>myVec<span class="br0">)</span>;
+   ...
+</pre></div>
+<p>Since vectors don't have roll information, the "roll" of myRot will be zero, but the other parts will be correct.</p>
+<p>Say you wanted myRot to point 90 degrees to the left...lets add another line:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+...
+   <span class="me1">myRot</span>.<span class="me1">Yaw</span> += <span class="nu0">16384</span>;      <span class="co1">// Now myRot points 90 degrees to the left of before</span>
+   ...
+</pre></div>
+<p>Easy stuff no? Just remember 65536 = 360 degrees, and to use SetRotation, and you'll do good. Rotators are useful for using angle based math, in many cases can be used in place of vector math to make some tasks much simpler. Thankfully Unreal already handles converting back and forth...</p>
+<p><b>Musicalglass:</b> OK, that will make it so when you open your map, it will be rotated in a new static position. Now how do you introduce the element of time into the equation? Like have your object start at zero and rotate to the new settings over a period of say, 10 seconds?</p>
+<p>I know there are several different interpolation functions available as well, like linear and smooth. Could somebody please add a couple of simple equations to this page which show you how to do this? Thanks</p>
+<p><b>Foxpaw:</b> I think this page is more about rotators themselves, not about actor rotation but I suppose some iterpolation stuff could go here. You should be able to accomplish what you want by setting bRotateToDesired true, then setting a desiredrotation and a rotationrate, as well as a physics type that supports this type of rotation. Then the object will start rotating toward the angle in desiredrotation at the rate specified in rotationrate.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">1</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-1"><a href="#Operators"><span class="tocnumber">2</span> <span class="toctext">Operators</span></a></li>
+<li class="toclevel-1"><a href="#A_note_on_logging_rotators"><span class="tocnumber">3</span> <span class="toctext">A note on logging rotators</span></a></li>
+<li class="toclevel-1"><a href="#Rotator_Replication"><span class="tocnumber">4</span> <span class="toctext">Rotator Replication</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<p>The following <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a> apply to rotators.</p>
+<dl>
+<dt>GetAxes (rotator A, out vector X, out vector Y, out vector Z) [static]&#160;</dt>
+<dd>Assigns the axis vectors of <tt>A</tt> to <tt>X</tt>, <tt>Y</tt> and <tt>Z</tt>, in terms of Absolute Rotation, where <tt>X</tt> points forward, <tt>Y</tt> points right and <tt>Z</tt> points upwards. <b>The UnrealEngine2 implementation of GetAxes gives invalid results when applied to the rotator 0,0,0. In this case three zero vectors will be returned.</b></dd>
+<dt>GetUnAxes (rotator A, out vector X, out vector Y, out vector Z) [static]&#160;</dt>
+<dd>Assigns the axis vectors of Rot(0,0,0) to <tt>X</tt>, <tt>Y</tt> and <tt>Z</tt>, in terms of <tt>A</tt>'s Local Rotation. The same result as <tt>GetAxes(A,X,Y,Z)</tt> followed by <tt>Invert(X,Y,Z)</tt>. If you think of <tt>X</tt>, <tt>Y</tt> and <tt>Z</tt> as 3x3 matrix, <tt>GetUnAxes</tt> returns the <a href="http://en.wikipedia.org/wiki/transposed" class="extiw" title="wikipedia:transposed">Wikipedia:transposed</a> matrix relative to what <tt>GetAxes</tt> would return with the same rotator.</dd>
+<dt>rotator RotRand (optional bool bRoll) [static]&#160;</dt>
+<dd>Returns a random rotator. If bRoll is <tt>False</tt> the <tt>Roll</tt> component of the rotator is 0.</dd>
+<dt>rotator OrthoRotation (vector X, vector Y, vector Z) [static]&#160;</dt>
+<dd>Returns a rotator from three <a href="http://en.wikipedia.org/wiki/orthogonal" class="extiw" title="wikipedia:orthogonal">Wikipedia:orthogonal</a> vectors.</dd>
+<dt>rotator Normalize (rotator Rot) [static]&#160;</dt>
+<dd>Returns the corresponding rotator with components between -32768 and 32767. (See <i>A note on logging rotators</i> below to find out why <code>log(Normalize(someRotator));</code> seems to disagree with this description.)</dd>
+</dl>
+<p><a name="Operators" id="Operators"></a></p>
+<h2><span class="mw-headline">Operators</span></h2>
+<p>See <a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a> for the operators than can be used with a Rotator.</p>
+<p><a name="A_note_on_logging_rotators" id="A_note_on_logging_rotators"></a></p>
+<h2><span class="mw-headline">A note on logging rotators</span></h2>
+<p>When rotators are typecasted to string, e.g. when logging them, their Pitch/Yaw/Roll values are cramped into the range of 0 to 65535 by reducing them to 16bit unsigned integers. This does not mean the rotator has changed, just that e.g. log() is not giving you their true value! To get the true value write your own rotator to string function.</p>
+<p>Example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> RotatorToString<span class="br0">(</span><span class="kw4">rotator</span> rot<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> <span class="st0">"("</span> $ rot.<span class="me1">Pitch</span> $ <span class="st0">","</span> $ rot.<span class="me1">Yaw</span> $ <span class="st0">","</span> $ rot.<span class="me1">Roll</span> $ <span class="st0">")"</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This example function will return a string replesentation of the rotator that is similar to the built-in typecast, but uses the full 32bit integer precision of the rotator's components.</p>
+<p><a name="Rotator_Replication" id="Rotator_Replication"></a></p>
+<h2><span class="mw-headline">Rotator Replication</span></h2>
+<p>Before a rotator is replicated, its component values are compressed into the range of a byte through the function ((value &gt;&gt; 8) &amp; 0xFF). This has the advantage that a rotator only takes up 3 bytes of bandwidth for its value, but also limits the precision to 256 possible values per component. That's why a player's view rotation is generally not replicated as a rotator. The reduced Yaw and Pitch precision would hurt aiming accuracy.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/g/e/n/Legacy%7EGeneral_Scale_And_Dimensions_f51b.html" title="Legacy:General Scale And Dimensions">General Scale and Dimensions</a></li>
+<li><a href="../../../../articles/b/r/u/Legacy%7EBrush_Rotate_5421.html" title="Legacy:Brush Rotate">Brush Rotate</a></li>
+</ul>
+<p>(there's a table of URU to degrees on both those pages)</p>
+<ul>
+<li><a href="../../../../articles/v/e/c/Legacy%7EVector_fa11.html" title="Legacy:Vector">Vector</a></li>
+<li><a href="../../../../articles/q/u/a/Legacy%7EQuaternion_eb92.html" title="Legacy:Quaternion">Quaternion</a></li>
+<li><a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">Typecasting</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Parallax:</b> I just wanted to take this oppurtunity to mention that in 16 bit maths, 65535 (as an unsigned 16 bit number) and -1 (as a signed 16 bit number) both have the binary representation 0xFFFF. This means that if you add -1 to 1 (65535 to 1) you get zero (65535 + 1 = 65536 -&gt; 0). In hex this looks like (0xFFFF + 0x0001 = 0x10000, then the leading 1 is truncated).</p>
+<p>Furthermore, this means that as long as the numbers are constanly mapped to the values 0 to 65535 (as they seem to be) then -1 and 65535 act like the same number. If it helps you visualise it, if you turn around 359 degrees, you have effectively turned 1 degree in the opposite direction.</p>
+<p>Of course, this whole argument no longer holds if you aren't talking about numbers that map from 0..65535. Fortunately in the case of rotators we are, whereas in the case of vectors or other representations of movement rather than rotation there is no such of logical wrap-around.</p>
+<p>I would be highly suprised if Rotators are <b>not</b> normalised upon network replication, as transmitting three 16 bit numbers when that is all the information that is needed is much more logical than transmitting three 32 bit numbers. It is not really relevant wheither these numbers are signed or unsigned in the case of rotators for the reasons I just explained.</p>
+<p>Bear in mind that when you subtract 1 from 50 (say) the computer (internally in the microprocessor) just calculates -1 (65535) and then adds it to 50, getting a result of 49 (after the inevitable overflow).</p>
+<p><b>Foxpaw:</b> One minor point of contention: UnrealScript rotators are a struct composed of three variables of type "int." An "int" appears to be represented natively with a 32 bit signed integer, not a 16 bit unsigned integer.</p>
+<p>However, the part about replication may be true, as it would save some bandwidth.</p>
+<p><b>Xian:</b> EPIC tried to compress the rotation in the case of players (Controller for UE2 and PlayerPawn for UE1) by putting the yaw and pitch in an integer. The roll could easily be compressed in a byte. Though I doubt replicating a struct made up of an int and a byte would save too much; Still, depending on what you need it for (i.e. the ViewRotation doesn't require a roll), a replicated int should be better than a whole 3-int struct.</p>
+<p>in case you wanted the code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> CompressExample <span class="br0">(</span><span class="kw4">rotator</span> Rot, <span class="kw6">out</span> <span class="kw4">int</span> CompRot, <span class="kw6">out</span> <span class="kw4">byte</span> CompRoll<span class="br0">)</span>
+<span class="br0">{</span>
+        CompRot = <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span><span class="nu0">32767</span> &amp; <span class="br0">(</span>Rot.<span class="me1">Pitch</span> / <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span> * <span class="nu0">32768</span><span class="br0">)</span> + <span class="br0">(</span><span class="nu0">32767</span> &amp; <span class="br0">(</span>Rot.<span class="me1">Yaw</span> / <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+        CompRoll = <span class="br0">(</span><span class="br0">(</span>Rot.<span class="me1">Roll</span> &gt;&gt; <span class="nu0">8</span><span class="br0">)</span> &amp; <span class="nu0">255</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DeCompressExample <span class="br0">(</span><span class="kw6">out</span> <span class="kw4">rotator</span> Rot, <span class="kw4">int</span> CompRot, <span class="kw4">byte</span> CompRoll<span class="br0">)</span>
+<span class="br0">{</span>
+        Rot.<span class="me1">Pitch</span> = <span class="br0">(</span>CompRot / <span class="nu0">32768</span><span class="br0">)</span>;
+        Rot.<span class="me1">Yaw</span> = <span class="br0">(</span><span class="nu0">2</span> * <span class="br0">(</span>CompRot - <span class="br0">(</span><span class="nu0">32768</span> * Rot.<span class="me1">Pitch</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+        Rot.<span class="me1">Pitch</span> *= <span class="nu0">2</span>;
+        Rot.<span class="me1">Roll</span> = <span class="br0">(</span><span class="br0">(</span>CompRoll &lt;&lt; <span class="nu0">8</span><span class="br0">)</span> | CompRoll<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Wormbo:</b> Rotators are already compressed for replication. For each component only 1 or 9 bits are replicated. The first bit signals, whether the component is zero and if it isn't, a byte with the value follows. That byte is calculated as Roll in the CompressExample function above. The (De)CompressExample functions are very handy though, if full precision is required for a rotation direction.</p>
+<hr />
+<p><b>Random150:</b> Rotators cause an interesting problem when you want to position a one vector relative to another. When the first vector is rotated, this means that the second requires rotation. Here is an example on how to do this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">vector</span> Loc;
+<span class="kw5">local</span> <span class="kw4">rotator</span> Rot;
+<span class="kw5">local</span> <span class="kw4">float</span> diff;
+ 
+diff = <span class="nu0">256</span>; <span class="co1">//The distance you need between the two</span>
+ 
+Loc = Location; <span class="co1">//Loction of the Orginal Vector</span>
+Rot = Rotation; <span class="co1">//Rotation of the Orginal Rotator</span>
+ 
+<span class="co1">//This is the movement of the X/Y plane. You will have to change </span>
+<span class="co1">//  sin/cos/tan to your required axis of movement</span>
+Loc.<span class="me1">X</span> += diff * <span class="kw7">cos</span><span class="br0">(</span>Rot.<span class="me1">Yaw</span>   * <span class="br0">(</span>pi / <span class="nu0">32768</span><span class="br0">)</span><span class="br0">)</span>;
+Loc.<span class="me1">Y</span> += diff * <span class="kw7">sin</span><span class="br0">(</span>Rot.<span class="me1">Yaw</span>   * <span class="br0">(</span>pi / <span class="nu0">32768</span><span class="br0">)</span><span class="br0">)</span>;
+Loc.<span class="me1">Z</span> += diff * <span class="kw7">sin</span><span class="br0">(</span>Rot.<span class="me1">Pitch</span> * <span class="br0">(</span>pi / <span class="nu0">32768</span><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p><b>computergod666:</b> What exactly happens when you subtract two rotators? Does it simply subtract their components from each other, or is there something more complex involved?</p>
+<p><b>Wormbo:</b> The four arithmetic operators +, -, * and / are all applied component-wise to rotators and vectors. No special "magic" involved.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 74/1000000
+Post-expand include size: 7/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/o/t/Legacy%7ERotator_9443.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/o/t/Legacy_talk%7ERotator_51a5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Rotator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:44, 26 February 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

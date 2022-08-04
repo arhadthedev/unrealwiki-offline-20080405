@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Ideas/Minefield - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Ideas/Minefield</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_bf77.html" title="Legacy:Mod Ideas">Legacy:Mod Ideas</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy">Mod ideas for UT 2003 – It's a Minefield</div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Description"><span class="tocnumber">1</span> <span class="toctext">Description</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Team_mine_behaviour"><span class="tocnumber">1.1</span> <span class="toctext">Team mine behaviour</span></a></li>
+<li class="toclevel-2"><a href="#Note_on_implementation"><span class="tocnumber">1.2</span> <span class="toctext">Note on implementation</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Interested_Scripters"><span class="tocnumber">1.2.1</span> <span class="toctext">Interested Scripters</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">2</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Description" id="Description"></a></p>
+<h2><span class="mw-headline">Description</span></h2>
+<p>This is a small mutator that spawns a configurable number of mines randomly within a level. A mine is triggered when a player runs over it. When triggered mines fire a small capsule into the air which spins for maybe 1/10th of a second before launching a "lightning gun like spark" at players within a pre-set radius at the point the mine was triggered. If there are no players within the target radius then the "capsule" explodes. The mines themselves don't do a lot of damage and have a fairly small blast radius, but what they do have is a nice kick to bonuce the player around a bit.</p>
+<ul>
+<li>The number of mines is expressed as a percentage of the number of navigation points on the level (between 5% and 50% – 15% is probably a good default).</li>
+<li>Mines are always spawned at navigation points (to make life easy).</li>
+<li>Mines are always visible - but should be very difficult to see.</li>
+<li>Mines are spawned at the start of the level and never regenerate unless the respawn mines option is set.</li>
+<li>Mines can be triggered by shooting them. In which case they behave in the same way as if they were triggered by a player.</li>
+<li>Team mines (for use in team games like BR, DD, and CTF) can be enabled/disabled. If team mines are disabled <i>all</i> mines are hostile. Otherwise all mines within the "owning radius" of the flag base, control point etc become "owned" by the team whose flag base it is.</li>
+<li>A respawn mines setting allows mines to respawn elswhere in the level when they are triggered - this keeps the number of mines on the level constant.</li>
+<li>The radius of ownership for team mines can be set to close (512 world units), near (1024 world units), far (2048 world units), and extreme (4096 world units).</li>
+</ul>
+<p><a name="Team_mine_behaviour" id="Team_mine_behaviour"></a></p>
+<h3><span class="mw-headline">Team mine behaviour</span></h3>
+<p>Mines will behave differently when in team mode depending on the game type. In capture the flag, when a mine falls within a certain radius of one or more flag bases it will be assigned to the owning team of the closest flag base.</p>
+<p>In Domination the mines will all start as neutral, then, when a control point changes team all mines within the "target" radius of the control point become owned by that team.</p>
+<p>In Bombing run, mines within a certain radius of the touchdown point and "scoring hoop(s)" become owned by the team whose touchdown point/scoring hoop it is.</p>
+<p>In Team deathmatch and deathmatch all mines are hostile - effectively the <i>team mines</i> options have no effect.</p>
+<p>Remember - players on the same team as the "owning team" of a mine do not trigger mines.</p>
+<p><a name="Note_on_implementation" id="Note_on_implementation"></a></p>
+<h3><span class="mw-headline">Note on implementation</span></h3>
+<p>Given that Domination points change owners fairly often it's probably better to have a reference on the mine to the "owning object" be it flag base, control point, or touchdown point/scoring hoop. This owning object is then interrogated at the point the mine is "touched" to see whether the mine should fire or not.</p>
+<p><a name="Interested_Scripters" id="Interested_Scripters"></a></p>
+<h4><span class="mw-headline">Interested Scripters</span></h4>
+<p>If you are interested in developing this mod for UT2003 then add your name to the list. Once you start development you should indicate that below (and hopefully include a link to a journal page). Before you start development you should also check this section to see if anyone else has started.</p>
+<ul>
+<li><a href="../../../../articles/k/u/h/Legacy%7EKuhal_1bf9.html" title="Legacy:Kuhal">Kuhal</a> - Can do in UT but no access to UT2003 as yet</li>
+<li>Postal - Allready working on something similar.</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Delta:</b> This idea is easily possible with a scripted trigger, some emitters, a trigger, and a projectile spawner. I try to make a prototype, and post how i made it... if needed&#160;:) Oh and this is a good solution for team mines... in Assault especially! And an amount of time can be set before making the mine active again... or just to trigger once only&#160;:) i try it im sure</p>
+<p><b>EntropicLqd:</b> Should mines beep?</p>
+<p><b>ZxAnPhOrIaN:</b> That would be a good idea. Also, mines should have a faint glow on them and explode when shot. In team games like CTF, you should have teamed mines so that you don't die when you have the flag in your base if you step on a mine.</p>
+<p><b>EntropicLqd:</b> Do you not think that the teamed mines would only really be useful if you could actually deploy them yourself as a player? Assuming the mines are still spawned randomly - would you change the owning team of the mines only within a certain radius of the flag, leaving an area in the middle of the map where all mines are dangerous? I like the idea of being able to shoot them. What about spawning more mid-game?</p>
+<p><b>ZxAnPhOrIaN:</b> It should calculate how far the flags are apart, and divide it by 3. One third is red, another third is blue, and the last third is neutral.</p>
+<p><b>EntropicLqd:</b> Hmmm, what about maps that have the flag bases back to back? Could be interesting. I'd prefer most of the map to have "unfriendly" mines tbh so I'd be inclined to set a fixed radius from the flag. Still doesn't help with flag bases that are back to back though.</p>
+<p><b>ZxAnPhOrIaN:</b> Lets forget about team mines.</p>
+<p><b>EntropicLqd:</b> Hmmm, too eary to give up on that idea at the moment I think. It's an appealing idea. As for the back to back levels - there are not that many ... and it might be quite amusing&#160;:)</p>
+<p><b>Birelli:</b> Regardless of flag configuration, have the same radius around all flags, and where the fields interesect make the mine be the team of whichever flag is closest (Without some real mathematical analysis of that I'm not sure if it would ever be the case that mines could be in the opponent's base, but I think it would cover 99% of maps out there).</p>
+<p>With that, make sure it supports searching for all flag bases so mods like CTF+ which support all kinds of wacky flag setups will still work.</p>
+<p>Finally, it might be interesting to try it with Domination also, adds new meaning to having a defensive advantage&#160;:-).</p>
+<p><b>ZxAnPhOrIaN:</b> Well, in DOM you have to configure the mines in a certain radius of the Domination checkpoint during gameplay to the team that owns the checkpoint. Also if the checkpoint is neutral, the mines will blow up EVERY player.&#160;:) On another note, you should put a mover or some sort of thing near the mine to blow a hole in the ground when the mine blows up.</p>
+<p><b>EntropicLqd:</b> Not sure about the mover idea - what happens if the mine spawns on a grill? Don't forget mines are spawned randomly across the map - they don't actually form part of the map. I always thought movers made up part of the BSP tree. I think I'd prefer to do a simple scorch mark on the ground when the mine explodes. Anyways – after all the refactoring any other comments?</p>
+<p><b>ZxAnPhOrIaN:</b> The scorch mark is a good idea, it could be a smaller redeemer blast mark.</p>
+<p><b>DJPaul:</b> Nice idea, could be fun. I'll put a "I might look in on this idea", just like i've done on a couple of the others. If anyone wants to do this, however - go for it.</p>
+<p><b>Mr.Mitchell:</b> I like the description of this mod. I was already planning on making a UT2003 version of my <a href="http://home.ict.nl/~mweterin/unreal/projects/flakminecannon.html" class="external text" title="http://home.ict.nl/~mweterin/unreal/projects/flakminecannon.html" rel="nofollow">FlakMineCannon mutator</a> so it would be easy to also make this mutator since I am already playing around with mines. So I also add my name to the list.</p>
+<p><b>DJPaul:</b> Dare I up against the might of Mr.Mitchell? Anyway, I may not even do it like I say above.</p>
+<p><b>Mr.Mitchell:</b> Cause DJPaul al already started with it (I guess that is meant by "delivery mode") I removed my name.</p>
+<p><b>DJPaul:</b> hi ho from somewhere in Canada. Hope j00 all having fun. Day before I left, I emailed what i've done with this to someone to continue - I was talking with them in #unrealwiki, but i've forgotten my name. whoever you are, have you done any wokr?</p>
+<p><b>Kuhal:</b> I like the idea. How can you be working on it for UT2K3 already? Are some of you lucky enough to be included in pre-release Alpha trials or something? Anyhow, the issue with who owns a mine is simply mitigated by having multiple ownership. Basically, if the mine is within range of the emmitter (could be a new actor or just the flag/domination point etc) then that particular mine WILL explode if an opposing team comes near it. If multiple teams own the mine then I'd suggest the mine does damage to all players in the radius if it explodes, and only the enemy players for the initial effect (was it lightning gun?). You can possibly add to this later with the idea of a mobile emmitter and in so doing, you could have a tactical decision to make if you wanted to move your emitter to a different location. Possibly also a number of mines can be laid (up to a map maximum) each few seconds. Thus (like the board game stratego) you can set up your defenses as you please... Lasyly, Direct hits or perhaps hits inflicting over a certain threshold of damage should be needed to explode an detected mine. otherwise you clear a minefield easily with spam rockets/deemer...</p>
+<p><b>DJPaul:</b> No, i've done some code for UT. You're welcome to it if you want.</p>
+<p><b>Kuhal:</b> Sure why not. So you've done some UT code trusting that conversion won't be a major issue? Sounds fine to me. kuhal@win.co.nz</p>
+<p><b>Postal:</b> I'm working on a stand alone land mine, a simulation of the M16A1 Apers with M605 fuse. Its mostly working for UT2k3, but I have 2 bugs to work out. I have figured out a way to make bots avoid them. Its a good bit more powerfull then what you guys are talking about, and it can be shot to be destroyed. The UT verson was invisable unless you were near it, unfortunaly the ability to do that was cut from UT2k3. I could easly make another verson of it which does less damage, beeps, and or can be safely passed with a Anti-Prox. Postal@PlanetUnreal.com</p>
+<p><b>MythOpus:</b> You can spawn an AvoidMarker (NavigationPoint) on top of it when the mine is created. And as far as the invisible until you're near it part goes, how was it cut from UT2003? Remember you can do practically anything in more than one way&#160;:P</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 102/2097152 bytes
+Template argument size: 46/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_Minefield_1d60.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Ideas_Minefield_90a0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Ideas/Minefield">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:18, 14 July 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

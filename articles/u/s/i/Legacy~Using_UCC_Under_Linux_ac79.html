@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Using UCC Under Linux - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Using UCC Under Linux</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page goes through the process of getting <a href="../../../../articles/u/c/c/Legacy%7EUcc_e245.html" title="Legacy:Ucc">Ucc</a>, the Unreal Script compiler (UT2004), working under the <a href="http://en.wikipedia.org/wiki/Linux" class="extiw" title="wikipedia:Linux">Wikipedia:Linux</a> OS.</p>
+<p>Note: currently UCC is not fully implemented in the linux version of UT2004; however, linux is not without hope, we can use the tool <a href="http://en.wikipedia.org/wiki/WINE" class="extiw" title="wikipedia:WINE">Wikipedia:WINE</a> to compile our Unrealscript. This tutorial shows how to do this as well as some other cool things we can do (so this will be usefull if/when UCC is fully implemented under linux).</p>
+<ul>
+<li><b>WIN_HOME</b> = The directory that contains UT2004 for windows</li>
+<li><b>NIX_HOME</b> = The directory that conatins UT2004 for linux</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Required_Tools"><span class="tocnumber">1</span> <span class="toctext">Required Tools</span></a></li>
+<li class="toclevel-1"><a href="#Base_Setup"><span class="tocnumber">2</span> <span class="toctext">Base Setup</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Bloated_Setup"><span class="tocnumber">2.1</span> <span class="toctext">Bloated Setup</span></a></li>
+<li class="toclevel-2"><a href="#Jumbled_Setup"><span class="tocnumber">2.2</span> <span class="toctext">Jumbled Setup</span></a></li>
+<li class="toclevel-2"><a href="#Linux_SDK_setup_1"><span class="tocnumber">2.3</span> <span class="toctext">Linux SDK setup 1</span></a></li>
+<li class="toclevel-2"><a href="#Linux_SDK_setup_2"><span class="tocnumber">2.4</span> <span class="toctext">Linux SDK setup 2</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Compiling_using_Wine"><span class="tocnumber">3</span> <span class="toctext">Compiling using Wine</span></a></li>
+<li class="toclevel-1"><a href="#Scripts"><span class="tocnumber">4</span> <span class="toctext">Scripts</span></a>
+<ul>
+<li class="toclevel-2"><a href="#utmake"><span class="tocnumber">4.1</span> <span class="toctext">utmake</span></a></li>
+<li class="toclevel-2"><a href="#utfind"><span class="tocnumber">4.2</span> <span class="toctext">utfind</span></a></li>
+<li class="toclevel-2"><a href="#utedit"><span class="tocnumber">4.3</span> <span class="toctext">utedit</span></a></li>
+<li class="toclevel-2"><a href="#utlinkpkg"><span class="tocnumber">4.4</span> <span class="toctext">utlinkpkg</span></a></li>
+<li class="toclevel-2"><a href="#utrun"><span class="tocnumber">4.5</span> <span class="toctext">utrun</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">6</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Required_Tools" id="Required_Tools"></a></p>
+<h2><span class="mw-headline">Required Tools</span></h2>
+<ul>
+<li>Your favorite flavor of Linux (I'm using Gentoo)</li>
+<li>Some version of wine (winex, cedega, wine_cvs, etc)</li>
+<li>A <a href="../../../../articles/t/e/x/Legacy%7EText_Editor_a641.html" title="Legacy:Text Editor">Text Editor</a> (vim, emacs, nano, pico, etc)</li>
+<li>A retail copy of <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> (yep, we actually have to purchase software)</li>
+<li>Latest UT patch (3323 as of this writing, but check the page <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>)</li>
+<li>UT Source (again 3323)</li>
+<li><a href="http://www.parl.clemson.edu/~mspeth/projects/ut2004/" class="external text" title="http://www.parl.clemson.edu/~mspeth/projects/ut2004/" rel="nofollow">ut2k4_linux_sdk</a> (Optional: 42MB)</li>
+</ul>
+<p><a name="Base_Setup" id="Base_Setup"></a></p>
+<h2><span class="mw-headline">Base Setup</span></h2>
+<p>There are several ways of setting up UT under linux so I'll describe the ways below.</p>
+<p><a name="Bloated_Setup" id="Bloated_Setup"></a></p>
+<h3><span class="mw-headline">Bloated Setup</span></h3>
+<p>The most generic type of setup that requires the most hard disk space.</p>
+<ol>
+<li>Install UT2004 Linux version</li>
+<li>Install UT2004 Windows version using wine</li>
+<li>Patch both to the latest version of UT</li>
+<li>Unpack the unreal source into the <b>WIN_HOME</b> directory</li>
+</ol>
+<p>Now you are ready to start writing Unreal Script.</p>
+<p>Your source code will be written in the <b>WIN_HOME</b> directory. Once you have compiled (shown later) your source then you will need to move a minimum of 3 files to your <b>NIX_HOME</b> directory.</p>
+<p>The 3 files are yourpkg.u, yourpkg.ucl, and yourpkg.int. These files should be found in your <b>WIN_HOME/System</b> directory and copied to the <b>NIX_HOME/System</b> directory.</p>
+<p><a name="Jumbled_Setup" id="Jumbled_Setup"></a></p>
+<h3><span class="mw-headline">Jumbled Setup</span></h3>
+<p>Requires the minimum space but compilation files and binary files get mixed together.</p>
+<ol>
+<li>Install UT2004 Linux version</li>
+<li>Install UT2004 WIndows version using wine</li>
+<li>Patch both</li>
+<li>Now Copy all files from the <b>WIN_HOME/System</b> to <b>NIX_HOME/System</b></li>
+<li>Delete <b>WIN_HOME</b> and all of its contents</li>
+<li>Unpack UT source into <b>NIX_HOME</b></li>
+</ol>
+<p>Now you are ready to start compiling and writing your Unreal Script</p>
+<p><a name="Linux_SDK_setup_1" id="Linux_SDK_setup_1"></a></p>
+<h3><span class="mw-headline">Linux SDK setup 1</span></h3>
+<p>Requires ut2004_linux_sdk (This is an "environment" that I have created for making unreal scripting easier on the linux user – the latest version has handles variables repeatedly used in the old scripts implemented by Chris Guirl and David Redick from <a href="http://clemsonlinux.org/" class="external text" title="http://clemsonlinux.org/" rel="nofollow">CLUG</a>).</p>
+<ol>
+<li>Install UT2004 Linux Version</li>
+<li>Unpack the latest version of ut2004_linux_sdk anywhere ( preferably somewhere other then <b>NIX_HOME</b>)</li>
+<li>Run the setup script found in ut2004_linux_sdk directory
+<ol>
+<li>setup symbolically links files needed to compile UT as well as creates a file in your home directory to store values used in the scripts.</li>
+<li>Usage: setup utenv where ut_env is a directory provided in the sdk.</li>
+</ol>
+</li>
+</ol>
+<p>You are now ready to compile your Unreal script code. Note, that we only have 1 full vesion of UT installed. The sdk provides all necessary files for compilation. setup symbolically links directories found in <b>NIX_HOME</b> that the compiler needs such as Textures, Sounds, etc. Here you will put your packages inside utenv.</p>
+<p><a name="Linux_SDK_setup_2" id="Linux_SDK_setup_2"></a></p>
+<h3><span class="mw-headline">Linux SDK setup 2</span></h3>
+<p>Basically the same as "Linux SDK setup 1" except your source files can be stored in a directory other then utenv. Here's what you need to do.</p>
+<ol>
+<li>Follow Linux SDK setup 1</li>
+<li>Create a directory somewhere for your project. (example mkdir /home/user/UTMod)</li>
+<li>Create a System directory inside your project dir (example mkdir /home/user/UTMod/System)</li>
+<li>Use utlinkpkg to symbolically link your new project</li>
+<li>Command Line
+<ol>
+<li>Usage: utlinkpkg pkg_dir
+<ol>
+<li>where pkg_dir is the full path to your new project directory</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>You can now compile your package like you would if the package was actually in ut_env.</p>
+<p><a name="Compiling_using_Wine" id="Compiling_using_Wine"></a></p>
+<h2><span class="mw-headline">Compiling using Wine</span></h2>
+<p>As noted at the top of the page, we cannot use the UCC provided in the linux version.</p>
+<p>Hence, we need to use UT's windows version. By now you should have the necessary tools to compile so lets push on.</p>
+<p>I am currently using cedega so the examples listed below will be using "cedega" but you can replace cedega with your version of wine (ie. winex, wine, wine_cvs, etc).</p>
+<p>To compile the UT source (without any of your modifications) then you can do this command</p>
+<ul>
+<li>cedega UCC.exe make</li>
+</ul>
+<p>UCC is the unreal script compiler. Make tells the compiler to compile your source.</p>
+<p><b>UCC make doesn't work exactly like gnu make</b></p>
+<p>With gnu make, if you modify a source file then make knows about this and recompiles the needed files.</p>
+<p>However, UCC does not do this. It looks in your System directory for the .u files corresponding to the packages listed in the Game .ini file (Think of this as your make file). If the .u is present, then it doesn't attempt to compile it; however, when the .u file is not present then it looks for your source and tries to compile it. I have written scripts to make this automatic for you,but if you do it on your own, then you need to remember to delete the .u files that you want to recompile.</p>
+<p>To use a different "make file" you can copy and paste the default make file called UT2004.ini located in your System directory to a new file (like UT2004_make.ini). Here we can edit this file to only compile packages that we need. Inside this file there will be several lines that have EditPackages= in it. EditPackages tells the compiler which packages to compile. In your new file you can remove those packages that are not needed by your package that you want to compile (btw, you need to add your package name like this <b>EditPackages=UTMod</b>)</p>
+<p>Now we are ready to compile with the new .ini file.</p>
+<ul>
+<li>cedega UCC.exe make -ini=UT2004_make.ini</li>
+</ul>
+<p>Thats it, UCC now uses UT2004_make.ini for its make file.</p>
+<p><a name="Scripts" id="Scripts"></a></p>
+<h2><span class="mw-headline">Scripts</span></h2>
+<p>These are provided in the SDK to make your Unreal Scripting easier. Feel free to use, modify, or ignore them, its up to you&#160;:)</p>
+<p><a name="utmake" id="utmake"></a></p>
+<h3><span class="mw-headline">utmake</span></h3>
+<p>This removes and compiles a package as well as moves the package to the <b>NIX_HOME</b>.</p>
+<ul>
+<li>Usage: utmake [class] [makefile]</li>
+</ul>
+<p>Where <b>class</b> is the name of the package to compile and <b>makefile</b> (optional) is the game .ini to use.</p>
+<p><a name="utfind" id="utfind"></a></p>
+<h3><span class="mw-headline">utfind</span></h3>
+<p>Useful for searching for the location of class files in the source directory.</p>
+<ul>
+<li>Usage: utfind [class]</li>
+</ul>
+<p>Where <b>class</b> is the source file you are looking for.</p>
+<p>Example: I am looking for class xPawn because Monster.uc extends it but xPawn isn't in the same directory as Monster.uc. so do</p>
+<ul>
+<li>utfind xPawn</li>
+</ul>
+<p>XEffects: xpawngibgroup.uc</p>
+<p>XGame: xPawn.uc</p>
+<p>XGame: xPawnSoundGroup.uc</p>
+<p><a name="utedit" id="utedit"></a></p>
+<h3><span class="mw-headline">utedit</span></h3>
+<p>Useful for looking at the ut files that you found with utfind.</p>
+<ul>
+<li>Usage: utedit [class] [ext]</li>
+</ul>
+<p>Where <b>class</b> is the name of the file (without the extension) to be looked in and <b>ext</b> is the extension (ie .uc, .ucl, .ini, etc). If ext is not given, .uc is assumed.</p>
+<p><a name="utlinkpkg" id="utlinkpkg"></a></p>
+<h3><span class="mw-headline">utlinkpkg</span></h3>
+<p>Used to symbolically link project directories so that you do not have to move src code into the utenv directory structure.</p>
+<ul>
+<li>Usage: utlinkpkg [package]</li>
+</ul>
+<p>Where <b>package</b> is the path to the directory with the src code that you want linked.</p>
+<p><a name="utrun" id="utrun"></a></p>
+<h3><span class="mw-headline">utrun</span></h3>
+<p>Ever get tired of clicking through the menus just to play a mod you are working on and you don't remember what the command line parameters are for starting ut with your mod?</p>
+<p>Well, utrun does it for you.</p>
+<ul>
+<li>Usage: utrun [map] [gametype]</li>
+</ul>
+<p>Where <b>map</b> is the map to start wit and <b>gametype</b> is the gametype to use.</p>
+<p>You avoid going through the menus by using this script.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/n/a/t/Legacy%7ENative_Coding_On_Linux_c2d8.html" title="Legacy:Native Coding On Linux">Native Coding On Linux</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Foxpaw:</b> Should this page possibly be renamed? "The Linux Way" would be a catchy title for a magazine article, but as this is a more reference oriented medium, I think that the title should give some indication to what the page contains, other than just the fact that it has something to do with Linux. "Using UCC under Linux," or "Coding under Linux" or something like that seems better to me. "The Linux Way" is also not very amiable to being linked to.</p>
+<p><b>Conzar:</b> Agreed. My title is catchy&#160;:) but not the best at describing this page. So how do I change the title???</p>
+<p><b>Foxpaw:</b> Err, actually you can't. You can make a new page and copy everything there, or we can probrably just leave these comments here and tarquin will probrably see it and change the name.</p>
+<p><b>Conzar:</b> Ok. Well, I'm going to continue to work on this then.</p>
+<p><b>Tarquin:</b> done&#160;:) Remember to make use of other pages in the wiki by linking to them&#160;:) (I've done a few for you)</p>
+<p><b>Conzar:</b> Thanks for the edits and renaming the page.</p>
+<p><b>Conzar:</b> Note, I updated script definitions to the lastest version.</p>
+<p><b>thelusiv:</b> With the setup script there, are the first two methods (the bloated and jumbled setups) really necessary? They're not really the ideal way to set it up and only seem to make this page more confusing...</p>
+<p><b>Conzar:</b> Well, they are necessary if the user does not want to use the sdk provided. I think it also helps those understand why the sdk is cool. But what does everyone else think? Should we re-order those subtopics, remove them, or leave it be?</p>
+<p><b>thelusiv:</b> Maybe there should be a page dedicated to doing it by hand using Linux, as well as a separate page about the SDK. That would significantly reduce clutter and keep all the information.</p>
+<p><b>strider:</b> I'm tring to compile a mod (Unreal Annihilation) using linux (I'd really rather not have to boot into windows anymore purely because of compiling!) I try wine ucc.exe make -mod=Annihilation2k4 but I get the following error: fixme:process:GetProcessWorkingSetSize (0xffffffff,0x40dce6d8,0x40dce6d4): stub. After this, the CPU goes to 100% until I press ctrl-c, where it exits with the error code 1.</p>
+<p>Any ideas?</p>
+<p><b>MythOpus:</b> I'm definately not the hugest Linux person (I don't use it at all, although my dad put it on here) but isn't it unnecesary to type in ucc.exe make -mode=Annihilation2k4? Doesn't it still look in it's directory for the ut2004.ini and compile all packages neccesary?</p>
+<p><b>strider:</b> It's a seperate mod, a total conversion. So yeah it's necessary. Typing ucc make -mod=annihilation2k4 works on windows, but not linux using this setup.</p>
+<p><b>OlgaB:</b> Is there any way to get UCC support in UT1?</p>
+<p><b>Wormbo:</b> Use WINE to run ucc.exe from the Windows version.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/i/Legacy%7EUsing_UCC_Under_Linux_ac79.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/i/Legacy_talk%7EUsing_UCC_Under_Linux_6b78.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Using_UCC_Under_Linux">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:30, 30 August 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

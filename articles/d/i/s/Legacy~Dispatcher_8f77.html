@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Dispatcher - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Dispatcher</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/t/r/i/Legacy%7ETriggers_%28UT%29_5eb3.html" title="Legacy:Triggers (UT)">Triggers (UT)</a> &gt;&gt; Dispatcher (Package: Engine)</div>
+<p><i>Replaced in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> by the <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a>.</i></p>
+<p>A dispatcher is a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> meant for taking another Trigger's <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> and sending out a bunch of new events. The dispatcher also has the capability to time when to send out these subsequent events. It is important to point out that the location of a dispatcher is totally irrelevant to its function: it is not affected by players touching it. However, it is generally advisable to put a dispatcher near to the trigger that it will be triggered by or the actors that it will in turn trigger just for organization's sake.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Examples"><span class="tocnumber">2</span> <span class="toctext">Examples</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Simple_example"><span class="tocnumber">2.1</span> <span class="toctext">Simple example</span></a></li>
+<li class="toclevel-2"><a href="#Delaying"><span class="tocnumber">2.2</span> <span class="toctext">Delaying</span></a></li>
+<li class="toclevel-2"><a href="#Further_examples"><span class="tocnumber">2.3</span> <span class="toctext">Further examples</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Custom_Subclasses"><span class="tocnumber">4</span> <span class="toctext">Custom Subclasses</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Haltable_dispatcher"><span class="tocnumber">4.1</span> <span class="toctext">Haltable dispatcher</span></a></li>
+<li class="toclevel-2"><a href="#Elephant_Dispatcher"><span class="tocnumber">4.2</span> <span class="toctext">Elephant Dispatcher</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>OutEvents&#160;</dt>
+<dd>list of events the dispatcher will fire, in order. Note that UnrealEd will <i>not</i> draw a red line to tiw actors whose Tag matches these events. (If you're paranoid about this, type the event name in the wrong case; UnrealEd will fix the case if there's a match). If you wish to make more than 7 events, link in a second dispatcher.</dd>
+<dt>OutDelays&#160;</dt>
+</dl>
+<p>the time to wait before firing the corresponding event. These are sequential; ie the dispatcher works like this:</p>
+<ul>
+<li>wait time OutDelays[0]
+<ul>
+<li>fire event OutEvents[0]</li>
+</ul>
+</li>
+<li>wait time OutDelays[1]</li>
+</ul>
+<ul>
+<li>
+<ul>
+<li>fire event OutEvents[1]</li>
+</ul>
+</li>
+<li>and so on.</li>
+</ul>
+<p>These can be equal to zero; thus firing several events simultaneously.</p>
+<p><br /></p>
+<p><a name="Examples" id="Examples"></a></p>
+<h2><span class="mw-headline">Examples</span></h2>
+<p><a name="Simple_example" id="Simple_example"></a></p>
+<h3><span class="mw-headline">Simple example</span></h3>
+<p>An example would be if you want the dispatcher to trigger 3 events upon the event "xxx" being sent out. The 3 events you want to send out are "yyy" at the same time that "xxx" was sent out, "yyy" again 20 seconds later, and "zzz" at the same time as the second "yyy". The properties you would fill in would be this:</p>
+<ul>
+<li>OutDelays
+<ul>
+<li><b>0</b> - 0.0</li>
+<li><b>1</b> - 20.0</li>
+<li><b>2</b> - 0.0</li>
+</ul>
+</li>
+<li>OutEvents
+<ul>
+<li><b>0</b> - yyy</li>
+<li><b>1</b> - yyy</li>
+<li><b>2</b> - zzz</li>
+</ul>
+</li>
+</ul>
+<p><a name="Delaying" id="Delaying"></a></p>
+<h3><span class="mw-headline">Delaying</span></h3>
+<p>There is another good trick that can be done with Dispatchers. Sometimes you need to trigger something, but then you need to make it wait before the actual Event happens. This can be done by putting a Dispatcher between the two Events in the chain.</p>
+<p>So, if you triggered the Dispatcher's tag xxx, but you needed it to wait 5 seconds before it triggered aaa, here's how it will look:</p>
+<ul>
+<li>OutDelays
+<ul>
+<li><b>0</b> - 5.0</li>
+</ul>
+</li>
+<li>OutEvents
+<ul>
+<li><b>0</b> - aaa</li>
+</ul>
+</li>
+</ul>
+<p>Notice that you're not doing anything except triggering an actor that will wait 5 seconds. This is a little trick that editors will sometimes use for such things as properly timing their special effects.</p>
+<p>Note that a dispatcher's OutDelays are cumulative. In other words, if you have:</p>
+<ul>
+<li>OutDelay 1</li>
+<li>OutDelay 3</li>
+<li>OutDelay 4</li>
+</ul>
+<p>Then the second event is called three seconds after the first, and four seconds after the dispatcher is triggered, and the third event four seconds after the second, and eight seconds in total from the time the dispatcher is called.</p>
+<p><a name="Further_examples" id="Further_examples"></a></p>
+<h3><span class="mw-headline">Further examples</span></h3>
+<ul>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a> – systems using several trigger actors to obtain complex behaviour.</li>
+<li>A tutorial which uses this actor: <a href="../../../../articles/l/i/g/Legacy%7ELightning_Storm_065e.html" title="Legacy:Lightning Storm">Lightning Storm</a></li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/d/y/n/Legacy%7EDynamics_8762.html" title="Legacy:Dynamics">Dynamics</a> – main page for everything about triggers</li>
+<li><a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> – overview of how triggering works</li>
+<li><a href="../../../../articles/t/y/p/Legacy%7ETypes_Of_Trigger_07fa.html" title="Legacy:Types Of Trigger">Types of Trigger</a> – summary of the different kinds of trigger actor</li>
+</ul>
+<p><a name="Custom_Subclasses" id="Custom_Subclasses"></a></p>
+<h2><span class="mw-headline">Custom Subclasses</span></h2>
+<p><a name="Haltable_dispatcher" id="Haltable_dispatcher"></a></p>
+<h3><span class="mw-headline">Haltable dispatcher</span></h3>
+<p><b>Tarquin:</b> A dispatcher which stops if triggered while dispatching. This is untested; I have no idea what happens to state label code when a function is called. see <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create A Subclass</a> for instructions.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">state</span> Dispatch
+<span class="br0">{</span>
+        <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">gotostate</span><span class="br0">(</span><span class="st0">''</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+Begin:
+        <span class="kw1">for</span><span class="br0">(</span> i=<span class="nu0">0</span>; i&lt;ArrayCount<span class="br0">(</span>OutEvents<span class="br0">)</span>; i++ <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span> OutEvents<span class="br0">[</span>i<span class="br0">]</span> != <span class="st0">''</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        Sleep<span class="br0">(</span> OutDelays<span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span>;
+                        <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">class</span> <span class="st0">'Actor'</span>, Target, OutEvents<span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span>
+                                Target.<span class="me1">Trigger</span><span class="br0">(</span> <span class="kw8">Self</span>, Instigator <span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Elephant_Dispatcher" id="Elephant_Dispatcher"></a></p>
+<h3><span class="mw-headline">Elephant Dispatcher</span></h3>
+<p>Normal Disp breaks the chain of command. This remembers who Triggered it and passes this information on to the actors it triggers. See <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> for details.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ChainDispatcher.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ChainDispatcher <span class="kw5">extends</span> Dispatcher;
+<span class="co1">// Remembers who Triggered it </span>
+<span class="co1">// and passes this information along the chain of command</span>
+ 
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">actor</span></a> SavedTrigger ;
+ 
+<span class="co1">//</span>
+<span class="co1">// When dispatcher is triggered...</span>
+<span class="co1">//</span>
+<span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+<span class="br0">{</span>
+        SavedTrigger  = Other ;
+        <span class="kw6">super</span>.<span class="me1">Trigger</span><span class="br0">(</span> Other, EventInstigator <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// Dispatch events.</span>
+<span class="co1">//</span>
+<span class="kw5">state</span> Dispatch
+<span class="br0">{</span>
+Begin:
+        <span class="kw7">disable</span><span class="br0">(</span><span class="st0">'Trigger'</span><span class="br0">)</span>;
+        <span class="kw1">for</span><span class="br0">(</span> i=<span class="nu0">0</span>; i&lt;ArrayCount<span class="br0">(</span>OutEvents<span class="br0">)</span>; i++ <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span> OutEvents<span class="br0">[</span>i<span class="br0">]</span> != <span class="st0">''</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        Sleep<span class="br0">(</span> OutDelays<span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span>;
+                        <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">class</span> <span class="st0">'Actor'</span>, Target, OutEvents<span class="br0">[</span>i<span class="br0">]</span> <span class="br0">)</span>
+                                Target.<span class="me1">Trigger</span><span class="br0">(</span> SavedTrigger, Instigator <span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw7">enable</span><span class="br0">(</span><span class="st0">'Trigger'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Category:Legacy Class (UT)</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Category:Legacy Custom Class (UT)</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> move the custom subclasses into sub pages?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 27/1000000
+Post-expand include size: 213/2097152 bytes
+Template argument size: 127/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Legacy Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/i/s/Legacy_talk%7EDispatcher_ac54.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Dispatcher">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:12, 18 November 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

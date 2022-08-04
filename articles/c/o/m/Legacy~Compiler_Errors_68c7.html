@@ -1,0 +1,727 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Compiler Errors - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Compiler Errors</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The warnings and errors described on this page are generated only by the compiler. If you need information about logged in-game warnings see <a href="../../../../articles/l/o/g/Legacy%7ELog_Warnings_d633.html" title="Legacy:Log Warnings">Log Warnings</a>.</p>
+<p>The <a href="../../../../articles/u/c/c/Legacy%7EUcc_e245.html" title="Legacy:Ucc">Ucc</a> Make <a href="../../../../articles/c/o/m/Legacy%7ECommandlet_d39f.html" title="Legacy:Commandlet">commandlet</a> outputs warning and critical error messages in the form</p>
+<pre>
+<i>&lt;path and filename&gt;</i>(<i>line number</i>) : <i>error message</i>
+</pre>
+<p>Usually the problem can be found by opening the specified file and looking at the specified line number. Exceptions are missing declarations or braces further up in the file or missing declarations in a superclass (if it's part of your code). The Wiki recommends the <a href="../../../../articles/u/m/a/Legacy%7EUMake_c884.html" title="Legacy:UMake">UMake</a> compiling tool&#160;:D.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Warnings"><span class="tocnumber">1</span> <span class="toctext">Warnings</span></a></li>
+<li class="toclevel-1"><a href="#Syntax_Errors"><span class="tocnumber">2</span> <span class="toctext">Syntax Errors</span></a>
+<ul>
+<li class="toclevel-2"><a href="#General_Structure"><span class="tocnumber">2.1</span> <span class="toctext">General Structure</span></a></li>
+<li class="toclevel-2"><a href="#Functions"><span class="tocnumber">2.2</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-2"><a href="#Variables"><span class="tocnumber">2.3</span> <span class="toctext">Variables</span></a></li>
+<li class="toclevel-2"><a href="#Typecasting"><span class="tocnumber">2.4</span> <span class="toctext">Typecasting</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Exec_Warnings"><span class="tocnumber">3</span> <span class="toctext">Exec Warnings</span></a></li>
+<li class="toclevel-1"><a href="#Bizarre_Compiler_Errors"><span class="tocnumber">4</span> <span class="toctext">Bizarre Compiler Errors</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Unknown"><span class="tocnumber">4.1</span> <span class="toctext">Unknown</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Script_serialization_mismatch"><span class="tocnumber">6.1</span> <span class="toctext">Script serialization mismatch</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Warnings" id="Warnings"></a></p>
+<h2><span class="mw-headline">Warnings</span></h2>
+<dl>
+<dt>Warning, '<i>name</i>' obscures '<i>name</i>' defined in base class&#160;</dt>
+<dd>You declared a class variable, struct or enum with the same name as a class variable, struct or enum of a superclass. This will obscure the object in the superclass so you can't access it in the code of your class anymore.<br />
+In UT2004 this warning also applies to local function variables which obscure class variables in the same class or one of its superclasses.</dd>
+</dl>
+<p><b>Foxpaw:</b> Could you get around this by simply using Self.? IE, if variable A was obscured by local variable A, you should be able to access local A with A, and global A with Self.A. Seems like it would work.</p>
+<p><b>Wormbo:</b> Of course you could, but the warning is there because the usual way to access the class varaible is blocked. It's easier to find the problem with this warning when you access the obscuring variable instead of the obscured one in you code.</p>
+<dl>
+<dt>Warning, '<i>variable name</i>' - unreferenced local variable&#160;</dt>
+<dd>A function declares a local variable but doesn't use it beyond that – you may as well remove it if <a href="http://c2.com/cgi/wiki?YouArentGonnaNeedIt" class="extiw" title="wiki:YouArentGonnaNeedIt">Wiki:YouArentGonnaNeedIt</a></dd>
+</dl>
+<dl>
+<dt>Warning, <i>function name</i> - Missing return value&#160;</dt>
+<dd>The function is declared as returning a value, but there's no <b>return</b> statement in the function. The default value of that variable type will be returned (e.g. false, 0, "", None; also see <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a>)</dd>
+</dl>
+<dl>
+<dt>ExecWarning, Reference to deprecated property '<i>variable name</i>'&#160;</dt>
+<dd>You are using a variable marked as deprecated in your code.</dd>
+</dl>
+<dl>
+<dt>Warning, Class names shouldn't end in a digit</dt>
+<dd>This warning appears harmless enough. Classes with names ending in a digit (IE BloodFX2) seem to work fine.</dd>
+</dl>
+<dl>
+<dt>Warning, Missing Function&#160;</dt>
+<dd>You are calling a function that has not been defined.</dd>
+</dl>
+<p><a name="Syntax_Errors" id="Syntax_Errors"></a></p>
+<h2><span class="mw-headline">Syntax Errors</span></h2>
+<p><a name="General_Structure" id="General_Structure"></a></p>
+<h3><span class="mw-headline">General Structure</span></h3>
+<dl>
+<dt>Bad class definition '<i>class name</i>'&#160;</dt>
+<dd>In <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>, the most common cause for this error is that you accidentally used "expands" instead of "extends." The old keyword "expands" is not supported anymore. (It has been considered deprecated for a long while already.)</dd>
+</dl>
+<dl>
+<dt>Superclass <i>class name</i> of class <i>other class name</i> not found&#160;</dt>
+<dd>The superclass of one of your classes couldn't be found. Check the class header of the second class for typos. If the superclass is in the same package also check its class header, if not check the <a href="../../../../articles/g/a/m/Legacy%7EGame_Ini_File_0242.html" title="Legacy:Game Ini File">Game Ini File</a>'s EditPackages lines for missing packages.</dd>
+</dl>
+<dl>
+<dt>Unexpected end of file at end of class&#160;</dt>
+<dd>This is usually caused by one or more missing "<code>}</code>". This error can be quite annoying in large classes. Most of it is prevented by proper code indentation and (what experienced coders frequently do) writing <i>both</i> the opening and the closing brace at the same time and then filling in code between them.</dd>
+</dl>
+<dl>
+<dt>Unexpected 'defaultproperties'&#160;</dt>
+<dd>The <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a> block can only be used outside of <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a>. Within UnrealEd, they have to be set from the <a href="../../../../articles/a/c/t/Legacy%7EActor_Classes_Browser_03a1.html" class="mw-redirect" title="Legacy:Actor Classes Browser">Actor Classes Browser</a> interface; hidden variables (not declared to show up in any of the property groups) can have their defaults set via the <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Console_a1ec.html" title="Legacy:UnrealEd Console">UnrealEd console</a>. Use <a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">UCC Make</a> instead of UnrealEd to compile your classes if you want to use this feature. This error can also happen when you use a weird commenting style like:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/* some comment
+</span>
+</pre></div>
+</dd>
+</dl>
+<ul>
+<li><span class="coMULTI">/</span><span class="co1">//===========</span>Basically using a multi-line comment immediately followed by a single-line comment anywhere in your class breaks the parser and makes it complain about the defaultproperties keyword. Add a whitespace or linebreak or think about your commenting style in general.&#160;;)</li>
+</ul>
+<dl>
+<dt>Unexpected '<i>} or identifier</i>'&#160;</dt>
+<dd>This is caused by one or more missing "<code>{</code>" or too many "<code>}</code>". See suggestions above.</dd>
+</dl>
+<dl>
+<dt>Call to '<i>function</i>': Type mismatch in parameter <i>number</i>&#160;</dt>
+<dd>One of the parameters in your function call doesn't have the right type and can't be automatically <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">casted</a> to it. Look up the original declaration of the function (in the original UnrealScript source code or here on the Wiki) and double-check against the types of the values you're actually using.</dd>
+</dl>
+<dl>
+<dt>Error, Call to '<i>function name</i>': bad or missing parameter 1</dt>
+<dd>Due to Non-Existing Variable or Spelling mistake Example:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+TriggerEvent<span class="br0">(</span><span class="st0">'SomethingWrongHere'</span>, <span class="kw8">Self</span>, Instigator<span class="br0">)</span>
+</pre></div>
+</dd>
+</dl>
+<dl>
+<dt>Error, Call to '<i>function name</i>': Bad ',' or missing ')'&#160;</dt>
+<dd>This error is reported if you attempt to call a function with more parameters than it was declared with. In other words, there should be no comma where the compiler found it, maybe the call is simply missing a right parenthesis there. For example the <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">global function</a> <b>Atan</b> was defined with only one parameter in UT1, but with two parameters in later engine generations.</dd>
+</dl>
+<dl>
+<dt>Internal fixup error 0&#160;</dt>
+<dd>This error occurs when using <code>break</code> in an <code>if</code> statement inside a <code>case</code> block.</dd>
+</dl>
+<dl>
+<dt>'Else': Bad command or expression&#160;</dt>
+<dd>Make sure there is an <code>If</code> right before the mentioned <code>else</code>. If that <code>If</code> block executes more that one line of code, make sure the block is enclosed in braces. See <a href="../../../../articles/f/l/o/Legacy%7EFlow_Syntax_a7ce.html" title="Legacy:Flow Syntax">Flow Syntax</a>.</dd>
+</dl>
+<dl>
+<dt>Error, Bad or missing expression in '(some expression)'</dt>
+<dd>Check whatever comes after the expression mentioned in the message. For example, a "Bad or missing expression in 'If'" could mean the condition does not evaluate to a boolean value (True or False), and generally you might have mistyped the function or variable name.</dd>
+</dl>
+<dl>
+<dt>Error, Right type is incompatable with "$"</dt>
+<dd>Usually when you have only specified the name of an array and not the variable contained inside.</dd>
+</dl>
+<dl>
+<dt>Error, Missing '(' in 'if'&#160;</dt>
+<dd>Usually due to wrong operator eg. using If(a=b) instead of if(a==B).</dd>
+</dl>
+<dl>
+<dt>Error,Missing '(' in 'struct'&#160;</dt>
+<dd>Can be caused by leaving Blank spaces in a variable name inside a struct.</dd>
+</dl>
+<dl>
+<dt>'Else If' is not allowed here<br />
+'Else' is not allowed here&#160;</dt>
+<dd>Most likely you have the wrong number of braces after an <code>If</code> statement.</dd>
+</dl>
+<dl>
+<dt>'class' is not allowed here&#160;</dt>
+<dd>Generally caused by having your class statement in the wrong place. However, I got this error as well in a switch statement by putting something after default, like so:</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">switch</span><span class="br0">(</span> CameraMode <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">case</span> CAM_FocusFollowLOS:
+<span class="co1">//  ... lots of stuff skipped here</span>
+  <span class="kw1">default</span>:
+  <span class="kw1">case</span> CAM_Still:
+    <span class="kw1">break</span>;
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dt>Enum is not allowed here.&#160;</dt>
+<dd>You have an enum declaration appearing after functions. Enums must be defined at the top of the class along with variables.</dd>
+</dl>
+<dl>
+<dt>Bad variable or function '<i>name</i>' in replication definition&#160;</dt>
+<dd>The variable or function isn't declared in this class. Check for spelling errors and make sure the specified variable or function isn't already declared in a superclass.</dd>
+</dl>
+<dl>
+<dt>Error, 'class': Limitor '<i>name</i>' is not a class name&#160;</dt>
+<dd>The <i>class name</i> in <tt>class&lt;<i>class name</i>&gt;</tt> does not point to an existing class. Make sure that the specified class is ed at the time the script is compiled.</dd>
+</dl>
+<dl>
+<dt>Can't find Class '<i>class name</i>'&#160;</dt>
+<dd>This error can also occur for <a href="../../../../articles/t/e/x/Legacy%7ETexture_7ee5.html" title="Legacy:Texture">Textures</a>, <a href="../../../../articles/s/o/u/Legacy%7ESound_ab57.html" title="Legacy:Sound">Sounds</a>, <a href="../../../../articles/m/e/s/Legacy%7EMesh_86f6.html" title="Legacy:Mesh">Meshes</a>, etc. Make sure the specified class is ed at compile time by either adding its package to the EditPackages <i>above</i> your package's entry or using an <code>#exec OBJ LOAD</code> line.</dd>
+</dl>
+<dl>
+<dt><i>Package1.ClassName</i>'s superclass must be <i>Package1.SuperClassName</i>, not <i>Package2.SuperClassName</i>&#160;</dt>
+<dd>I got this weird error message when compiling two packages with similar class structures. <i>Package1</i> contained a class <i>ClassName</i> with the superclass <i>SuperClassName</i> (both in <i>Package1</i>) and <i>Package2</i> contained the same classes. <i>Package2</i> was compiled before <i>Package1</i> and the error occured during parsing of <i>ClassName</i> in <i>Package1</i>.<br />
+Always change the class names when copying them from one project to another. It's fine as long as you compile them seperately, but as soon as you need both of them problems like this start occuring.<br />
+<br />
+<b>j3rky:</b> This error message also appears if you changed the ancestor class of native actors and objects (e.g. <i>class A extends B</i> changed to <i>class A extends C</i>), without having rebuilt the native DLL. In that case, the native DLL still references the old class <i>B</i> while the script compiler is trying to bind to the new class <i>C</i>. Fix this by deleting the old DLL, or by running <i>ucc make</i> with the <i>-nobind</i> option. Rebuild the DLL with the new generated header file.</dd>
+</dl>
+<dl>
+<dt>Unterminated string constant&#160;</dt>
+<dd>This error occurs, when the closing double quotation marks for a string are missing. Note that while strings may contain line breaks, they may not span several lines in your code. Use the <code>Chr</code> function to generate the line break characters if you need them.</dd>
+</dl>
+<p><b>fataoverdose</b>You can also get this error if you put one to many double quotation marks in the string.</p>
+<dl>
+<dt>BEGIN OBJECT: name <i>objectname</i> redefined.&#160;</dt>
+<dd>This error occures if two or more objects declared in the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a> of the same class have the same name. The objects must have unique names.</dd>
+</dl>
+<dl>
+<dt>redundant data: <i>defaultproperty declaration</i>&#160;</dt>
+<dd>You get this error when you redefine the default value of a property in the same class, like:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+</pre></div>
+</dd>
+</dl>
+<p><span class="br0">{</span></p>
+<pre>
+ somearray<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"this will be reported by the compiler"</span>
+ somearray<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="st0">"this won't be reported"</span>
+</pre>
+<p><span class="br0">}</span></p>
+<p><b>Foxpaw:</b> I accidentally did something similar, but the second variable was reported, not the first. However, since the variable in your example is an array, it may be treated differently. My code was (trimmed down a bit):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  Skins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'PlayerSkins.JuggMaleABodyA'</span>
+  Skins<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'PlayerSkins.JuggMaleAHeadA'</span>
+  CollisionRadius=<span class="nu0">+00050.000000</span>
+  CollisionHeight=<span class="nu0">+00050.000000</span>
+ 
+  CollisionRadius=<span class="nu0">+00034.000000</span>
+  CollisionHeight=<span class="nu0">+00078.000000</span>
+<span class="br0">}</span>
+</pre></div>
+<p>In this code it reported that the 34 and 78 were the redundant data.</p>
+<dl>
+<dt>Missing '(' in 'Remove(...)'&#160;</dt>
+<dd>A dynamic array's Remove method expects the index of the first element and the number of elements to be removed in parentheses, like "Remove(2,4)".</dd>
+</dl>
+<p>}</p>
+<dl>
+<dt>Missing "(" in editable member variable</dt>
+<dd>Don't put anything in the parentheses next to a variable name when defining a struct ie.</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">struct</span> mystruct
+<span class="br0">{</span>
+<span class="kw5">Var</span><span class="br0">(</span>myvalues<span class="br0">)</span> <span class="kw4">float</span> ValueA;
+<span class="kw5">Var</span><span class="br0">(</span>myvalues<span class="br0">)</span> <span class="kw4">float</span> ValueB;
+<span class="br0">}</span>
+</pre></div>
+<p>This will work;</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">struct</span> mystruct
+<span class="br0">{</span>
+<span class="kw5">Var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> ValueA;
+<span class="kw5">Var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> ValueB;
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dt>Error, ArrayCount argument is not an array&#160;</dt>
+<dd>The syntax <tt>ArrayCount(<i>arrayname</i>)</tt> only applies to static arrays. Use <tt><i>arrayname</i>.Length</tt> for dynamic arrays instead.</dd>
+</dl>
+<dl>
+<dt>Map are not supported in UnrealScript yet&#160;</dt>
+<dd>You felt like experimenting, huh?&#160;:) The <code>map</code> variable type isn't supported in UnrealScript.</dd>
+</dl>
+<dl>
+<dt>General protection fault!, ScriptCompiler::CompileSecondPass&#160;</dt>
+<dd>There's actually quite a string that acoompanies this, but this part should signal you that this is what you've got. You did something that the compiler can't handle but Epic never imagined you'd try. I got this error from trying to use an unconditional replication. I wanted this function to be replicated to the other party regardless of which machine it originated on, so I tried: reliable AddAction,RemoveAction; This will generate the above error. You MUST use the if part of the replication statement even if it will always be true. There isn't any way to know exactly what is causing this error in your code, but by looking at the ucc.log, you can at least determine which class the unexpected error was encountered (it will be the last class listed prior to the stack trace).
+<dl>
+<dd>Another way to get the GFP failt is using [dependsOn] with a class that doesn't exists.</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h3><span class="mw-headline">Functions</span></h3>
+<dl>
+<dt>Redefinition of '<i>function name</i>' differs from original&#160;</dt>
+<dd>When overriding functions you are not allowed to change the return type, the number or type of parameters or some of the function modifiers, e.g. static functions must stay static, public functions can't become protected. (E.g. simulated or native functions can become non-simulated or non-native in subclasses though, because those keywords only apply to the actual implementation in that single class.)<br />
+Functions can't be over ed in UnrealScript.</dd>
+</dl>
+<dl>
+<dt>'<i>function name</i>': too many parameters&#160;</dt>
+<dd>In UnrealScript functions can have a maximum of 16 parameters. If you need more parameters you will have to put them in a struct or array and pass that to the function.</dd>
+</dl>
+<dl>
+<dt>Function '<i>function name</i>' specifiers differ from original&#160;</dt>
+<dd>This error occurs when you try to override a final function or try to override a public function with a protected or private one or a protected function with a private or public one. (see <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a>)</dd>
+</dl>
+<dl>
+<dt>'<i>identifier</i>' conflicts with '<i>other identifier</i>'&#160;</dt>
+<dd>You can have only one function of the same name within the same state of a class, and you can't have variables and functions with the same name in the same class at all. Rename or remove one of the conflicting identifiers.</dd>
+</dl>
+<dl>
+<dt>Can't call instance functions from within static functions&#160;</dt>
+<dd><a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">Static functions</a> can only call other static functions. Check if your function really needs to be static or whether you forgot to declare the other function as static.<br />
+You can also get this error when trying to call a non-static function via the <tt>class'SomeClass'.static.FunctionName()</tt> syntax.</dd>
+</dl>
+<dl>
+<dt>Bad preoperator definition</dt>
+<dd>Your declaration of a preoperator is invalid. This is most often caused by attempting to set a priority for a preoperator, as preoperators and postoperators do not take a priority value. See <a href="../../../../articles/s/c/r/Legacy%7EScripting_Operators_5be1.html" title="Legacy:Scripting Operators">Scripting Operators</a> for the proper declaration.</dd>
+</dl>
+<dl>
+<dt>Bad postoperator definition</dt>
+<dd>This is the same as "Bad preoperator definition," but for postoperators.</dd>
+</dl>
+<dl>
+<dt>Unknown Function '<i>function name</i>' in 'Class <i>Package1.ClassName</i>'</dt>
+<dd>This error comes up when your code attempts to call a function that does not exist. You may have forgot the parenthesis when using the <code>super</code> keyword to call a function that have no parameters. This can also be caused by forgetting the cast on an object reference. Sometimes it is also caused by a misspelled function name.</dd>
+</dl>
+<dl>
+<dt><i>Function name</i> mismatches delegate <i>delegate name</i>&#160;</dt>
+<dd>You tried to assign a function to a delegate property, but the function's parameters and/or return value don't match the delegate's parameters and/or return value.</dd>
+</dl>
+<dl>
+<dt>Delegate assignment failed</dt>
+<dd>You tried to assign a function to a delegate property, but the function's parameters and/or return value don't match the delegate's parameters and/or return value.</dd>
+</dl>
+<dl>
+<dt>Error, operator must have 2 parameters&#160;</dt>
+<dd>Binary operators must be declared with two parameters and a return value. See <a href="../../../../articles/s/c/r/Legacy%7EScripting_Operators_5be1.html" title="Legacy:Scripting Operators">Scripting Operators</a>.</dd>
+</dl>
+<p><a name="Variables" id="Variables"></a></p>
+<h3><span class="mw-headline">Variables</span></h3>
+<dl>
+<dt>Can't assign Const variables&#160;</dt>
+<dd>You are not allowed to assign class variables declared with the const modifier. (See <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a>.) Instead find a native function which can set this variable. (e.g. SetDrawScale() for the DrawScale property)</dd>
+<dt>Error, Missing '&gt;' in 'class limitor'&#160;</dt>
+</dl>
+<p>I got this problem with the following code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> array&lt;class&lt;WeaponFire&gt;&gt; WFCs;
+</pre></div>
+<p>which was easily fixed by changing it to the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> array&lt;class&lt;WeaponFire&gt; &gt; WFCs;
+</pre></div>
+<p>Presumably, it parses "&gt;&gt;" as an <a href="../../../../articles/o/p/e/Legacy%7EOperator_da82.html" class="mw-redirect" title="Legacy:Operator">operator</a> and then can't find the closing "&gt;".</p>
+<p><br /></p>
+<dl>
+<dt>Can't save <i>class</i>: Graph is linked to external private object <i>object</i>&#160;</dt>
+<dd>One of your classes is making a reference to an object in another package without the RF_Public flag set. This is not permitted in Unreal Packages. Check your class for references to private or protected variables in other classes or to other object constants. This error can also occur if you reference a protected variable in a superclass *if* your derived class resides in a different package from the class where the protected member is declared (even though this is technically supposed to work).</dd>
+</dl>
+<dl>
+<dt>Enums can only be declared in class or struct scope&#160;</dt>
+<dd>Like the message says. Enums can't be declared in functions or operators.</dd>
+</dl>
+<dl>
+<dt>Variable declaration: '<i>variable name</i>' already defined&#160;</dt>
+<dd>You tried to declare two variables with the same name in the same function.</dd>
+</dl>
+<dl>
+<dt>Expression has no effect&#160;</dt>
+<dd>Expressions like <code>Int1 + Int2;</code> have no effect, i.e. they don't change anything when not assigned to a variable. This error can also be caused by using an incorrect syntax for assigning values to array elements like <code>anArray(0) = anything;</code> (the correct syntax is <code>anArray[0] = anything;</code>)</dd>
+</dl>
+<dl>
+<dt>')' Expression has no effect&#160;</dt>
+<dd>You could be missing the first '(' in a log command. You could also be typecasting wrong. Also, make sure a function parameter does not have the same name as a function you're calling in that function. Example:</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ThisIsWrong<span class="br0">(</span><span class="kw4">int</span> Spawn<span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw1">If</span><span class="br0">(</span>Spawn == <span class="nu0">1</span><span class="br0">)</span>
+   Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'AClass'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dt>Unrecognized member '<i>variable name</i>' in class '<i>class name</i>'</dt>
+<dd>You're attempting to use a <i>variable name</i> that is not defined as a global variable in class <i>class name</i>. This usually occurs when you've typecasted a class variable, such as PlayerPawn(P) where P was defined as a Pawn. In this situation, at the line this error mentions, you've probably forgotten to typecast your P variable.</dd>
+</dl>
+<dl>
+<dt>Unrecognized type '<i>variable type</i>'&#160;</dt>
+<dd>The class, enum or struct you wanted to use is not declared or not visible from this point. Also check for typos.</dd>
+</dl>
+<dl>
+<dt>Type mismatch in '<i>operator</i>'&#160;</dt>
+<dd>The variable type you specified doesn't match the type the operatore requires and can't be automatically casted to the required type.</dd>
+</dl>
+<dl>
+<dt>Type mismatch in 'If'&#160;</dt>
+<dd>Similar to the type mismatch in operator. The condition must be a boolean value, it will not be <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">typecasted</a> automatically. Often the use of <code>=</code> instead of <code>----</code> causes this error.</dd>
+</dl>
+<dl>
+<dt>Array mismatch in '='&#160;</dt>
+<dd>This error is thrown when some code attempts to copy a static array. Static arrays can be passed as function parameters but can't be copied. This implies that static arrays also can't be used as return types because they cannot be assigned to a more permanent var. Consider using a <a href="../../../../articles/d/y/n/Legacy%7EDynamic_Array_dc99.html" title="Legacy:Dynamic Array">Dynamic_Array</a> instead.</dd>
+</dl>
+<dl>
+<dt>Unrecognized variable '<i>variable name</i>' name in replication definition&#160;</dt>
+<dd>You tried to replicate a variable or function which was not declared in this class. Check for typos.</dd>
+</dl>
+<dl>
+<dt>Bool arrays are not allowed&#160;</dt>
+<dd>Well, they are not allowed.&#160;:) Use <i>byte</i> arrays instead.</dd>
+</dl>
+<dl>
+<dt>Can only assign individual booleans, not boolean arrays&#160;</dt>
+<dd>You tried to assign a static array to another static array. This message always says "boolean" although you can't even declare boolean arrays. ArrayOne = ArrayTwo is only allowed for dynamic arrays. Instead use a loop and assign element by element.</dd>
+</dl>
+<dl>
+<dt>Variable is too large (<i>x</i> bytes, 255 max)&#160;</dt>
+<dd>Static arrays and large structs can only be accessed from outside the object containing them when they use less than 255 bytesx of memory. This restriction may seem weird, but you'll have to live with it. Try using a dynamic array instead of a static one, break doen the struct into several class properties or use accessor functions to work around this restriction.</dd>
+</dl>
+<dl>
+<dt>Arrays within arrays not supported.&#160;</dt>
+<dd>You can't use declarations like "array&lt; array&lt;string&gt; &gt;", otherwise the compiler throws this error. You could however create a struct with an array as the only element and create an array of this struct.</dd>
+</dl>
+<dl>
+<dt>ObjectProperty '<i>Property Name</i>' : unresolved reference to '<i>Some Texture or Something</i>'&#160;</dt>
+<dd>This is usually caused by having a reference to a texture or other resource that is spelled incorrectly, you forgot to create, or something similar. However, this can also have an interesting cause: If the texture/whatever package contains a resource of a type that is not in a package above this one. (IE you made a custom Material class and the package has a material of that class in it, and the code for that Material class hasn't been compiled yet) then the entire package will fail to.<br />
+This can also happen if you have multiple paths, both containing the offending package. For example: let's say you have a texture package called mytex.utx, and for some reason you put it in your mod\textures\ directory, as well as your ut200x\system directory. You then add a texture to the copy in your mod\textures\ directory, and forget to add it to the other one(sloppy, but I've done this on accident before.) And let's say that in your .ini file you have your mod\textures\ directory listed AFTER the ut200x\textures directory. Then ucc will the first version of the package, thinking that's what you meant, but won't find the new texture, and spit this error at you. The solution: always only use one version of every package. Learn how to use ini files to tell UCC where to look for packages, rather than putting a copy in your mod directory to run, and your system directory to compile.<b>FatalOverdose</b>-note. one spelling mistake in a parent class can cause this error for all its children. This can be very frustrating when ucc tells you there are errors in scripts that seem to be totally correct. This can also occure if you try to put "new class'name'" in the defaultproperties.</dd>
+</dl>
+<dl>
+<dt>Variable declaration <i>variable name</i>: Bad or missing array size&#160;</dt>
+<dd>You have to specify a numeric value as the size of a static array. It seems in UT the compiler doesn't recognize constants as the array size, but this works in UT2003. Also remember that you have to specify an integer value as the array size and the largest positive integer number UnrealScript knows is 2147483647. (Use the constant MaxInt if you can't remember this value, but why the heck would you create a static array this large?)</dd>
+</dl>
+<p><b>Foxpaw:</b> It wouldn't let me use even 65536 elements in a static array. I needed the former number because I wanted to make something like a trig table, only for coordinate rotation instead of regular trig.</p>
+<p><b>Wormbo:</b> Try 65535 (maximum unsigned short) or 32767 (maximum signed short). What about using a dynamic array instead?</p>
+<p><b>Foxpaw:</b> I considered that, but then I figured that a dynamic array that large probrably would not be allocated a contiguous block of memory (unless it was a static array) and so there would be a lot of skipping around.</p>
+<p><b>Wormbo:</b> Dynamic arrays allocate a single block of memory. They just might decide to allocate a larger block if more space is required and release the previously used block.</p>
+<dl>
+<dt>Variable '<i>variable name</i>' already has a replication definition&#160;</dt>
+<dd>The variable appears more than once in the replication block. You can specify only one replication statement per variable.</dd>
+</dl>
+<dl>
+<dt>'struct': Expecting 'Var', got '<i>identifier</i>'&#160;</dt>
+<dd>Structs have to be declared in a certain way and all delcarations within the struct have to begin with <code>var</code>. See also <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a>.</dd>
+</dl>
+<dl>
+<dt>Invalid property or function call on a dynamic array&#160;</dt>
+<dd>Dynamic arrays only have three properties and methods: Length, Insert() and Remove(). See <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a> for details. The most common cause of this error is attempting to do something to an element in an array and forgetting the array index delimiter. For example, doing something like <tt>MyArray.bDeleteMe</tt> instead of <tt>MyArray[i].bDeleteMe</tt>.</dd>
+</dl>
+<dl>
+<dt>You can only access default values of variables here&#160;</dt>
+<dd>In <a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">static functions</a> you do not have direct access to class-level variables. You can only access function parameters, local variables and, through the <tt>default.<i>VariableName</i></tt> syntax, the default values of class variables.</dd>
+</dl>
+<p><a name="Typecasting" id="Typecasting"></a></p>
+<h3><span class="mw-headline">Typecasting</span></h3>
+<dl>
+<dt>Cast from '<i>class name</i>' to '<i>other class name</i>' will always fail&#160;</dt>
+<dd>You're attempting to perform a <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">typecast</a> which will always fail because the class you're casting to is not a subclass of the variable's class. (That's the case, for instance, if you try to cast a variable of type <code>class&lt;Something&gt;</code> to an <i>object</i> of a different class.)</dd>
+</dl>
+<dl>
+<dt>Cast from '<i>class name</i>' to '<i>other class name</i>' is unneccessary&#160;</dt>
+<dd><i>other class name</i> is either the same class as <i>class name</i> or a superclass of it. This kind of <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">typecasting</a> is not neccessary.</dd>
+</dl>
+<dl>
+<dt>No need to cast '<i>property type</i>' to itself&#160;</dt>
+<dd>When a property already is of e.g. type <i>int</i> there is no need to cast it to <i>int</i> again when using it. This error also occurs when you work with a "subclass" of a struct (e.g. <i>plane</i> extends <i>vector</i>) and try to cast it to its "superclass" (e.g. <tt>vector(aPlaneStuct)</tt>).</dd>
+</dl>
+<dl>
+<dt>Can't convert '<i>property type</i>' to '<i>other property type</i>'&#160;</dt>
+<dd>This error occurs when you try to typecast between incompatible variable types like e.g. <i>Object</i> -&gt; <i>Int</i> ("ObjectProperty to IntProperty") or <i>vector</i> -&gt; <i>float</i> ("StructProperty to FloatProperty").</dd>
+</dl>
+<p><a name="Exec_Warnings" id="Exec_Warnings"></a></p>
+<h2><span class="mw-headline">Exec Warnings</span></h2>
+<dl>
+<dt>ExecWarning, Import Texture <i>name</i> from <i>filename</i> failed<br />
+ExecWarning, Failed factoring: NEW SOUND FILE=<i>filename</i> PACKAGE=<i>packagename</i> NAME=<i>name</i>&#160;</dt>
+<dd>Usually these errors are caused by missing files or typos. Check the spelling of the file name and make sure the file really is where <i>filename</i> points to. Remember that the UT\MyMod directory is the base for specifying file names in #exec lines.</dd>
+</dl>
+<dl>
+<dt>Failed ing package: Can't find file '<i>filename</i>'&#160;</dt>
+<dd>The package you specified in an <code>#exec obj</code> line could not be found. Check the spelling of the file name.</dd>
+</dl>
+<dl>
+<dt>ExecWarning, Bad MESH LODPARAMS<br />
+ExecWarning, Bad MESH ORIGIN<br />
+ExecWarning, Bad MESH SEQUENCE<br />
+ExecWarning, Missing meshmap<br />
+ExecWarning, Missing meshmap, texture, or num (MESHMAP=<i>meshmap name</i> NUM=<i>number</i> TEXTURE=<i>texture name</i>)&#160;</dt>
+<dd>All these errors can be caused by a missing file for the mesh. Check for typos and check the log for details about which file is missing.<br />
+The last error can also be caused by a missing texture. Make sure the texture is either imported or the texture's package is ed before assigning it to a mesh.</dd>
+</dl>
+<dl>
+<dt>Texture dimensions are not powers of two<br />
+Can't find file '<i>texture file</i>' for import<br />
+<i>path and filename of class file</i>(<i>line number</i>) : ExecWarning, Import texture <i>texture name</i> from <i>texture file</i> failed&#160;</dt>
+<dd>These errors always show up together. They are caused, like the message says, when your textures are not sized in a power of two (i.e 32x32, 64x128, etc.).</dd>
+</dl>
+<dl>
+<dt>Unknown property in defaults: <i>the line in defaultproperties</i>&#160;</dt>
+<dd>Mostly the variable is not declared or there are spaces around the "<code>=</code>". Also see <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">Default Properties</a>.</dd>
+</dl>
+<dl>
+<dt>Warning: Failed to '<i>package</i>': Can't find file for package '<i>package</i>'<br />
+Warning: Failed to '<i>texture package</i>': Can't find file for package '<i>package</i>'<br />
+Warning: Failed ing package: Can't find file for package '<i>package</i>'&#160;</dt>
+<dd><b>Pingz:</b> I'm getting these warnings from a single #exec statement in my project which intends to a texture package. The package does exist and the url is correct. As a test i deleted the texture package file and the warning changed to the correct <i>Can't find file 'texture package'</i> message. Anyone got a clue as to what this means? Please replace my comment here with some sort of explanation.<a href="../../../../articles/l/e/g/Category%7ELegacy_Answer_Needed_ec9f.html" title="Category:Legacy Answer Needed">Category:Legacy Answer Needed</a></dd>
+</dl>
+<p><a name="Bizarre_Compiler_Errors" id="Bizarre_Compiler_Errors"></a></p>
+<h2><span class="mw-headline">Bizarre Compiler Errors</span></h2>
+<dl>
+<dt>Compiler Hangs/Freezes&#160;</dt>
+<dd>This is obviously a difficult type of error to troubleshoot. Simply put, the compiler simply ceases compiling, generally as soon as opening your package or while it is "Analysing..." I'm not certain what causes this, generally I remove classes from the package until eventually it stops doing it, then see which classes it hangs with and which it does not to help isolate the problem. I've found that sometimes I'll accidentally make my classes extend themselves or extend their own subclasses (a result of not paying attention) and this will cause this type of problem. Any further information on what specific conditions can cause this would certainately be appreciated.</dd>
+</dl>
+<p><b>Faithful:</b> Having \" anywhere (<i>including</i> inside either style comment) except inside a set of "" will cause the compiler to hang at "Analyzing..." . I have noticed that using \\" in place of \" will prevent this problem.</p>
+<dl>
+<dt>Compiler suddenly drops back to DOS prompt/whatever&#160;</dt>
+<dd>This is a weird one. It compiles as normal, and while in the "Parsing" section, simply stops. No error message, nothing. Just drops back to the DOS prompt. UCC.log ends mid-comment. The problem turned out to be a struct that I was using – which contained an array of that same struct. The compiler is capable of warping its head around that notion but if you try to actually declare a variable of that struct it doesn't know what to do – kind of like infinite recursion.</dd>
+</dl>
+<p>Error: VelocityScale::ImportText failed in: -</p>
+<p>Error: Unknown member X in StartSizeRangeStartSizeRange →Can be all due to incorrect spacing in the defaultproperties</p>
+<p>Error: Unknown member RelativeSize in SizeScale – may be due to using global search and replace in ude</p>
+<p>Error: Unknown member b in Color -</p>
+<p>-Fataloverdose.-</p>
+<p><a name="Unknown" id="Unknown"></a></p>
+<h3><span class="mw-headline">Unknown</span></h3>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/l/o/g/Legacy%7ELog_Warnings_d633.html" title="Legacy:Log Warnings">Log Warnings</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Coding_FAQ_bac3.html" title="Legacy:Unreal Coding FAQ">Unreal Coding FAQ</a></li>
+<li><a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">Compiling With UCC</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Test_4ca2.html" title="Legacy:UnrealScript Language Test">UnrealScript Language Test</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p>Tenative answer here... gurus feel free to confirm or deny this:</p>
+<dl>
+<dt>Variable is too large (xxx bytes, 255 max)</dt>
+<dd><br />
+These occur when you try to access a data structure that is greater then 255 bytes from another object.You might only be trying to access a little bool but if that bool is part of an array of structs whose total size is bigger than 255 bytes then you're not going to be able to code stuff like:</dd>
+</dl>
+<p>bMyvar = otheractor.bigarray[i].bTheirVar&#160;;</p>
+<p>Without the compiler choking and giving that "context: variable is too large" error.</p>
+<p>To work round this you can code a method into the object that contains the large structure that returns the element you're after (or, if the object is part of a package you can't recompile, then make a subclass and impliment the method there) like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// this is in the actor that contains the large array you need to access</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> checktheirvar<span class="br0">(</span><span class="kw4">int</span> index<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span><span class="br0">(</span>bigarray<span class="br0">[</span>index<span class="br0">]</span>.<span class="me1">bTheirVar</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// and this goes in the other object that's trying to access that data</span>
+ 
+bMyvar=otheractor.<span class="me1">Checktheirvar</span><span class="br0">(</span>i<span class="br0">)</span>;
+</pre></div>
+<p><b>El Muerte TDS:</b> afaik the <i>variable too large</i> only happens with static arrays and structs, so when you use dynamic arrays it won't happen. With dynamic arrays only a pointer it passed, while with static arrays and structs the whole array/struct will be passed. Yes dynamic arrays are slower, but with a big array it doesn't matter much.</p>
+<dl>
+<dd><b>Mychaeel:</b> "Dynamic arrays are slower"? Only if you count adding and removing elements, but that's plain impossible with static arrays. Accessing existing array elements is just as fast as with static arrays.</dd>
+</dl>
+<dl>
+<dd><b>JoeDark:</b> Accessing existing array elements in a dynamic array is only as fast as a static array if they are handled like Vectors in Java where it is actually a static array disguised as a dynamic array. If it's done as a linked list then access is O(n) compared to the static array's O(1) access time so static access is obviously faster, though unless your dealing with a large n not that much faster.</dd>
+</dl>
+<dl>
+<dd><b>Foxpaw:</b> Well, there's more than just two possible implementations of the dynamic arrays. The Unreal engine is chock full of caching schemes, tables, and other methods of storing and retrieving data that are far more complex than what one would generally assume of the implementation, and render speculation about the number of operations required for a given operation shaky at best. I wouldn't be surprised if static arrays and dynamic arrays are both stored in a relational database and looked up that way. The only way to really tell which is faster is to time them, but even that wouldn't really be accurate, because there's other stuff to consider.</dd>
+</dl>
+<dl>
+<dd>For instance, if the implementation is as you suggested, (block of memory for array, linked list for dynamic arrays) then you would be doing a great number of operations on the stack. Anyways, I don't know how dynamic arrays or even static arrays are implemented in the Unreal Engine, but I'd question the notion that dynamic arrays are a linked list - because when you pass one to a function you get a duplicate array, not a pointer into an array.</dd>
+</dl>
+<dl>
+<dd><b>JoeDark:</b> Fair enough, esp. because uscript is an interpreted language arrays might be implemented any number of ways, including relational databases&#160;;)</dd>
+</dl>
+<dl>
+<dd><b>Red:</b> I presume the issue is because of how the array is stored in memory. and because dynamic ones only pass a pointer rather than the whole array.still getting the infor be accessing with a method is one workable soultion, but i'm not sure if it would be faster than passing a pointer to a dynamic array.... both methods essentially allow you access the pieces of info you want, in sligthly different ways.</dd>
+</dl>
+<hr />
+<p>So why don't try</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> array&lt;mystruct&gt; bigarray;
+</pre></div>
+<p><b>Zedsquared:</b> ok, thanks, cool for UT2003, but UT dosen't properly support dynamic arrays does it? Anyone know any other way around this in UT classic?</p>
+<p><b>Mychaeel:</b> Other than an accessor method, no.</p>
+<p><b>Foxpaw:</b> There is a way around this and it is very graceful, iffin you ask me. It uses a little thing called a <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked list</a> which is detailed elsewhere on the Wiki.</p>
+<p><a name="Script_serialization_mismatch" id="Script_serialization_mismatch"></a></p>
+<h3><span class="mw-headline">Script serialization mismatch</span></h3>
+<p>This is an Error I'm getting while trying to compile with UMake, using the standard directories stated in the compiling with UCC page. I'm basically using the Bulldog scripts as REF.. changing the Tex, Models, and classes names..</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Parsing WarthogHeadlight
+ 
+Script serialization mismatch: Got <span class="nu0">0</span>, expected <span class="nu0">-2147483612</span>
+ 
+History: UStruct::<span class="me2">Serialize</span> &lt;- <span class="br0">(</span><span class="kw5">Class</span> WHSkins.<span class="me1">TexAlignerPlanar0</span><span class="br0">)</span> &lt;- UState::<span class="me2">Serialize</span> &lt;- UClass::<span class="me2">Serialize</span>
+ &lt;- <span class="br0">(</span><span class="kw5">Class</span> WHSkins.<span class="me1">TexAlignerPlanar0</span><span class="br0">)</span> &lt;- LoadObject
+ &lt;- <span class="br0">(</span><span class="kw5">Class</span> WHSkins.<span class="me1">TexAlignerPlanar0</span> <span class="nu0">5595020</span>==<span class="nu0">5595020</span>/<span class="nu0">5939846</span> <span class="nu0">5594999</span> <span class="nu0">16</span><span class="br0">)</span> 
+&lt;- ULinkerLoad::<span class="me2">Pre</span>     &lt;- PreLoadObjects &lt;- UObject::<span class="me2">EndLoad</span> &lt;- UObject::<span class="me2">LoadPackage</span> &lt;- UEditorEngine::<span class="me2">SafeExec</span> 
+&lt;- <span class="br0">(</span>LOAD FILE=WHSkins.<span class="me1">utx</span><span class="br0">)</span> &lt;- UEditorEngine::<span class="me2">SafeExec</span> &lt;- <span class="br0">(</span>OBJ LOAD FILE=WHSkins.<span class="me1">utx</span><span class="br0">)</span> 
+&lt;- FScriptCompiler::<span class="me2">ProcessCompilerDirective</span> &lt;- Directive &lt;- FScriptCompiler::<span class="me2">CompileDeclaration</span> 
+&lt;- FScriptCompiler::<span class="me2">CompileStatement</span> &lt;- FirstPass &lt;- TryCompile &lt;- FScriptCompiler::<span class="me2">CompileScript</span> 
+&lt;- <span class="br0">(</span><span class="kw5">Class</span> Halo.<span class="me1">WarthogHeadlight</span>, Pass <span class="nu0">0</span>, Line <span class="nu0">1</span><span class="br0">)</span> &lt;- MakeScript &lt;- MakeScript &lt;- MakeScript &lt;- MakeScript 
+&lt;- MakeScript &lt;- DoScripts &lt;- UEditorEngine::<span class="me2">MakeScripts</span> &lt;- UMakeCommandlet::<span class="me2">Main</span>
+ 
+Exiting due to error
+</pre></div>
+<p><b>Wormbo:</b> The error message itself doesn't help solving the problem. At least the WarthogHeadlight class' code should be posted, too.</p>
+<p><b>Adam1972:</b> Actually, I've been hammering away at finding the answer... When I posted the problem I couldn't make</p>
+<p>sense of what was happening... This is what I have so far.. I have a texture file called WHSkins.utx, and a mesh file</p>
+<p>called WHMeshes.usx That I've created to replace the Bulldog textures and also A Warthog mesh from Halo to replace the</p>
+<p>Warthog... So I assume I should be able to basically plug in the diffrences, at least to get it to go. When You look at</p>
+<p>the Bulldog.uc ....</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\staticmeshes\BulldogMeshes.<span class="me1">usx</span>
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\sounds\WeaponSounds.<span class="me1">uax</span>
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\textures\VehicleFX.<span class="me1">utx</span>
+</pre></div>
+<p><b>Adam1972:</b> Then comparing it to my Warthog.uc:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\staticmeshes\WHMeshes.<span class="me1">usx</span>
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\sounds\WeaponSounds.<span class="me1">uax</span>
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\textures\WHSkins.<span class="me1">utx</span>
+</pre></div>
+<p><b>Adam1972:</b> You'll see I only changed the filename.. I followed the Instructions on compiling with UCC and figure that the directories inside the project should match what is listed in the UCC compiling page.. so I made a Halo directory and placed a Class, Textures, and Models folder inside. Umake begins to parse the files and when it hits the WarthogHeadlight.uc file which looks like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> OBJ LOAD FILE=WHSkins.<span class="me1">utx</span>
+ 
+<span class="kw5">class</span> WarthogHeadlight <span class="kw5">extends</span> DynamicProjector;
+ 
+<span class="co1">// Empty tick here - do detach/attach in Warthog tick</span>
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> Delta<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>It returns a WHSkins.utx not found. This script is exactly like the original BulldogHeadlight.uc script. I get the same</p>
+<p>with the scripts calling on the WHMeshes.usx.</p>
+<p>If I change it to #exec OBJ LOAD FILE=..\textures\WHSkins.utx it still does not find the files. If I place those same 2</p>
+<p>files into the UT2003 folder in their respective folders.. Well that's when I get the "Script serialization mismatch"</p>
+<p>error. I get no errors associated with the script itself, the only problem I found with that was the "defaultproperties"</p>
+<p>that all the decompiled originals have.. my warthog ones seemed to cause errors until I deleted those "defaultproperties".</p>
+<p>I'm stumped.... Please help&#160;:S</p>
+<p><b>Foxpaw:</b> I don't have UT2003 but I have found something that I think may be the problem. It doesn't surprise me that neither FILE=WHSkins.utx nor FILE=..\textures\WHSkins.utx finds the headlight. The former will look in the base directory of your class, the "Halo" directory, and the second goes up a step then looks in the base directory of your UT2003 install to find a package called "textures." Remember it starts from "Halo," not "Halo\classes." ".." means up one directory. What you need to put to reference "Halo\textures" is "FILE=.\textures\WHSkins.utx." Scratch the last dot, that's just for correct punctuation. ".." means go up one directory, "." means look in this directory. It's basically the same as writing "FILE=\textures\WHSkins.utx" except that the compiler won't accept that, so the single dot is used to denote a subdirectory of the one it starts in.</p>
+<p><b>Languard:</b> Minor correction: UT2003 does accept "FILE=\textures\ect" I don't think having the current directory dot will hurt, but it isn't needed. Not on XP at least, it might be different for the other OS's. As a side note, I'm not sure why they the object files with exec statments, since it is not needed. I know this because for my sword attachment class, I use an animated mesh that I've placed in the Animations directory, but I do not have any exec statments to it, and it works fine. The only thing I can think of is maybe it is for performance reasons.</p>
+<p><b>Languard:</b> Correction to previous satement, you do need the statments. My misconception was due to some really bad coding on my part, and I forgot about this one statement I had in a wierd spot. Yet another reason why you should always code neatly, even if it is throwaway code.</p>
+<p><b>Foxpaw:</b> Yes, I don't think you need the dots, the problem with the code that was listed was that it had a double dot and was going up one directory isntead of going fromt he current directory. You actually don't need the statements if you have the thing you were going to already in another package, so long as you refer to that package at compile-time. I never use statements and it works fine for me.</p>
+<p><b>Lilguy:</b> just added some stuff to the "unresolved reference" error.</p>
+<p><b>FatalOverdose</b> Added "just added 'Error, Bad or missing expression in 'If'". This a very usfull page but its getting to big.</p>
+<p><b>Tarquin:</b> All the comments and chat need to be refactored into document mode. That would slim it down a bit!&#160;:)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 378/1000000
+Post-expand include size: 45/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Answer_Needed_ec9f.html" title="Category:Legacy Answer Needed">Legacy Answer Needed</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Legacy Troubleshooting</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/o/m/Legacy%7ECompiler_Errors_68c7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/o/m/Legacy_talk%7ECompiler_Errors_5706.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Compiler_Errors">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 11:36, 20 October 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

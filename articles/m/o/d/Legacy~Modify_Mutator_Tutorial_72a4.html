@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Modify Mutator Tutorial - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Modify Mutator Tutorial</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i>This page is one of a series of <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a>.</i></p>
+<p><a name="UTute_2:_A_Modify_Mute_.28Cooler.29" id="UTute_2:_A_Modify_Mute_.28Cooler.29"></a></p>
+<h2><span class="mw-headline">UTute 2: A Modify Mute (Cooler)</span></h2>
+<p>Now that you've been warned about OO and have created your own package and simple mutator, let's take a closer look at what a mutator really is and how to use them. For this, we're going to rip open the Cooler mutator from the original XPak. This little mute cools off <a href="../../../../articles/a/d/r/Legacy%7EAdrenaline_cd3b.html" title="Legacy:Adrenaline">adrenaline</a> even if you aren't using it, forcing players to keep on their killing sprees to be able to really pull off those combos.</p>
+<blockquote class="legacyquote">
+<p>Quicknote on that last tutorial – you might want to completely delete your MyPackage directory, .u and .int file. Why? Because not everyone can have a package of the same name. In fact, nobody can – one MyPackage would simply overwrite over the other. Now would be a good time to create a new package with your own unique name.</p>
+</blockquote>
+<p>The first question one should be asking is, "How did Reg know how to make this mute?" I don't work for Epic, never had any advanced look at the code, no classes, no manuals. Instead, the most common way you will find to learn how to do things in the Unreal engine is to compare it to something similar that is already functioning. In this case, I wanted a mutator that would lower the player's adrenaline about every second. That sounded like our old friend the Regeneration mutator, which raises the player's health about every second. So I hunted around the packages until I found the likely suspect of MutRegen.</p>
+<p>I don't want this to sound to rudimentary. Sure, for a really simple mutator like this, it seems obvious - but later on when you are trying to figure out how the trace function works to precisely land a shot with the InstantFire class, it might not seem so clear. In fact, if you ask questions on the forums and newsgroups, expect to get answers like "Look in the RocketLauncherPickUp class".</p>
+<p>Now, here is the cooler class in full:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// MutCooler - Lowers Adrenaline</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> MutCooler <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw2">#exec</span> OBJ LOAD File=MutatorArt.<span class="me1">utx</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> AdrenalineDecrease;
+ 
+<span class="co1">// Don't call Actor PreBeginPlay() for Mutator</span>
+<span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    SetTimer<span class="br0">(</span><span class="nu0">1.0</span>,<span class="kw9">true</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Controller C;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">ControllerList</span>; C != <span class="kw9">None</span>; C = C.<span class="me1">NextController</span><span class="br0">)</span>
+    <span class="br0">{</span>
+                 <span class="kw1">if</span> <span class="br0">(</span>C.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> &amp;&amp; C.<span class="me1">Adrenaline</span> &gt; <span class="nu0">5</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            C.<span class="me1">Adrenaline</span> -= AdrenalineDecrease;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     AdrenalineDecrease=<span class="nu0">2</span>
+     GroupName=<span class="st0">"Cooler"</span>
+     FriendlyName=<span class="st0">"Cooler"</span>
+     Description=<span class="st0">"Cools off adrenaline"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The top part is simply a comment block for describing things to the poor saps who might look at the code. The first real line of code is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MutCooler <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+</pre></div>
+<p>Which says that MutCooler is a child of Mutator, and inherits all its properties and methods (see <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class syntax</a> for more). Now, in order to make our specific mutator work, we simply extend Mutator's functionality by modifying or adding to those traits.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> OBJ LOAD File=MutatorArt.<span class="me1">utx</span>
+</pre></div>
+<p><a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">Exec directives</a> like this one tell the engine to interact with real files, like models and textures and the like. This one is here pretty much only because it was in MutRegen. They become more important when you start trying to retexture existing models and the like.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> AdrenalineDecrease;
+</pre></div>
+<p>In UnrealScript, you define <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Variables_67bc.html" title="Legacy:UnrealScript Language Reference/Variables">global Variables</a> before you define any methods or functions. While this is pretty standard for many languages, what may be weird to some is how you automatically define values (or instantiate) these variables</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Don't call Actor PreBeginPlay() for Mutator</span>
+<span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    SetTimer<span class="br0">(</span><span class="nu0">1.0</span>,<span class="kw9">true</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Ah, one of my favorite parts of the mutator - because it looks like I was good and commented stuff. In reality, this was just something I copied from MutRegen. This redefines the event (events differ slightly from functions in how the native code sees them, but for the most part you can treat them the same) PreBeginPlay to start a timer. PreBeginPlay is called right after the object is created, but before gameplay begins. It and its similar function PostBeginPlay have a lot of usage when changing existing objects in the game. SetTimer has two variables - the first is the interval time for the timer, or how long to wait. The second is a boolean which sets the timer to repeat or not. Here, we set the timer to repeat about every second.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Controller C;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">ControllerList</span>; C != <span class="kw9">None</span>; C = C.<span class="me1">NextController</span><span class="br0">)</span>
+    <span class="br0">{</span>
+                 <span class="kw1">if</span> <span class="br0">(</span>C.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> &amp;&amp; C.<span class="me1">Adrenaline</span> &gt; <span class="nu0">5</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            C.<span class="me1">Adrenaline</span> -= AdrenalineDecrease;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The function Timer is what is actually called when the timer is triggered. This creates a local variable to hold a <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a>. Controllers are new to UT2003, but could be easily described as the code which actually controls the pawn (player or bot) in the game. Pawns and Controllers work tightly together, allowing modders to modify distinct parts of them individually. Here, it runs through the current list of controllers (Level.ControllerList) and if that controller has a certain amount of adrenaline, it decreases it.</p>
+<blockquote class="legacyquote">
+<p>{{{1}}}</p>
+</blockquote>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     AdrenalineDecrease=<span class="nu0">2</span>
+     GroupName=<span class="st0">"Cooler"</span>
+     FriendlyName=<span class="st0">"Cooler"</span>
+     Description=<span class="st0">"Cools off adrenaline"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Finally, the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a> section. This defines some of the basic variables for the mutator. AdrenalineDecrease here is used in the timer to determine the amount of adrenaline to decrease, and if this mutator were configurable - that number could be changed to alter the mutator's effects without having to alter any code. The other three define the mutator for the game. The "GroupName" is the group the mutator belongs to. There can only be one mutator of a group brought into the game at one time. "FriendlyName" is the title placed into the mutator list and "Description" is what will go into the description block when the mutator is highlighted.</p>
+<p><br /></p>
+<blockquote class="legacyquote">
+<p>Quicknote about structuring the defaultproperties section - notice the lack of semicolons</p>
+</blockquote>
+<p>There's the cooler class. Pretty simplistic, really. Now the only thing left is to open up the int file and add:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Public<span class="br0">]</span>
+<a href="/Object"><span class="kw10">Object</span></a>=<span class="br0">(</span><span class="kw5">Class</span>=<span class="kw5">Class</span>,MetaClass=Engine.<a href="/Mutator"><span class="kw10">Mutator</span></a>,<span class="kw4">Name</span>=XPak.<span class="me1">MutCooler</span>,Description=<span class="st0">"Cooler."</span><span class="br0">)</span>
+</pre></div>
+<p>So that the game will recognize it. MetaClass here is the kind of object you are describing. In the next tute, you'll see how adding a weapon can be made to show on the Weapons Database dropdown. Name is the full name of the class, or Package.Class and description is simply a text description. Currently, I don't think UT2003 really uses description for mutes, but it's best to put one in.</p>
+<p><i>This tutorial was originally part of <a href="../../../../articles/r/e/g/Legacy%7ERegularX_4e64.html" title="Legacy:RegularX">RegularX</a>'s UTutes series.</i></p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeapon_Mutator_Tutorial_ca70.html" title="Legacy:Weapon Mutator Tutorial">Weapon Mutator Tutorial</a>: – your recommended next step</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a> – all the UnrealScript tutorials</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> – all the reference pages</li>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a> – more on mutators</li>
+<li><a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a> – more on the organizational and social aspects</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>RegularX:</b> It should be noted that the cooler class above is from the original xpak, and the code in the XXXPak has been updated (I think).</p>
+<p><b>CorDharel:</b> Question: Can I use the content of this tutorial for my own tutorial? I did one in german, and I think this way is really easy to understand. Would be great if i can.</p>
+<p><b>RegularX:</b> Certainly, just make all the usual acknowledgements/pointers back to the wiki.</p>
+<p><b>CorDharel:</b> I thank you, I did the acknowledgements and pointers. You can see the result on www.guc.ch.vu (sorry for propaganda), but I can't assure that you will understand it&#160;;)</p>
+<p><b>CH3Z:</b> Again, what if you are trying to mod for UT and don't have UT2003? This note extended from comment on <a href="../../../../articles/r/e/g/Legacy%7ERegen_Mutator_da2b.html" title="Legacy:Regen Mutator">Regen Mutator</a>.</p>
+<p><b>Heinz57:</b> Hello all. This is my first edit at the Unreal Wiki. Regarding the mutators in XpakII, I had problems getting the SlipSuit.uc class to compile. The culprit seems to be the following code from the Tick function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>OldAmmo &gt; RepAmmo<span class="br0">)</span>
+        AmmoCharge -= <span class="nu0">1.0</span>;
+    OldAmmo = RepAmmo;
+</pre></div>
+<p>The variable OldAmmo is not declared locally for this method or at the class level. And, I followed the class hierarchy up through TransLauncher, Weapon, Inventory and Actor... no declaration of this variable could be found. Perhaps I have an out of date version of the XpakII classes? If so, could someone please post a link within these tutes to the most up to date packages?</p>
+<p>Thx</p>
+<p><b>RegularX:</b> Heya Heinz. The copy of the Translauncher code I have here declares var int RepAmmo, OldAmmo in the same line. That copy is a few patches old however and so Epic might have pulled a fast one and changed the class. In fact, my non-photographic memory (more like a grease drawing) is thinking that I've seen something about OldAmmo in the logs recently - so I think that's likely. If that's true (I can't confirm it on this computer), try replacing the Tick function with:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> dt<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span> Bot<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">Controller</span><span class="br0">)</span> != <span class="kw9">none</span> <span class="br0">)</span><span class="br0">{</span>
+                    <span class="kw1">if</span><span class="br0">(</span>FireMode<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AllowFire</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="br0">{</span>
+                    SlipSuitActivate<span class="br0">(</span>FireMode<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">DoFireEffect</span><span class="br0">(</span><span class="br0">)</span>;
+                                                <span class="br0">}</span>
+                                <span class="br0">}</span>
+<span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span>dt<span class="br0">)</span>;
+</pre></div>
+<p>And see if that compiles. The SlipSuit uses the tick to trick the bots into triggering the Suit whenever they can, and that's probably the only portion of the function which needs to alter from the parent class.</p>
+<p>I'm working on finalizing the next version of the xxxpak, but it might not be out for another "two weeks" or so. If this continues to be a problem, email me at inkless@inkless.com.</p>
+<p><b>Heinz57:</b> Thanks for the quick response RegularX. I've replaced the Tick() method code as you've shown (with the addition of a closing brace after the call to Super.Tick() - assuming all other code after was to be ignored), and this, of course, works great. I'm afraid I can't test the change however (because I'm at work, and I have a feeling it would be frowned upon to fire up UT2K3 when I'm supposed to be happily coding&#160;;-)). Is this a fix then, or just a workaround?</p>
+<p>To confirm your suspicion re: variable declaration in the TransLauncher class, see the following snippet from the v2225 source:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> TransBeacon TransBeacon;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>     MaxCamDist;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> AmmoCharge;
+<span class="kw5">var</span> <span class="kw4">int</span> RepAmmo;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> AmmoChargeMax;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> AmmoChargeRate;
+<span class="kw5">var</span> <span class="kw6">globalconfig</span> <span class="kw4">bool</span> bPrevWeaponSwitch;
+</pre></div>
+<p>By the way, this was the only problem stopping me from compiling, so you should be golden, now. Nice work, btw!</p>
+<p>Cheers.</p>
+<p><b>RegularX:</b> Having the same work issue I can't confirm, but looking at the code it should be a fix, an improvement even, from the earlier SS class (because it won't let this happen again). If it flies, I'll incorporate into the upcoming version.</p>
+<p><b>DarthDevilous:</b> Hi, only my second post here (forgot to put a name <a href="../../../../articles/v/i/s/Legacy%7EVisual_Studio_6_31d4.html" title="Legacy:Visual Studio 6">here</a>). Anyway, what would happen if AdrenalineDecrease were bigger than 5?</p>
+<p><b>RegularX:</b> ... well, try it and find out&#160;;) Nothing will - in fact in a later version both Heater and Cooler had configs to alter that to anything. So a larger number will just decrease the adrenaline that much faster.</p>
+<p><b>T1:</b> Just making sure, but does this code only work in UT2003? Because when I tried some of the XPak things on UT2004 they didn't work (GPFs)... It's been a while, so I don't remember if this mutator was one of the mutators UT2004 broke.</p>
+<p><b>RegularX:</b> I haven't tried these in UT2004 as I had always planned to recode them completely, so there might well be incompatibilities. I would think this one would work. The weapon ones won't. I have new code for UXL which combines heater, cooler and the other adrenaline mutes into one.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 56/1000000
+Post-expand include size: 599/2097152 bytes
+Template argument size: 434/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EModify_Mutator_Tutorial_72a4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EModify_Mutator_Tutorial_0624.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Modify_Mutator_Tutorial">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:39, 28 December 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

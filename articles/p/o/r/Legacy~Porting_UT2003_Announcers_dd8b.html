@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Porting UT2003 Announcers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Porting UT2003 Announcers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>Announcers are the voices you hear so often in UT2004. There are two types of announcer, which can be independently configured: the Status and the Award announcer. Some mods (e.g. Jailbreak) have their own announcer. There is a minor change to how UT2004 detects an announcer: you have to declare and compile a class.</p>
+<p><a name="Converting_the_Announcer" id="Converting_the_Announcer"></a></p>
+<h2><span class="mw-headline">Converting the Announcer</span></h2>
+<p>Having a UT2003 announcer mostly means having a UAX package. As described in the original instructions ofmost UT2003 announcers, you must put this file into the <i>Sounds</i> folder of UT2003; do this step for UT2004 too, but don't edit the INI file; it won't help much. Instead, create a subdirectory in your UT2004 directory and name it Announcer<i>Name</i>, e.g. <i>AnnouncerZeus</i>. In here, create another subdirectory named <i>Classes</i>. Then, open your favourite text editor and type this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> *<span class="kw4">name</span>*Announcer <span class="kw5">extends</span> AnnouncerVoice;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     SoundPackage=<span class="st0">"*UAXPackage*"</span>
+     FallbackSoundPackage=<span class="st0">"*FallbackPackage*"</span>
+     AnnouncerName=<span class="st0">"*MenuName*"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Time for a little code replace. Replace the *name* with the name of your announcer, *UAXPackage* with the name of your UAX package (<b>without</b> the .uax extension!), *FallbackPackage* with the package you want to use if your announcer doesn't have the given sound (basically, for male voices, use <i>AnnouncerMale2k4</i> and for female voices <i>AnnouncerFemale2k4</i>), and instead of *MenuName* the name of your announcer that should show up in the menu.</p>
+<p>Here an example (ZeusAnnouncerSounds.uax is the name of the UAX package):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ZeusAnnouncer <span class="kw5">extends</span> AnnouncerVoice;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    SoundPackage=<span class="st0">"ZeusAnnouncerSounds"</span>
+    FallbackSoundPackage=<span class="st0">"AnnouncerMale2k4"</span>
+    AnnouncerName=<span class="st0">"Zeus"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Save the file as <i>*name*Announcer.uc</i>, in my case <i>ZeusAnnouncer.uc</i> (as the class declaration says).</p>
+<p>Now, it is time to change your .INI file. Open up your UT2004.ini (in your UT2004 System directory) with your favourite text editor, and look for the block of <i>EditPackages=</i> lines (section <i>[Editor.EditorEngine]</i>). Here, limit the list to this:</p>
+<pre>
+EditPackages=Core
+EditPackages=Engine
+EditPackages=Fire
+EditPackages=Editor
+EditPackages=GamePlay
+EditPackages=XInterface
+EditPackages=*AnnouncerFolderName*
+</pre>
+<p>Replace *AnnouncerFolderName* with the name of the directory you put your announcer into. Now, open up your command line and go to your UT2004 directory (using CD to "Change Directories"; typing the drive letter with the colon and pressing Enter will switch drives on Windows computers). Here, type</p>
+<pre>
+ucc make
+</pre>
+<p>for Windows, and</p>
+<pre>
+./ucc-bin make
+</pre>
+<p>for Linux and Mac (not sure about this). Wait for the compiler to compile your files; if "Success" and "Announcer exported succesfully" appears, you are done. Start UT2004 and check out your announcer.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 25/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/o/r/Legacy%7EPorting_UT2003_Announcers_dd8b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/o/r/Legacy_talk%7EPorting_UT2003_Announcers_e569.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Porting_UT2003_Announcers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 05:37, 16 September 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

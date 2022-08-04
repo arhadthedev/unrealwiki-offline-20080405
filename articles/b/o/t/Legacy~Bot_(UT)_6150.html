@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Bot (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Bot (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> &gt;&gt; Bot (Package: Botpack)</div>
+<p>Base class for all <a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">AI</a>-controlled players in Unreal Tournament. See also <a href="../../../../articles/b/o/t/Legacy%7EBots_3354.html" title="Legacy:Bots">Bots</a>, the corresponding base class in <a href="../../../../articles/u/n/r/Legacy%7EUnreal_1_b197.html" class="mw-redirect" title="Legacy:Unreal 1">Unreal 1</a>.</p>
+<p>The behaviour of the bots is determined by their current state and what orders they have (if any). Essentially, the bot takes a stimulus like the desire for a weapon, or spotting another pawn, and determines an action based upon it's own internal state and orders. Sometimes the bot will change it's own internal state to enable it to better deal with the action it wishes to perform.</p>
+<p>At its most basic the bot AI can be boiled down to the following actions below repeated <i>ad nauseum</i>.</p>
+<ul>
+<li>Find big guns and ammunition.</li>
+<li>See other pawn - attack other pawn.</li>
+</ul>
+<p>For a slightly more detailed view of the bot AI see the <a href="../../../../articles/b/o/t/Legacy%7EBot_Support_%28UT%29_500c.html" title="Legacy:Bot Support (UT)">Bot Support (UT)</a> page.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">1</span> <span class="toctext">Known Subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Orders"><span class="tocnumber">2</span> <span class="toctext">Orders</span></a></li>
+<li class="toclevel-1"><a href="#States"><span class="tocnumber">3</span> <span class="toctext">States</span></a></li>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">4</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-1"><a href="#AI_Functions"><span class="tocnumber">5</span> <span class="toctext">AI Functions</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li>HumanBotPlus</li>
+<li>SkaarjBot</li>
+</ul>
+<p><a name="Orders" id="Orders"></a></p>
+<h2><span class="mw-headline">Orders</span></h2>
+<dl>
+<dt>Point&#160;</dt>
+<dd>If a bot has "Point" orders then it can command other bots. I vaguely remember seeing a limit to the number of bots each bot could command somewhere in the code but I wouldn't bet anything on it (not even a pair of smelly old socks).</dd>
+<dt>Follow&#160;</dt>
+<dd>This order will cause the bot to follow the pawn that gave the "follow" order. The Actor that gave the order is assigned to the <i>OrderObject</i> property.</dd>
+<dt>Hold&#160;</dt>
+<dd>Bots under this order will attempt to hold the position that they have been assigned.</dd>
+<dt>Defend&#160;</dt>
+<dd>Bots under this order will find a nice spot to camp and set up their tent.</dd>
+<dt>Attack&#160;</dt>
+<dd>Bots under this order will enter a search and destroy mode, or, attempt to capture the flag, control point, or complete the next objective.</dd>
+<dt>FreeLance&#160;</dt>
+<dd>Bots under this order will do whatever they decide is necessary. In deathmatch games they collect inventory until they find someone to fight. In team games they decide what to do based upon the current state of the game.</dd>
+</dl>
+<p><a name="States" id="States"></a></p>
+<h2><span class="mw-headline">States</span></h2>
+<dl>
+<dt>StartUp&#160;</dt>
+<dd>The initial starting state for a bot.</dd>
+<dt>Holding&#160;</dt>
+<dt>Hold&#160;</dt>
+<dt>Roaming&#160;</dt>
+<dt>Wandering&#160;</dt>
+<dt>Acquisition&#160;</dt>
+<dt>Attacking&#160;</dt>
+<dt>Retreating&#160;</dt>
+<dt>Fallback&#160;</dt>
+<dt>Charging&#160;</dt>
+<dd>In this state the bot will rush at it's enemy with no regard for the continued well being of either itself or its target.</dd>
+<dt>TacticalMove&#160;</dt>
+<dt>Hunting&#160;</dt>
+<dt>StakeOut&#160;</dt>
+<dt>TakeHit&#160;</dt>
+<dt>ImpactJumping&#160;</dt>
+<dt>FallingState&#160;</dt>
+<dt>RangedAttack&#160;</dt>
+<dt>VictoryDance&#160;</dt>
+<dt>GameEnded&#160;</dt>
+<dd>This state is entered when the game has ended. It essentially prevents the bots from moving around and doing things once the game is over.</dd>
+<dt>Dying&#160;</dt>
+<dd>This is the state that is entered when the bot has been killed and is busy "dying" (presumably leaking decals all over the place and generally making a mess).</dd>
+<dt>FindAir&#160;</dt>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<p>See <a href="../../../../articles/b/o/t/Legacy%7EBot_%28UT%29_Graphics_And_Animation_3f33.html" title="Legacy:Bot (UT)/Graphics And Animation">graphics and animation</a> functions for the list of functions used to handle pawn animations and graphics.</p>
+<p><a name="AI_Functions" id="AI_Functions"></a></p>
+<h2><span class="mw-headline">AI Functions</span></h2>
+<dl>
+<dt>function <a href="../../../../articles/e/a/t/Legacy%7EEAttitude_a731.html" title="Legacy:EAttitude">eAttitude</a> AttitudeTo( <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other )&#160;</dt>
+<dd>This function determines the bot's attitude towards the <i>Other</i> pawn. The function can return any of the following attitudes: <i>fear</i>, <i>hate</i>, <i>ignore</i>, and <i>friendly</i>. The primary driver for the bot's attitude towards <i>Other</i> is the function <a href="../../../../articles/d/e/a/Legacy%7EDeathMatchPlus_e967.html" title="Legacy:DeathMatchPlus">DeathMatchPlus</a>.AssessBotAttitude() (This function is overidden in the game type classes). The attitude calculated is then set to <i>friendly</i> if <i>Other</i> is on the same team as the bot and the game is a team game.</dd>
+</dl>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 177/2097152 bytes
+Template argument size: 113/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Legacy Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/o/t/Legacy%7EBot_%28UT%29_6150.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/o/t/Legacy_talk%7EBot_%28UT%29_aa38.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Bot_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:54, 7 April 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

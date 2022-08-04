@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Setting Up A Subversion Server - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Setting Up A Subversion Server</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Setting_up_a_Subversion_Server_under_Windows"><span class="tocnumber">1</span> <span class="toctext">Setting up a Subversion Server under Windows</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Download_the_Windows_Resource_Kit_Tools"><span class="tocnumber">1.1</span> <span class="toctext">Download the Windows Resource Kit Tools</span></a></li>
+<li class="toclevel-2"><a href="#Install_the_Windows_Resource_Kit_Tools"><span class="tocnumber">1.2</span> <span class="toctext">Install the Windows Resource Kit Tools</span></a></li>
+<li class="toclevel-2"><a href="#Configure_Subversion_to_Run_as_a_Service"><span class="tocnumber">1.3</span> <span class="toctext">Configure Subversion to Run as a Service</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Easy_Alternative"><span class="tocnumber">2</span> <span class="toctext">The Easy Alternative</span></a></li>
+<li class="toclevel-1"><a href="#Controlling_Access"><span class="tocnumber">3</span> <span class="toctext">Controlling Access</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Other_Resources"><span class="tocnumber">5</span> <span class="toctext">Other Resources</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Setting_up_a_Subversion_Server_under_Windows" id="Setting_up_a_Subversion_Server_under_Windows"></a></p>
+<h2><span class="mw-headline">Setting up a Subversion Server under Windows</span></h2>
+<p>There are a few ways to set up a Subversion server on your Windows machine. The easiest way, is just to put a shortcut to the <tt>svnserve.exe</tt> program with appropriate arguments in your Startup folder, but this has some drawbacks:</p>
+<ul>
+<li>It's only running when you're logged in.</li>
+<li>It causes an empty command window to show up on your desktop. This can be minimized, but it still shows up in the taskbar.</li>
+</ul>
+<p><br />
+A better way would actually be to set up the Subversion server as a Windows service, which avoids both of these problems. This document will describe how to do this.</p>
+<p><br /></p>
+<p><a name="Download_the_Windows_Resource_Kit_Tools" id="Download_the_Windows_Resource_Kit_Tools"></a></p>
+<h3><span class="mw-headline">Download the Windows Resource Kit Tools</span></h3>
+<p>The "Windows Server 2003 Resource Kit Tools" package can be downloaded from Microsoft's download site (<a href="http://www.microsoft.com/downloads" class="external free" title="http://www.microsoft.com/downloads" rel="nofollow">http://www.microsoft.com/downloads</a>) under the "System Management Tools" download category (or directly from <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=9d467a69-57ff-4ae7-96ee-b18c4790cffd&amp;displaylang=en" class="external free" title="http://www.microsoft.com/downloads/details.aspx?FamilyID=9d467a69-57ff-4ae7-96ee-b18c4790cffd&amp;displaylang=en" rel="nofollow">http://www.microsoft.com/downloads/details.aspx?FamilyID=9d467a69-57ff-4ae7-96ee-b18c4790cffd&amp;displaylang=en</a>). Note that Microsoft does seem to have a number of confusingly-similarly named packages available for download from their site. You're looking for the one which has a file name of <tt>rktools.exe</tt>.</p>
+<p><br /></p>
+<p><a name="Install_the_Windows_Resource_Kit_Tools" id="Install_the_Windows_Resource_Kit_Tools"></a></p>
+<h3><span class="mw-headline">Install the Windows Resource Kit Tools</span></h3>
+<p>As with Subversion, this is a simple matter of double-clicking the downloaded installer and following the prompts. After doing this, to test that the installation all went ok, open a command prompt window (Start-&gt;Run, "<tt>cmd</tt>"), and type "<tt>instsrv</tt>". You should get a brief message describing INSTSRV's command syntax. (If you don't, try looking for <tt>INSTSRV.EXE</tt> in the location you told the Resource Kit to install, and use its full path name instead)</p>
+<p><br /></p>
+<p><a name="Configure_Subversion_to_Run_as_a_Service" id="Configure_Subversion_to_Run_as_a_Service"></a></p>
+<h3><span class="mw-headline">Configure Subversion to Run as a Service</span></h3>
+<p>First we will need to install an appropriately-named service using the <tt>SRVANY.EXE</tt> utility provided by the Resource Kit. To do this, you will need to open a command window and type the following:</p>
+<pre>
+ instsrv "Subversion" "C:\Program Files\Windows Resource Kits\Tools\srvany.exe"  
+ 
+</pre>
+<p>(This assumes you've installed the Resource Kit Tools in the default location of <tt>C:\Program Files\Windows Resource Kits\Tools</tt>. If you installed it somewhere else, obviously, you'll need to change the path to <tt>srvany.exe</tt> appropriately.)</p>
+<p><br />
+The SRVANY program is designed to allow any program to run as a service, but we still need to tell it <i>what</i> program it's supposed to be running. Unfortunately, this step requires a little bit of fiddling with the Windows Registry.</p>
+<p><br />
+<b>NOTE:</b> Changing the wrong things in the Registry can seriously break your Windows system. Always be careful when using the Windows Registry Editor, and be sure to back up your system before doing changes like this. (That having been said, if you're careful about what you change, using the Registry Editor usually isn't as scary as it sounds)</p>
+<p>Start up the Registry Editor by choosing "Run..." from the Start menu and typing the following:</p>
+<pre>
+ regedt32  
+</pre>
+<p><br /></p>
+<p>On the left side of the Registry Editor is what looks like a directory tree view (these are locations in the registry, not actual directories on the disk, but the navigation is the same). Find the following path and select this folder:</p>
+<pre>
+ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Subversion  
+</pre>
+<p><br /></p>
+<ol>
+<li>From the Edit pulldown menu, select New-&gt;Key</li>
+<li>For the name of the new key, type "Parameters"</li>
+<li>From the Edit pulldown menu, select New-&gt;String Value</li>
+<li>For the name of the new string value, type "Application"</li>
+<li>From the Edit pulldown menu, select "Modify" (or just double-click the new "Application" key in the right pane)</li>
+</ol>
+<p>An "Edit String" dialog box will appear. Type the following:</p>
+<pre>
+ C:\Program Files\Subversion\bin\svnserve.exe  
+</pre>
+<p>(This assumes Subversion is installed in <tt>C:\Program Files\Subversion</tt>, of course)</p>
+<p><br /></p>
+<ol>
+<li>From the Edit pulldown menu, select New-&gt;String Value</li>
+<li>For the name of the new string value, type "AppParameters"</li>
+<li>From the Edit pulldown menu, select "Modify" (or just double-click the new "AppParameters" key in the right pane)</li>
+</ol>
+<p>An "Edit String" dialog box will appear. Type the following:</p>
+<pre>
+ -d -r C:\Subversion  
+</pre>
+<p>(the <tt>-d-</tt> flag tells it to run as a daemon (server) process, and the <tt>-r C:\Subversion-</tt> tells it where the directory with the repositories lives)</p>
+<p><br /></p>
+<p><br />
+Now our service should be configured properly, we just need to give it a try:</p>
+<ol>
+<li>Open the Services control panel (this may be under the "Administrative Tools" subfolder in Control Panels).</li>
+<li>You should now be able to find a "Subversion" service in the list of services. Select this service.</li>
+<li>From the Action menu, select "Start".</li>
+</ol>
+<p><br />
+If all goes well, the Subversion process should now say "Started" in its Status column.</p>
+<p><br />
+You now have a Subversion server running, serving all of the repositories under your <tt>C:\Subversion</tt> directory. This means that repositories which you've been accessing with URLs like:</p>
+<pre>
+ file:///C:/Subversion/repository_name  
+</pre>
+<p>..can now also be accessed as..</p>
+<pre>
+ svn://localhost/repository_name  
+</pre>
+<p>(note that there are only two slashes (//) before "localhost")</p>
+<p><br />
+So let's give our new server a try. Assuming that you've set up a repository as described in <a href="../../../../articles/s/e/t/Legacy%7ESetting_Up_Subversion_96f5.html" title="Legacy:Setting Up Subversion">Setting up Subversion</a>, we should be able to access it now as <tt>svn://localhost/UT_work</tt>:</p>
+<ol>
+<li>Right click on a file or folder somewhere (doesn't matter where) and select "TortoiseSVN-&gt;Repo-Browser" from the pop-up menu.</li>
+</ol>
+<p>For the repository URL, type:</p>
+<pre>
+ svn://localhost/UT_work  
+</pre>
+<p><br /></p>
+<p><br />
+You should see your repository and its contents show up in the Repository Browser window.</p>
+<p><br /></p>
+<p><a name="The_Easy_Alternative" id="The_Easy_Alternative"></a></p>
+<h2><span class="mw-headline">The Easy Alternative</span></h2>
+<p>If all that is far too complicated for you, there also is a small commandline tool for setting up SVNServe as a service: <a href="http://www.clanlib.org/~mbn/svnservice/" class="external text" title="http://www.clanlib.org/~mbn/svnservice/" rel="nofollow">SVNService</a>. Extract SVNService.exe to the same directory as SVNServe.exe (by default that is C:\Program Files\Subversion\bin) and you are ready to go.</p>
+<p>Usage is really easy:</p>
+<dl>
+<dt>Installing the service&#160;</dt>
+</dl>
+<pre>
+SVNService -install <i>[SVNServe parameters]</i>  
+</pre>
+<p>This will create a new service with the name "SVNService". The service is initially configured to be started manually.\\</p>
+<p>Useful SVNServe parameters might be "-d -r D:\Path\To\Repository".</p>
+<dl>
+<dt>Changing the service parameters&#160;</dt>
+</dl>
+<pre>
+<tt>SVNService -setup <i>[new SVNServe parameters]</i></tt>
+ 
+</pre>
+<dl>
+<dt>Removing the service&#160;</dt>
+</dl>
+<pre>
+<tt>SVNService -remove</tt>  
+</pre>
+<p>This will also stop the service if it's till running.</p>
+<p><br />
+Note that SVNService can manage only one service. You'll have to go the long way described above if you want more than that.</p>
+<p><br /></p>
+<p><a name="Controlling_Access" id="Controlling_Access"></a></p>
+<h2><span class="mw-headline">Controlling Access</span></h2>
+<p>By default, Subversion repositories accessed through a Subversion server are readable by anyone, but only writable by people who have been specifically authorized to do so. Obviously, you will want to do a bit of configuration to specify who's allowed to do what, and how Subversion is supposed to tell who people are.</p>
+<p><br />
+This configuration is done by editing the <tt>svnserve.conf</tt> file located in the <tt>conf</tt> directory of each repository (for example, <tt>C:\Subversion\UT_work\conf\svnserve.conf</tt>). Open this file in a text editor.</p>
+<p><br />
+In the configuration file, lines starting with <tt>#</tt> are comments, so as you can see, the default file has everything commented out. You will want to add a few lines (or uncomment the ones that are already there):</p>
+<pre>
+ [general]  
+ anon-access = read  
+ auth-access = write  
+ password-db = passwd  
+ realm = My Subversion Repository  
+ 
+</pre>
+<p>(obviously, you can change the <tt>anon-access</tt> and <tt>auth-access</tt> lines if this isn't the behavior you want. For example, you could change them to <tt>anon-access=none</tt> if you don't want anonymous users seeing your repository contents, and <tt>auth-access=read</tt> if you only want to provide read access to the people you specify (in which case you will only have write access via local (<tt>file:</tt>) URLs))</p>
+<p><br />
+The <tt>realm</tt> parameter is a way of grouping multiple repositories to use a single login. If two repositories have the same realm, all Subversion clients will assume they can use the same username/password to login to them. Since we're not working with multiple repositories (yet), it doesn't really matter what we put here as long as it's unique, but it is displayed by many clients when prompting for a password, so it's good to use something descriptive.</p>
+<p><br />
+The <tt>password-db</tt> parameter specifies the name of a file to have usernames and passwords in, which is relative to the <tt>conf</tt> directory. In this case, we've specified a filename of <tt>passwd</tt>, so we now need to create a <tt>passwd</tt> file in the same directory as our <tt>svnserve.conf</tt>. In the new <tt>passwd</tt> file, add the following:</p>
+<pre>
+ [users]  
+ my_username = my_password  
+ 
+</pre>
+<p>(Obviously, replace <tt>my_username</tt> and <tt>my_password</tt> with an appropriate username and password for yourself). You can also add as many other account usernames and passwords as you want in the same form under the [users] section.</p>
+<p><br />
+There is one other aspect to access which needs to be mentioned: In order for other people to access your new Subversion server, they will need to be able to connect to your machine on TCP port 3690. You will need to make sure that your machine is reachable from the outside world (not behind a NAT router or firewall of some kind) and that port 3690 is not blocked by any personal firewall software you may have installed). Other users should then be able to access your repository using URLs of the form:</p>
+<pre>
+ svn://your_hostname_or_ip/repository_name  
+ 
+</pre>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/s/u/b/Legacy%7ESubversion_057c.html" title="Legacy:Subversion">Subversion</a></li>
+<li><a href="../../../../articles/v/e/r/Legacy%7EVersion_Control_642d.html" title="Legacy:Version Control">Version Control</a></li>
+</ul>
+<p><br /></p>
+<p><a name="Other_Resources" id="Other_Resources"></a></p>
+<h2><span class="mw-headline">Other Resources</span></h2>
+<dl>
+<dt><a href="http://support.microsoft.com/kb/q137890/" class="external free" title="http://support.microsoft.com/kb/q137890/" rel="nofollow">http://support.microsoft.com/kb/q137890/</a>&#160;</dt>
+<dd>Microsoft Knowledge Base article on how to use INSTSRV and SRVANY.</dd>
+<dt><a href="http://subversion.tigris.org/" class="external free" title="http://subversion.tigris.org/" rel="nofollow">http://subversion.tigris.org/</a>&#160;</dt>
+<dd>The Subversion web site.</dd>
+</dl>
+<p><br /></p>
+<hr />
+<p>----</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 76/1000000
+Post-expand include size: 30/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/e/t/Legacy%7ESetting_Up_A_Subversion_Server_2a5a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/e/t/Legacy_talk%7ESetting_Up_A_Subversion_Server_288b.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Setting_Up_A_Subversion_Server">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:38, 15 August 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Debugging Techniques - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Debugging Techniques</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Put all your <b>Hints for Debugging</b> here.</p>
+<p>As a programmer, I can only think on UnrealScript stuff, but you should add anything that would help someone to get extra info about the environment, actor behaviour and errors on the fly.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#UnrealScript_Techniques"><span class="tocnumber">1</span> <span class="toctext">UnrealScript Techniques</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Use_the_Log.21"><span class="tocnumber">1.1</span> <span class="toctext">Use the Log!</span></a></li>
+<li class="toclevel-2"><a href="#Using_DisplayDebug_.28UT2003.29"><span class="tocnumber">1.2</span> <span class="toctext">Using DisplayDebug (UT2003)</span></a></li>
+<li class="toclevel-2"><a href="#Using_the_Graph_.28UT2003.29"><span class="tocnumber">1.3</span> <span class="toctext">Using the Graph (UT2003)</span></a></li>
+<li class="toclevel-2"><a href="#The_Debug_Line_.28UT2003.29"><span class="tocnumber">1.4</span> <span class="toctext">The Debug Line (UT2003)</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Staying_Debug_Line"><span class="tocnumber">1.4.1</span> <span class="toctext">Staying Debug Line</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Using_TextToSpeech_.28UT2004.2FUT2003.3F.29"><span class="tocnumber">1.5</span> <span class="toctext">Using TextToSpeech (UT2004/UT2003?)</span></a></li>
+<li class="toclevel-2"><a href="#Slowing_things_down"><span class="tocnumber">1.6</span> <span class="toctext">Slowing things down</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Network_Debugging"><span class="tocnumber">2</span> <span class="toctext">Network Debugging</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Testing_in_a_Client.2FServer_Environment"><span class="tocnumber">2.1</span> <span class="toctext">Testing in a Client/Server Environment</span></a></li>
+<li class="toclevel-2"><a href="#ServerPackages"><span class="tocnumber">2.2</span> <span class="toctext">ServerPackages</span></a></li>
+<li class="toclevel-2"><a href="#Simulating_Lag_and_Packet_Loss"><span class="tocnumber">2.3</span> <span class="toctext">Simulating Lag and Packet Loss</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Console_Commands"><span class="tocnumber">3</span> <span class="toctext">Console Commands</span></a></li>
+<li class="toclevel-1"><a href="#A_Note_about_Debugging"><span class="tocnumber">4</span> <span class="toctext">A Note about Debugging</span></a></li>
+<li class="toclevel-1"><a href="#Optimizing"><span class="tocnumber">5</span> <span class="toctext">Optimizing</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="UnrealScript_Techniques" id="UnrealScript_Techniques"></a></p>
+<h2><span class="mw-headline">UnrealScript Techniques</span></h2>
+<p><a name="Use_the_Log.21" id="Use_the_Log.21"></a></p>
+<h3><span class="mw-headline">Use the Log!</span></h3>
+<p>The log is generally the first thing to try when debugging.</p>
+<p>It lets you append text to the game's log file. The stuff it writes can be viewed while the game is running, type "showlog" in console to open the log window. To start the game with log window already displayed and in windowed mode start UT2004.exe with " -WINDOWED -LOG" parameters.</p>
+<p>It is a native function declared in <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>, so it is, in effect, a global function. Its declaration is as follows:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">231</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> <span class="kw5">function</span> <span class="kw7">Log</span><span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S, <span class="kw6">optional</span> <span class="kw4">name</span> Tag <span class="br0">)</span>;
+<span class="co1">//'S' is your message that you want to appear in the log.</span>
+</pre></div>
+<p>The 'Tag' parameter gives the beginning of your message a more meaningful name (useful for mod developers to differentiate their warning messages).</p>
+<p>Log output gives you something like this: "Tag: S", where of course 'Tag' and 'S' are replaced. If 'Tag' is not supplied, "ScriptLog" is used.</p>
+<p>Log is saved by default to "/GameName/System/GameName.log" file, ie "UT2004/System/UT2004.log". Attempting to view the log file with external application while the game is still running is not recommended, as sometimes information is not actually saved into the log at the moment that it happens – the order and variables are still preserved, but I believe that the Unreal Engine maintains an internal log in memory and only writes it to disk periodically.</p>
+<p>The warn function is essentially the same as log, but there is no "tag" argument. The "tag" of the warn function is always "Warning."</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">232</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> <span class="kw5">function</span> <span class="kw7">Warn</span><span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S <span class="br0">)</span>;
+<span class="co1">//'S' is your message that you want to appear in the log.</span>
+</pre></div>
+<p>The warn function's output is similar to UT's and UT2003's <a href="../../../../articles/l/o/g/Legacy%7ELog_Warnings_d633.html" title="Legacy:Log Warnings">log warnings</a>.</p>
+<p>You can also use the "say" functionality to make your actor "talk" within the level and read the output. This allows for a realtime "log" that you can view in-game, though things written using this will not actually be written to the log file:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">Broadcast</span><span class="br0">(</span><span class="kw8">self</span>, <span class="st0">"blah blah blah"</span>, <span class="st0">'Say'</span><span class="br0">)</span>;
+</pre></div>
+<p><b>OverloadUT:</b> Unfortunately, this method has limited reliability, because the messages broadcasted will be spam filtered just like normal chat. Meaning that if you send too many messages too fast, some of them simply won't be displayed. The limit is quite low too... So be sure you're only sending one message at a time, and only at key times. I like to instead use the <i><b>ClientMessage()</b></i> function inside <i><b>PlayerController</b></i> - but unfortunately it's a more annoying because you need a specific PlayerController to send it to.</p>
+<p><b>Kirk:</b> Also note that if you suddenly see messages coming up you didn't instigate... it's probably form the bots doing the same thing as you.</p>
+<p><a name="Using_DisplayDebug_.28UT2003.29" id="Using_DisplayDebug_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">Using DisplayDebug (UT2003)</span></h3>
+<p>The DisplayDebug function in class <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> shows a lot of info about the player/zone/weapon. It is shown when you use the <tt>ShowDebug</tt> console command and it can be used to draw pertinent information on the HUD in realtime. If you want to make it compatible with other DisplayDebug functions from other actors, you must insert a carriage return at the end of whatever you are writing, to prevent other actors from appending text directly to whatever you have written.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> DisplayDebug<span class="br0">(</span>Canvas Canvas, <span class="kw6">out</span> <span class="kw4">float</span> YL, <span class="kw6">out</span> <span class="kw4">float</span> YPos<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">string</span> T;
+ 
+  <span class="kw6">super</span>.<span class="me1">DisplayDebug</span><span class="br0">(</span>Canvas, YL, YPos<span class="br0">)</span>;
+ 
+  T = <span class="st0">"DOT: "</span>$vect<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span> <span class="kw3">Dot</span> Normal<span class="br0">(</span><span class="kw4">vector</span><span class="br0">(</span>rotation<span class="br0">)</span><span class="br0">)</span>;
+  Canvas.<span class="me1">DrawText</span><span class="br0">(</span>T,<span class="kw9">false</span><span class="br0">)</span>;
+  YPos += YL;
+  Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">4</span>,YPos<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>You can also use DisplayDebug to draw anything you normally could to the Canvas. Here is an example of drawing the position of a vector onto the screen visually. The example draws a cross at the on-screen location where the vector would be percieved to be - note that this assumes that the vector is a "location" vector, as it will be drawn relative to the world origin:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> DisplayDebug<span class="br0">(</span>Canvas Canvas, <span class="kw6">out</span> <span class="kw4">float</span> YL, <span class="kw6">out</span> <span class="kw4">float</span> YPos<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw6">Super</span>.<span class="me1">DisplayDebug</span><span class="br0">(</span>Canvas, YL, YPos<span class="br0">)</span>;
+ 
+  Canvas.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+  Canvas.<span class="me1">SetPos</span><span class="br0">(</span>Canvas.<span class="me1">WorldToScreen</span><span class="br0">(</span>YOURVECTORHERE<span class="br0">)</span>.<span class="me1">X</span>,Canvas.<span class="me1">WorldToScreen</span><span class="br0">(</span>YOURVECTORHERE<span class="br0">)</span>.<span class="me1">Y</span><span class="br0">)</span>;
+  DrawCross<span class="br0">(</span>Canvas<span class="br0">)</span>;
+  Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"A SHORT DESCRIPTION WHICH WILL GET DRAWN NEXT TO THE CROSS GOES HERE"</span>,<span class="kw9">false</span><span class="br0">)</span>;
+  Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">4</span>,YPos<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DrawCross<span class="br0">(</span>canvas c<span class="br0">)</span>
+<span class="br0">{</span>
+  c.<span class="me1">DrawLine</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">18</span><span class="br0">)</span>;
+  c.<span class="me1">DrawLine</span><span class="br0">(</span><span class="nu0">1</span>, <span class="nu0">18</span><span class="br0">)</span>;
+  c.<span class="me1">DrawLine</span><span class="br0">(</span><span class="nu0">2</span>, <span class="nu0">18</span><span class="br0">)</span>;
+  c.<span class="me1">DrawLine</span><span class="br0">(</span><span class="nu0">3</span>, <span class="nu0">18</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Using_the_Graph_.28UT2003.29" id="Using_the_Graph_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">Using the Graph (UT2003)</span></h3>
+<p>The graph is a debugging method only availible from KVehicle and its subclasses. It is defined in KVehicle. It can be displayed with the <code>Graph Show</code> console command. To plot a value on the graph, call the GraphData function, as follows:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+GraphData<span class="br0">(</span><span class="st0">"description"</span>, <span class="kw5">var</span><span class="br0">)</span>;
+</pre></div>
+<p>Where <i>var</i> (float or int) is your variable and <i>description</i> is any string. The graph automatically adjusts the vertical scale to fit all of the values that have been fed into it. The graph will update whenever a new point is plotted, regardless of what actor plots it. The graph is color coded, and points are joined together based on their <i>descriptions</i>. There is a legend with the graph that will indicate which color is associated with which <i>description</i> and the maximum value that has been plotted for that <i>description.</i></p>
+<p><a name="The_Debug_Line_.28UT2003.29" id="The_Debug_Line_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">The Debug Line (UT2003)</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+DrawDebugLine<span class="br0">(</span> Location1, Location2, R, G, B<span class="br0">)</span>;
+</pre></div>
+<p>This is a great way of showing vectors. It draws a line between the two vectors specified in Location1 and Location2. Technically one is the start and the other is the end, but it doesn't make any visual difference. R, G, and B, are the elements of the color of the line, red, green and blue, respectively. They must each be between 0 and 255. This is superior to just drawing something on the canvas, as it will go "through" objects instead of being drawn on top of them. This makes it much easier to see the actual vector that is being expressed. It is, however, relatively slow. It is not slow in the sense that it will drag down your framerate while you debug, but it is too slow to be reasonably used for in-game effects like a laser. This function can be called at any time and will be "stored up" by the engine until the next frame is drawn. You can draw as many debug lines as you like and they will all be "saved up" in this manner. This can be very useful for, for instance, making a line drawing of the path a bot intends to follow, etcetera.</p>
+<p><a name="Staying_Debug_Line" id="Staying_Debug_Line"></a></p>
+<h4><span class="mw-headline">Staying Debug Line</span></h4>
+<p>Another debug line command similar to the one above creates a permanent line, which can be used for easily creating non-dynamic lines in 3D space. This can be handy for displaying the path that a wandering or searching character has taken over time. -ymalaika</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+DrawStayingDebugLine<span class="br0">(</span> Location1, Location2, R, G, B<span class="br0">)</span>;
+  ClearStayingDebugLines<span class="br0">(</span><span class="br0">)</span>
+</pre></div>
+<p><a name="Using_TextToSpeech_.28UT2004.2FUT2003.3F.29" id="Using_TextToSpeech_.28UT2004.2FUT2003.3F.29"></a></p>
+<h3><span class="mw-headline">Using TextToSpeech (UT2004/UT2003?)</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span> <span class="kw5">function</span> TextToSpeech<span class="br0">(</span> <span class="kw4">string</span> Text, <span class="kw4">float</span> Volume <span class="br0">)</span>;
+<span class="co1">//Text: Text you want to be turned into speech</span>
+</pre></div>
+<p>This function is declared in Actor so any actor can use it. An example of how to use it would be to find out if a function was fired or not. It's very useful for those who don't want to go into the log all the time and would like voice confirmation.</p>
+<p><b>Seabreeze:</b> what does the 'Volume' variable represent?</p>
+<p><b>Wormbo:</b> The same thing it represents in any audio function – how loud you want the output to be.</p>
+<p><b>Seabreeze:</b> ahhh.. newbie here! for some reason I was only thinking of volume of objects and not volume of sound, thanks!</p>
+<p><a name="Slowing_things_down" id="Slowing_things_down"></a></p>
+<h3><span class="mw-headline">Slowing things down</span></h3>
+<p>If you need time to set a particular situation up, use one of these console commands:</p>
+<ul>
+<li>playersonly&#160;: freezes all movement except you</li>
+<li>slomo #, or set engine.gameinfo gamespeed &lt;value here&gt;</li>
+</ul>
+<p><a name="Network_Debugging" id="Network_Debugging"></a></p>
+<h2><span class="mw-headline">Network Debugging</span></h2>
+<p><a name="Testing_in_a_Client.2FServer_Environment" id="Testing_in_a_Client.2FServer_Environment"></a></p>
+<h3><span class="mw-headline">Testing in a Client/Server Environment</span></h3>
+<p>It is crucial that you test your code under client/server conditions. Just running a "listen server" (a network server started from within the game) won't help there; for concerns like <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">replication</a> the listen server behaves just like a standalone game as far as the local player is concerned.</p>
+<p>You don't need a LAN or an Internet connection to test your code under networking conditions though: you can <a href="../../../../articles/l/a/u/Legacy%7ELaunch_A_Local_Netgame_df6b.html" title="Legacy:Launch A Local Netgame">Launch A Local Netgame</a>.</p>
+<p><a name="ServerPackages" id="ServerPackages"></a></p>
+<h3><span class="mw-headline">ServerPackages</span></h3>
+<p>None of your client-side actors will show up or execute client-side code <b>unless your package is loaded client-side</b>; unless that happens to happen anyway (because you're coding a game type, for example), you'll have to add your code package to the server .ini file's <code>ServerPackages</code> list.</p>
+<p>Open the server's .ini file (usually server.ini or, on a local dedicated server, frequently just the <a href="../../../../articles/g/a/m/Legacy%7EGame_Ini_File_0242.html" title="Legacy:Game Ini File">game ini file</a>), look for the <code>[Engine.GameEngine]</code> section and add a line for your package:</p>
+<pre>
+ ServerPackages=MyPackage
+</pre>
+<p><a name="Simulating_Lag_and_Packet_Loss" id="Simulating_Lag_and_Packet_Loss"></a></p>
+<h3><span class="mw-headline">Simulating Lag and Packet Loss</span></h3>
+<p>You can tell the engine to simulate network lag, packet loss, packets out of order and packet duplicating when testing on a local server as described above.</p>
+<p>Add one or several of the following parameters to the server's command line:</p>
+<dl>
+<dt>pktlag=<i>&lt;milliseconds&gt;</i>&#160;</dt>
+<dd>Simulates lag.</dd>
+</dl>
+<dl>
+<dt>pktloss=<i>&lt;percentage&gt;</i>&#160;</dt>
+<dd>Simulates packet loss. The given percentage specifies how many packets are lost; it can be between 0 (no packet loss) and 100 (all packets will be lost).</dd>
+</dl>
+<dl>
+<dt>pktdup=<i>&lt;percentage&gt;</i>&#160;</dt>
+<dd>Simulates packet duplication. The given percentage specifies how many packets are duplicated; it can be between 0 (no packet duplication) and 100 (all packets duplicated).</dd>
+</dl>
+<dl>
+<dt>pktorder=<i>&lt;0 or 1&gt;</i>&#160;</dt>
+<dd>Simulates packets that are received out of order.</dd>
+</dl>
+<p>A server for a test game with 150 milliseconds lag, 10 percent packet loss and packets out of order would look like this:</p>
+<pre>
+ ucc server DM-Gael pktlag=150 pktloss=10 pktorder=1
+</pre>
+<p><a name="Console_Commands" id="Console_Commands"></a></p>
+<h2><span class="mw-headline">Console Commands</span></h2>
+<p>See <a href="../../../../articles/c/o/n/Legacy%7EConsole_Commands_Debugging_Console_Commands_0d73.html" title="Legacy:Console Commands/Debugging Console Commands">Console Commands/Debugging Console Commands</a></p>
+<p><a name="A_Note_about_Debugging" id="A_Note_about_Debugging"></a></p>
+<h2><span class="mw-headline">A Note about Debugging</span></h2>
+<p>It's important to remember that not only can software develop bugs, but your debugging tools themselves can have bugs too. Log and other native debugging commands seem quite stable, but things in DisplayDebug and similar functions are prone to error like any other program. If your debugging tools show that your code is acting in an absolutely bizarre fashion, check your debugging code to see if it is in fact the debugger that is faulty.</p>
+<p><a name="Optimizing" id="Optimizing"></a></p>
+<h2><span class="mw-headline">Optimizing</span></h2>
+<p>If your mod runs slowly or causes hitches on some computers, see <a href="../../../../articles/c/o/d/Legacy%7ECode_Optimization_a3bf.html" title="Legacy:Code Optimization">Code Optimization</a>.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/l/o/g/Legacy%7ELog_Warnings_d633.html" title="Legacy:Log Warnings">Log Warnings</a></li>
+<li>A Bug's Life</li>
+<li><a href="../../../../articles/s/p/e/Legacy%7ESpectate_Bots_aa5b.html" title="Legacy:Spectate Bots">Spectate Bots</a></li>
+<li><a href="../../../../articles/t/e/s/Legacy%7ETesting_Botplay_7e2c.html" title="Legacy:Testing Botplay">Testing Botplay</a></li>
+<li><a href="../../../../articles/u/d/e/Legacy%7EUDebugger_c9db.html" title="Legacy:UDebugger">UDebugger</a></li>
+<li><a href="../../../../articles/r/u/n/Legacy%7ERunning_A_Dedicated_Server_With_UCC_c5eb.html" title="Legacy:Running A Dedicated Server With UCC">Running A Dedicated Server With UCC</a></li>
+<li><a href="../../../../articles/t/e/s/Legacy%7ETesting_Lab_65ed.html" title="Legacy:Testing Lab">Testing Lab</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Ch3z</b> I actually run a copy of the 436 server only disto from a seperate folder and connect to it with my reg UT installation. That way I know I'm actually connecting via the internet, and with all the hops to get back to my own machine I get plenty of non-simulated lag. I just feel like its a better test. I also make sure none of the files i need to join the server are in my UT dir and it makes me download them all from the server before connecting. Seems more like a valid test to me. I'm wondering if this would be a good idea or not. Not sure if this is where the page should be created from or not but... check out the <a href="../../../../articles/t/e/s/Legacy%7ETesting_Lab_65ed.html" title="Legacy:Testing Lab">Testing Lab</a>.</p>
+<p>Shouldn't this page, Debugging Techniques be Category Tutorial?</p>
+<p><b>Tarquin:</b> Not really.</p>
+<p><b>Vitaloverdose</b> is none of this relevant to 2004?</p>
+<p><b>Wormbo:</b> There's a section about <i>additional</i> techniques in UT2004, and of course they apply to UT2004 as well.</p>
+<p><b>OlympusMons:</b> Found the clear debug staying lines thing on the udn just thought I would add it here, not sure if its in the right spot.</p>
+<p><b>Shambler:</b> A class I made to spew debug logs onto the HUD instead of into the log file: <a href="../../../../articles/l/o/g/Legacy%7ELog_Interaction_d73d.html" title="Legacy:Log Interaction">Log Interaction</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 61/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/e/b/Legacy%7EDebugging_Techniques_10ec.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/e/b/Legacy_talk%7EDebugging_Techniques_b2f3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Debugging_Techniques">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:39, 6 November 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

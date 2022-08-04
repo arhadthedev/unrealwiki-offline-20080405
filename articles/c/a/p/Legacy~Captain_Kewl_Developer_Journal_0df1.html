@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Captain Kewl/Developer Journal - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Captain Kewl/Developer Journal</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/c/a/p/Legacy%7ECaptain_Kewl_2eb6.html" title="Legacy:Captain Kewl">Legacy:Captain Kewl</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#05_Oct_2002"><span class="tocnumber">1</span> <span class="toctext">05 Oct 2002</span></a></li>
+<li class="toclevel-1"><a href="#07_Oct_2002"><span class="tocnumber">2</span> <span class="toctext">07 Oct 2002</span></a></li>
+<li class="toclevel-1"><a href="#13_Oct_2002"><span class="tocnumber">3</span> <span class="toctext">13 Oct 2002</span></a></li>
+<li class="toclevel-1"><a href="#21_Oct_2002"><span class="tocnumber">4</span> <span class="toctext">21 Oct 2002</span></a></li>
+<li class="toclevel-1"><a href="#20_Nov_2002"><span class="tocnumber">5</span> <span class="toctext">20 Nov 2002</span></a></li>
+<li class="toclevel-1"><a href="#21_Nov_2002"><span class="tocnumber">6</span> <span class="toctext">21 Nov 2002</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="05_Oct_2002"></a></p>
+<h4><span class="mw-headline">05 Oct 2002</span></h4>
+<p>Last monday I made my way to the local EB and forced them to happily sell me a copy of UT2k3 before they were ready to put it up on display. In the days since, I have spent unhealthy amounts of time studying the new codebase, and can thus far only conclude this:</p>
+<p>I am shocked and APPALLED that they have removed the "Fatness" actor display property.</p>
+<p>In spite of this tragedy, I feel it is my duty to not only myself but to the greater UT community that I continue in my efforts to contribute. Thus we take our first steps toward the As-yet-unnamed "XCTF"-based mod.</p>
+<p>My working idea for constructing this mod is to use a series of mutators, each responsible for specific rules. The reason why I chose this is because 1.) A basic CTF gametype already exists in 2k3, and 2.) the additional rules (full weapons), are general enough that they can be effectively applied to virtually any other gametype as well. Avoid redundancy and insure consistency.</p>
+<p>The only real sticking point here is the Grapple. The difficult part isn't the implementation of the grapple itself, but effective application to the Bot AI. Would we be able to get away with using mutators for this? In UT I implemented bot grappling by co-opting the actions induced by the translocator – none of the AI changes were made to the Bots themselves. I haven't looked through the 2k3 code in depth yet, but in UT translocation was handled specifically by the navgationpoints and the X-loc itself: the navigationpoint forced the bot to switch to the X-loc and then fire. Keeping it short, my implementation of the grapple involved simply replacing the X-loc and tweaking where the bot aimed.</p>
+<p>So yes, it's possible to get a bot to use a grapple to get to unreachable places without gutting the bot AI. But something that sticks out in my mind about 2k3 is the way bots USE the X-loc. As a means of normal travel, even if it's just to the other side of a room. If we're going to have a grapple, it's only right that we have the bots use it in the same *intelligent* manner it uses the X-loc... which raises the issue of whether or not the same hack can be used. When using the X-loc to travel, are bots still using navpoints? Or are they just using fuzzy logic to guess how best to get to their destination?</p>
+<p>If it's the latter, then we might have to go the route of tweaking the bot controller AI. Which is where we have to decide about mutator use. Would a mutator be the best way to swap controllers? (Is it even possible with a mutator?)</p>
+<p>Mutator construction itself is still pretty straightforward. Game Rules – player stats, scoring, and damage modification – have now been split off from GameInfo. Thus for a mutator to hook into any of the GameRules functions, you now need to accompany the mutator with GameRules subclass. It's otherwise pretty much unchanged.</p>
+<p><a name="07_Oct_2002"></a></p>
+<h4><span class="mw-headline">07 Oct 2002</span></h4>
+<p>The DE particle emission class == cool. It’s about damn time UT had some proper support for beam effects.</p>
+<p>So the grapple is in and more or less functional. Interesting exercise in aquinting myself with the new structure for weapons; there’s now something like 5 different classes to deal with. The weapon as an inventory class is still intact, but really now just exists to serve the same purpose as ammo – to show that the weapon exists in the player’s inventory. Facets of the weapon have been abstracted into wholely separate classes, including ones which represent the weapon as viewed as either a pickup or 3pp, and ones which control the actual weapon behavior. Which actually makes a whole lot of sense, particularly the different pickup and 3pp classes, but makes things a bit more difficult to keep track of.</p>
+<p>The grapple is more or less based on various previous UT implementations, mostly my own. The weapon fires a projectile which, when it lands, adds a velocity to the player which draws him near. One nice thing about the WeaponFire class is that the abstraction supports firing modes that are contingent upon the player holding the fire button down; no need for any kind of tick-bound “if ( bFire&#160;!= 0 )” checks. Thus the grapple can have two modes: the first is a Quake-style automatic recall on buttonup, the alternate fire is a normal fire/recall. The rope is implemented using an xEmitter subclass, largely based on the Ion Painter beam.</p>
+<p>I subclassed the xPlayer controller class in order to put in an exec function which grabs the grapple in inventory and co-opts its WeaponFire. I’m using the alt mode, so calling the “hook” function once will fire the hook, and calling it again, or “unhook”, will recall it. There’s our offhand grapple. I’m considering removing this and placing it in an inventory item instead – it would make an offhand/no offhand gametype configuration easier to implement, I think.</p>
+<p>The keybinding for the grapple goes to an alias… don’t have my user.ini open right now, but it’s something like “hook | onbuttonup unhook” I’m a bit trepid about going this route – somehow it evokes that shock combo binding used by people who aren’t coordinated enough to move two fingers. For a while I was considering implementing another input byte… but then, that would also require using a similar alias, and on top of that, could get pretty nasty code-wise with the grapple needing some controller-specific code; it counters the abstraction I’d like to maintain. Choose the lesser of two evils, I guess.</p>
+<p>Net code is probably a bigger priority than bot support. Arbitrarily calling AddVelocity for the purpose of pawn locomotion isn’t the most client-friendly thing to do. Player movement prediction is pretty much how I had it figured while toying with the idea of changing player physics on M:R – all taken care of in the controller’s PlayerMove() function which makes one call to the client and one call to the server – though it’s nice that they now have comments which confirm this. I’m thinking more and more that I’m going to have to go with a new movement state. (Hey, if we’re going to mess around with the controller, might as well go all the way.)</p>
+<p><a name="13_Oct_2002"></a></p>
+<h4><span class="mw-headline">13 Oct 2002</span></h4>
+<p>Um… <a href="http://www.boilingpoint.com/~jasonyu/ut/" class="external text" title="http://www.boilingpoint.com/~jasonyu/ut/" rel="nofollow">I got distracted</a>.</p>
+<p>Anyway. I ended up going with a new movement state for the playerpawn.</p>
+<p>Each time the user manually presses a key to move in any direction, an acceleration is applied to the pawn. This acceleration is what causes the player to move – the player’s velocity is what results. Client prediction doesn’t care about the velocity – the player’s position over time – but instead uses the acceleration – the player’s velocity over time. That way it can not only determine the client’s position, but also where it will likely be in the next update.</p>
+<p>Arbitrarily using AddVelocity doesn’t work, since velocity is neither replicated nor predicted. The new version of the grapple instead tells the player to accelerate in a given vector and sends the player to the new state, “Hooked”. There the controller uses state-specific versions of PlayerMove and ProcessMove to handle the changes. The Hooked state itself is extended from the PlayerFlying state, as we basically want the same thing – to have the player fly – only in this case the player’s acceleration will only be affected by the grapple and no player input.</p>
+<p>The magnitude of acceleration for grappling players is 2048, the same amount used for all pawn movenent with the exception of jumping, which I believe is something like 6000. The latter is more than sufficient, though, as with such a player can easily do instant 180-degree turns and start running in the opposite direction without missing a beat. The grapple tells the player to cap the maximum air speed at 700, so a grappling player will never move at more than twice as fast as his running speed. This value will most likely undergo further tweaking.</p>
+<p>Oh, and bots can grapple-walk. Basically done by hacking up the xloc-hop code and refitting it for use with the grapple. Bots use manual fire on the immediate next node they want to travel to, and when they are pulled close enough, the grapple unhooks. The grapple will automatically unhook and drop the bot after two seconds anyway, just to insure that the bot doesn’t somehow get stuck. Still needs some tweaking – need to write up some better logic for the bots’s grapple aiming. Keep it from shooting the hook off into space while aiming at an uphill target. Things like that. Need to work on getting the bots to grapple on to actual targets, ie high platforms, next.</p>
+<p>Seeing the bots use the grapple to get around is extremely, extremely gratifying.</p>
+<p><a name="21_Oct_2002"></a></p>
+<h4><span class="mw-headline">21 Oct 2002</span></h4>
+<p>And then I passed everything off to the guys at the <a href="http://www.thecgn.com/q2/" class="external text" title="http://www.thecgn.com/q2/" rel="nofollow">Coliseum</a> to tweak to their hearts' content.</p>
+<p>If anyone else is interested in the sources, drop me a note and I'll hook you up. (Ba-dum-bum-crash!)</p>
+<p><a name="20_Nov_2002"></a></p>
+<h4><span class="mw-headline">20 Nov 2002</span></h4>
+<p>Something I hacked together, based on a <a href="../../../../articles/l/e/n/Legacy%7ELens_Flare_e0c6.html" title="Legacy:Lens Flare">discussion</a> from sometime back.</p>
+<p><a href="http://www.boilingpoint.com/~jasonyu/ut/lensflare.jpg" class="external autonumber" title="http://www.boilingpoint.com/~jasonyu/ut/lensflare.jpg" rel="nofollow">[1]</a></p>
+<p><a name="21_Nov_2002"></a></p>
+<h4><span class="mw-headline">21 Nov 2002</span></h4>
+<p>Some tweaking of the textures and placement. Another screenshot:</p>
+<p><a href="http://www.boilingpoint.com/~jasonyu/ut/lensflare2.jpg" class="external autonumber" title="http://www.boilingpoint.com/~jasonyu/ut/lensflare2.jpg" rel="nofollow">[2]</a></p>
+<p>What I'd like is to be able to somehow hook into however standard coronas are rendered and have the flares mirror that behavior. I suspect it's somewhere in the native code, though, so I may be SOL.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 30/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/a/p/Legacy%7ECaptain_Kewl_Developer_Journal_0df1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/a/p/Legacy_talk%7ECaptain_Kewl_Developer_Journal_8059.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Captain_Kewl/Developer_Journal">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:30, 11 January 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

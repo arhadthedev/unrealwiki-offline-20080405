@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:GameInfo (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:GameInfo (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_%28UT%29_c293.html" title="Legacy:Info (UT)">Info (UT)</a> &gt;&gt; GameInfo (Package: Engine)</div>
+<p>A GameInfo subclass contains the rules for a gametype. This includes timelimit, fraglimit, scoring, difficulty, game speed, allowed playerpawn classes, default inventory assignment, and if appropriate, team assignment and general bot behavior.</p>
+<p>This is assigned to a map in the <a href="../../../../articles/l/e/v/Legacy%7ELevel_Properties_9905.html" title="Legacy:Level Properties">Level Properties</a> window, under LevelInfo -&gt; DefaultGameType.</p>
+<p>The <tt>GameInfo</tt> for the current game can be retrieved from every actor in that game via <tt>Level.Game</tt>, but <i>only</i> on the server. <tt>GameInfo</tt> is not replicated to network clients; only <a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_%28UT%29_b4b8.html" title="Legacy:GameReplicationInfo (UT)">GameReplicationInfo (UT)</a> is.</p>
+<p>See <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> for the UT200x version of this class.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Globalconfig_Properties"><span class="tocnumber">1.1</span> <span class="toctext">Globalconfig Properties</span></a></li>
+<li class="toclevel-2"><a href="#Config_Properties"><span class="tocnumber">1.2</span> <span class="toctext">Config Properties</span></a></li>
+<li class="toclevel-2"><a href="#Localized_Properties"><span class="tocnumber">1.3</span> <span class="toctext">Localized Properties</span></a></li>
+<li class="toclevel-2"><a href="#Other_Properties"><span class="tocnumber">1.4</span> <span class="toctext">Other Properties</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Methods"><span class="tocnumber">2</span> <span class="toctext">Methods</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Native_Functions"><span class="tocnumber">2.1</span> <span class="toctext">Native Functions</span></a></li>
+<li class="toclevel-2"><a href="#Events"><span class="tocnumber">2.2</span> <span class="toctext">Events</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Known_subclasses"><span class="tocnumber">3</span> <span class="toctext">Known subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">4</span> <span class="toctext">Comments</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p><a name="Globalconfig_Properties" id="Globalconfig_Properties"></a></p>
+<h3><span class="mw-headline">Globalconfig Properties</span></h3>
+<dl>
+<dt>bool bMuteSpectators&#160;</dt>
+<dd>Whether spectators are allowed to speak.</dd>
+<dt>bool bLowGore&#160;</dt>
+<dd>Whether or not to reduce gore.</dd>
+<dt>bool bVeryLowGore&#160;</dt>
+<dd>Greatly reduces gore.</dd>
+<dt>bool bNoCheating&#160;</dt>
+<dd>Disallows cheating. Hehe.</dd>
+<dt>bool bAllowFOV&#160;</dt>
+<dd>Allows FOV changes in net games</dd>
+<dt>bool bExternalBatcher&#160;</dt>
+<dt>float AutoAim&#160;</dt>
+<dd>How much autoaiming to do (1 = none, 0 = always). (cosine of max error to correct)</dd>
+<dt>float GameSpeed&#160;</dt>
+<dd>Scale applied to game rate.</dd>
+<dt>int MaxSpectators&#160;</dt>
+<dd>Maximum number of spectators.</dd>
+<dt>private string AdminPassword&#160;</dt>
+<dd>Password to receive bAdmin privileges.</dd>
+<dt>private string GamePassword&#160;</dt>
+<dd>Password to enter game.</dd>
+<dt>int MaxPlayers&#160;</dt>
+<dt>string ServerLogName&#160;</dt>
+<dd>Server Log</dd>
+<dt>bool bLocalLog&#160;</dt>
+<dt>bool bWorldLog&#160;</dt>
+<dt>bool bBatchLocal&#160;</dt>
+<dt>int DemoBuild&#160;</dt>
+<dt>int DemoHasTuts&#160;</dt>
+<dt>string IPPolicies[50]&#160;</dt>
+</dl>
+<p><a name="Config_Properties" id="Config_Properties"></a></p>
+<h3><span class="mw-headline">Config Properties</span></h3>
+<dl>
+<dt>bool bNoMonsters&#160;</dt>
+<dd>Whether monsters are allowed in this play mode.</dd>
+<dt>bool bHumansOnly&#160;</dt>
+<dd>Whether non human player models are allowed.</dd>
+<dt>bool bCoopWeaponMode&#160;</dt>
+<dd>Whether or not weapons stay when picked up.</dd>
+<dt>bool bClassicDeathmessages&#160;</dt>
+<dd>Weapon deathmessages if false.</dd>
+</dl>
+<p><a name="Localized_Properties" id="Localized_Properties"></a></p>
+<h3><span class="mw-headline">Localized Properties</span></h3>
+<dl>
+<dt>bool bAlternateMode&#160;</dt>
+<dt>string SwitchLevelMessage&#160;</dt>
+<dt>string DefaultPlayerName&#160;</dt>
+<dt>string LeftMessage&#160;</dt>
+<dt>string FailedSpawnMessage&#160;</dt>
+<dt>string FailedPlaceMessage&#160;</dt>
+<dt>string FailedTeamMessage&#160;</dt>
+<dt>string NameChangedMessage&#160;</dt>
+<dt>string EnteredMessage&#160;</dt>
+<dt>string GameName&#160;</dt>
+<dt>string MaxedOutMessage&#160;</dt>
+<dt>string WrongPassword&#160;</dt>
+<dt>string NeedPassword&#160;</dt>
+<dt>string IPBanned&#160;</dt>
+</dl>
+<p><a name="Other_Properties" id="Other_Properties"></a></p>
+<h3><span class="mw-headline">Other Properties</span></h3>
+<dl>
+<dt>int ItemGoals, KillGoals, SecretGoals&#160;</dt>
+<dd>Special game goals.</dd>
+<dt>byte Difficulty&#160;</dt>
+<dd>In Unreal: 0=easy, 1=medium, 2=hard, 3=very hard. In UT: 0=Novice, 1=</dd>
+<dt>bool bRestartLevel&#160;</dt>
+<dt>bool bPauseable&#160;</dt>
+<dd>Whether the level is pauseable.</dd>
+<dt>bool bCanChangeSkin&#160;</dt>
+<dd>Allow player to change skins in game.</dd>
+<dt>bool bTeamGame&#160;</dt>
+<dd>This is a teamgame.</dd>
+<dt>bool bDeathMatch&#160;</dt>
+<dd>This game is some type of deathmatch (where players can respawn during gameplay)</dd>
+<dt>bool bGameEnded&#160;</dt>
+<dd>set when game ends</dd>
+<dt>bool bOverTime&#160;</dt>
+<dt>bool bCanViewOthers&#160;</dt>
+<dt>float StartTime&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a>&gt; DefaultPlayerClass&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_%28UT%29_cf18.html" title="Legacy:Weapon (UT)">Weapon (UT)</a>&gt; DefaultWeapon&#160;</dt>
+<dd>Default weapon given to player at start.</dd>
+<dt>int NumSpectators&#160;</dt>
+<dd>Current number of spectators.</dd>
+<dt>class&lt;<a href="../../../../articles/s/c/o/Legacy%7EScoreBoard_eab2.html" title="Legacy:ScoreBoard">ScoreBoard</a>&gt; ScoreBoardType&#160;</dt>
+<dd>Type of scoreboard this game uses.</dd>
+<dt>class&lt;<a href="../../../../articles/m/e/n/Legacy%7EMenu_98c7.html" title="Legacy:Menu">Menu</a>&gt; GameMenuType&#160;</dt>
+<dd>Type of oldstyle game options menu to display.</dd>
+<dt>string BotMenuType&#160;</dt>
+<dd>Type of bot menu to display.</dd>
+<dt>string RulesMenuType&#160;</dt>
+<dd>Type of rules menu to display.</dd>
+<dt>string SettingsMenuType&#160;</dt>
+<dd>Type of settings menu to display.</dd>
+<dt>string GameUMenuType&#160;</dt>
+<dd>Type of Game dropdown to display.</dd>
+<dt>string MultiplayerUMenuType&#160;</dt>
+<dd>Type of Multiplayer dropdown to display.</dd>
+<dt>string GameOptionsMenuType&#160;</dt>
+<dd>Type of options dropdown to display.</dd>
+<dt>class&lt;<a href="../../../../articles/h/u/d/Legacy%7EHUD_%28UT%29_e73f.html" title="Legacy:HUD (UT)">HUD (UT)</a>&gt; HUDType&#160;</dt>
+<dd>HUD class this game uses.</dd>
+<dt>class&lt;<a href="../../../../articles/m/a/p/Legacy%7EMapList_efa4.html" title="Legacy:MapList">MapList</a>&gt; MapListType&#160;</dt>
+<dd>Maplist this game uses.</dd>
+<dt>string MapPrefix&#160;</dt>
+<dd>Prefix characters for names of maps for this game type.</dd>
+<dt>string BeaconName&#160;</dt>
+<dd>Identifying string used for finding LAN servers.</dd>
+<dt>string SpecialDamageString&#160;</dt>
+<dt>int SentText&#160;</dt>
+<dt>int NumPlayers&#160;</dt>
+<dt>int CurrentID&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_%28UT%29_c539.html" title="Legacy:LocalMessage (UT)">LocalMessage (UT)</a>&gt; DeathMessageClass&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_%28UT%29_c539.html" title="Legacy:LocalMessage (UT)">LocalMessage (UT)</a>&gt; DMMessageClass&#160;</dt>
+<dd>A message class to be used for commonly used messages. For example, the <a href="../../../../articles/d/e/a/Legacy%7EDeathMatchPlus_e967.html" title="Legacy:DeathMatchPlus">DeathMatchPlus</a> gametype sets DeathMatchMessage as the default, which contains messages for overtime, players leaving and joining the game, players changing names, and players switching teams.</dd>
+<dt>class&lt;<a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a>&gt; MutatorClass&#160;</dt>
+<dd>Class of this gametype's base mutator. (Default is Engine.<a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a>, <a href="../../../../articles/d/e/a/Legacy%7EDeathMatchPlus_e967.html" title="Legacy:DeathMatchPlus">DeathMatchPlus</a> uses Botpack.<a href="../../../../articles/d/m/m/Legacy%7EDMMutator_c133.html" title="Legacy:DMMutator">DMMutator</a>.)</dd>
+<dt><a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> BaseMutator&#160;</dt>
+<dt><a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> DamageMutator&#160;</dt>
+<dd><a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">Linked list</a> of mutators which affect damage.</dd>
+<dt><a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> MessageMutator&#160;</dt>
+<dd><a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">Linked list</a> of mutators which get localized message queries.</dd>
+<dt>class&lt;<a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a>&gt; WaterZoneType&#160;</dt>
+<dd>Default waterzone entry and exit effects</dd>
+<dt>name DefaultPlayerState&#160;</dt>
+<dd>What state a player should start in for this game type</dd>
+<dt>class&lt;<a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a>&gt; GameReplicationInfoClass&#160;</dt>
+<dt><a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a> GameReplicationInfo&#160;</dt>
+<dt><a href="../../../../articles/s/t/a/Legacy%7EStatLog_1ad4.html" title="Legacy:StatLog">StatLog</a> LocalLog&#160;</dt>
+<dt><a href="../../../../articles/s/t/a/Legacy%7EStatLog_1ad4.html" title="Legacy:StatLog">StatLog</a> WorldLog&#160;</dt>
+<dt>bool bLoggingGame&#160;</dt>
+<dd>Does this gametype log?</dd>
+<dt>string LocalLogFileName&#160;</dt>
+<dt>string WorldLogFileName&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/s/t/a/Legacy%7EStatLog_1ad4.html" title="Legacy:StatLog">StatLog</a>&gt; StatLogClass&#160;</dt>
+<dt>string EnabledMutators&#160;</dt>
+<dd>Server query info</dd>
+</dl>
+<p><a name="Methods" id="Methods"></a></p>
+<h2><span class="mw-headline">Methods</span></h2>
+<dl>
+<dt>AdminLogin (<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> P, string Password)&#160;</dt>
+<dd>This function will allow a player to log in as the administrator if the password entered is correct. The function also broadcasts a notification message to the other players.</dd>
+<dt>AdminLogout (<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> P)&#160;</dt>
+<dd>This function is called when a player leaves administrator mode. It ensures that the player is forced to "Walk", and kills them. <i>There is code in there to preserve the players score when they die from logging out of admin mode but I'm sure it doesn't work in practice. – must check</i>.</dd>
+<dt>InitLogging ( )&#160;</dt>
+<dd>Called from <code>PostBeginPlay()</code>. Logs more stuff than you can shake a big stick at. Calls functions on the WorldLog, Log, and LocalLog objects to do so.</dd>
+<dt>InitGameReplicationInfo ( )&#160;</dt>
+<dd>This function is responsible for placing the values of the attributes of the GameInfo class important to the client onto the <a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a> object.</dd>
+<dt>string GetInfo ( )&#160;</dt>
+<dd>Returns the status of the World log.</dd>
+<dt>string GetRules ( )&#160;</dt>
+<dd>This function builds up a description of the server from the list of mutators currently in use, the type of server (Listen or otherwise), and whether there is a password on the server or not.</dd>
+<dt>int GetServerPort ( )&#160;</dt>
+<dd>This functon returns the port the server is runing on by interrogating the level URL.</dd>
+<dt>bool SetPause (bool bPause, <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> P)&#160;</dt>
+<dd>If the level can be paused then the player who paused the game is stored and the function returns <tt>true</tt>. If the game is not pausable then the function will return <tt>false</tt>.</dd>
+<dt>LogGameParameters (<a href="../../../../articles/s/t/a/Legacy%7EStatLog_1ad4.html" title="Legacy:StatLog">StatLog</a> StatLog)&#160;</dt>
+<dd>This function writes the general game parameters to the stat. log.</dd>
+<dt>SetGameSpeed (float T)&#160;</dt>
+<dd>This function sets the game speed.</dd>
+<dt>bool IsRelevant (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Other)&#160;</dt>
+<dd>This function is called from any <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s <code>PreBeginPlay()</code>. If this function returns <tt>true</tt> the actor continues to exist. If the function returns <tt>false</tt> then the actor is removed from the game. This function calls the <tt>AlwaysKeep(), and IsRelevant()</tt> functions on any mutators within the game prior to checking actor difficulty levels and "odds of appearing" values. The function also counts the number of remaining <tt>SecretGoals</tt>, <tt>ItemGoals</tt>, and <tt>KillGoals</tt> left within the level. (also see <a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">Creating Actors And Objects</a>)</dd>
+<dt>bool GrabOption (out string Options, out string Result)&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>GetKeyValue (string Pair, out string Key, out string Value)&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>bool HasOption (string Options, string InKey)&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>string ParseOption (string Options, string InKey)&#160;</dt>
+<dd><i>finsh me</i></dd>
+<dt>ProcessServerTravel (string URL, bool bItems)&#160;</dt>
+<dd>Called when a map changes. Is responsible for handling the transfer of players and their inventory as well as ensuring that all logging for the level jsut played is tidied up.</dd>
+<dt>bool AtCapacity (string Options)&#160;</dt>
+<dd>This function returns true if the server has the maximum number of players allowed on it.</dd>
+<dt>bool CheckIPPolicy (string Address)&#160;</dt>
+<dd>Returns <tt>true</tt> if the IP address of the client is allowed to connect to the server.</dd>
+<dt>int GetIntOption( string Options, string ParseString, int CurrentValue )&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>Logout (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Exiting)&#160;</dt>
+<dd>Logs the player out and tells the logging engine about it.</dd>
+<dt>AddDefaultInventory (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> PlayerPawn)&#160;</dt>
+<dd>Add any default inventory to the player.</dd>
+<dt>NavigationPoint FindPlayerStart (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Player, optional byte InTeam, optional string incomingName)&#160;</dt>
+<dd>Locates the "best" player start for the player.</dd>
+<dt>bool RestartPlayer (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> aPlayer)&#160;</dt>
+<dd>Restart a player after they have died. This function adds the default inventory by calling AddDefaultInventory(), finds a start location by calling (you guessed it) FindPlayerStart(). Once this has been acomplished, sets the player's stats back to defaults.</dd>
+<dt>StartPlayer (<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> Other)&#160;</dt>
+<dd>Start a player. <i>Finish me</i></dd>
+<dt>Killed (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killer, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, name damageType)&#160;</dt>
+<dd>Called when someon gets killed. This function broadcasts the death message, logs the event, and calls the <tt>ScoreKill()</tt> function.</dd>
+<dt>BroadcastRegularDeathMessage (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killer, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, name damageType)&#160;</dt>
+<dd>Calls on to <tt>BroadcastLocalizedMessage()</tt>.</dd>
+<dt>ScoreKill (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killer, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other)&#160;</dt>
+<dd>Increases the Killer's killCount and score by 1 unless it was a suicide - in which case the killed pawn loses a point.</dd>
+<dt>string KillMessage (name damageType, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other) [static]&#160;</dt>
+<dd>Returns " died." as a default catch all death message.</dd>
+<dt>bool CanSpectate (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Viewer, <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> ViewTarget)&#160;</dt>
+<dd>Returns whether players are allowed to use a certain Actor as ViewTarget.</dd>
+<dt>RegisterDamageMutator (<a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> M)&#160;</dt>
+<dd>Adds a damage mutator at the front of the list of damage mutators.</dd>
+<dt>RegisterMessageMutator (<a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> M)&#160;</dt>
+<dd>Adds a message mutator at the front of the list of message mutators.</dd>
+<dt>int ReduceDamage (int Damage, name DamageType, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> injured, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> instigatedBy)&#160;</dt>
+<dd>This function returns a damage of 0 if the injured <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> is in a zone that has it's <tt>bNeutralZone</tt> property set to <tt>true</tt>. Otherwise the original damage is returned.</dd>
+<dt>bool ShouldRespawn (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Other)&#160;</dt>
+<dd>Returns whether an actor item should respawn. In death matches this function should return True for weapon and item pickups.</dd>
+<dt>bool PickupQuery (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, <a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a> Item)&#160;</dt>
+<dd>Called when pawn has a chance to pick Item up (i.e. when the pawn touches a weapon or item pickup). Should return true if he wants to pick it up, false if he does not want it.</dd>
+<dt>DiscardInventory (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other)&#160;</dt>
+<dd>Discard a player's inventory after he dies.</dd>
+<dt>float PlayerJumpZScaling ( )&#160;</dt>
+<dd>Returns 1.0, but could be overidden for "low grav" game types</dd>
+<dt>ChangeName (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, coerce string S, bool bNameChange)&#160;</dt>
+<dd>Attempt to change a players name.</dd>
+<dt>bool ChangeTeam (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, int N)&#160;</dt>
+<dd>Return whether a player can change teams or not.</dd>
+<dt>float PlaySpawnEffect (<a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a> Inv)&#160;</dt>
+<dd>Play an inventory respawn effect.</dd>
+<dt>string PlayerKillMessage (name damageType, <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> Other) [static]&#160;</dt>
+<dd>returns " was killed by ".</dd>
+<dt>string CreatureKillMessage (name damageType, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other) [static]&#160;</dt>
+<dd>returns "was killed by a "</dd>
+<dt>SendPlayer (<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> aPlayer, string URL)&#160;</dt>
+<dd>Send the player specified to the URL passed to the function.</dd>
+<dt>RestartGame ( )&#160;</dt>
+<dd>Called to restart the current game</dd>
+<dt>bool AllowsBroadcast (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> broadcaster, int Len)&#160;</dt>
+<dd>Returns <tt>true</tt> if the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> passed to the function is allowed to broadcast a message.</dd>
+<dt>EndGame (string Reason)&#160;</dt>
+<dd>Called at the end of the game. Is responsible for checking with the mutator function <tt>HandleEndGame()</tt> and the function <tt>SetEndCams</tt> to determine whether the ame should go into extra time. The function also closes the game logging down.</dd>
+<dt>bool SetEndCams (string Reason)&#160;</dt>
+<dd>Puts all player pawns into a <i>GameEnded</i> state and calls the <tt>clientGameEnded()</tt> function on them. The function returns <tt>true</tt>.</dd>
+<dt>ResetGame ( ) [static]&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>bool AddBot ( )&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>bool ForceAddBot ( )&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>PlayTeleportEffect (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Incoming, bool bOut, bool bSound)&#160;</dt>
+<dd><i>finish me</i></dd>
+</dl>
+<p><a name="Native_Functions" id="Native_Functions"></a></p>
+<h3><span class="mw-headline">Native Functions</span></h3>
+<dl>
+<dt>string GetNetworkNumber()&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>string ParseKillMessage (string KillerName, string VictimName, string WeaponName, string DeathMessage) [static]&#160;</dt>
+<dd>Parses the kill message. Replaces the first occurances of <tt>%k</tt>, <tt>%o</tt> and <tt>%w</tt> with <tt>KillerName</tt>, <tt>VictimName</tt> and <tt>WeaponName</tt> respectively. (also see <a href="../../../../articles/m/e/s/Legacy%7EMessage_Placeholder_f300.html" title="Legacy:Message Placeholder">Message Placeholder</a>)</dd>
+</dl>
+<p><a name="Events" id="Events"></a></p>
+<h3><span class="mw-headline">Events</span></h3>
+<dl>
+<dt>GameEnding ( )&#160;</dt>
+<dd>This functon is called when a game is shut down. It halts any world logging and local logging.</dd>
+<dt>DetailChange ( )&#160;</dt>
+<dd>This function is called whenever the client changes their level of detail (high to low, or low to high). Apart from re-linking all of the zones to a SkyBox, any actors with their <tt>bHighDetailMode</tt> property set to true will be destroyed on entry to a "low detail" mode.</dd>
+<dt>InitGame (string Options, out string Error)&#160;</dt>
+<dd>This function is called before the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actors</a> <tt>PreBeginPlay()</tt> function if the comment in the file is to be believed. It sets up some of the game options.</dd>
+<dt>string GetBeaconText ( )&#160;</dt>
+<dd><i>finish me</i></dd>
+<dt>PreLogin (string Options, string Address, out string Error, out string FailCode)&#160;</dt>
+<dd>Accepts or rejects a player based upon any game password vlaidation, IP bans, and current server capacity.</dd>
+<dt><a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> Login (string Portal, string Options, out string Error, class&lt;<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a>&gt; SpawnClass)&#160;</dt>
+<dd>Log a player in. Fails login if you set the Error string. PreLogin is called before Login, but significant game time may pass before Login is called, especially if content is downloaded.</dd>
+<dt>PostLogin (<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> NewPlayer)&#160;</dt>
+<dd>Called after a successful login. This is the first place it is safe to call replicated functions on the PlayerPawn. <i>finish me</i></dd>
+<dt>AcceptInventory (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> PlayerPawn)&#160;</dt>
+<dd>Called when new inventory is accepted. Calls the function <tt>AddDefaultInventory</tt>.</dd>
+<dt>ScoreEvent (name EventName, <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> EventActor, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> InstigatedBy)&#160;</dt>
+<dd>Placeholder event function.</dd>
+</dl>
+<p><a name="Known_subclasses" id="Known_subclasses"></a></p>
+<h2><span class="mw-headline">Known subclasses</span></h2>
+<ul>
+<li>UnrealGameInfo</li>
+<li><a href="../../../../articles/t/o/u/Legacy%7ETournamentGameInfo_1a4d.html" title="Legacy:TournamentGameInfo">TournamentGameInfo</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p>We could do with a nice time diagram showing when all of the different functions and events (including those on the mutators) get called.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<p>See <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a> and <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a> for additional background information.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Category:Legacy Class (UT)</a></p>
+<hr />
+<p><b>Fearless</b>: Hmmm, some interesting information here even if it's basic. I'd really like to do a mutator that changes gamespeed without the intervention of an admin. I have also a little question concerning the adminlogout command. It says here that the player is killed when the command is invoked. This does happen on our Linux 4.40 server but this doesn't happen on a server you're hosting yourself. Does anyone have any idea why this is&#160;:P&#160;?</p>
+<p><b>NogginBasher</b>: You can do that using a combination of x3dfxMapVote and IdeFiX's ServerMode. In ServerMode.ini you need something like: "Commands[11]=SET Engine.GameInfo GameSpeed 1.25". I'm currently testing: "Commands[12]=SET Botpack.DeathMatchPlus bHardcoreMode True"</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 111/1000000
+Post-expand include size: 204/2097152 bytes
+Template argument size: 135/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Legacy Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/g/a/m/Legacy_talk%7EGameInfo_%28UT%29_fe19.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:GameInfo_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 14:51, 22 June 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

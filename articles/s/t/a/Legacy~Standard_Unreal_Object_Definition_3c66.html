@@ -1,0 +1,593 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Standard Unreal Object Definition - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Standard Unreal Object Definition</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The header file below is taken from the Publicly Released 432 Header Files, Component of the Engine, Inc. Folder. These files are downloaded from the Epic Games Website.</p>
+<p>See <a href="../../../../articles/s/t/a/Legacy%7EStandard_Unreal_Object_Definition_Discuss_369c.html" title="Legacy:Standard Unreal Object Definition/Discuss">Legacy:Standard Unreal Object Definition/Discuss</a> to comment, debate, analyze, whatever.</p>
+<hr />
+<p><a name="Tim_Sweeney.2C_UnObject_Header_FileStandard_Unreal_Object_Definitions.2C_Engine" id="Tim_Sweeney.2C_UnObject_Header_FileStandard_Unreal_Object_Definitions.2C_Engine"></a></p>
+<h2><span class="mw-headline">Tim Sweeney, UnObject Header File<br />
+Standard Unreal Object Definitions, Engine</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/*=============================================================================
+        UnObj.h: Standard Unreal object definitions.
+        Copyright 1997-1999 Epic Games, Inc. All Rights Reserved.
+ 
+        Revision history:
+                * Created by Tim Sweeney
+=============================================================================*/</span>
+ 
+<span class="coMULTI">/*----------------------------------------------------------------------------
+        Forward declarations.
+----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">// All engine classes.</span>
+<span class="kw5">class</span>          UBitmap;
+<span class="kw5">class</span>                  UTexture;
+<span class="kw5">class</span>                          UFont;
+<span class="kw5">class</span>          UPalette;
+<span class="kw5">class</span>          USound;
+<span class="kw5">class</span>          UMusic;
+<span class="kw5">class</span>          UPrimitive;
+<span class="kw5">class</span>                  UMesh;
+<span class="kw5">class</span>                  UModel;
+<span class="kw5">class</span>          UPolys;
+<span class="kw5">class</span>          ULevelBase;
+<span class="kw5">class</span>                  ULevel;
+<span class="kw5">class</span>                  UPendingLevel;
+<span class="kw5">class</span>          UPlayer;
+<span class="kw5">class</span>                  UViewport;
+<span class="kw5">class</span>                  UNetConnection;
+<span class="kw5">class</span>          UConsole;
+ 
+<span class="co1">// Other classes.</span>
+<span class="kw4">struct</span> FTextureInfo;
+<span class="kw5">class</span>  AActor;
+<span class="kw5">class</span>  ABrush;
+<span class="kw5">class</span>  FDecal;
+<span class="kw5">class</span>  ADecal;
+<span class="kw5">class</span>  FScan;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        UBspNode.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">// Flags associated with a Bsp node.</span>
+<span class="kw4">enum</span> EBspNodeFlags
+<span class="br0">{</span>
+        <span class="co1">// Flags.</span>
+        NF_NotCsg                       = 0x01, <span class="co1">// Node is not a Csg splitter, i.e. is a transparent poly.</span>
+        NF_ShootThrough         = 0x02, <span class="co1">// Can shoot through (for projectile solid ops).</span>
+        NF_NotVisBlocking   = 0x04, <span class="co1">// Node does not block visibility, i.e. is an invisible collision hull.</span>
+        NF_PolyOccluded         = 0x08, <span class="co1">// Node's poly was occluded on the previously-drawn frame.</span>
+        NF_BoxOccluded          = 0x10, <span class="co1">// Node's bounding box was occluded.</span>
+        NF_BrightCorners        = 0x10, <span class="co1">// Temporary.</span>
+        NF_IsNew                        = 0x20, <span class="co1">// Editor: Node was newly-added.</span>
+        NF_IsFront              = 0x40, <span class="co1">// Filter operation bounding-sphere precomputed and guaranteed to be front.</span>
+        NF_IsBack               = 0x80, <span class="co1">// Guaranteed back.</span>
+ 
+        <span class="co1">// Combinations of flags.</span>
+        NF_NeverMove            = <span class="nu0">0</span>, <span class="co1">// Bsp cleanup must not move nodes with these tags.</span>
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// Identifies a unique convex volume in the world.</span>
+<span class="co1">//</span>
+<span class="kw4">struct</span> ENGINE_API FPointRegion
+<span class="br0">{</span>
+        <span class="co1">// Variables.</span>
+        <span class="kw5">class</span> AZoneInfo* Zone;                 <span class="co1">// Zone actor.</span>
+        <span class="kw4">INT</span>                             iLeaf;                 <span class="co1">// Bsp leaf.</span>
+        <span class="kw4">BYTE</span>             ZoneNumber;   <span class="co1">// Zone number.</span>
+ 
+        <span class="co1">// Constructors.</span>
+        FPointRegion<span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+        FPointRegion<span class="br0">(</span> <span class="kw5">class</span> AZoneInfo* InLevel <span class="br0">)</span>
+        :       Zone<span class="br0">(</span>InLevel<span class="br0">)</span>, iLeaf<span class="br0">(</span>INDEX_NONE<span class="br0">)</span>, ZoneNumber<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+        FPointRegion<span class="br0">(</span> <span class="kw5">class</span> AZoneInfo* InZone, <span class="kw4">INT</span> InLeaf, <span class="kw4">BYTE</span> InZoneNumber <span class="br0">)</span>
+        :       Zone<span class="br0">(</span>InZone<span class="br0">)</span>, iLeaf<span class="br0">(</span>InLeaf<span class="br0">)</span>, ZoneNumber<span class="br0">(</span>InZoneNumber<span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// FBspNode defines one node in the Bsp, including the front and back</span>
+<span class="co1">// pointers and the polygon data itself.  A node may have 0 or 3 to (MAX_NODE_VERTICES-1)</span>
+<span class="co1">// vertices. If the node has zero vertices, it's only used for splitting and</span>
+<span class="co1">// doesn't contain a polygon (this happens in the editor).</span>
+<span class="co1">//</span>
+<span class="co1">// vNormal, vTextureU, vTextureV, and others are indices into the level's</span>
+<span class="co1">// vector table.  iFront,iBack should be INDEX_NONE to indicate no children.</span>
+<span class="co1">//</span>
+<span class="co1">// If iPlane==INDEX_NONE, a node has no coplanars.  Otherwise iPlane</span>
+<span class="co1">// is an index to a coplanar polygon in the Bsp.  All polygons that are iPlane</span>
+<span class="co1">// children can only have iPlane children themselves, not fronts or backs.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> FBspNode <span class="co1">// 64 bytes</span>
+<span class="br0">{</span>
+public:
+        <span class="kw4">enum</span> <span class="br0">{</span>MAX_NODE_VERTICES=<span class="nu0">16</span><span class="br0">}</span>;      <span class="co1">// Max vertices in a Bsp node, pre clipping.</span>
+        <span class="kw4">enum</span> <span class="br0">{</span>MAX_FINAL_VERTICES=<span class="nu0">24</span><span class="br0">}</span>;     <span class="co1">// Max vertices in a Bsp node, post clipping.</span>
+        <span class="kw4">enum</span> <span class="br0">{</span>MAX_ZONES=<span class="nu0">64</span><span class="br0">}</span>;                      <span class="co1">// Max zones per level.</span>
+ 
+        <span class="co1">// Persistent information.</span>
+        FPlane                  <span class="kw4">Plane</span>;                 <span class="co1">// 16 Plane the node falls into (X, Y, Z, W).</span>
+        QWORD                   ZoneMask;               <span class="co1">// 8  Bit mask for all zones at or below this node (up to 64).</span>
+        <span class="kw4">INT</span>                            iVertPool;              <span class="co1">// 4  Index of first vertex in vertex pool, =iTerrain if NumVertices==0 and NF_TerrainFront.</span>
+        <span class="kw4">INT</span>                            iSurf;                  <span class="co1">// 4  Index to surface information.</span>
+ 
+        <span class="co1">// iBack:  4  Index to node in front (in direction of Normal).</span>
+        <span class="co1">// iFront: 4  Index to node in back  (opposite direction as Normal).</span>
+        <span class="co1">// iPlane: 4  Index to next coplanar poly in coplanar list.</span>
+        union <span class="br0">{</span> <span class="kw4">INT</span> iBack; <span class="kw4">INT</span> iChild<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>; <span class="br0">}</span>;
+                <span class="kw4">INT</span> iFront;
+                        <span class="kw4">INT</span> iPlane;
+ 
+        <span class="kw4">INT</span>                            iCollisionBound;<span class="co1">// 4  Collision bound.</span>
+        <span class="kw4">INT</span>                            iRenderBound;   <span class="co1">// 4  Rendering bound.</span>
+        <span class="kw4">BYTE</span>                   iZone<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;            <span class="co1">// 2  Visibility zone in 1=front, 0=back.</span>
+        <span class="kw4">BYTE</span>                   NumVertices;    <span class="co1">// 1  Number of vertices in node.</span>
+        <span class="kw4">BYTE</span>                   NodeFlags;              <span class="co1">// 1  Node flags.</span>
+        <span class="kw4">INT</span>                            iLeaf<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;            <span class="co1">// 8  Leaf in back and front, INDEX_NONE=not a leaf.</span>
+ 
+        <span class="co1">// Functions.</span>
+        UBOOL IsCsg<span class="br0">(</span> DWORD ExtraFlags=<span class="nu0">0</span> <span class="br0">)</span> <span class="kw5">const</span>
+        <span class="br0">{</span>
+                <span class="kw1">return</span> <span class="br0">(</span>NumVertices&gt;<span class="nu0">0</span><span class="br0">)</span> &amp;&amp; !<span class="br0">(</span>NodeFlags &amp; <span class="br0">(</span>NF_IsNew | NF_NotCsg | ExtraFlags<span class="br0">)</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        UBOOL ChildOutside<span class="br0">(</span> <span class="kw4">INT</span> iChild, UBOOL Outside, DWORD ExtraFlags=<span class="nu0">0</span> <span class="br0">)</span> <span class="kw5">const</span>
+        <span class="br0">{</span>
+                <span class="kw1">return</span> iChild ? <span class="br0">(</span>Outside || IsCsg<span class="br0">(</span>ExtraFlags<span class="br0">)</span><span class="br0">)</span> : <span class="br0">(</span>Outside &amp;&amp; !IsCsg<span class="br0">(</span>ExtraFlags<span class="br0">)</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        ENGINE_API friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FBspNode&amp; N <span class="br0">)</span>;
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// Properties of a zone.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ENGINE_API FZoneProperties
+<span class="br0">{</span>
+public:
+        <span class="co1">// Variables.</span>
+        AZoneInfo*      ZoneActor;              <span class="co1">// Optional actor defining the zone's property.</span>
+        <span class="kw4">FLOAT</span>          LastRenderTime; <span class="co1">// Most recent level TimeSeconds when rendered.</span>
+        QWORD           Connectivity;   <span class="co1">// (Connect[i]&amp;(1&lt;&lt;j))==1 if zone i is adjacent to zone j.</span>
+        QWORD           Visibility;             <span class="co1">// (Connect[i]&amp;(1&lt;&lt;j))==1 if zone i can see zone j.</span>
+ 
+        <span class="co1">// Serializer.</span>
+        friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FZoneProperties&amp; P <span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>FZoneProperties&lt;&lt;<span class="br0">)</span>;
+                <span class="kw1">return</span> Ar &lt;&lt; *<span class="br0">(</span>UObject**<span class="br0">)</span>&amp;P.<span class="me1">ZoneActor</span> &lt;&lt; P.<span class="me1">Connectivity</span> &lt;&lt; P.<span class="me1">Visibility</span>;
+                Ar &lt;&lt; P.<span class="me1">LastRenderTime</span>;
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        UBspLeaves.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// Information about a convex volume.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> FLeaf
+<span class="br0">{</span>
+public:
+        <span class="co1">// Variables.</span>
+        <span class="kw4">INT</span> iZone;          <span class="co1">// The zone this convex volume is in.</span>
+        <span class="kw4">INT</span> iPermeating;    <span class="co1">// Lights permeating this volume considering shadowing.</span>
+        <span class="kw4">INT</span> iVolumetric;    <span class="co1">// Volumetric lights hitting this region, no shadowing.</span>
+        QWORD VisibleZones; <span class="co1">// Bit mask of visible zones from this convex volume.</span>
+ 
+        <span class="co1">// Functions.</span>
+        FLeaf<span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+        FLeaf<span class="br0">(</span> <span class="kw4">INT</span> iInZone, <span class="kw4">INT</span> InPermeating, <span class="kw4">INT</span> InVolumetric, QWORD InVisibleZones <span class="br0">)</span>
+        :       iZone<span class="br0">(</span>iInZone<span class="br0">)</span>, iPermeating<span class="br0">(</span>InPermeating<span class="br0">)</span>, iVolumetric<span class="br0">(</span>InVolumetric<span class="br0">)</span>, VisibleZones<span class="br0">(</span>InVisibleZones<span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+        friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FLeaf&amp; L <span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>FLeaf&lt;&lt;<span class="br0">)</span>;
+                <span class="kw1">return</span> Ar &lt;&lt; AR_INDEX<span class="br0">(</span>L.<span class="me1">iZone</span><span class="br0">)</span> &lt;&lt; AR_INDEX<span class="br0">(</span>L.<span class="me1">iPermeating</span><span class="br0">)</span> &lt;&lt; AR_INDEX<span class="br0">(</span>L.<span class="me1">iVolumetric</span><span class="br0">)</span> &lt;&lt; L.<span class="me1">VisibleZones</span>;
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        UBspSurf.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// One Bsp polygon.  Lists all of the properties associated with the</span>
+<span class="co1">// polygon's plane.  Does not include a point list; the actual points</span>
+<span class="co1">// are stored along with Bsp nodes, since several nodes which lie in the</span>
+<span class="co1">// same plane may reference the same poly.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> FBspSurf
+<span class="br0">{</span>
+public:
+ 
+        <span class="co1">// Persistent info.</span>
+        UTexture*       <a href="/Texture"><span class="kw10">Texture</span></a>;               <span class="co1">// 4 Texture map.</span>
+        DWORD           PolyFlags;              <span class="co1">// 4 Polygon flags.</span>
+        <span class="kw4">INT</span>                    pBase;                  <span class="co1">// 4 Polygon &amp; texture base point index (where U,V==0,0).</span>
+        <span class="kw4">INT</span>                    vNormal;                <span class="co1">// 4 Index to polygon normal.</span>
+        <span class="kw4">INT</span>                    vTextureU;              <span class="co1">// 4 Texture U-vector index.</span>
+        <span class="kw4">INT</span>                    vTextureV;              <span class="co1">// 4 Texture V-vector index.</span>
+        <span class="kw4">INT</span>                    iLightMap;              <span class="co1">// 4 Light mesh.</span>
+        <span class="kw4">INT</span>                    iBrushPoly;             <span class="co1">// 4 Editor brush polygon index.</span>
+        SWORD           PanU;                   <span class="co1">// 2 U-Panning value.</span>
+        SWORD           PanV;                   <span class="co1">// 2 V-Panning value.</span>
+        ABrush*         <a href="/Actor"><span class="kw10">Actor</span></a>;                   <span class="co1">// 4 Brush actor owning this Bsp surface.</span>
+        TArray&lt;FDecal&gt;    Decals;         <span class="co1">// 12 Array decals on this surface</span>
+        TArray&lt;INT&gt;       Nodes;                  <span class="co1">// 12 Nodes which make up this surface</span>
+ 
+        <span class="co1">// Functions.</span>
+        ENGINE_API friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FBspSurf&amp; Surf <span class="br0">)</span>;
+<span class="br0">}</span>;
+ 
+<span class="co1">// Flags describing effects and properties of a Bsp polygon.</span>
+<span class="kw4">enum</span> EPolyFlags
+<span class="br0">{</span>
+        <span class="co1">// Regular in-game flags.</span>
+        PF_Invisible            = 0x00000001,   <span class="co1">// Poly is invisible.</span>
+        PF_Masked                       = 0x00000002,   <span class="co1">// Poly should be drawn masked.</span>
+        PF_Translucent          = 0x00000004,   <span class="co1">// Poly is transparent.</span>
+        PF_NotSolid                     = 0x00000008,   <span class="co1">// Poly is not solid, doesn't block.</span>
+        PF_Environment          = 0x00000010,   <span class="co1">// Poly should be drawn environment mapped.</span>
+        PF_ForceViewZone        = 0x00000010,   <span class="co1">// Force current iViewZone in OccludeBSP (reuse Environment flag)</span>
+        PF_Semisolid            = 0x00000020,   <span class="co1">// Poly is semi-solid = collision solid, Csg nonsolid.</span>
+        PF_Modulated            = 0x00000040,   <span class="co1">// Modulation transparency.</span>
+        PF_FakeBackdrop         = 0x00000080,   <span class="co1">// Poly looks exactly like backdrop.</span>
+        PF_TwoSided                     = 0x00000100,   <span class="co1">// Poly is visible from both sides.</span>
+        PF_AutoUPan                     = 0x00000200,   <span class="co1">// Automatically pans in U direction.</span>
+        PF_AutoVPan             = 0x00000400,   <span class="co1">// Automatically pans in V direction.</span>
+        PF_NoSmooth                     = 0x00000800,   <span class="co1">// Don't smooth textures.</span>
+        PF_BigWavy                      = 0x00001000,   <span class="co1">// Poly has a big wavy pattern in it.</span>
+        PF_SpecialPoly          = 0x00001000,   <span class="co1">// Game-specific poly-level render control (reuse BigWavy flag)</span>
+        PF_SmallWavy            = 0x00002000,   <span class="co1">// Small wavy pattern (for water/enviro reflection).</span>
+        PF_Flat                         = 0x00004000,   <span class="co1">// Flat surface.</span>
+        PF_LowShadowDetail      = 0x00008000,   <span class="co1">// Low detaul shadows.</span>
+        PF_NoMerge                      = 0x00010000,   <span class="co1">// Don't merge poly's nodes before lighting when rendering.</span>
+        PF_CloudWavy            = 0x00020000,   <span class="co1">// Polygon appears wavy like clouds.</span>
+        PF_DirtyShadows         = 0x00040000,   <span class="co1">// Dirty shadows.</span>
+        PF_BrightCorners        = 0x00080000,   <span class="co1">// Brighten convex corners.</span>
+        PF_SpecialLit           = 0x00100000,   <span class="co1">// Only speciallit lights apply to this poly.</span>
+        PF_Gouraud                      = 0x00200000,   <span class="co1">// Gouraud shaded.</span>
+        PF_NoBoundRejection = 0x00200000,       <span class="co1">// Disable bound rejection in OccludeBSP (reuse Gourard flag)</span>
+        PF_Unlit                        = 0x00400000,   <span class="co1">// Unlit.</span>
+        PF_HighShadowDetail     = 0x00800000,   <span class="co1">// High detail shadows.</span>
+        PF_Portal                       = 0x04000000,   <span class="co1">// Portal between iZones.</span>
+        PF_Mirrored                     = 0x08000000,   <span class="co1">// Reflective surface.</span>
+ 
+        <span class="co1">// Editor flags.</span>
+        PF_Memorized            = 0x01000000,   <span class="co1">// Editor: Poly is remembered.</span>
+        PF_Selected             = 0x02000000,   <span class="co1">// Editor: Poly is selected.</span>
+        PF_Highlighted      = 0x10000000,       <span class="co1">// Editor: Poly is highlighted.   </span>
+        PF_FlatShaded           = 0x40000000,   <span class="co1">// FPoly has been split by SplitPolyWithPlane.   </span>
+ 
+        <span class="co1">// Internal.</span>
+        PF_EdProcessed          = 0x40000000,   <span class="co1">// FPoly was already processed in editorBuildFPolys.</span>
+        PF_EdCut                = 0x80000000,   <span class="co1">// FPoly has been split by SplitPolyWithPlane.  </span>
+        PF_RenderFog            = 0x40000000,   <span class="co1">// Render with fogmapping.</span>
+        PF_Occlude                      = 0x80000000,   <span class="co1">// Occludes even if PF_NoOcclude.</span>
+        PF_RenderHint       = 0x01000000,   <span class="co1">// Rendering optimization hint.</span>
+ 
+        <span class="co1">// Combinations of flags.</span>
+        PF_NoOcclude            = PF_Masked | PF_Translucent | PF_Invisible | PF_Modulated,
+        PF_NoEdit                       = PF_Memorized | PF_Selected | PF_EdProcessed | PF_NoMerge | PF_EdCut,
+        PF_NoImport                     = PF_NoEdit | PF_NoMerge | PF_Memorized | PF_Selected | PF_EdProcessed | PF_EdCut,
+        PF_AddLast                      = PF_Semisolid | PF_NotSolid,
+        PF_NoAddToBSP           = PF_EdCut | PF_EdProcessed | PF_Selected | PF_Memorized,
+        PF_NoShadows            = PF_Unlit | PF_Invisible | PF_Environment | PF_FakeBackdrop,
+        PF_Transient            = PF_Highlighted,
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        FLightMapIndex.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// A shadow occlusion mask.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ENGINE_API FShadowMask
+<span class="br0">{</span>
+public:
+        AActor* Owner;
+        TArray&lt;BYTE&gt; ShadowData;
+        friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FShadowMask&amp; M <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">return</span> Ar &lt;&lt; *<span class="br0">(</span>UObject**<span class="br0">)</span>&amp;M.<span class="me1">Owner</span> &lt;&lt; M.<span class="me1">ShadowData</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// Describes the mesh-based lighting applied to a Bsp poly.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ENGINE_API FLightMapIndex
+<span class="br0">{</span>
+public:
+        <span class="kw4">INT</span>            DataOffset;
+        <span class="kw4">INT</span>            iLightActors;
+        FVector Pan;
+        <span class="kw4">FLOAT</span>  UScale, VScale;
+        <span class="kw4">INT</span>     UClamp, VClamp;
+        <span class="kw4">BYTE</span>   UBits, VBits;
+        friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FLightMapIndex&amp; I <span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>FLightMapIndex&lt;&lt;<span class="br0">)</span>;
+                Ar &lt;&lt; I.<span class="me1">DataOffset</span>;
+                Ar &lt;&lt; I.<span class="me1">Pan</span>;
+                Ar &lt;&lt; AR_INDEX<span class="br0">(</span>I.<span class="me1">UClamp</span><span class="br0">)</span> &lt;&lt; AR_INDEX<span class="br0">(</span>I.<span class="me1">VClamp</span><span class="br0">)</span>;
+                Ar &lt;&lt; I.<span class="me1">UScale</span> &lt;&lt; I.<span class="me1">VScale</span>;
+                Ar &lt;&lt; I.<span class="me1">iLightActors</span>;
+                <span class="kw1">return</span> Ar;
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        UPolys.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">// Results from FPoly.SplitWithPlane, describing the result of splitting</span>
+<span class="co1">// an arbitrary FPoly with an arbitrary plane.</span>
+<span class="kw4">enum</span> ESplitType
+<span class="br0">{</span>
+        SP_Coplanar             = <span class="nu0">0</span>, <span class="co1">// Poly wasn't split, but is coplanar with plane</span>
+        SP_Front                = <span class="nu0">1</span>, <span class="co1">// Poly wasn't split, but is entirely in front of plane</span>
+        SP_Back                 = <span class="nu0">2</span>, <span class="co1">// Poly wasn't split, but is entirely in back of plane</span>
+        SP_Split                = <span class="nu0">3</span>, <span class="co1">// Poly was split into two new editor polygons</span>
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// A general-purpose polygon used by the editor.  An FPoly is a free-standing</span>
+<span class="co1">// class which exists independently of any particular level, unlike the polys</span>
+<span class="co1">// associated with Bsp nodes which rely on scads of other objects.  FPolys are</span>
+<span class="co1">// used in UnrealEd for internal work, such as building the Bsp and performing</span>
+<span class="co1">// boolean operations.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ENGINE_API FPoly
+<span class="br0">{</span>
+public:
+<span class="kw2">#if</span> <span class="nu0">0</span> <span class="co1">//WDM -- remove this...?</span>
+        <span class="co1">// The changes to these values allow things like the 2D shape editor and brush clipping</span>
+        <span class="co1">// to create large polys with many sides if they need to.</span>
+        <span class="co1">//</span>
+        <span class="kw4">enum</span> <span class="br0">{</span>MAX_VERTICES=<span class="nu0">32</span><span class="br0">}</span>; <span class="co1">// Maximum vertices an FPoly may have.</span>
+<span class="kw2">#else</span>
+        <span class="kw4">enum</span> <span class="br0">{</span>MAX_VERTICES=<span class="nu0">16</span><span class="br0">}</span>; <span class="co1">// Maximum vertices an FPoly may have.</span>
+<span class="kw2">#endif</span>
+        <span class="kw4">enum</span> <span class="br0">{</span>VERTEX_THRESHOLD=MAX_VERTICES<span class="nu0">-2</span><span class="br0">}</span>; <span class="co1">// Threshold for splitting into two.</span>
+ 
+        FVector     Base;               <span class="co1">// Base point of polygon.</span>
+        FVector     Normal;                     <span class="co1">// Normal of polygon.</span>
+        FVector     TextureU;           <span class="co1">// Texture U vector.</span>
+        FVector     TextureV;           <span class="co1">// Texture V vector.</span>
+        FVector     Vertex<span class="br0">[</span>MAX_VERTICES<span class="br0">]</span>; <span class="co1">// Actual vertices.</span>
+        DWORD       PolyFlags;          <span class="co1">// FPoly &amp; Bsp poly bit flags (PF_).</span>
+        ABrush*         <a href="/Actor"><span class="kw10">Actor</span></a>;                   <span class="co1">// Brush where this originated, or NULL.</span>
+        UTexture*       <a href="/Texture"><span class="kw10">Texture</span></a>;               <span class="co1">// Texture map.</span>
+        FName           ItemName;               <span class="co1">// Item name.</span>
+        <span class="kw4">INT</span>                    NumVertices;    <span class="co1">// Number of vertices.</span>
+        <span class="kw4">INT</span>                    iLink;                  <span class="co1">// iBspSurf, or brush fpoly index of first identical polygon, or MAXWORD.</span>
+        <span class="kw4">INT</span>                    iBrushPoly;             <span class="co1">// Index of editor solid's polygon this originated from.</span>
+        SWORD           PanU,PanV;              <span class="co1">// Texture panning values.</span>
+        <span class="kw4">INT</span>                    SavePolyIndex;  <span class="co1">// Used by multiple vertex editing to keep track of original PolyIndex into owner brush</span>
+        UBOOL           bFaceDragSel;
+ 
+        <span class="co1">// Custom functions.</span>
+        void  Init                              <span class="br0">(</span><span class="br0">)</span>;
+        void  Reverse                   <span class="br0">(</span><span class="br0">)</span>;
+        void  SplitInHalf               <span class="br0">(</span>FPoly *OtherHalf<span class="br0">)</span>;
+        void  Transform                 <span class="br0">(</span><span class="kw5">const</span> FModelCoords &amp;Coords, <span class="kw5">const</span> FVector &amp;PreSubtract,<span class="kw5">const</span> FVector &amp;PostAdd, <span class="kw4">FLOAT</span> Orientation<span class="br0">)</span>;
+        <span class="kw4">int</span>   Fix                              <span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw4">int</span>   CalcNormal               <span class="br0">(</span> UBOOL bSilent = <span class="nu0">0</span> <span class="br0">)</span>;
+        <span class="kw4">int</span>   SplitWithPlane   <span class="br0">(</span><span class="kw5">const</span> FVector &amp;Base,<span class="kw5">const</span> FVector &amp;Normal,FPoly *FrontPoly,FPoly *BackPoly,<span class="kw4">int</span> VeryPrecise<span class="br0">)</span> <span class="kw5">const</span>;
+        <span class="kw4">int</span>   SplitWithNode            <span class="br0">(</span><span class="kw5">const</span> UModel *Model,<span class="kw4">INT</span> iNode,FPoly *FrontPoly,FPoly *BackPoly,<span class="kw4">int</span> VeryPrecise<span class="br0">)</span> <span class="kw5">const</span>;
+        <span class="kw4">int</span>   SplitWithPlaneFast<span class="br0">(</span><span class="kw5">const</span> FPlane <span class="kw4">Plane</span>,FPoly *FrontPoly,FPoly *BackPoly<span class="br0">)</span> <span class="kw5">const</span>;
+        <span class="kw4">int</span>   <span class="kw7">Split</span>                           <span class="br0">(</span><span class="kw5">const</span> FVector &amp;Normal, <span class="kw5">const</span> FVector &amp;Base, <span class="kw4">int</span> NoOverflow=<span class="nu0">0</span> <span class="br0">)</span>;
+        <span class="kw4">int</span>   RemoveColinears  <span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw4">int</span>   Finalize                 <span class="br0">(</span><span class="kw4">int</span> NoError<span class="br0">)</span>;
+        <span class="kw4">int</span>   Faces                            <span class="br0">(</span><span class="kw5">const</span> FPoly &amp;Test<span class="br0">)</span> <span class="kw5">const</span>;
+        <span class="kw4">FLOAT</span> Area                             <span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="co1">// Serializer.</span>
+        ENGINE_API friend FArchive&amp; operator&lt;&lt;<span class="br0">(</span> FArchive&amp; Ar, FPoly&amp; Poly <span class="br0">)</span>;
+ 
+        <span class="co1">// Inlines.</span>
+        <span class="kw4">int</span> IsBackfaced<span class="br0">(</span> <span class="kw5">const</span> FVector &amp;Point <span class="br0">)</span> <span class="kw5">const</span>
+                <span class="br0">{</span><span class="kw1">return</span> <span class="br0">(</span><span class="br0">(</span>Point-Base<span class="br0">)</span> | Normal<span class="br0">)</span> &lt; <span class="nu0">0</span>.<span class="me1">f</span>;<span class="br0">}</span>
+        <span class="kw4">int</span> IsCoplanar<span class="br0">(</span> <span class="kw5">const</span> FPoly &amp;Test <span class="br0">)</span> <span class="kw5">const</span>
+                <span class="br0">{</span><span class="kw1">return</span> <span class="kw7">Abs</span><span class="br0">(</span><span class="br0">(</span>Base - Test.<span class="me1">Base</span><span class="br0">)</span>|Normal<span class="br0">)</span>&lt;<span class="nu0">0</span>.01f &amp;&amp; <span class="kw7">Abs</span><span class="br0">(</span>Normal|Test.<span class="me1">Normal</span><span class="br0">)</span>&gt;<span class="nu0">0</span>.9999f;<span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="co1">//</span>
+<span class="co1">// List of FPolys.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> ENGINE_API UPolys : public UObject
+<span class="br0">{</span>
+        DECLARE_CLASS<span class="br0">(</span>UPolys,UObject,CLASS_RuntimeStatic,Engine<span class="br0">)</span>
+ 
+        <span class="co1">// Elements.</span>
+        TTransArray&lt;FPoly&gt; Element;
+ 
+        <span class="co1">// Constructors.</span>
+        UPolys<span class="br0">(</span><span class="br0">)</span>
+        : Element<span class="br0">(</span> this <span class="br0">)</span>
+        <span class="br0">{</span><span class="br0">}</span>
+ 
+        <span class="co1">// UObject interface.</span>
+        void Serialize<span class="br0">(</span> FArchive&amp; Ar <span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>UPolys::<span class="me2">Serialize</span><span class="br0">)</span>;
+                <span class="kw6">Super</span>::<span class="me2">Serialize</span><span class="br0">(</span> Ar <span class="br0">)</span>;
+                <span class="kw1">if</span><span class="br0">(</span> Ar.<span class="me1">IsTrans</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        Ar &lt;&lt; Element;
+                <span class="br0">}</span>
+                <span class="kw1">else</span>
+                <span class="br0">{</span>
+                        Element.<span class="me1">CountBytes</span><span class="br0">(</span> Ar <span class="br0">)</span>;
+                        <span class="kw4">INT</span> DbNum=Element.<span class="me1">Num</span><span class="br0">(</span><span class="br0">)</span>, DbMax=DbNum;
+                        Ar &lt;&lt; DbNum &lt;&lt; DbMax;
+                        <span class="kw1">if</span><span class="br0">(</span> Ar.<span class="me1">IsLoading</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                Element.<span class="me1">Empty</span><span class="br0">(</span> DbNum <span class="br0">)</span>;
+                                Element.<span class="me1">AddZeroed</span><span class="br0">(</span> DbNum <span class="br0">)</span>;
+                        <span class="br0">}</span>
+                        <span class="kw1">for</span><span class="br0">(</span> <span class="kw4">INT</span> i=<span class="nu0">0</span>; i&lt;Element.<span class="me1">Num</span><span class="br0">(</span><span class="br0">)</span>; i++ <span class="br0">)</span>
+                                Ar &lt;&lt; Element<span class="br0">(</span>i<span class="br0">)</span>;
+                <span class="br0">}</span>
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        FVerts.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// One vertex associated with a Bsp node's polygon.  Contains a vertex index</span>
+<span class="co1">// into the level's FPoints table, and a unique number which is common to all</span>
+<span class="co1">// other sides in the level which are cospatial with this side.</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> FVert
+<span class="br0">{</span>
+public:
+        <span class="co1">// Variables.</span>
+        <span class="kw4">INT</span>    pVertex;        <span class="co1">// Index of vertex.</span>
+        <span class="kw4">INT</span>            iSide;          <span class="co1">// If shared, index of unique side. Otherwise INDEX_NONE.</span>
+ 
+        <span class="co1">// Functions.</span>
+        friend FArchive&amp; operator&lt;&lt; <span class="br0">(</span>FArchive &amp;Ar, FVert &amp;Vert<span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>FVert&lt;&lt;<span class="br0">)</span>;
+                <span class="kw1">return</span> Ar &lt;&lt; AR_INDEX<span class="br0">(</span>Vert.<span class="me1">pVertex</span><span class="br0">)</span> &lt;&lt; AR_INDEX<span class="br0">(</span>Vert.<span class="me1">iSide</span><span class="br0">)</span>;
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*-----------------------------------------------------------------------------
+        FDecals.
+-----------------------------------------------------------------------------*/</span>
+ 
+<span class="co1">//</span>
+<span class="co1">// Decal associated with a surface</span>
+<span class="co1">//</span>
+<span class="kw5">class</span> FDecal
+<span class="br0">{</span>
+public:
+        <span class="co1">// Variables.</span>
+        FVector Vertices<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>; <span class="co1">// Vertices of decal on surface (offset from the surface base).</span>
+        ADecal* <a href="/Actor"><span class="kw10">Actor</span></a>;                   <span class="co1">// ADecal actor associated with this decal.</span>
+        TArray&lt;INT&gt; Nodes;                <span class="co1">// The FBspNode indices on which this decal lies.</span>
+ 
+        <span class="co1">// Functions.</span>
+        friend FArchive&amp; operator&lt;&lt; <span class="br0">(</span>FArchive &amp;Ar, FDecal &amp;Decal<span class="br0">)</span>
+        <span class="br0">{</span>
+                guard<span class="br0">(</span>FDecal&lt;&lt;<span class="br0">)</span>;
+                <span class="kw1">if</span><span class="br0">(</span> !Ar.<span class="me1">IsLoading</span><span class="br0">(</span><span class="br0">)</span> &amp;&amp; !Ar.<span class="me1">IsSaving</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+                        Ar &lt;&lt; *<span class="br0">(</span>UObject**<span class="br0">)</span>&amp;Decal.<a href="/Actor"><span class="kw10">Actor</span></a>;
+                <span class="kw1">return</span> Ar;
+                unguard;
+        <span class="br0">}</span>
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/*----------------------------------------------------------------------------
+        The End.
+----------------------------------------------------------------------------*/</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 39/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/t/a/Legacy%7EStandard_Unreal_Object_Definition_3c66.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/t/a/Legacy_talk%7EStandard_Unreal_Object_Definition_75d9.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Standard_Unreal_Object_Definition">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:34, 27 May 2003 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

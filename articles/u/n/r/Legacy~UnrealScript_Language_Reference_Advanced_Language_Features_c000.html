@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UnrealScript Language Reference/Advanced Language Features - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UnrealScript Language Reference/Advanced Language Features</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_cee2.html" title="Legacy:UnrealScript Language Reference">Legacy:UnrealScript Language Reference</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#UnrealScript_Language_Reference"><span class="tocnumber">1</span> <span class="toctext">UnrealScript Language Reference</span></a></li>
+<li class="toclevel-1"><a href="#Advanced_Language_Features"><span class="tocnumber">2</span> <span class="toctext">Advanced Language Features</span></a>
+<ul>
+<li class="toclevel-2"><a href="#ForEach_And_Iterator_Functions"><span class="tocnumber">2.1</span> <span class="toctext">ForEach And Iterator Functions</span></a></li>
+<li class="toclevel-2"><a href="#Function_Calling_Specifiers"><span class="tocnumber">2.2</span> <span class="toctext">Function Calling Specifiers</span></a></li>
+<li class="toclevel-2"><a href="#Default_Values_of_Variables"><span class="tocnumber">2.3</span> <span class="toctext">Default Values of Variables</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Accessing_Default_Values_of_Variables"><span class="tocnumber">2.3.1</span> <span class="toctext">Accessing Default Values of Variables</span></a></li>
+<li class="toclevel-3"><a href="#Accessing_Default_Values_of_Variables_in_a_Variable_Class"><span class="tocnumber">2.3.2</span> <span class="toctext">Accessing Default Values of Variables in a Variable Class</span></a></li>
+<li class="toclevel-3"><a href="#Accessing_Static_Functions_in_a_Variable_Class"><span class="tocnumber">2.3.3</span> <span class="toctext">Accessing Static Functions in a Variable Class</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Dynamic_Arrays"><span class="tocnumber">2.4</span> <span class="toctext">Dynamic Arrays</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="UnrealScript_Language_Reference" id="UnrealScript_Language_Reference"></a></p>
+<h2><span class="mw-headline">UnrealScript Language Reference</span></h2>
+<p><i>This subpage is part of a document by Tim Sweeney. The Unreal Wiki has been granted permission to host it. Please don't make any edits to these pages other than basic formatting of the text. If you have more to say on a topic here, please start a new Wiki page on it, for example from <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> or <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal Engine</a>, and then add a "related topics" section to the very end of a page here.</i></p>
+<blockquote class="legacyquote">
+<p>Tim Sweeney<br />
+Epic MegaGames, Inc.<br />
+tim@epicgames.com<br />
+<a href="http://www.epicgames.com" class="external free" title="http://www.epicgames.com" rel="nofollow">http://www.epicgames.com</a></p>
+</blockquote>
+<p><a name="Advanced_Language_Features" id="Advanced_Language_Features"></a></p>
+<h2><span class="mw-headline">Advanced Language Features</span></h2>
+<p><a name="ForEach_And_Iterator_Functions" id="ForEach_And_Iterator_Functions"></a></p>
+<h3><span class="mw-headline">ForEach And Iterator Functions</span></h3>
+<p>UnrealScript's "foreach" command makes it easy to deal with large groups of actors, for example all of the actors in a level, or all of the actors within a certain distance of another actor. "foreach" works in conjunction with a special kind of function called an "iterator" function whose purpose is to iterate through a list of actors.</p>
+<p>Here is a simple example of foreach:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Display a list of all lights in the level.</span>
+<span class="kw5">function</span> Something<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+ 
+        <span class="co1">// Go through all actors in the level.</span>
+        <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Lights:"</span> <span class="br0">)</span>;
+        <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">class</span> <span class="st0">'Actor'</span>, A <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span> A.<span class="me1">LightType</span> != LT_None <span class="br0">)</span>
+                        <span class="kw7">log</span><span class="br0">(</span> A <span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The first parameter in all "foreach" commands is a constant class, which specifies what kinds of actors to search. You can use this to limit the search to, for example, all Pawns only.</p>
+<p>The second parameter in all "foreach" commands is a variable which is assigned an actor on each iteration through the "foreach" loop.</p>
+<p>Here are all of the iterator functions which work with "foreach".</p>
+<dl>
+<dt>AllActors ( class BaseClass, out actor Actor, optional name MatchTag )</dt>
+<dd>Iterates through all actors in the level. If you specify an optional MatchTag, only includes actors which have a "Tag" variable matching the tag you specified.</dd>
+</dl>
+<dl>
+<dt>ChildActors( class BaseClass, out actor Actor )</dt>
+<dd>Iterates through all actors owned by this actor.</dd>
+</dl>
+<dl>
+<dt>BasedActors( class BaseClass, out actor Actor )</dt>
+<dd>Iterates throgh all actors which are standing on this actor.</dd>
+</dl>
+<dl>
+<dt>TouchingActors( class BaseClass, out actor Actor )</dt>
+<dd>Iterates through all actors which are touching (interpenetrating) this actor.</dd>
+</dl>
+<dl>
+<dt>TraceActors( class BaseClass, out actor Actor, out vector HitLoc, out vector HitNorm, vector End, optional vector Start, optional vector Extent )</dt>
+<dd>Iterates through all actors which touch a line traced from the Start point to the End point, using a box of collision extent Extent. On each iteration, HitLoc is set to the hit location, and HitNorm is set to an outward-pointing hit normal.</dd>
+</dl>
+<dl>
+<dt>RadiusActors( class BaseClass, out actor Actor, float Radius, optional vector Loc )</dt>
+<dd>Iterates through all actors within a specified radius of the specified location (or if none is specified, this actor?s location).</dd>
+</dl>
+<dl>
+<dt>VisibleActors( class BaseClass, out actor Actor, optional float Radius, optional vector Loc )</dt>
+<dd>Iterates through a list of all actors who are visible to the specified location (or if no location is specified, this actor?s location).</dd>
+</dl>
+<table>
+<tr>
+<td><i>more on this topic in the Wiki: <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">Iterator</a></i></td>
+</tr>
+</table>
+<p><a name="Function_Calling_Specifiers" id="Function_Calling_Specifiers"></a></p>
+<h3><span class="mw-headline">Function Calling Specifiers</span></h3>
+<p>In complex programming situations, you will often need to call a specific version of a function, rather than the one that?s in the current scope. To deal with these cases, UnrealScript provides the following keywords:</p>
+<dl>
+<dt>Global</dt>
+<dd>Calls the most-derived global (non-state) version of the function.</dd>
+</dl>
+<dl>
+<dt>Super</dt>
+<dd>Calls the corresponding version of the function in the parent class. The function called may either be a state or non-state function depending on context.</dd>
+</dl>
+<dl>
+<dt>Super(classname)</dt>
+<dd>Calls the corresponding version of the function residing in (or above) the specified class. The function called may either be a state or non-state function depending on context.</dd>
+</dl>
+<p>It is not valid to combine multiple calling specifiers (i.e. Super(Actor).Global.Touch).</p>
+<p>Here are some examples of calling specifiers:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyClass <span class="kw5">extends</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>;
+ 
+<span class="kw5">function</span> MyExample<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span><span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>.<span class="me1">Touch</span><span class="br0">(</span> Other <span class="br0">)</span>;
+        <span class="kw6">Global</span>.<span class="me1">Touch</span><span class="br0">(</span> Other <span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">Touch</span><span class="br0">(</span> Other <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>As an additional example, the BeginPlay() function is called when an actor is about to enter into gameplay. The BeginPlay() function is implemented in the Actor class and it contains some important functionality that needs to be executed. Now, say you want to override BeginPlay() in your new class MyClass, to add some new functionality. To do that safely, you need to call the version of BeginPlay() in the parent class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyClass <span class="kw5">extends</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>;
+ 
+<span class="kw5">function</span> BeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">// Call the version of BeginPlay in the parent class (important).</span>
+        <span class="kw6">Super</span>.<span class="me1">BeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="co1">// Now do custom BeginPlay stuff.</span>
+        <span class="co1">//...</span>
+<span class="br0">}</span>
+</pre></div>
+<table>
+<tr>
+<td><i>more on this topic in the Wiki: <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a> and <a href="../../../../articles/s/p/e/Legacy%7ESpecial_UnrealScript_Keywords_f5d3.html" title="Legacy:Special UnrealScript Keywords">Special UnrealScript Keywords</a></i></td>
+</tr>
+</table>
+<p><a name="Default_Values_of_Variables" id="Default_Values_of_Variables"></a></p>
+<h3><span class="mw-headline">Default Values of Variables</span></h3>
+<p><a name="Accessing_Default_Values_of_Variables" id="Accessing_Default_Values_of_Variables"></a></p>
+<h4><span class="mw-headline">Accessing Default Values of Variables</span></h4>
+<p>UnrealEd enables level designers to edit the "default" variables of an object's class. When a new actor is spawned of the class, all of its variables are initialized to those defaults. Sometimes, it?s useful to manually reset a variable to its default value. For example, when the player drops an inventory item, the inventory code needs to reset some of the actor?s values to its defaults. In UnrealScript, you can access the default variables of a class with the "Default." keyword. For example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> Health, Stamina;
+<span class="co1">//...</span>
+ 
+<span class="co1">// Reset some variables to their defaults.</span>
+<span class="kw5">function</span> ResetToDefaults<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">// Reset health, and stamina.</span>
+        Health = <span class="kw1">Default</span>.<span class="me1">Health</span>;
+        Stamina = <span class="kw1">Default</span>.<span class="me1">Stamina</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Accessing_Default_Values_of_Variables_in_a_Variable_Class" id="Accessing_Default_Values_of_Variables_in_a_Variable_Class"></a></p>
+<h4><span class="mw-headline">Accessing Default Values of Variables in a Variable Class</span></h4>
+<p>If you have a class reference (a variable of "class" or "class&lt;classlimiter&gt;" type), you can access the default properties of the class it references, without having an object of that class. This syntax works with any expression that evaluates to class type.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw5">class</span> C;
+<span class="kw5">var</span> class&lt;Pawn&gt; PC;
+Health = <span class="kw5">class</span><span class="st0">'Spotlight'</span>.<span class="kw1">default</span>.<span class="me1">LightBrightness</span>; <span class="co1">// Access the default value of LightBrightness in the Spotlight class. </span>
+Health = PC.<span class="kw1">default</span>.<span class="me1">Health</span>; <span class="co1">// Access the default value of Health in a variable class identified by PC.</span>
+Health = class&lt;Pawn&gt;<span class="br0">(</span>C<span class="br0">)</span>.<span class="kw1">default</span>.<span class="me1">Health</span>; <span class="co1">// Access the default value of Health in a casted class expression.</span>
+</pre></div>
+<p><a name="Accessing_Static_Functions_in_a_Variable_Class" id="Accessing_Static_Functions_in_a_Variable_Class"></a></p>
+<h4><span class="mw-headline">Accessing Static Functions in a Variable Class</span></h4>
+<p>Static functions in a variable class may be called using the following syntax.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw5">class</span> C;
+<span class="kw5">var</span> class&lt;Pawn&gt; PC;
+<span class="kw5">class</span><span class="st0">'SkaarjTrooper'</span>.<span class="kw6">static</span>.<span class="me1">SomeFunction</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Call a static function in a specific class.</span>
+PC.<span class="kw6">static</span>.<span class="me1">SomeFunction</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Call a static function in a variable class.</span>
+class&lt;Pawn&gt;<span class="br0">(</span>C<span class="br0">)</span>.<span class="kw6">static</span>.<span class="me1">SomeFunction</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Call a static function in a casted class expression.</span>
+</pre></div>
+<p><a name="Dynamic_Arrays" id="Dynamic_Arrays"></a></p>
+<h3><span class="mw-headline">Dynamic Arrays</span></h3>
+<p>Previously, we covered Arrays, which were static. What that means is that the size (how many elements are in the array) is set at compile time and cannot be changed. Dynamic Arrays and Static Arrays share the following common characteristics:</p>
+<dl>
+<dt>Constant seek time&#160;</dt>
+<dd>The time code spends accessing any given element of the array is the same, regardless of how many elements are in the array</dd>
+<dt>Unlimited element type&#160;</dt>
+<dd>You can have an array of anything (other than bools) – ints, vectors, Actors, etc.</dd>
+<dt>Access behavior&#160;</dt>
+<dd>You can access any element with an index into the array, and conversely, attempting to access an element at an index that is outside the bounds of the array will throw an accessed none.</dd>
+</dl>
+<p>Dynamic Arrays provide a way of having Static Array functionality with the ability to change the number of elements during run-time, in order to accommodate changing needs. In order use Dynamic Arrays, we need to know a few things.</p>
+<p>The first is variable declaration. In order to declare a dynamic array, the syntax is <code>array&lt;VARIABLE_TYPE&gt; VARIABLE_NAME</code> which is preceded by the appropriate identifiers (var or local, for example). An example would be <code>var array&lt;int&gt; IntList</code>. When script starts, IntList will start with 0 elements. There are methods supported by Dynamic Arrays that allow us to add elements to the array, take elements out, and increase or decrease the length of the array arbitrarily. The syntax for calling these methods is (using our IntList example) <code>IntList.MethodName()</code>. The following is a breakdown of the supported methods and a brief explanation of their parameters:</p>
+<dl>
+<dt>Insert(int index_to_insert_at, int how_many_elements_to_insert)&#160;</dt>
+<dd>This allows us to tell the array to create more elements and create them starting at a specific location in the array. Inserting 5 elements at index 3 will shift up (in index value) all elements in the array starting at index 3 and up (shifting them up by the number of elements to insert).</dd>
+<dt>Remove(int index_to_begin_removing_at, int how_many_elements_to_remove)&#160;</dt>
+<dd>This allows us to remove a group of elements from the array starting at any valid index within the array. Note that any indexes that are higher than the range to be removed will have their index values changed, keep this in mind if you store index values into dynamic arrays.</dd>
+</dl>
+<p>Dynamic Arrays also have a variable called "Length", which is the current length (number of elements) of the dynamic array. To access Length, using our example array, we would say <code>IntList.Length</code>. We can not only read the Length variable, but we can also directly set it, allowing us to modify the number of elements in the array. When you modify the Length variable directly, all changes in array length happen at the 'end' of the array. For example, if we set <code>IntList.Length = 5</code>, and then we set <code>IntList.Length = 10</code>, the extra 5 elements we just added were added to the end of the array, maintaining our original 5 elements and their values. If we decreased the Length, the elements would be taken off the end as well. Note that when you add elements to the array, either by Insert() or by increasing Length, the elements are initialized to the variable type's default value (0 for ints, None for class references, etc). It is also noteworthy to know that you can increase the length of a dynamic array by setting an element index that is greater than the array's current Length value. This will extend the array just as if you had set Length to the larger value.</p>
+<p>A word of caution – the Length member of a dynamic array should never be incremented/decremented by '++', '–', '+=', or '-=', nor should you pass Length to a function as an out parameter (where the function can change the value of it). Doing these things will result in memory leaks and crashes due to Length not being accurate any more; only setting the Length via the '=' operator (and setting an element at an index larger than Length) modifies the actual length of the dynamic array properly.</p>
+<p>A final note – dynamic arrays are not replicated. You could get around this by having a function that replicates and has two arguments, an index into the dynamic array and the value to store there. However, you would also have to consider consequences of elements not being the same within a space of a tick on client and server.</p>
+<table>
+<tr>
+<td><i>more on this topic in the Wiki: <a href="../../../../articles/d/y/n/Legacy%7EDynamic_Array_dc99.html" title="Legacy:Dynamic Array">dynamic array</a></i></td>
+</tr>
+</table>
+<hr />
+<p>Prev Page: <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Language_Functionality_19d5.html" title="Legacy:UnrealScript Language Reference/Language Functionality">Legacy:UnrealScript Language Reference/Language Functionality</a> – <b>Section 8 of 9</b> – Next Page: <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Advanced_Technical_Issues_aa58.html" title="Legacy:UnrealScript Language Reference/Advanced Technical Issues">Legacy:UnrealScript Language Reference/Advanced Technical Issues</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 53/1000000
+Post-expand include size: 215/2097152 bytes
+Template argument size: 96/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Advanced_Language_Features_c000.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnrealScript_Language_Reference_Advanced_Language_Features_c42d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UnrealScript_Language_Reference/Advanced_Language_Features">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:43, 20 June 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

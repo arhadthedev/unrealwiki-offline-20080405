@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:BotCandy - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:BotCandy</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Many <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> mods lacked good bot support, some used the basic <a href="../../../../articles/b/o/t/Legacy%7EBot_Support_%28UT%29_500c.html" title="Legacy:Bot Support (UT)">Bot Support (UT)</a>, which is great for running around, collecting weapons and killing anything you see. However, once you remove the pickups you'll notice that bots will only travel between HomeBase, DefensePoint and similar actors, and objective based actors such as <a href="../../../../articles/f/l/a/Legacy%7EFlagBase_9eaf.html" title="Legacy:FlagBase">FlagBase</a> or actors special to the mod.</p>
+<p>In order to fix this despite the coder's lack of time/interest which haunts many mods, I found a work-around.</p>
+<p>The idea is based on the simple fact that bots are hunting <a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickups</a>. Sadly, we can't have that in the map. Instead we will have to cheat the bots into thinking they are hunting weapons. To do this, do the following:</p>
+<ol>
+<li>Place an Actor &gt;&gt; Inventory &gt;&gt; Pickup &gt;&gt; TournamentPickup &gt;&gt; <a href="../../../../articles/u/t/_/Legacy%7EUT_ShieldBelt_0d46.html" title="Legacy:UT ShieldBelt">UT_ShieldBelt</a></li>
+<li>Open Actor Properties and set its Filter -&gt; OddsOfAppearing to 0</li>
+<li>Set the Inventory -&gt; MaxDesireability to an appropriate number (The higher number, the higher odds of bots going there)</li>
+</ol>
+<p>The desireability detirmines how sweet the candy is, making bots want it more. When a bot runs over the candy, it is "picked up" despite not really existing, ensuring bots will have to move on searching for the next piece of candy. Place these candy at keypoints, intersections or in areas the bots are ignoring.</p>
+<p><b>LegalAssassin</b></p>
+<p><i>This technique was used in TTR-Nuenen</i></p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Support_c519.html" title="Legacy:Bot Support">Bot Support</a> (UT200x)</li>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Support_%28UT%29_500c.html" title="Legacy:Bot Support (UT)">Bot Support (UT)</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SabbathCat:</b> Is the Filter -&gt; OddsOfAppearing=0 supposed to keep the <a href="../../../../articles/u/t/_/Legacy%7EUT_ShieldBelt_0d46.html" title="Legacy:UT ShieldBelt">UT_ShieldBelt</a> from being displayed?</p>
+<p>It still shows up for me. Maybe setting its DrawType = DT_None and BCollideActors=False&#160;?</p>
+<p><b>LegalAssassin:</b> It works for me. Perhaps Advanced -&gt; bHidden = True would do the trick?</p>
+<p><b>Wormbo:</b> OddsOfAppearing actually prevents the pickup from being spawned altogether, which is something completely differnet than visually hiding it. If you only hide it can still be picked up. If you make it untouchable, bots will likely get stuck there because they try to reach it and can't pick it up. OddsOfAppearing has the advantage, that UnrealEd still creates an InventorySpot for the pickup, but the pickup itself will never exist in the game.</p>
+<p><b>Legal:</b> Yes, but I can't see how it couldn't work, ie still being visible. Either SabbathCat did something wrong or it works, but still shows. If it's the second one, you should try to make it invisible.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 3/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/o/t/Legacy%7EBotCandy_effc.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/o/t/Legacy_talk%7EBotCandy_9e36.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:BotCandy">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:09, 17 November 2005 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

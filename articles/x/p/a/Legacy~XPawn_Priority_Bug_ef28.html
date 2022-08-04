@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:XPawn Priority Bug - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:XPawn Priority Bug</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Goal"><span class="tocnumber">1.1</span> <span class="toctext">Goal</span></a></li>
+<li class="toclevel-2"><a href="#Volume_Priority"><span class="tocnumber">1.2</span> <span class="toctext">Volume Priority</span></a></li>
+<li class="toclevel-2"><a href="#The_Bug_-_In_Brief"><span class="tocnumber">1.3</span> <span class="toctext">The Bug - In Brief</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Cause"><span class="tocnumber">2</span> <span class="toctext">Cause</span></a>
+<ul>
+<li class="toclevel-2"><a href="#How_Volume_Priority_And_Splashing_Are_Handled"><span class="tocnumber">2.1</span> <span class="toctext">How Volume Priority And Splashing Are Handled</span></a>
+<ul>
+<li class="toclevel-3"><a href="#PlayerReplicationInfo"><span class="tocnumber">2.1.1</span> <span class="toctext">PlayerReplicationInfo</span></a></li>
+<li class="toclevel-3"><a href="#xPawn"><span class="tocnumber">2.1.2</span> <span class="toctext">xPawn</span></a></li>
+<li class="toclevel-3"><a href="#PhysicsVolume"><span class="tocnumber">2.1.3</span> <span class="toctext">PhysicsVolume</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#The_Problem"><span class="tocnumber">2.2</span> <span class="toctext">The Problem</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Solutions"><span class="tocnumber">3</span> <span class="toctext">Solutions</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Proposal_One:_Avoid_Overlapping_Volumes"><span class="tocnumber">3.1</span> <span class="toctext">Proposal One: Avoid Overlapping Volumes</span></a></li>
+<li class="toclevel-2"><a href="#Proposal_Two:_Modify_xPawn"><span class="tocnumber">3.2</span> <span class="toctext">Proposal Two: Modify xPawn</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<p><a name="Goal" id="Goal"></a></p>
+<h3><span class="mw-headline">Goal</span></h3>
+<p>This page will describe, and will hopefully provide solutions to, the <a href="../../../../articles/x/p/a/Legacy%7EXPawn_d626.html" title="Legacy:XPawn">xPawn</a> "priority bug" in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> and <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>.</p>
+<p><a name="Volume_Priority" id="Volume_Priority"></a></p>
+<h3><span class="mw-headline">Volume Priority</span></h3>
+<p>The <tt>priority</tt> variable found in <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolume</a> determines which one of several overlapping PhysicsVolumes gets to apply its physics properties (Gravity, GroundFriction, ZoneVelocity and so on) on players and other actors in the overlapping area. The higher the value of <tt>priority</tt>, the higher the Priority. Every <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolume</a> added, however, even if <tt>priority</tt> is 0, has a higher priority than the <a href="../../../../articles/d/e/f/Legacy%7EDefaultPhysicsVolume_752c.html" title="Legacy:DefaultPhysicsVolume">DefaultPhysicsVolume</a>.</p>
+<p><a name="The_Bug_-_In_Brief" id="The_Bug_-_In_Brief"></a></p>
+<h3><span class="mw-headline">The Bug - In Brief</span></h3>
+<p>There is a bug in the implementation of the priority scheme in <a href="../../../../articles/x/p/a/Legacy%7EXPawn_d626.html" title="Legacy:XPawn">xPawn</a> as it pertains to interactions with <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolumes</a>. If the player is contained within overlapping volumes and one of the volumes has <tt>bWaterVolume</tt> set to <tt>True</tt>, splashing sounds are likely to be played when a Player walks, dodges, or whatever, regardless of which volume has priority.</p>
+<p><a name="Cause" id="Cause"></a></p>
+<h2><span class="mw-headline">Cause</span></h2>
+<p><a name="How_Volume_Priority_And_Splashing_Are_Handled" id="How_Volume_Priority_And_Splashing_Are_Handled"></a></p>
+<h3><span class="mw-headline">How Volume Priority And Splashing Are Handled</span></h3>
+<p><a name="PlayerReplicationInfo" id="PlayerReplicationInfo"></a></p>
+<h4><span class="mw-headline">PlayerReplicationInfo</span></h4>
+<p>The following code was extracted from an export of the <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> class, <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> build 3186</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> UpdatePlayerLocation<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Volume V, Best;
+    <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+    <span class="kw5">local</span> Controller C;
+ 
+    C = Controller<span class="br0">(</span>Owner<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span> C != <span class="kw9">None</span> <span class="br0">)</span>
+        P = C.<a href="/Pawn"><span class="kw10">Pawn</span></a>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span> P == <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        PlayerVolume = <span class="kw9">None</span>;
+        PlayerZone = <span class="kw9">None</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> PlayerZone != P.<span class="me1">Region</span>.<span class="me1">Zone</span> <span class="br0">)</span>
+                PlayerZone = P.<span class="me1">Region</span>.<span class="me1">Zone</span>;
+ 
+    <span class="kw1">foreach</span> P.<span class="me1">TouchingActors</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Volume'</span>, V <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> V.<span class="me1">LocationName</span> == <span class="st0">""</span><span class="br0">)</span>
+            <span class="kw1">continue</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> <span class="br0">(</span>Best != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>V.<span class="me1">LocationPriority</span> &lt;= Best.<span class="me1">LocationPriority</span><span class="br0">)</span> <span class="br0">)</span>
+            <span class="kw1">continue</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> V.<span class="me1">Encompasses</span><span class="br0">(</span>P<span class="br0">)</span> <span class="br0">)</span>
+            Best = V;
+    <span class="br0">}</span>
+    <span class="kw1">if</span> <span class="br0">(</span> PlayerVolume != Best <span class="br0">)</span>
+                PlayerVolume = Best;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="xPawn" id="xPawn"></a></p>
+<h4><span class="mw-headline">xPawn</span></h4>
+<p>The following code was extracted from an export of the <a href="../../../../articles/x/p/a/Legacy%7EXPawn_d626.html" title="Legacy:XPawn">xPawn</a> class, <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> build 3186</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> FootStepping<span class="br0">(</span><span class="kw4">int</span> Side<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> SurfaceNum, i;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> A;
+        <span class="kw5">local</span> <a href="/Material"><span class="kw10">material</span></a> FloorMat;
+        <span class="kw5">local</span> <span class="kw4">vector</span> HL,HN,Start,End;
+ 
+    SurfaceNum = <span class="nu0">0</span>;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span> i=<span class="nu0">0</span>; i&lt;Touching.<span class="kw6">Length</span>; i++ <span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><span class="br0">(</span>PhysicsVolume<span class="br0">(</span>Touching<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; PhysicsVolume<span class="br0">(</span>Touching<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>.<span class="me1">bWaterVolume</span><span class="br0">)</span>
+                        || <span class="br0">(</span>FluidSurfaceInfo<span class="br0">(</span>Touching<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> &lt; <span class="nu0">0.5</span> <span class="br0">)</span>
+                                PlaySound<span class="br0">(</span><a href="/sound"><span class="kw10">sound</span></a><span class="st0">'PlayerSounds.FootStepWater2'</span>, SLOT_Interact, FootstepVolume <span class="br0">)</span>;
+                        <span class="kw1">else</span>
+                                PlaySound<span class="br0">(</span><a href="/sound"><span class="kw10">sound</span></a><span class="st0">'PlayerSounds.FootStepWater1'</span>, SLOT_Interact, FootstepVolume <span class="br0">)</span>;
+                        <span class="kw1">return</span>;
+                <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> bIsCrouched || bIsWalking <span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Base!=<span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>!Base.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'LevelInfo'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Base.<span class="me1">SurfaceType</span>!=<span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                SurfaceNum = Base.<span class="me1">SurfaceType</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+                Start = Location - <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*CollisionHeight;
+                End = Start - <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">16</span><span class="br0">)</span>;
+                A = Trace<span class="br0">(</span>hl,hn,End,Start,<span class="kw9">false</span>,,FloorMat<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span>FloorMat !=<span class="kw9">None</span><span class="br0">)</span>
+                        SurfaceNum = FloorMat.<span class="me1">SurfaceType</span>;
+        <span class="br0">}</span>
+        PlaySound<span class="br0">(</span>SoundFootsteps<span class="br0">[</span>SurfaceNum<span class="br0">]</span>, SLOT_Interact, FootstepVolume,,<span class="nu0">400</span> <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="PhysicsVolume" id="PhysicsVolume"></a></p>
+<h4><span class="mw-headline">PhysicsVolume</span></h4>
+<p>The following code was extracted from an export of the <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolume</a> class, <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> build 3186</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        BACKUP_Gravity          = Gravity;
+        BACKUP_bPainCausing     = bPainCausing;
+        <span class="kw1">if</span><span class="br0">(</span> VolumeEffect == <span class="kw9">None</span> &amp;&amp; bWaterVolume <span class="br0">)</span>
+                VolumeEffect = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'EFFECT_WaterVolume'</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">//</span>
+<span class="co1">// (...)</span>
+<span class="co1">//</span>
+ 
+ 
+<span class="kw5">event</span> touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+        <span class="kw5">local</span> <span class="kw4">bool</span> bFoundPawn;
+ 
+        <span class="kw6">Super</span>.<span class="me1">Touch</span><span class="br0">(</span>Other<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> Other == <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw1">return</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> bNoInventory &amp;&amp; <span class="br0">(</span>Pickup<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Other.<span class="me1">Owner</span> == <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                Other.<span class="me1">LifeSpan</span> = <span class="nu0">1.5</span>;
+                <span class="kw1">return</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span> bMoveProjectiles &amp;&amp; <span class="br0">(</span>ZoneVelocity != <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Physics</span> == PHYS_Projectile <span class="br0">)</span>
+                        Other.<span class="me1">Velocity</span> += ZoneVelocity;
+                <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Other.<span class="me1">Base</span> == <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Emitter'</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Other.<span class="me1">Physics</span> == PHYS_None<span class="br0">)</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        Other.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Projectile<span class="br0">)</span>;
+                        Other.<span class="me1">Velocity</span> += ZoneVelocity;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span> bPainCausing <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">bDestroyInPainVolume</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        Other.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+                        <span class="kw1">return</span>;
+                <span class="br0">}</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">bCanBeDamaged</span> &amp;&amp; !Other.<span class="me1">bStatic</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        CausePainTo<span class="br0">(</span>Other<span class="br0">)</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span> Other == <span class="kw9">None</span> <span class="br0">)</span>
+                                <span class="kw1">return</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span> PainTimer == <span class="kw9">None</span> <span class="br0">)</span>
+                                PainTimer = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'VolumeTimer'</span>, <span class="kw8">self</span><span class="br0">)</span>;
+                        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                <span class="kw1">ForEach</span> TouchingActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pawn'</span>, P<span class="br0">)</span>
+                                        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>P != Other<span class="br0">)</span> &amp;&amp; P.<span class="me1">bCanBeDamaged</span> <span class="br0">)</span>
+                                        <span class="br0">{</span>
+                                                bFoundPawn = <span class="kw9">true</span>;
+                                                <span class="kw1">break</span>;
+                                        <span class="br0">}</span>
+                                <span class="kw1">if</span> <span class="br0">(</span> !bFoundPawn <span class="br0">)</span>
+                                        PainTimer.<span class="me1">SetTimer</span><span class="br0">(</span><span class="nu0">1.0</span>,<span class="kw9">true</span><span class="br0">)</span>;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span> bWaterVolume &amp;&amp; Other.<span class="me1">CanSplash</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+                PlayEntrySplash<span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">//</span>
+<span class="co1">// (...)</span>
+<span class="co1">//</span>
+ 
+ 
+<span class="kw5">function</span> PlayEntrySplash<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> SplashSize;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> splash;
+ 
+        splashSize = <span class="kw7">FClamp</span><span class="br0">(</span><span class="nu0">0.00003</span> * Other.<span class="me1">Mass</span> * <span class="br0">(</span><span class="nu0">250</span> - <span class="nu0">0.5</span> * <span class="kw7">FMax</span><span class="br0">(</span><span class="nu0">-600</span>,Other.<span class="me1">Velocity</span>.<span class="me1">Z</span><span class="br0">)</span><span class="br0">)</span>, <span class="nu0">0.1</span>, <span class="nu0">1.0</span> <span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> EntrySound != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                PlaySound<span class="br0">(</span>EntrySound, SLOT_Interact, splashSize<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Instigator</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        MakeNoise<span class="br0">(</span>SplashSize<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span><span class="br0">(</span> EntryActor != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                splash = Spawn<span class="br0">(</span>EntryActor<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> splash != <span class="kw9">None</span> <span class="br0">)</span>
+                        splash.<span class="me1">SetDrawScale</span><span class="br0">(</span>splashSize<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw5">event</span> untouch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> bWaterVolume &amp;&amp; Other.<span class="me1">CanSplash</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+                PlayExitSplash<span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw5">function</span> PlayExitSplash<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> SplashSize;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> splash;
+ 
+        splashSize = <span class="kw7">FClamp</span><span class="br0">(</span><span class="nu0">0.003</span> * Other.<span class="me1">Mass</span>, <span class="nu0">0.1</span>, <span class="nu0">1.0</span> <span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> ExitSound != <span class="kw9">None</span> <span class="br0">)</span>
+                PlaySound<span class="br0">(</span>ExitSound, SLOT_Interact, splashSize<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> ExitActor != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                splash = Spawn<span class="br0">(</span>ExitActor<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> splash != <span class="kw9">None</span> <span class="br0">)</span>
+                        splash.<span class="me1">SetDrawScale</span><span class="br0">(</span>splashSize<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="The_Problem" id="The_Problem"></a></p>
+<h3><span class="mw-headline">The Problem</span></h3>
+<p>The most obvious problem is that the FootStepping() function in <a href="../../../../articles/x/p/a/Legacy%7EXPawn_d626.html" title="Legacy:XPawn">xPawn</a> takes it upon itself to check for touching <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolumes</a>, rather than using the <tt>PlayerVolume</tt> var in <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>, in order to determine if a "splash" should be "played". In doing this, it bypasses the priority check made in the UpdatePlayerLocation() function of <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>, thus eliminating the priority scheme for the "splashing" functionality.</p>
+<p><a name="Solutions" id="Solutions"></a></p>
+<h2><span class="mw-headline">Solutions</span></h2>
+<p><a name="Proposal_One:_Avoid_Overlapping_Volumes" id="Proposal_One:_Avoid_Overlapping_Volumes"></a></p>
+<h3><span class="mw-headline">Proposal One: Avoid Overlapping Volumes</span></h3>
+<p><i><b>Note:</b></i> Obviously, this is just a work-around...</p>
+<p>Just like the title says: Avoid overlapping <a href="../../../../articles/p/h/y/Legacy%7EPhysicsVolume_069a.html" title="Legacy:PhysicsVolume">PhysicsVolumes</a>.</p>
+<p><b>Pros:</b></p>
+<ul>
+<li>You avoid the issue all together</li>
+</ul>
+<p><b>Cons:</b></p>
+<ul>
+<li>You potentially sacrifice certain senarios–"dynamic" volumes attached to movers interacting with one another, for instance.</li>
+</ul>
+<p><a name="Proposal_Two:_Modify_xPawn" id="Proposal_Two:_Modify_xPawn"></a></p>
+<h3><span class="mw-headline">Proposal Two: Modify xPawn</span></h3>
+<p>One solution may be to add a new check to the simulated function FootStepping() in xPawn (or in your own new pawn class) that compares touching volumes with <tt>bWaterVolume</tt> set to <tt>True</tt> with <tt>PlayerVolume</tt> in <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>. If they are not one in the same, skip the splashing code.</p>
+<p><b>Pros:</b></p>
+<ul>
+<li>Will likely solve the problem</li>
+</ul>
+<p><b>Cons:</b></p>
+<ul>
+<li>By extending xPawn, you now essentially are forced into making a <a href="../../../../articles/m/o/d/Legacy%7EMod_ad7d.html" class="mw-redirect" title="Legacy:Mod">mod</a>/<a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a> in order to impliment your changes. Pawn-type is set in the <a href="../../../../articles/p/l/a/Legacy%7EPlayer_ff26.html" title="Legacy:Player">player</a> class (by default, <a href="../../../../articles/x/p/l/Legacy%7EXPlayer_7578.html" title="Legacy:XPlayer">xPlayer</a>) which is in turn is set by a <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> actor like xDeathMatch.</li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 43/1000000
+Post-expand include size: 36/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Legacy Troubleshooting</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/x/p/a/Legacy%7EXPawn_Priority_Bug_ef28.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/x/p/a/Legacy_talk%7EXPawn_Priority_Bug_e4ca.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:XPawn_Priority_Bug">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:38, 7 April 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

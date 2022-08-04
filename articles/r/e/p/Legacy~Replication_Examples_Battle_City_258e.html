@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Replication Examples/Battle City - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Replication Examples/Battle City</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/r/e/p/Legacy%7EReplication_Examples_6065.html" title="Legacy:Replication Examples">Legacy:Replication Examples</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="A_study_of_replication" id="A_study_of_replication"></a></p>
+<h2><span class="mw-headline">A study of replication</span></h2>
+<p>I recently finished and released a small mod called Battle City. The main reason for the creation of Battle City was to practice different methods of replication and to see how they functioned. The mod enveloped the replication of variables in the server to client model, client to server model as well as the replication of functions between the server and client model and the client and server model. Different approaches to each model were taken and some were noted better than others.</p>
+<p>Replication is a very abstract idea and the idea of it isn't just send data between the server and the client or client to server, but is to maintain the integrety of the simulation between the server and the client. Let me elaborate this a little more.</p>
+<p>With synchronous games there is no requirement to write any forms of replication as those games are designed to be run synchronous with all players. This meaning that everyone duplicates everything that is done. While this means little problems during the development of the game (what works offline will work online) it does mean problems in the clients. If games became asynchronous due to packet loss or latencies then the game is corrupted and must be abandoned. If games do not recognize that they are out of sync then the games can be continued to run without any notification with interesting player results. Games must be started all at the same time, with everyone ready. No one else can join the game concurrently. There are a lot more problems than listed here, but these are more than enough to cause frustrations on the players mind.</p>
+<p>Asynchronous games usually use a server/client model, where one governs the others. One is seen as the correct version of the game, and others are just simulations of that game which is periodically corrected by the server. In this case, Unreal uses replication as a form to periodically correct the server or to allow events to occur. Replication is also used to prevent cheating that can occur during asynch games. The reason for this is that fooling a server to believe that the client side version of events is correct, is somewhat 'easy' to those who know what they are doing.</p>
+<p>Battle City took the various forms of replication that were often used. The weapon/shield switching involved the client asking the server to do something with a client parsed variable. The effects of weapons/shields were the server telling the clients that something occured. The money/inventory system covered the aspect that the server was the supreme governer of variables that clients had to obey by (Couldn't buy more items if the server didn't think you had enough money). And lastly the planning/decision aspects that must be accounted for when your planning how a replication system will work.</p>
+<p>The first was looking at asking servers to do something, i.e to switch to a different weapon type. In planning this, the basic model I approached was this:</p>
+<ol>
+<li><b>Client</b> request</li>
+<li><b>Client</b> preliminary checks</li>
+<li><b>Client</b> send parsed function</li>
+<li><b>Server</b> receive <b>Client</b> function</li>
+<li><b>Server</b> preliminary checks</li>
+<li><b>Server</b> accepts changes</li>
+<li><b>Server</b> makes changes</li>
+<li><b>Server</b> notifies <b>Client</b> of changes</li>
+<li><b>Client</b> receives changes</li>
+<li><b>Client</b> adjusts <b>Client</b> side variables</li>
+<li>Complete</li>
+</ol>
+<p>The was a reason for each of these steps. First, a client request is accepted. This is purely client side code and the server does not need any participation of this. Thus there is no point to do any replication or simulation of this event, during preliminary checks the client simply checks if the client is able to do such a function. While this in itself can be hacked, it isn't a problem as the server will double check. This was used to speed up the process by possibly stopping the function if it couldn't be run anyways (for legitimate players). Once that was done the server receives the function. The replication block used for this was:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span> 
+<span class="br0">{</span> 
+  un/<span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">Role_Authority</span><span class="br0">)</span> 
+    ServerSendFunction; 
+<span class="br0">}</span>
+</pre></div>
+<p>This indicates that the client wishes to send something to the server. While this could also be a variable, I often find that using a function enveloped with a variable is a faster way to parse it as it also allows the server to immediately parse the variable to continue the sequence of events. In this case, the client would tell the server to run a function with a parsed variable (to indicate what weapon the client wanted to switch to).</p>
+<p>From there the server proceeds to check the variable with its version of the current client. The weapon type currently being used was stored within the vehicle itself, and the parsed variable was checked by the server on the current version of the pawn. If this failed, the server notifies the client that the event was determined to be invalid. The model I used for this was,</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span> 
+<span class="br0">{</span> 
+  un/<span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">Role_Authority</span><span class="br0">)</span> 
+    ClientFunction; 
+<span class="br0">}</span> 
+ 
+<span class="kw5">function</span> ServerParseFunction<span class="br0">(</span><span class="kw4">int</span> A<span class="br0">)</span> 
+<span class="br0">{</span> 
+  <span class="kw1">if</span><span class="br0">(</span>!ParseVariable<span class="br0">(</span>A<span class="br0">)</span><span class="br0">)</span> 
+    ClientFunction<span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Other server required changes </span>
+<span class="br0">}</span> 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> ClientFunction<span class="br0">(</span><span class="br0">)</span> 
+<span class="br0">{</span> 
+  <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> == <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> 
+    <span class="kw1">return</span>; 
+ 
+  <span class="kw1">if</span><span class="br0">(</span>PlayerController<span class="br0">(</span>Controller<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> 
+    <span class="co1">// Server/Client run function if possible. </span>
+<span class="br0">}</span>
+</pre></div>
+<p>To my understanding, a server runs a function whether it is simulated or not. Simply placing simulated functions everywhere will not neccessarily indicate that your code will work, and the reason for this I believe is that what the simulated tag does is that it simply allows the function to be able to run on the client (that is, if the actor has the appropriate role setting). In most cases, the server also requires syntax values since you often want that function to do something with something else. If the function itself wasn't replicated from the server to the client, then the function will run will null variable replacements instead, thus creating either a null result or creating undesired results. Hence the need for replicating the client intended function from the server. Which was what is done in the example above.</p>
+<p>The if statement checking the Level.NetMode is written to exclude dedicated servers since they could never be clients. Remember that excluding ,Role == Role_Authority will also exclude Listen servers as they are simply a client attached to a self server.</p>
+<p>In most cases, I wanted the client to update its HUD whenever a weapon/shield was switched to a new type. Because I used the Level.TimeSeconds to time a lot of the HUD events, simply parsing the Level.TimeSeconds between the server and the client will not work as Level.TimeSeconds starts when the engine was first started. Thus the difference between a server's Level.TimeSeconds and the client's Level.TimeSeconds can be very minimal to extremely large.</p>
+<p>However, since the HUD is only ever owned by the client (Servers do not maintain a server copy of the client's hud) then the client can be responsible to notify the HUD of the change that occured. By using the above example, I could also append to the 'if(PlayerController(Controller)&#160;!= None)' with a 'PlayerController(Controller).myHud&#160;!= None' to further weed out servers/clients that no longer had a HUD (and to prevent an access none from occuring).</p>
+<p>The client side notification can be hacked, but there would be very little point in doing so, as it is the server that maintains the weapon/shield status not the client. Thus, the client side only notification can be considered 'safe to hack'.</p>
+<p>The second element was telling a client about a server event. While this can range from simple (tank shell attacking you) to somewhat difficult (tank shell hit you, made a special effect on you and placed a timer of it's effects on you). Thus the level of planning further increases. The model I took for this approach was:</p>
+<ol>
+<li><b>Server</b> event occured</li>
+<li><b>Server</b> parses event to ensure validity</li>
+<li><b>Server</b> generates reactions to events</li>
+<li><b>Server</b> sends event to <b>Client</b></li>
+<li><b>Client</b> receives</li>
+<li><b>Client</b> updates simulation</li>
+<li>Complete</li>
+</ol>
+<p>All of the server side is pretty easy. However, when a tank had a special effect placed onto it, a small boolean was altered on the server to let the client know the effect is in effect. For example, bConcussed was set true when the concussion effect was in play and false to when it wasn't. The server governs this variable and the client is normally never allowed to change it. The replication looked a little like this,</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span> 
+<span class="br0">{</span> 
+  un/<span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span>bNetDirty &amp;&amp; <span class="kw8">Role</span> == <span class="kw9">Role_Authority</span><span class="br0">)</span> 
+    bConcussed; 
+<span class="br0">}</span>
+</pre></div>
+<p>The properties of this, tell that when the variable differs between the client and server for the server to replicate the variable again. This was used for a different purpose that I will explain later on.</p>
+<p>Previously when I first wrote this code, I would simply simulate a client function to spawn the client side effects which would then attach itself to the owner of the effect. The owner was then responsible for the destruction of the effect. However the problems that occured with this was that it used several replication steps (First replicate the effect was needed, then the effect replicate back to the server and its owner about its existence and then for the owner to sometime replicate the function to destroy the effect). This wasn't the best approach for this. Not only was it bad replication but it was also poor in maintaining the intregrety of the simulations between the server and the client but sometimes the effects wouldn't be removed or sometimes the effects would appear incorrectly.</p>
+<p>Thus what I decided to do was to have the server set a variable which indicated the status of the effect. The client then checks for this variable and maintains its effects client side only. While the effects could be hacked, the hacking of this part isn't anything special as it would only hinder the cheater in that he wouldn't know what effect was being done on him/her.</p>
+<p>Thus the replication code went something like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> TakeDamage<span class="br0">(</span>syntax<span class="br0">)</span> 
+<span class="br0">{</span> 
+  <span class="kw1">if</span><span class="br0">(</span>Damaged<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span> 
+  <span class="br0">{</span> 
+    bConcussed = <span class="kw9">true</span>; 
+    UpdateClient<span class="br0">(</span><span class="br0">)</span> 
+  <span class="br0">}</span> 
+<span class="br0">}</span> 
+ 
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span> 
+<span class="br0">{</span> 
+  <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> 
+  <span class="br0">{</span> 
+    <span class="kw1">if</span><span class="br0">(</span>bConcussed<span class="br0">)</span> 
+      <span class="co1">//generate effects else Effects.Destroy(); </span>
+  <span class="br0">}</span> 
+<span class="br0">}</span>
+</pre></div>
+<p>There were also extraneous code to maintain the effects, and both the owner and the effects were responsible for destroy the effect/itself. This was a double approach in removing rogue effects. On hindsight, this probably wasn't really required, not did it need to be in the tick function. Periodic checking would have been fine ... Battle City was reported to be slower on a lot of machines and that was probably due to my over use of the tick function.</p>
+<p>Finally the cash system was a mixture of both of the above. While I won't go into elaborate details, it simple used the parts where the client requested an event (then came the client preliminary checks, etc etc) with the final sum that the server would then give an item to the player. By using a mixture of the above techniques I was able to make a rudimentary monetary system pretty quickly and easily.</p>
+<p>What I learnt most with this mod was how to plan and setup for replication. You first of all need to figure out what exactly are you doing. In this case, say your wanting to make items purchasable, so one possible plan is this:</p>
+<ol>
+<li><b>Client</b> chooses item to buy</li>
+<li><b>Client</b> checks if it can buy said item</li>
+<li><b>Client</b> notifies the <b>Server</b> of the purchase decision</li>
+<li><b>Server</b> checks if the <b>Server</b> version of the <b>Client</b> can buy said item</li>
+<li><b>Server</b> confirms the purchase is valid</li>
+<li><b>Server</b> then notifies the <b>Client</b> the purchase was successful/unsuccessful</li>
+<li><b>Client</b> receives the <b>Server</b> notification</li>
+<li><b>Client</b> informs the player</li>
+<li>Complete</li>
+</ol>
+<p>By breaking it down into steps, you should be able to visualize what parts need to be run on the server and what parts need to be run on the client. From here, you can plan out your function path tree and how functions will be run and in what order. Also with this much planning you can also see how you may optimize your code, as well as being able to decide which sections have to be replicated or ones that can be somewhat laxed about (unreliable replication). By thinking about the planning and setting up, when I coded things first time they worked in offline and online conditions 95% of the time. Of course, I can deny that sometimes even with good planning and setup there is a chance that it may not work on the network, but in saying that by doing this you have a much higher chance that it will work.</p>
+<p>Remember, as elmuerte has reminded me again and again, designing, planning and thinking about how you will write you code is more important than the task of writing the code itself. In fact, I think that a good sign of a coder is when he/she is able to visualize and explain to others in what manner the code will be written.</p>
+<p>Well, with all this said, I hope this slight revalation will help you in your adventures with replication. Replication is definately something that is hard to grasp and I still am learning more about it (You can never learn enough about replication). I did learn some other replication techniques during the development of Battle City, but I can't give everything away now can I?</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Solid Snake:</b> Thanks to Arelius for fixing up some of my comments in this document. Much appreciated.</p>
+<p><b>JonAzz:</b> In the replication blocks, shouldn't it be Reliable if ( Role == Role_Authority ) {} , right now the Reliable is missing&#160;:B</p>
+<p><b>Solid Snake:</b> You're correct, that it should have a pre syntax before the if statement, but I left it empty so that people would decide whether to use reliable or unreliable as the pre syntax (although post mentioning that might have helped). The curly brackets aren't required but some people do it for obsufication reasons. You're allowed to do:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span><span class="br0">(</span><span class="st0">''</span>syntax<span class="st0">''</span><span class="br0">)</span>
+  Blah blah;
+</pre></div>
+<p>or</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span><span class="br0">(</span><span class="st0">''</span>Syntax<span class="st0">''</span><span class="br0">)</span> <span class="br0">{</span>
+  Blah Blah;
+<span class="br0">}</span>
+</pre></div>
+<hr />
+<p><b>Tarquin:</b> I suggest moving this page to <strong class="selflink">Replication Examples/Battle City</strong>:</p>
+<p><b>Vitaloverdose</b>; im not sure what the 'un/reliable' indicates, i havent seen it written like that anywhere else. Is it reliable or unreliable&#160;?. Its not explained anywhere in the tutorial.</p>
+<p><b>Kartoshka:</b> The "reliable" function tells the server to check to see if the packet containing the replicated variable was sent successfully or not, and keep sending it until it is successful. The "unreliable" function sends the packet, but does not perform this check. As this is just a general example of replication, I believe the author left it up to the end-user to determine which function he would like to use.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 21/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/p/Legacy%7EReplication_Examples_Battle_City_258e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/p/Legacy_talk%7EReplication_Examples_Battle_City_6d46.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Replication_Examples/Battle_City">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:12, 10 October 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

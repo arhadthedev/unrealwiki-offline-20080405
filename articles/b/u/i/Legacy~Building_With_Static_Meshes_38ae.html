@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Building With Static Meshes - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Building With Static Meshes</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The introduction of <a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_d654.html" title="Legacy:Static Mesh">Static Meshes</a> has radically changed how maps are built. In the <a href="../../../../articles/t/h/e/Legacy%7EThe_Curse_Of_Static_Meshes_e9eb.html" title="Legacy:The Curse Of Static Meshes">The Curse Of Static Meshes</a> article, mappers explain their problems with this new technique. Here you'll find solutions.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Acclimatizing"><span class="tocnumber">1</span> <span class="toctext">Acclimatizing</span></a></li>
+<li class="toclevel-1"><a href="#Problems"><span class="tocnumber">2</span> <span class="toctext">Problems</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Finding_the_right_mesh"><span class="tocnumber">2.1</span> <span class="toctext">Finding the right mesh</span></a></li>
+<li class="toclevel-2"><a href="#Meshes_stuck_in_maps"><span class="tocnumber">2.2</span> <span class="toctext">Meshes stuck in maps</span></a></li>
+<li class="toclevel-2"><a href="#PrePivot"><span class="tocnumber">2.3</span> <span class="toctext">PrePivot</span></a></li>
+<li class="toclevel-2"><a href="#Scaling_Textures"><span class="tocnumber">2.4</span> <span class="toctext">Scaling Textures</span></a></li>
+<li class="toclevel-2"><a href="#Bad_lights"><span class="tocnumber">2.5</span> <span class="toctext">Bad lights</span></a></li>
+<li class="toclevel-2"><a href="#No_back_face"><span class="tocnumber">2.6</span> <span class="toctext">No back face</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Customizing"><span class="tocnumber">3</span> <span class="toctext">Customizing</span></a></li>
+<li class="toclevel-1"><a href="#Opinions_on_static_mesh_mapping"><span class="tocnumber">4</span> <span class="toctext">Opinions on static mesh mapping</span></a></li>
+<li class="toclevel-1"><a href="#General_Forum_on_Static_Meshes"><span class="tocnumber">5</span> <span class="toctext">General Forum on Static Meshes</span></a></li>
+<li class="toclevel-1"><a href="#Static_Meshes_and_Collision"><span class="tocnumber">6</span> <span class="toctext">Static Meshes and Collision</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">7</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Acclimatizing" id="Acclimatizing"></a></p>
+<h2><span class="mw-headline">Acclimatizing</span></h2>
+<p>rough thoughts to refactor:</p>
+<ul>
+<li>to get an idea of how to use SMs, use RMODE 3 in game, or <a href="../../../../articles/v/i/e/Legacy%7EViewport_Caption_Context_Menu_9613.html" title="Legacy:Viewport Caption Context Menu">Viewport Caption Context Menu</a> -&gt; Show -&gt; Static meshes.</li>
+<li>despite what has been said, maps are not mere boxes with meshes: many maps still have a reasonably complex <a href="../../../../articles/b/s/p/Legacy%7EBSP_220f.html" title="Legacy:BSP">BSP</a>, with things like subtracts for lowered floor areas (in the first map of the DD ladder)</li>
+</ul>
+<p>Getting used to SM... some rough ideas:</p>
+<ul>
+<li>adapt DavidM's old advice about mapping for UT: copy. Take a UT2003 map you like – then rip it up and rip it off. Copy the style. Make corridors, entrances, walkways etc the same way as in that map. If you feel brave, load up the SM packages it uses and experiment with the other SMs in those packages.</li>
+</ul>
+<p><a name="Problems" id="Problems"></a></p>
+<h2><span class="mw-headline">Problems</span></h2>
+<p>Quick cures for static mesh ailments:</p>
+<p><a name="Finding_the_right_mesh" id="Finding_the_right_mesh"></a></p>
+<h3><span class="mw-headline">Finding the right mesh</span></h3>
+<p>Epic's mesh packages are notorious for being an absolute mess, with no logic to the way the meshes are organized. (Hello? 80% of meshes in "misc" group?)</p>
+<p>Try our <a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_Package_Index_6d3a.html" title="Legacy:Static Mesh Package/Index">Static Mesh Package/Index</a>. There's also an app being worked on that will let you search them by keyword.</p>
+<p><a name="Meshes_stuck_in_maps" id="Meshes_stuck_in_maps"></a></p>
+<h3><span class="mw-headline">Meshes stuck in maps</span></h3>
+<p>If you want to use any of the static meshes Epic's or Digital Extremes' mappers put into their maps' <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a> <a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">packages</a>, you do not have to re-import them into your own MyLevel package. Simply load the map they're in in the static mesh browser as if it was a static mesh package (in fact, since it contains static meshes, it's as good as one).</p>
+<p>However, some players delete standard maps they do not like from their hard drive – mention the dependency in your map's accompanying text file.</p>
+<p><a name="PrePivot" id="PrePivot"></a></p>
+<h3><span class="mw-headline">PrePivot</span></h3>
+<p>Some meshes are <i>always</i> off-grid, no matter what you do to. This appears to be down to shoddy work on the part of Epic.</p>
+<p>Use <a href="../../../../articles/a/c/t/Legacy%7EActor_Display_9b4b.html" title="Legacy:Actor/Display">Display</a> -&gt; PrePivot to put awkward meshes back on grid.</p>
+<p><a name="Scaling_Textures" id="Scaling_Textures"></a></p>
+<h3><span class="mw-headline">Scaling Textures</span></h3>
+<p>SMs can be scaled to any size, which is great! But the texture they carry is scaled too, and sometimes this looks like crud if you make the mesh too large.</p>
+<p>Create a <a href="../../../../articles/t/e/x/Legacy%7ETexScaler_18f6.html" title="Legacy:TexScaler">TexScaler</a> in <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a> to rescale textures in a flash for static meshes you've scaled. For example, if you have doubled the size of the mesh, halved the size fo the texture to compensate.</p>
+<p><a name="Bad_lights" id="Bad_lights"></a></p>
+<h3><span class="mw-headline">Bad lights</span></h3>
+<p>A number of light meshes have the actual light part displaying a material that is <i>set to unlit</i>. You can find normal versions of the material if you look in the <a href="../../../../articles/t/e/x/Legacy%7ETexture_Package_6f58.html" title="Legacy:Texture Package">texture package</a> it comes from, eg UCGeneric.</p>
+<p><a name="No_back_face" id="No_back_face"></a></p>
+<h3><span class="mw-headline">No back face</span></h3>
+<p>Meshes with no back face – eg the windows in DM-Oceanic.</p>
+<p>You might have to put two meshes back to back, or create a two-side version of the material that is applied. Or use CSG brushes to fill in the gaps.</p>
+<p><a name="Customizing" id="Customizing"></a></p>
+<h2><span class="mw-headline">Customizing</span></h2>
+<p>See <a href="../../../../articles/s/t/a/Legacy%7EStaticMeshActor_e403.html" title="Legacy:StaticMeshActor">StaticMeshActor</a> for useful properties that can be set to alter individual placed static meshes; see <a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_d654.html" title="Legacy:Static Mesh">Static Mesh</a> for properties of the actual resource that can be edited.</p>
+<p>Briefly, you can change the following aspects of a placed mesh:</p>
+<ul>
+<li>size</li>
+<li>rotation</li>
+<li>displayed textures</li>
+</ul>
+<p><a name="Opinions_on_static_mesh_mapping" id="Opinions_on_static_mesh_mapping"></a></p>
+<h2><span class="mw-headline">Opinions on static mesh mapping</span></h2>
+<ul>
+<li><a href="../../../../articles/t/h/e/Legacy%7EThe_Curse_Of_Static_Meshes_e9eb.html" title="Legacy:The Curse Of Static Meshes">The Curse Of Static Meshes</a> – the <i>curse</i></li>
+</ul>
+<hr />
+<p><i>anything below here please refactor or delete!</i></p>
+<hr />
+<blockquote class="legacyquote">
+<p>Lee Perry (of Epic) writes on the Polycount Message Boards: "Levels and environment meshes are far more my area of expertise. There's many factors that go into your frame rate of course, but it's normal to have about 30K to 60K polys *in view* at any time. Your level could have a great great GREAT deal more than than, it's all about what's visible, and there's many (easy to use) new tools to help with visibility, such as anti-portals and volumes. For the most part we build level shells out of BSP at about 2-5 times the polys of a UT level, and then we populate it very densely with environment static meshes. These are built (most of the time) in a modular fashion, and pull a lot of the weight level textures used to in UT. Instead of slapping a texture on a wall, now you grab a couple of models and stick in front of the wall. The modular designs allow for a great deal of detail in a level without having to meticulously model a high-detail level. Building static mesh sets is pretty fun stuff, especially when you get the payoff of seeing them all over the web in everyone's levels, and largely used in ways you never would of expected. You could model 2-3 basic walls (built with edges on a grid prederably), make a door, maybe a cieling piece or two, maybe 2 good decoration pieces if you feel like it, and voilà you'll have 9000 user maps using your prefabs everywhere they can fit them. It's cool to walk into a room you modeled, and not really recognize it because it was built so differently than you intended" and "Oh, BTW, for sea surfaces, you'd most likely drop in a dynamic water plane and it would be generated realistically in a way that should never tile. And you can set things like mesh resolution, wave height, etc... on that"</p>
+</blockquote>
+<p>Source: <a href="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636.html?00168" class="external text" title="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636.html?00168" rel="nofollow">Polycount Message Board</a></p>
+<p><a name="General_Forum_on_Static_Meshes" id="General_Forum_on_Static_Meshes"></a></p>
+<h2><span class="mw-headline">General Forum on Static Meshes</span></h2>
+<p>Amid cries that "Unreal Mapping is over", let's establish some rough ideas. First of all, people should realize that they're discussing based on suppositions.</p>
+<p>Models may come to be treated much like textures are currently treated. That is:</p>
+<ul>
+<li>no-one complains that they can only use UT bundled textures,</li>
+<li>there's plenty of variety bundled with the game</li>
+<li>Epic mappers such as CliffyB have previously expressed surprise at the originality with which l33t community mappers use the built-in textures</li>
+<li>some people will specialize and create model packs, the same way people produced texture packs.</li>
+</ul>
+<p>Model creating will become an extra job in the process of making environments; this is a natural direction to take since the complexity of the worlds is increasing.</p>
+<p>Some more information taken from the Polycount message board (once again eepers stumps up the goods).</p>
+<blockquote class="legacyquote">
+<p>Lee Perry (of Epic) writes some more on the Polycount Message Boards: Actually, Ent, the prefab modeling and level design questions are completely what I'm most familiar with, so no prob at all, ask away, detailed as you like! No, nothing has replaced zones. They are still the best and fastest way to break up a map. Volume is a general term that could be anything from a damage volume to a volume that changes the physics within it. I imagine you're pretty much refering to "anti-portal volumes though (APV's if you will)" An APV or simple Anti-portal sheet is something you use only when zoning won't do the trick for you. Rooms connected by hallways and so forth should still be zones, but if a room is really big with an object in the middle, you stick an APV in it, and it helps obscure things behind it (in the same zone). Another key use is in terrain. Say you've got a map with big hills on it. The whole outside is a single zone, but you don't wanna go drawing the whole world when you're outside. So you take an anti-portal and stick it in your major hills so the engine knows it doesn't need to draw things on the other side. APVs can be any convex shape, preferably with low polys. Honestly I don't think once in the game has one been used that wasn't a simple cube though. it's not a big precision-mesh-fitting operation. Too many anti-portals start to outweigh the benefits of themselves as well, don't go dropping them in every little item just in case someone crouches behind it. Naming areas can be done in Zone Infos, or a volume can be dragged over an area that does nothing but change the location name. I don't know why anyone would claim APVs don't work in multiplayer, they're a key factor in getting maps running fast. They do. Fog does occlude polys beyond it, yes. Unless a material specifically states it's double sided, the engine doesn't draw the backs of polys. It's still a good idea to delete polys you won't see, because there's still overhead with those polys as the engine runs around talking to the vid card trying to decide wether it needs to draw them or not. Level polys vary a great deal, it's just one of many aspects you keep in mind. Overdraw from loads of particles have a big hit (learn to make efficient emitters!), some materials slow it, etc. But if you're just looking for a ballpark... 20K to 45K polys in view, onscreen, is pretty reasonable. As said before though, it varies widely. You can find cases where a test level pushes 600K polys at a steady 50 FPS, and you can find cases with loads of materials and overdraw and gameplay issues that runs 12K polys at 15FPS. Luckily there are many tools in game that let you pull up stats and see exactly where your framerate is going as you run around a level, it's pretty easy to spot problem areas.</p>
+</blockquote>
+<p>Source: <a href="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636-9.html" class="external text" title="http://dynamic.gamespy.com/~polycount/ubb/Forum1/HTML/006636-9.html" rel="nofollow">Polycount Message Board</a></p>
+<p>And heres some more fromthe same thread. Lee Perry is one patient guy.</p>
+<blockquote class="legacyquote">
+<p>"The way it works is this... if you're looking through an anti-portal and you see a little corner of a wall mesh sticking out behind it, the whole wall mesh gets drawn. If you move so as the whole thing is out of view, obscured by the volume, the whole mesh isn't drawn. So making a complicated volume for this use will generally not make it work better, you're always going to be moving around and seeing things around corners. It's best to use the simplest shape to get the job done."</p>
+</blockquote>
+<p><a name="Static_Meshes_and_Collision" id="Static_Meshes_and_Collision"></a></p>
+<h2><span class="mw-headline">Static Meshes and Collision</span></h2>
+<p>Here's some more fascinating information taken from the UT Modelling thread over at polycount (Props to Lee Perry again&#160;:)).</p>
+<blockquote class="legacyquote">
+<p>"Collision for static meshes is specified in the editor. Bullets and line-trace effects will default to per-polygon no-fuss collision. Player collision will too, but it's a good idea to make a simplified version in editor to reduce this, it gets expensive when you've got 16 people running around your area. That's an easy task, BTW, even though it sounds like a drag, Karma will benefit from that step anyway. Karma collision *CAN* use per-poly collision, but it gets expensive quick. As with player collision, it's best to bring in your wall, build a relatively simplified BSP surface around it, and designate that as that object's collision. You only have to do that once. As you do that, every instance of that wall mesh throughout the level gains that same collision." Also, if that's not something you're jazzed about, or you've got something that should really just be a cylinder or a box, in the little mesh browser you can create a collision mesh with like 2 clicks. They're called DOPs, and essentially you tell it which of the simple shapes you want and it shrink wraps that primative to your object. It's very fast, very user friendly, and it speeds up player and karma collision calculation VASTLY. BSP shells generally are only resorted to if a DOP shape isn't really appropriate. By using these two collision techniques, there's really very few places you need to make any kind of blocking volumes."</p>
+</blockquote>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_d654.html" title="Legacy:Static Mesh">Static Mesh</a> – Definition &amp; basics</li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_Modeling_f220.html" title="Legacy:Static Mesh Modeling">Static Mesh Modeling</a> – creating your own</li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_Package_1def.html" title="Legacy:Static Mesh Package">Static Mesh Package</a> – listing of the default SM packages</li>
+<li><a href="../../../../articles/h/a/r/Legacy%7EHardware_Brush_9e2e.html" title="Legacy:Hardware Brush">Hardware Brush</a></li>
+</ul>
+<hr />
+<p><b>EntropicLqd:</b> I've been thinking about this whole prefab thing and it occurs to me that in order to make effective use of the prefabs you will need to make your BSP/geometry corridors wider than you would expect. Otherwise when you add your "prefab wall" the interior space within your corridor (or room) will be smaller than anticipated. Some questions that could do with answering around this are:</p>
+<ul>
+<li>Do prefabs have a front and back (a side from which they are not visible)? It would seem a sensible.</li>
+<li>Should prefabs be algined with world geometry, or, do they need to sit slightly in front of the BSP'd wall (like in UT when you have 2 add brushes in the same place you see texture tears).</li>
+</ul>
+<p><b>Mychaeel:</b> You certainly <i>can</i> make prefabs that don't have a back side, and to achieve a 3D effect, they'll have to sit a bit in front of a wall.</p>
+<p><b>Aphex:</b> I presume meshes are treated the same way as our old friends semi-solids (though probably without the bsp errors&#160;;) so you dont need to align them with anything, and they are separate from the BSP.</p>
+<hr />
+<p><b>EntropicLqd:</b> I pity the poor bugger that winds up refactoring all this information. I'd have a go but it scares me.</p>
+<p><b>Flashman:</b> Well sed Ent m8&#160;:) btw: i'm currently making architecture that has no backfacing polys where I can guarantee there will be a wall/floor etc. It's just a matter of preference &amp; performance&#160;:) apart from probs with texture alignment (probably my MAX un1337ness) the seem to go in fine!</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Category:Legacy Mapping</a></p>
+<p>Refactor me</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 39/1000000
+Post-expand include size: 6698/2097152 bytes
+Template argument size: 6491/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/u/i/Legacy%7EBuilding_With_Static_Meshes_38ae.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/u/i/Legacy_talk%7EBuilding_With_Static_Meshes_065a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Building_With_Static_Meshes">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:48, 23 June 2004 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

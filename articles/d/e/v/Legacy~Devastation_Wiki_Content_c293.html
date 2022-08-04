@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Devastation Wiki Content - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Devastation Wiki Content</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page contains links to many of the pages (well, it would do if there were lots of Devastation related content on the Wiki) relating to the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal Engine</a> based game <a href="../../../../articles/d/e/v/Legacy%7EDevastation_74db.html" title="Legacy:Devastation">Devastation</a>. If you are adding new Devastation content then feel free to link to it from here (creating a new section if you need to).</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Possible_Mod_Types"><span class="tocnumber">1</span> <span class="toctext">Possible Mod Types</span></a></li>
+<li class="toclevel-1"><a href="#Mapping_for_Devastation"><span class="tocnumber">2</span> <span class="toctext">Mapping for Devastation</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Some_Useful_Units"><span class="tocnumber">2.1</span> <span class="toctext">Some Useful Units</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Coding_for_Devastation"><span class="tocnumber">3</span> <span class="toctext">Coding for Devastation</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Possible_Mod_Types" id="Possible_Mod_Types"></a></p>
+<h2><span class="mw-headline">Possible Mod Types</span></h2>
+<p>Out of the box Devastation doesn't support any mod types via the game interface. It is possible to change the game type and add mutators via the "command line". The structure of the Devastation code is such that not all of the standard mutator functions work, or behave in the manner expected from experience with UT and UT2003.</p>
+<p>So far I've tried the following via a mutator:</p>
+<dl>
+<dt>Altering the player movement characteristics via the ModifyPlayer() function.</dt>
+<dd>The function is called but the player movement is reset later in the code (as far as I can tell).</dd>
+<dt>Changing the amount of damage taken when falling via MutatorTakeDamage.&#160;</dt>
+<dd>The MutateTakeDamage() function is never called. It would appear that "damage mutators" need to extend the <i>Damager control</i> class. This means that it would be nigh on impossible to run more than one "damage mutator" at a time. I feel a set of custom classes coming on that call the original mutator chain after the default handling is done. I'll be the first to admit that it's a bit pants but hey - what is this life if full of care, we have no time to fix broken code.</dd>
+<dt>CheckReplacement()&#160;</dt>
+<dd>This mutator function works fine and behaves as expected. Be aware that Dev. spawns many many effects during gameplay that are passed through this function (at least in a listen server). A long mutator chain may impact performance. I must get around to testing this in dedicated server mode.</dd>
+<dt>ScoreKill()&#160;</dt>
+<dd>This function behaves as expected. The <i>standard</i> Score is updated prior to the function being called. The actual score used is held in separate variables and updated after this function is called.</dd>
+</dl>
+<p><a name="Mapping_for_Devastation" id="Mapping_for_Devastation"></a></p>
+<h2><span class="mw-headline">Mapping for Devastation</span></h2>
+<dl>
+<dt>Does Devastation support the terrain features of the Unreal Engine?&#160;</dt>
+<dd>Yes.</dd>
+</dl>
+<p><a name="Some_Useful_Units" id="Some_Useful_Units"></a></p>
+<h3><span class="mw-headline">Some Useful Units</span></h3>
+<dl>
+<dt>Normal jumping height&#160;</dt>
+<dd>64 units.</dd>
+<dt>Crouch-jumping height&#160;</dt>
+<dd>&#160;? units.</dd>
+<dt>Maximum distance that can be jumped&#160;</dt>
+<dd>&#160;? units.</dd>
+<dt>How big are door frames&#160;</dt>
+<dd>Door frames seem to conform to the following dimensions - width=60, breadth=8, height=120. Very weird dimensions. I've also seen doors that were 56x8x128 which is slightly more sensible. Personally I think I may work to 64x8x128 - but that my not fit with the static meshes available.</dd>
+<dt>Any thoughts on texture sizes?&#160;</dt>
+<dd>Textures are generally no larger than 256x 256. Although some sky textures can be up to 1024x1024.</dd>
+<dt>How fast does the player move?&#160;</dt>
+<dd>The player has a ground speed of 230 units. I've not been able to acertain whether this is walking speed or running speed.</dd>
+</dl>
+<p><a name="Coding_for_Devastation" id="Coding_for_Devastation"></a></p>
+<h2><span class="mw-headline">Coding for Devastation</span></h2>
+<p>The model used within Devastation to support it's game types is different to that of UT and UT2003. The code adopts a very service based approach to it's functionality (which to my mind is quite tidy). Whether it's actually easy to use or not is another matter. I won't know until I get the game.</p>
+<p>Essentially, all game types are subclassed from DGameInfo. The game info class has a set of references to <i>Game Assistants</i>. These assistants are responsible for implementing the rules of the game and take on many of the functions handled by the GameInfo class and Controller (as far as I can tell).</p>
+<p>The game assistants are held in a linked list in a similar way to Mutators. In both cases there is no link to the previous assistant in the chain.</p>
+<p>Each DGameAssistant has a set of references to all of the other "standard" game assistants used by each of the game types. These are listed below:</p>
+<ul>
+<li>Access center</li>
+<li>Spawn center - Controls players entering and leaving the game as well as respawning.</li>
+<li>Inventory manager - Controls the players default inventory and also handles collecting other items of inventory as well.</li>
+<li>Bot manager - Controls the spawning of the "bots" within the game. How closely involved this class is in managing the "players" in the single player game is currently under investigation. The ADDBOTS console command appears to be broken with Devastation - support for adding bots appears to be in this class but with no way of adding them via the console.</li>
+<li>Team manager</li>
+<li>Damage control - Controls the amount of damage taken. Using a custom DDamageControl class you should be able to hook into accessing "damage mutators".</li>
+<li>Broadcaster</li>
+<li>Game log</li>
+</ul>
+<p>Quite how game assistants and mutators work together is something of a mystery at the moment. I hope to explore this more fully in the future.</p>
+<hr />
+<p><b>Tarquin:</b> I downloaded the demo and it crashes on startup&#160;:(</p>
+<pre>
+GameVersion: 368
+Can't find 'ini:Engine.Engine.GameEngine' in configuration file
+History: UObject::SafeLoadError &lt;- UObject::StaticLoadClass &lt;- InitEngine
+</pre>
+<p><b>EntropicLqd:</b> Devastation places the MP Demo INI files in "My Documents/DevastationMPDemo". Try deleting them and letting the game re-create them. And make sure that the directories exist.</p>
+<p><b>Tarquin:</b> Thanks for the tip .... still crashes the same though&#160;:( I'm off to rant about it in BuF OT ...</p>
+<p><b>EntropicLqd</b> What OS are you running? What files (and files sizes) do you have in "My Documents/DevastationMPDemo"? This is a curious one. There's a few other people in the devastation forums with the same problem but no-one has figured it out yet.</p>
+<p><b>Tarquin:</b> Win98SE. I couldn't find any folder called "DevastationMPDemo", so I made one. Could the problem be related to the fact that I used TweakUI to set "My Documents" in a different location?</p>
+<p><b>EntropicLqd:</b> Wouldn't suprise me. Create a "My Documents" folder and see if that works. Other people have reported problems when they've got their "My Documents" folder pointing to a network or compressed drive. Might be worth just creating a "My Documents" directory in the original location (c:\ if I remember right) to see if that solves the problem.</p>
+<p><b>Tarquin:</b> Yup, someone on the devas forum has the exact same problem but with XP. C\my Doc is still physically there – it's just a registry setting that's different</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/e/v/Legacy%7EDevastation_Wiki_Content_c293.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/e/v/Legacy_talk%7EDevastation_Wiki_Content_dec4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Devastation_Wiki_Content">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:26, 23 March 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

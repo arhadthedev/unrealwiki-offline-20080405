@@ -1,0 +1,551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Clam - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Clam</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Intro"><span class="tocnumber">1</span> <span class="toctext">Intro</span></a></li>
+<li class="toclevel-1"><a href="#IIQD"><span class="tocnumber">2</span> <span class="toctext">IIQD</span></a></li>
+<li class="toclevel-1"><a href="#Dll_To_Lib.2C_Header_File"><span class="tocnumber">3</span> <span class="toctext">Dll To Lib, Header File</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Goal"><span class="tocnumber">3.1</span> <span class="toctext">Goal</span></a></li>
+<li class="toclevel-2"><a href="#CODE"><span class="tocnumber">3.2</span> <span class="toctext">CODE</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Intro" id="Intro"></a></p>
+<h3><span class="mw-headline">Intro</span></h3>
+<p><a name="IIQD" id="IIQD"></a></p>
+<h3><span class="mw-headline">IIQD</span></h3>
+<p>Interaction Interface Quick Decision v1.1</p>
+<p>Use live gameplay control options to set gameplay elements</p>
+<p>This is part of the base code for IIQD. The mouse code was taken from Tanus' SyndicateMod. Also the way<br />
+the image coding is done may seem familiar with the Sega500 website tutorials.<br />
+<br />
+Also I highly doubt this is the most efficient way to do this. I think I took the long way around in doing<br />
+some of these things. I'll change the textures to ones found within UT2k3 as soon as I get around to it.<br />
+Also I'll put the playercontroller which is needed for this to make much sense and the gametype for conclusion. The playercontroller is a<br />
+stripped down version of Tanus'. Finally the UnitPress() function in the playercontroller still needs tweaked.<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> selectorinteraction <span class="kw5">extends</span> interaction <span class="kw6">dependson</span><span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>;
+ 
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">IMPORT</span> <span class="kw4">name</span>=CURSOR FILE=Textures\cursor12.<span class="me1">tga</span> GROUP=<span class="st0">"HUD"</span> MIPS=OFF FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">IMPORT</span> <span class="kw4">name</span>=CURSORCLICK FILE=Textures\cursor12click.<span class="me1">tga</span> GROUP=<span class="st0">"HUD"</span> MIPS=OFF FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">IMPORT</span> <span class="kw4">name</span>=MENU FILE=Textures\menu2.<span class="me1">tga</span> GROUP=<span class="st0">"HUD"</span> MIPS=OFF FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">texture</span></a> <span class="kw6">IMPORT</span> <span class="kw4">name</span>=BUTTON FILE=Textures\button.<span class="me1">tga</span> GROUP=<span class="st0">"HUD"</span> MIPS=OFF FLAGS=<span class="nu0">2</span>
+ 
+<span class="kw5">var</span>   <span class="kw4">int</span>     SelectedBox;
+ 
+<span class="kw5">var</span>   PlayerController    PlayerOwner;
+ 
+<span class="kw5">var</span>   <a href="/Texture"><span class="kw10">texture</span></a>             CursorMat,  CursorMat2,    MenuTemp,   Button;
+ 
+<span class="kw5">var</span>        <span class="kw4">bool</span>       CursorClick;
+ 
+ 
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw1">if</span> <span class="br0">(</span>PlayerOwner == <span class="kw9">None</span><span class="br0">)</span>
+PlayerOwner = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span>Canvas C<span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw5">local</span> <span class="kw4">float</span> CursorX, CursorY;
+   <span class="kw5">local</span> <span class="kw4">byte</span> tempstyle;
+   <span class="kw5">local</span> <span class="kw4">color</span> tempColor;
+ 
+   tempstyle=C.<span class="me1">Style</span>;
+   tempcolor=C.<span class="me1">DrawColor</span>;
+ 
+   CursorX = SelectorPlayer<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">WindowsMouseX</span>;
+   CursorY = SelectorPlayer<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">WindowsMouseY</span>;
+ 
+ 
+ 
+   <span class="co1">//</span>
+   <span class="co1">//MENU</span>
+   <span class="co1">//</span>
+   c.<span class="me1">setPos</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+   c.<span class="me1">Style</span>=<span class="nu0">5</span>;
+   c.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>, <span class="nu0">255</span>, <span class="nu0">255</span><span class="br0">)</span>;
+   c.<span class="me1">DrawIcon</span><span class="br0">(</span>MenuTemp, <span class="nu0">2</span><span class="br0">)</span>;
+ 
+ 
+   <span class="co1">//Buttons</span>
+   <span class="co1">//Draw Button One</span>
+   c.<span class="me1">setPos</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span>/<span class="nu0">2</span>,<span class="nu0">5</span><span class="br0">)</span>;
+   C.<span class="me1">Style</span>=<span class="nu0">3</span>;
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">1</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">1</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   C.<span class="me1">DrawIcon</span><span class="br0">(</span>Button, <span class="nu0">1</span><span class="br0">)</span>;
+ 
+   <span class="co1">//Draw Button Two</span>
+   c.<span class="me1">setPos</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span>/<span class="nu0">2</span>,Button.<span class="me1">VSize</span><span class="nu0">+45</span><span class="br0">)</span>;
+   C.<span class="me1">Style</span>=<span class="nu0">3</span>;
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">2</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">2</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   C.<span class="me1">DrawIcon</span><span class="br0">(</span>Button, <span class="nu0">1</span><span class="br0">)</span>;
+ 
+   <span class="co1">//Draw Button Three</span>
+   c.<span class="me1">setPos</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span>/<span class="nu0">2</span>,<span class="br0">(</span>Button.<span class="me1">VSize*</span><span class="nu0">2</span><span class="br0">)</span><span class="nu0">+90</span><span class="br0">)</span>;
+   C.<span class="me1">Style</span>=<span class="nu0">3</span>;
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">3</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">3</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   C.<span class="me1">DrawIcon</span><span class="br0">(</span>Button, <span class="nu0">1</span><span class="br0">)</span>;
+ 
+   <span class="co1">//</span>
+   <span class="co1">//MOUSE</span>
+   <span class="co1">//</span>
+   c.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>, <span class="nu0">255</span>, <span class="nu0">255</span><span class="br0">)</span>;
+   c.<span class="me1">Style</span> =<span class="nu0">6</span>;
+   C.<span class="me1">SetPos</span><span class="br0">(</span> CursorX, CursorY <span class="br0">)</span>;
+ 
+   <span class="kw1">if</span><span class="br0">(</span>cursorclick==<span class="kw9">true</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   c.<span class="me1">DrawIcon</span><span class="br0">(</span>Cursormat2, <span class="nu0">1</span>/<span class="nu0">2</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>cursorclick!=<span class="kw9">true</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   C.<span class="me1">DrawIcon</span><span class="br0">(</span>cursormat, <span class="nu0">1</span>/<span class="nu0">2</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+ 
+   C.<span class="me1">SetPos</span><span class="br0">(</span> <span class="nu0">10</span>, <span class="br0">(</span>C.<span class="me1">ClipY</span><span class="nu0">-20</span><span class="br0">)</span> <span class="br0">)</span>; <span class="co1">//DISPLAY MOUSE COORDINATES</span>
+   C.<span class="me1">DrawText</span><span class="br0">(</span> <span class="st0">"CursorX:"</span>@CursorX@<span class="st0">",CursorY:"</span>@CursorY <span class="br0">)</span>;
+ 
+   <span class="co1">//FINISH UP</span>
+    C.<span class="me1">Style</span>=tempstyle;
+    C.<span class="me1">DrawColor</span>=tempColor;
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+ 
+ 
+ 
+<span class="co1">//KeyEvent</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> KeyEvent<span class="br0">(</span>EInputKey Key, EInputAction Action, <span class="kw4">FLOAT</span> Delta <span class="br0">)</span>
+<span class="br0">{</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Action == IST_Press<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Key == IK_RightMouse<span class="br0">)</span><span class="br0">)</span>
+<span class="br0">{</span>
+cursorclick=<span class="kw9">true</span>;
+ButtonPress<span class="br0">(</span><span class="br0">)</span>;   <span class="co1">//Perform button function</span>
+SelectorPlayer<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">UnitPress</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>Action == IST_Release<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Key == IK_RightMouse<span class="br0">)</span><span class="br0">)</span>
+<span class="br0">{</span>
+cursorclick=<span class="kw9">false</span>;
+<span class="br0">}</span>
+<span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="co1">//ButtonPress</span>
+<span class="kw5">function</span> ButtonPress<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">local</span> <span class="kw4">float</span> CursorX, CursorY;
+ 
+      CursorX = SelectorPlayer<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">WindowsMouseX</span>;
+   CursorY = SelectorPlayer<span class="br0">(</span>PlayerOwner<span class="br0">)</span>.<span class="me1">Player</span>.<span class="me1">WindowsMouseY</span>;
+ 
+ 
+   <span class="co1">//button 1</span>
+   <span class="kw1">if</span><span class="br0">(</span>CursorX &gt; <span class="br0">(</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span> - Button.<span class="me1">USize</span><span class="br0">)</span> / <span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span>&amp;&amp; CursorX &lt; <span class="br0">(</span>MenuTemp.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span>+ <span class="br0">(</span>Button.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span> &amp;&amp; CursorY &gt; <span class="nu0">5</span> &amp;&amp; CursorY &lt; Button.<span class="me1">VSize</span><span class="nu0">+5</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">1</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">4</span>;
+   <span class="kw1">return</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">1</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">1</span>;
+   <span class="kw1">return</span>;
+   <span class="br0">}</span>
+   <span class="br0">}</span>
+ 
+   <span class="co1">//button 2</span>
+   <span class="kw1">if</span> <span class="br0">(</span>CursorX &gt; <span class="br0">(</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span> - Button.<span class="me1">USize</span><span class="br0">)</span> / <span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span>&amp;&amp; CursorX &lt; <span class="br0">(</span>MenuTemp.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span>+ <span class="br0">(</span>Button.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span> &amp;&amp; CursorY &gt; Button.<span class="me1">VSize</span><span class="nu0">+5</span> &amp;&amp; CursorY &lt; <span class="br0">(</span>Button.<span class="me1">VSize*</span><span class="nu0">2</span><span class="br0">)</span><span class="nu0">+5</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">2</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">4</span>;
+   <span class="kw1">return</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">2</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">2</span>;
+   <span class="kw1">return</span>;
+   <span class="br0">}</span>
+   <span class="br0">}</span>
+ 
+   <span class="co1">//button 3</span>
+   <span class="kw1">if</span> <span class="br0">(</span>CursorX &gt; <span class="br0">(</span><span class="br0">(</span>MenuTemp.<span class="me1">USize</span> - Button.<span class="me1">USize</span><span class="br0">)</span> / <span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span>&amp;&amp; CursorX &lt; <span class="br0">(</span>MenuTemp.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span>+ <span class="br0">(</span>Button.<span class="me1">Usize</span>/<span class="nu0">2</span><span class="br0">)</span> + <span class="nu0">35</span> &amp;&amp; CursorY &gt; <span class="br0">(</span>Button.<span class="me1">VSize*</span><span class="nu0">2</span><span class="br0">)</span><span class="nu0">+75</span>  &amp;&amp; CursorY &lt; <span class="br0">(</span>Button.<span class="me1">VSize*</span><span class="nu0">3</span><span class="br0">)</span><span class="nu0">+75</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox==<span class="nu0">3</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">4</span>;
+   <span class="kw1">return</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>selectedbox!=<span class="nu0">3</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   selectedbox=<span class="nu0">3</span>;
+   <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>   <span class="co1">//End of Button Press</span>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    cursormat=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'CURSOR'</span>
+    cursormat2=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'CURSORCLICK'</span>
+    MenuTemp=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'MENU'</span>
+    button=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'BUTTON'</span>
+    bVisible=<span class="kw9">true</span>
+    bActive=<span class="kw9">true</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>Player Controller</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> selectorplayer <span class="kw5">extends</span> xPlayer;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> CamHeight, CamDistance;
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasInteraction;
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bHold;
+ 
+<span class="kw5">var</span> ScriptedController cdawg;
+ 
+<span class="kw5">var</span> <span class="kw4">rotator</span> CameraRot; 
+<span class="kw5">var</span> <span class="kw4">vector</span> CameraLoc;
+<span class="kw5">var</span> <span class="kw4">float</span> MaxClipX, MaxClipY;
+ 
+ 
+ 
+<span class="kw5">event</span> PlayerCalcView<span class="br0">(</span><span class="kw6">out</span> <a href="/Actor"><span class="kw10">actor</span></a> ViewActor, <span class="kw6">out</span> <span class="kw4">vector</span> CameraLocation, <span class="kw6">out</span> <span class="kw4">rotator</span> CameraRotation <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">vector</span> temp;
+    bBehindView=<span class="kw9">true</span>;
+    SetViewTarget<span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    ViewActor = ViewTarget;
+ 
+ 
+    CameraLocation = ViewActor.<span class="me1">Location</span>;
+    temp = CamDistance * <span class="kw4">vector</span><span class="br0">(</span>CameraRotation<span class="br0">)</span>;
+    CameraLocation = CameraLocation - temp;
+    CameraLocation.<span class="me1">z</span>+=CamHeight;
+    CameraRotation = <span class="kw4">rotator</span><span class="br0">(</span>ViewActor.<span class="me1">Location</span> - CameraLocation<span class="br0">)</span>;
+    <span class="co1">//offsetcameraLocation=CameraLocation;</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> PlayerWaiting
+<span class="br0">{</span>
+Begin:
+    <span class="kw1">If</span> <span class="br0">(</span><span class="br0">(</span>Viewport<span class="br0">(</span>Player<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>!bHasInteraction<span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+        Player.<span class="me1">InteractionMaster</span>.<span class="me1">AddInteraction</span><span class="br0">(</span><span class="st0">"selector.selectorinteraction"</span>, Player<span class="br0">)</span>;
+        bHasInteraction = <span class="kw9">True</span>;
+        <span class="br0">}</span>
+ 
+ 
+<span class="br0">}</span>
+ 
+ 
+<span class="kw5">function</span> UnitPress<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ 
+         <span class="kw5">local</span> <span class="kw4">vector</span> TraceEnd, HitLocation, HitNormal, Dir, CameraLoc;
+        <span class="kw5">local</span> <span class="kw4">rotator</span> CameraRot;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> ViewActor;
+        <span class="kw5">local</span> <span class="kw4">float</span> Fov, FovDist;
+        <span class="kw5">local</span> <span class="kw4">float</span> MouseX, MouseY;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> Other;
+ 
+        MouseX = Player.<span class="me1">WindowsMouseX</span> / MaxClipX;
+        MouseY = Player.<span class="me1">WindowsMouseY</span> / MaxClipY;
+ 
+        CameraRot = GetViewRotation<span class="br0">(</span><span class="br0">)</span>;
+        CameraLoc = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+ 
+        PlayerCalcView<span class="br0">(</span>ViewActor, CameraLoc, CameraRot<span class="br0">)</span>;
+ 
+        Fov = <span class="br0">(</span>FovAngle/<span class="nu0">2</span><span class="br0">)</span> * Pi / <span class="nu0">180.00</span>;
+        FovDist = <span class="br0">(</span>MaxClipX/<span class="nu0">2</span><span class="br0">)</span> / <span class="kw7">Tan</span><span class="br0">(</span>Fov<span class="br0">)</span>;
+ 
+        Dir.<span class="me1">X</span> = FovDist;
+        Dir.<span class="me1">Y</span> = MouseX - MaxClipX / <span class="nu0">2</span>;
+        Dir.<span class="me1">Z</span> = -<span class="br0">(</span>MouseY - MaxClipY / <span class="nu0">2</span><span class="br0">)</span>;
+ 
+        Dir = Dir &gt;&gt; CameraRot;
+ 
+        TraceEnd = <span class="br0">(</span>CameraLoc<span class="br0">)</span> + <span class="nu0">50000</span> * Normal<span class="br0">(</span>Dir<span class="br0">)</span>;
+ 
+        Other = Trace<span class="br0">(</span>HitLocation, HitNormal, TraceEnd, CameraLoc, <span class="kw9">true</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'xpawn'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"halloween"</span><span class="br0">)</span>;
+        <span class="kw1">return</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ 
+    CamHeight=<span class="nu0">350</span>
+    CamDistance=<span class="nu0">300</span>
+    InputClass=<span class="kw5">class</span><span class="st0">'viewtest.SyndicatePlayerInput'</span>
+    PawnClass=<span class="kw5">Class</span><span class="st0">'selector.selectorpawn'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>SelectorGame</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> selectorgame <span class="kw5">extends</span> xDeathMatch;
+ 
+<span class="kw5">function</span> startmatch<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw6">Super</span>.<span class="me1">startmatch</span><span class="br0">(</span><span class="br0">)</span>;
+DropPawns<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DropPawns<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">local</span> playercontroller theplayer;
+<span class="kw5">local</span> <a href="/Pawn"><span class="kw10">pawn</span></a> temppawn;
+ 
+ 
+ 
+ 
+      <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'playercontroller'</span>, theplayer<span class="br0">)</span>
+      <span class="br0">{</span>
+       temppawn=theplayer.<a href="/Pawn"><span class="kw10">pawn</span></a>;
+       theplayer.<span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Spectating'</span><span class="br0">)</span>;
+       temppawn.<span class="me1">destroy</span><span class="br0">(</span><span class="br0">)</span>;
+       <span class="br0">}</span>
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ 
+   PlayerControllerClassName=<span class="st0">"selector.selectorplayer"</span>
+   HudType=<span class="st0">"selector.selectorHUD"</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Dll_To_Lib.2C_Header_File" id="Dll_To_Lib.2C_Header_File"></a></p>
+<h3><span class="mw-headline">Dll To Lib, Header File</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//    dinterface_supp.h : supplement header file for dinterface.dll</span>
+<span class="co1">//    Author: DLL to Lib version 1.42</span>
+<span class="co1">//    Date: Friday, December 12, 2003</span>
+<span class="co1">//    Description: The declaration of the dinterface.dll's entry-point function.</span>
+<span class="co1">//    Prototype: BOOL WINAPI xxx_DllMain(HINSTANCE hinstance, DWORD fdwReason, LPVOID lpvReserved);</span>
+<span class="co1">//    Parameters: </span>
+<span class="co1">//            hinstance</span>
+<span class="co1">//              Handle to current instance of the application. Use AfxGetInstanceHandle()</span>
+<span class="co1">//              to get the instance handle if your project has MFC support.</span>
+<span class="co1">//            fdwReason</span>
+<span class="co1">//              Specifies a flag indicating why the entry-point function is being called.</span>
+<span class="co1">//            lpvReserved </span>
+<span class="co1">//              Specifies further aspects of DLL initialization and cleanup. Should always</span>
+<span class="co1">//              be set to NULL;</span>
+<span class="co1">//    Comment: Please see the help document for detail information about the entry-point </span>
+<span class="co1">//             function</span>
+ 
+<span class="co1">/////////////////////////////////////////////////////////////////////</span>
+ 
+<span class="kw2">#if</span> !defined<span class="br0">(</span>D2L_DINTERFACE_SUPP_H__1E4C3315_1197_226C_06A6_6C4616652C9D__INCLUDED_<span class="br0">)</span>
+<span class="kw2">#define</span> D2L_DINTERFACE_SUPP_H__1E4C3315_1197_226C_06A6_6C4616652C9D__INCLUDED_
+ 
+<span class="kw2">#if</span> _MSC_VER &gt; <span class="nu0">1000</span>
+<span class="kw2">#pragma</span> once
+<span class="kw2">#endif</span> <span class="co1">// _MSC_VER &gt; 1000</span>
+ 
+<span class="kw2">#ifdef</span> __cplusplus
+extern <span class="st0">"C"</span> <span class="br0">{</span>
+<span class="kw2">#endif</span>
+ 
+ 
+<span class="kw2">#include</span> &lt;windows.<span class="me1">h</span>&gt;
+ 
+<span class="coMULTI">/* This is dinterface.dll's entry-point function. You should call it to do necessary
+ initialization and finalization. */</span>
+ 
+<span class="kw4">BOOL</span> WINAPI DINTERFACE_DllMain<span class="br0">(</span>HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved<span class="br0">)</span>;
+ 
+ 
+<span class="kw2">#ifdef</span> __cplusplus
+<span class="br0">}</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#endif</span> <span class="co1">// !defined(D2L_DINTERFACE_SUPP_H__1E4C3315_1197_226C_06A6_6C4616652C9D__INCLUDED_)</span>
+</pre></div>
+<p><a name="Goal" id="Goal"></a></p>
+<h4><span class="mw-headline">Goal</span></h4>
+<p>My Goal right now is to fool around with creating an RTS style gametype.<br />
+1.Spawn a playercontroller at the playerstart<br />
+2.Spawn 6 possessable pawns in a circular position around the playercontrollers start.<br />
+3.Create a HUD with a mouse pointer where I can click on the pawns to possess them.<br />
+4.When I left click on a pawn it posseses it, when I right click on a place, the pawn will move there.\\</p>
+<p><a name="CODE" id="CODE"></a></p>
+<h4><span class="mw-headline">CODE</span></h4>
+<p>Startmatch()<br />
+6 ai controlled pawns<br />
+1 playercontroller in spec mode to take care of extra bot<br />
+<br />
+*Pawns stand still, don't shoot each other<br />
+*Click on Pawn, selects it<br />
+<br />
+Decide which pawn is selected<br />
+InterFace<br />
+Make Pawn Look selected<br />
+Mouse cursor<br />
+<br />
+<br />
+On click, trace from viewactor down, if pawn, select pawn<br />
+<br />
+On right click, if pawn is selected, trace down and move pawn to location<br />
+<br />
+Pawn AI - stand still, dont shoot, move when playercontroller tells it to<br />
+playercontroller - calls to pawns, must decide which pawn, decide which pawn.function, detect pawn</p>
+<hr />
+<p><b>Wormbo:</b> Maybe you could make a new Pipebomb tutorial page at the <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a>.</p>
+<p><b>Switch`:</b> What's that dinterface_supp.h for?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 48/1000000
+Post-expand include size: 4/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Personal_Page_0f2d.html" title="Category:Legacy Personal Page">Legacy Personal Page</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/l/a/Legacy%7EClam_2631.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/l/a/Legacy_talk%7EClam_e240.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Clam">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:55, 21 January 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

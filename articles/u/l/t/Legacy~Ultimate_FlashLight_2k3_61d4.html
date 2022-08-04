@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Ultimate FlashLight 2k3 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Ultimate FlashLight 2k3</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A really nice flashlight for UT2003. <a href="http://www.frag-ops.com/content/animations/FragOps-taclight.wmv" class="external text" title="http://www.frag-ops.com/content/animations/FragOps-taclight.wmv" rel="nofollow">Watch it in action</a></p>
+<p><a href="http://www.frag-ops.com/images/taclight.jpg" class="external text" title="http://www.frag-ops.com/images/taclight.jpg" rel="nofollow">ScreenShot</a></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Summary"><span class="tocnumber">1</span> <span class="toctext">Summary</span></a></li>
+<li class="toclevel-1"><a href="#What_You_Need"><span class="tocnumber">2</span> <span class="toctext">What You Need</span></a></li>
+<li class="toclevel-1"><a href="#Effect_TacLightProjector.uc"><span class="tocnumber">3</span> <span class="toctext">Effect_TacLightProjector.uc</span></a></li>
+<li class="toclevel-1"><a href="#Effect_TacLightGlow.uc"><span class="tocnumber">4</span> <span class="toctext">Effect_TacLightGlow.uc</span></a></li>
+<li class="toclevel-1"><a href="#Applications"><span class="tocnumber">5</span> <span class="toctext">Applications</span></a></li>
+<li class="toclevel-1"><a href="#Final_Note"><span class="tocnumber">6</span> <span class="toctext">Final Note</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Comments"><span class="tocnumber">6.1</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Summary" id="Summary"></a></p>
+<h2><span class="mw-headline">Summary</span></h2>
+<p>I spent a few days trying to create a fairly realistic flashlight using projectors, then switched to dynamic lights after i didn't get the specific look i wanted, at the same time discovering they had a random darkening effect when projected onto certain terrain. This worked out better for the terrain issue, but i felt it looked too drab. What i ended up deciding on was a dynamic projector to get a focal point with adjustable FOV, and then keeping the light for ambience. To follow the FOV adjustment of the projector, i'm manually adjusting the LightRadius of the dynamic light, which is dependant on a trace done every tick. The resulting effect was quite stunning, and i decided it was too good to go unshared.</p>
+<p>On a side note, i made my projective texture light-affected, which seems to partially cure the darkening effect on terrain.</p>
+<p><a name="What_You_Need" id="What_You_Need"></a></p>
+<h2><span class="mw-headline">What You Need</span></h2>
+<ol>
+<li>A texture for the projector. I use a 256x256, DXT1 compressed bitmap. The full info is commented below.</li>
+</ol>
+<p><a name="Effect_TacLightProjector.uc" id="Effect_TacLightProjector.uc"></a></p>
+<h2><span class="mw-headline">Effect_TacLightProjector.uc</span></h2>
+<p>Here is where everything takes place. <b>bHasLight</b> is toggled from an outside control. All you need to do is call <b>spawn(class'Effect_TacLightProjector',Owner);</b> where "Owner" is the pawn that will be owning the light. Then set its <b>bHasLight</b> variable, and the actor will take care of the rest.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// © 2003 Matt 'SquirrelZero' Farber</span>
+<span class="co1">//=============================================================================</span>
+<span class="co1">// "UT2k3 Ultimate Flashlight"</span>
+<span class="co1">// I wrote this using _both_ a dynamic projector and a dynamic light, with the </span>
+<span class="co1">// dynamic projector as the focal point and lightsource providing general </span>
+<span class="co1">// ambient illumination.  Either one by itself is pretty dull, but combine the </span>
+<span class="co1">// two and you've got yourself a really nice effect if done correctly.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> Effect_TacLightProjector <span class="kw5">extends</span> DynamicProjector;
+ 
+<span class="co1">// add a light too, there seems to be a problem with the projector darkening terrain sometimes</span>
+<span class="kw5">var</span> Effect_TacLightGlow TacLightGlow;
+ 
+<span class="kw5">var</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> LightPawn;
+<span class="kw5">var</span> Controller LightController;
+<span class="kw5">var</span> <span class="kw4">bool</span> bHasLight;
+ 
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+        <span class="co1">// relevant variables needed by the client</span>
+        <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+                LightPawn, LightController;
+ 
+        <span class="co1">// relevant variables needed by the client</span>
+        <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+                bHasLight;
+<span class="br0">}</span>
+ 
+<span class="co1">// setup the pawn and controller variables, spawn the dynamic light</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> bProjectActor <span class="br0">)</span>
+                SetCollision<span class="br0">(</span><span class="kw9">True</span>, <span class="kw9">False</span>, <span class="kw9">False</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>Owner != <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                LightPawn = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>;
+                LightController = LightPawn.<span class="me1">Controller</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span>TacLightGlow == <span class="kw9">None</span> &amp;&amp; <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                TacLightGlow = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Effect_TacLightGlow'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// updates the taclight projector and dynamic light positions</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">vector</span> StartTrace,EndTrace,X,Y,Z,HitLocation,HitNormal;
+        <span class="kw5">local</span> <a href="/Material"><span class="kw10">material</span></a> SurfaceMat;
+        <span class="kw5">local</span> <span class="kw4">float</span> BeamLength;
+ 
+        <span class="co1">// we're changing its location and rotation, so detach it</span>
+        DetachProjector<span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="co1">// fallback</span>
+        <span class="kw1">if</span> <span class="br0">(</span>LightPawn == <span class="kw9">None</span> || LightController == <span class="kw9">None</span> || !bHasLight<span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>TacLightGlow != <span class="kw9">None</span><span class="br0">)</span>
+                        TacLightGlow.<span class="me1">bDynamicLight</span> = <span class="kw9">false</span>;
+                <span class="kw1">return</span>;
+        <span class="br0">}</span>
+ 
+        <span class="co1">// ok, first we need to get a location directly in front of the player</span>
+        StartTrace = LightPawn.<span class="me1">Location</span> + LightPawn.<span class="me1">EyePosition</span><span class="br0">(</span><span class="br0">)</span>;
+        GetAxes<span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span>,X,Y,Z<span class="br0">)</span>;
+ 
+        <span class="co1">// not too far out, we don't want a flashlight that can shine across the map</span>
+        EndTrace = StartTrace + <span class="nu0">1800</span>*<span class="kw4">vector</span><span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+        Trace<span class="br0">(</span>HitLocation,HitNormal,EndTrace,StartTrace,<span class="kw9">true</span>,,SurfaceMat<span class="br0">)</span>;
+ 
+        <span class="co1">// find out how far the first hit was</span>
+        BeamLength = VSize<span class="br0">(</span>StartTrace-HitLocation<span class="br0">)</span>;
+ 
+        <span class="co1">// clear the base, we're going to be doing some adjustments</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Base != <span class="kw9">None</span><span class="br0">)</span>;
+                SetBase<span class="br0">(</span><span class="kw9">none</span><span class="br0">)</span>;
+ 
+        <span class="co1">// this makes a neat focus effect when you get close to a wall</span>
+        <span class="kw1">if</span> <span class="br0">(</span>BeamLength &lt;= <span class="nu0">90</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                SetLocation<span class="br0">(</span>StartTrace+<span class="kw4">vector</span><span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>*<span class="kw7">Max</span><span class="br0">(</span><span class="br0">(</span><span class="nu0">0.2</span>*BeamLength<span class="br0">)</span>, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+                SetBase<span class="br0">(</span>LightPawn<span class="br0">)</span>;
+                SetRotation<span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+                SetDrawScale<span class="br0">(</span><span class="kw7">FMax</span><span class="br0">(</span><span class="nu0">0.02</span>,<span class="br0">(</span>BeamLength/<span class="nu0">90</span><span class="br0">)</span><span class="br0">)</span>*<span class="kw1">Default</span>.<span class="me1">DrawScale</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="co1">// else we project it normally, positioning slightly in front of the player</span>
+        <span class="kw1">else</span> 
+        <span class="br0">{</span>
+                SetLocation<span class="br0">(</span>StartTrace+<span class="kw4">vector</span><span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>*<span class="nu0">80</span><span class="br0">)</span>;
+                SetBase<span class="br0">(</span>LightPawn<span class="br0">)</span>;
+                SetRotation<span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+                SetDrawScale<span class="br0">(</span><span class="kw1">Default</span>.<span class="me1">DrawScale</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="co1">// reattach it</span>
+        AttachProjector<span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="co1">// turns the dynamic light on if it's off</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!TacLightGlow.<span class="me1">bDynamicLight</span><span class="br0">)</span>
+                TacLightGlow.<span class="me1">bDynamicLight</span> = <span class="kw9">true</span>;
+ 
+        <span class="co1">// better than tracing for the actor, makes it more projector-like</span>
+        <span class="kw1">if</span> <span class="br0">(</span>SurfaceMat != <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="co1">// again, neat focus effect up close, starts earlier than the dynamic projector</span>
+                <span class="kw1">if</span> <span class="br0">(</span>BeamLength &lt;= <span class="nu0">100</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        TacLightGlow.<span class="me1">LightBrightness</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightBrightness</span> * <span class="br0">(</span><span class="nu0">1.0</span> + <span class="br0">(</span><span class="nu0">1.0</span> - <span class="br0">(</span>BeamLength/<span class="nu0">100</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+                        TaclightGlow.<span class="me1">LightRadius</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightRadius</span> * <span class="kw7">FMax</span><span class="br0">(</span><span class="nu0">0.3</span>,<span class="br0">(</span>BeamLength/<span class="nu0">100</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+                <span class="co1">// else we scale its radius and brightness depending on distance from the material</span>
+                <span class="kw1">else</span>
+                <span class="br0">{</span>
+                        <span class="co1">// fades the lightsource out as it moves farther away</span>
+                        <span class="kw1">if</span> <span class="br0">(</span>BeamLength &gt;= <span class="nu0">1300</span><span class="br0">)</span>
+                                TacLightGlow.<span class="me1">LightBrightness</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightBrightness</span> * <span class="br0">(</span><span class="br0">(</span><span class="nu0">1800</span>-BeamLength<span class="br0">)</span>/<span class="nu0">500</span><span class="br0">)</span>;
+                        <span class="co1">// else normal brightness</span>
+                        <span class="kw1">else</span>
+                                TacLightGlow.<span class="me1">LightBrightness</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightBrightness</span>;
+ 
+                        <span class="co1">// this makes the light act more like a spotlight, resizing depending on distance</span>
+                        TacLightGlow.<span class="me1">LightRadius</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightRadius</span> + <span class="br0">(</span><span class="nu0">4.5</span> * <span class="br0">(</span>BeamLength/<span class="nu0">1900</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+                TacLightGlow.<span class="me1">SetLocation</span><span class="br0">(</span>HitLocation-<span class="kw4">vector</span><span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>*<span class="nu0">64</span><span class="br0">)</span>;
+                TacLightGlow.<span class="me1">SetRotation</span><span class="br0">(</span><span class="kw4">rotator</span><span class="br0">(</span>HitLocation-StartTrace<span class="br0">)</span><span class="br0">)</span>;
+ 
+        <span class="br0">}</span>
+        <span class="co1">// else if the trace returned nothing, then we put the light right in front of the player, scale its brightness down,</span>
+        <span class="co1">// and give it normal radius.  This makes it seem as if the light is casting a dull glow  onto the ground in front </span>
+        <span class="co1">// of the player, and is dim enough for players to not notice the transition.</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+                TacLightGlow.<span class="me1">LightRadius</span> = TacLightGlow.<span class="kw1">Default</span>.<span class="me1">LightRadius</span>;
+                TacLightGlow.<span class="me1">LightBrightness</span> = <span class="nu0">50</span>;
+                TacLightGlow.<span class="me1">SetLocation</span><span class="br0">(</span>StartTrace+<span class="kw4">vector</span><span class="br0">(</span>LightController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>*<span class="nu0">100</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        <span class="co1">// for my projtexture, i'm using a 256x256 DXT1 texture, created in the same way as the bulldog headlights --</span>
+        <span class="co1">// just a bright white circle dead center on a black background.  Make sure the texture is set to TC_Clamp</span>
+        <span class="co1">// or it'll repeat itself over the whole surface.</span>
+        ProjTexture=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'FOMisc.Projected.TacLight'</span>
+        MaterialBlendingOp=PB_Modulate
+        FrameBufferBlendingOp=PB_Add
+        MaxTraceDistance=<span class="nu0">1600</span>
+        bClipBSP=<span class="kw9">True</span>
+        bProjectOnUnlit=<span class="kw9">True</span>
+        bGradient=<span class="kw9">True</span>
+        bProjectOnAlpha=<span class="kw9">True</span>
+        bProjectOnParallelBSP=<span class="kw9">True</span>
+        bLightChanged=<span class="kw9">True</span>
+        <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+        DrawScale=<span class="nu0">0.21000</span>
+        FOV=<span class="nu0">5</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Effect_TacLightGlow.uc" id="Effect_TacLightGlow.uc"></a></p>
+<h2><span class="mw-headline">Effect_TacLightGlow.uc</span></h2>
+<p>A dynamic light used by the <b>Effect_TacLightProjector</b> class to provide extra ambience.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// © 2003 Matt 'SquirrelZero' Farber</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> Effect_TacLightGlow <span class="kw5">extends</span> Light;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        SetTimer<span class="br0">(</span><span class="nu0">1.0</span>,<span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// makes bots "see" the light when it's on</span>
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        MakeNoise<span class="br0">(</span><span class="nu0">0.3</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        <a href="/Texture"><span class="kw10">Texture</span></a>=S_Light
+        LightType=LT_Steady
+        LightEffect=LE_None
+        LightBrightness=<span class="nu0">180</span>
+        LightSaturation=<span class="nu0">255</span>
+        LightRadius=<span class="nu0">3.0</span>
+        LightPeriod=<span class="nu0">34</span>
+        CollisionRadius=<span class="nu0">+0005.000000</span>
+        CollisionHeight=<span class="nu0">+0005.000000</span>
+        bHidden=<span class="kw9">true</span>
+        bStatic=<span class="kw9">false</span>
+        bNoDelete=<span class="kw9">false</span>
+        bMovable=<span class="kw9">true</span>
+        bDynamicLight=<span class="kw9">false</span>
+        bDirectional=<span class="kw9">true</span>
+        <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Applications" id="Applications"></a></p>
+<h2><span class="mw-headline">Applications</span></h2>
+<p>In my case, i created a specialized exec function in my <b>PlayerController</b> class for toggling the light on or off, named <b>ToggleItem()</b>. Since my light will only be used by specific weapons and not all the time, the exec then calls my custom function <b>SpecialFire()</b>, declared in my <b>Weapon</b> class, on the currently held weapon. By default <b>SpecialFire()</b> is a blank function, but on taclight weapons here is where i insert my trigger for the light. This then calls a client-&gt;server (Reliable if Role &lt; ROLE_Authority) replicated function, and the server spawns the light if it doesn't exist, else toggles it on or off if it does (<b>bHasLight = true;</b> or <b>bHasLight = false;</b>). The <b>Owner</b> of the light is always the weapon's <b>Instigator</b>, since by default the Instigator is replicated in the WeaponClass. To see how to specify the Owner when spawning the projector, look at the <b>spawn()</b> function in the <b>Actor</b> class.</p>
+<p><a name="Final_Note" id="Final_Note"></a></p>
+<h2><span class="mw-headline">Final Note</span></h2>
+<p>That's all there is to it, the projector actor handles nearly everything on its own. If you intend to use this method, please contact me and let me know, only because i'd like to hear how you made use of it.</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h3><span class="mw-headline">Comments</span></h3>
+<p><b>MythOpus:</b> Wow, this looks good. I've been looking for a flshlight for awhile now. My search is over&#160;:D I have a question though... how did you get this ingame and how do you turn it on&#160;?? I've compiled it.. what next?</p>
+<p><b>SquirrelZero:</b> Thanks =]. I added an 'applications' section, to explain how i put it to use.</p>
+<p><b>MythOpus:</b> I see... Way outta my league&#160;:) So this is for Face Off then&#160;?</p>
+<p><b>SquirrelZero:</b> nah, different mod coming out soon. <a href="http://www.frag-ops.com" class="external text" title="http://www.frag-ops.com" rel="nofollow">Frag.Ops</a></p>
+<p><b>Foxpaw:</b> Could this page be renamed to something simpler, like just Flashlight or Creating a flashlight or something to that effect? "Ultimate Flashlight 2K3" sound like "Xtreme Advertising" run amok.</p>
+<p><b>SquirrelZero:</b> what am i advertising? This a free script. I'm not forcing anyone to use it over another one. Ultimate FlashLight 2k3 is the name of the program, i made it up in exactly 5 seconds, because honestly i didn't care what it was called as long as it was useful for someone. I mean cmon, that's along the same lines as asking someone to rename their mutator or mod. I'm sorry that my choice doesn't agree with you, but i think you're a bit too "Xtreme" yourself.</p>
+<p><b>Mosquito:</b> IN BEFORE THE LOCK!! wait... this isn't a forum.... oh well. Hey? how did you record the video WITH sound?!</p>
+<p><b>Dark Pulse:</b> He probably dumped Pictures repeatedly (I know there's a console command for this) and then Did a Rip of Audio using total Recorder or something, then bundled them together.</p>
+<p><b>(v)adOnion:</b> Be glad he's sharing his code - a lot of people don't and you'll have to figure stuff out all on your own.</p>
+<p><b>Bslayerw:</b> SquirrelZero, FragOps looks awesome. Thanks for sharing the code. It's people like you that make the modding community a better place. Sharing code like this is very valuable.</p>
+<p><b>RegularX:</b> Ditto here SZ. I just started researching into some good flashlight code, had kinda wondered about a path like this, then found this page. Exactly what I was looking for. Thanks for sharing, this will shave off a lot of frustration I think&#160;:)</p>
+<p><b>SquirrelZero:</b> I've gotten quite a few requests over the past few days on how to actually implement it in your own code, so i think i'll add some detailed examples soon. Gimme a few days to think them up tho&#160;:)</p>
+<p><b>MythOpus:</b> I know your probably busy with FragOps. (Impressive BTW) but how are those 'examples' coming along&#160;:P I want to just put the turn on flashlight exec function in my playercontroller but I don't want it to have anything to do with the current weapon. Any ideas?</p>
+<p><b>EricBlade:</b> I popped this in as a mutator in my game, and everything seems to be good on it, except that i'm not actually getting any light. &#160;:( I don't know if I know enough to debug this, either. All the code seems to be functioning.. am I having replication issues?</p>
+<p><b>MythOpus:</b> Well, I haven't looked at this in a long time, but I don't think that it actually gives off light, as a light actor would. It should only display a projector of a light. Unless, that's the thing you're talking about.</p>
+<p><b>EricBlade:</b> Turned out it was replication issues.. a tad difficult thing to work with in a mutator, i'm thinking.. so i implemented it into my playercontroller, and spent an hour or so before realising that exec function flashlight() { .. } doesn't work, for no obvious reason.&#160;:) Now, I have it working, though it obviously makes a much better spot/pointlight than a flashlight. Since it is implemented as both a projector, and a light, it should give off light, and it does (although I had to change the "if(TacLightGlow == None &amp;&amp; Role == ROLE_AUTHORITY)" to just if(TacLightGlow == None), else there was no light glow on the local players end, and the local players end filled with a zillion Accessed Nones.&#160;:) Now, to see if I can make it more flashlight like.. if anyone has suggestions, i'd love to hear&#160;:)</p>
+<p><b>MythOpus:</b>Modify the texture so that it will have those... flashlight 'rings' around the light?</p>
+<p><b>EricBlade:</b>Looks like that would be the first order. It looks like the Light part of this really doesn't seem to work. I actually commented out all the code having to do with the LightGlow, and it worked almost identically, except I didn't get weird spot flashes on parts of the level..</p>
+<p><b>SuperApe:</b> A different <a href="http://forums.unrealplayground.com/showthread.php?t=38185" class="external text" title="http://forums.unrealplayground.com/showthread.php?t=38185" rel="nofollow">Flashlight example</a> for UT200x. Not sure how it compares to this one, but it includes bot support, etc. Comments welcome on the UP forums.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 44/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/l/t/Legacy%7EUltimate_FlashLight_2k3_61d4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/l/t/Legacy_talk%7EUltimate_FlashLight_2k3_d396.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Ultimate_FlashLight_2k3">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:37, 6 March 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

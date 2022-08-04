@@ -1,0 +1,353 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Quaternion - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Quaternion</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Quaternions are a mathematical construct that represents a rotation in three dimensions. It is not as intuitive as the Euler angles that are used for most of the rotation within Unrealscript. A <a href="../../../../articles/r/o/t/Legacy%7ERotator_9443.html" title="Legacy:Rotator">rotator</a>, is a rotation using Euler angles and is the "standard" type of rotation within Unrealscript. <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> has native support for Quaternions, though through custom scripts you can use <a href="../../../../articles/q/u/a/Legacy%7EQuaternions_In_Unreal_Tournament_3b10.html" title="Legacy:Quaternions In Unreal Tournament">quaternions in Unreal Tournament</a> too.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#How_they_work"><span class="tocnumber">1</span> <span class="toctext">How they work</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_Practical_Way"><span class="tocnumber">1.1</span> <span class="toctext">The Practical Way</span></a></li>
+<li class="toclevel-2"><a href="#The_Technical_Way"><span class="tocnumber">1.2</span> <span class="toctext">The Technical Way</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Built-In_Quaternion_Functions"><span class="tocnumber">2</span> <span class="toctext">Built-In Quaternion Functions</span></a></li>
+<li class="toclevel-1"><a href="#Other_Useful_Functions"><span class="tocnumber">3</span> <span class="toctext">Other Useful Functions</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Identity_Quaternion"><span class="tocnumber">3.1</span> <span class="toctext">Identity Quaternion</span></a></li>
+<li class="toclevel-2"><a href="#Converting_a_Rotator_to_a_Quaternion"><span class="tocnumber">3.2</span> <span class="toctext">Converting a Rotator to a Quaternion</span></a></li>
+<li class="toclevel-2"><a href="#Converting_Quaternion_to_a_Rotator"><span class="tocnumber">3.3</span> <span class="toctext">Converting Quaternion to a Rotator</span></a></li>
+<li class="toclevel-2"><a href="#Normalizing_a_Quaternion"><span class="tocnumber">3.4</span> <span class="toctext">Normalizing a Quaternion</span></a></li>
+<li class="toclevel-2"><a href="#Slerp_Between_Quaternions"><span class="tocnumber">3.5</span> <span class="toctext">Slerp Between Quaternions</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Related_Links"><span class="tocnumber">6</span> <span class="toctext">Related Links</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="How_they_work" id="How_they_work"></a></p>
+<h2><span class="mw-headline">How they work</span></h2>
+<p>There are two ways to explain a quaternion: the technical way and the practical way. I much prefer the practical way for purposes of Unrealscript because the mathematical expression of a quaternion is for most purposes irrelevant within Unrealscript.</p>
+<p><a name="The_Practical_Way" id="The_Practical_Way"></a></p>
+<h3><span class="mw-headline">The Practical Way</span></h3>
+<p>This explanation assumes you have a working knowledge of <a href="../../../../articles/r/o/t/Legacy%7ERotator_9443.html" title="Legacy:Rotator">rotators</a> and <a href="../../../../articles/v/e/c/Legacy%7EVector_fa11.html" title="Legacy:Vector">vectors</a>. As you know, you can cast a rotator to a vector or vice versa. Because a vector has a direction, it can be used store the facing of an object. However, a vector stores only the actual facing of the object, and not the complete rotation of the object. A vector-based "rotation" always has roll set to 0 for all intents and purposes. Technically, it does not have a roll component but it will gain a roll of 0 when cast back into a rotator. Vectors, however, have an advantage over rotators - they never suffer from "gimbal lock." To experience Gimbal Lock you can simply look straight up or down inside the game and note that your rotation is halted when you are looking directly up or directly down. Vector rotation does not suffer from this, but it lacks the roll component, which sometimes you want to retain. This is where a quaternion can be useful. A quaternion is basically a vector with a roll component tacked on. The rotation of an object defined by a quaternion is the facing as defined by the vector, rolled by the roll component of the quaternion. This is best demonstrated with a picture:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Quaternion.png_a456.html" class="image" title="Legacy Quaternion.png"><img alt="" src="../../../../images/Legacy_Quaternion.png" width="76" height="86" border="0" /></a></span></div>
+</div>
+<p><a name="The_Technical_Way" id="The_Technical_Way"></a></p>
+<h3><span class="mw-headline">The Technical Way</span></h3>
+<p>Quaternions encode spatial rotations by four real numbers (or two complex numbers), whereas the linear representation of these transformations as 3x3 matrices requires nine. Interpolating the quaternionic representation of a sequence of rotations is more natural than doing so for the familiar Euler angles, such as yaw, pitch, and roll. The quaternions occupy a smooth, seamless, isotropic space which is a generalization of the surface of a sphere. Thus, there is no need for special care to avoid singularities, such as gimbal lock.</p>
+<p>A quaternion is like a <a href="http://en.wikipedia.org/wiki/complex_number" class="extiw" title="wikipedia:complex_number">Wikipedia:complex number</a> ( x + iy ), but extended some more, to x + iy + jz + kw. Similarly to complex numbers, i<sup>2</sup> = j<sup>2</sup> = k<sup>2</sup> = -1. Note the xyzw might be in different places: some writers use w for the real part; some writers treat the ijk part as a vector and consider the quaternion to be essentially (scalar, vector).</p>
+<p>So what does this have to do with the 3D world? Well, a rotation has 4 numbers too: 3 give the axis of rotation as a vector, and the 4th gives how far you rotate, as an angle.</p>
+<p>It turns out that when you multiply two quaternions, the product represents the rotation obtained by combining the two original rotations the two original quaternions represented.</p>
+<p><a name="Built-In_Quaternion_Functions" id="Built-In_Quaternion_Functions"></a></p>
+<h2><span class="mw-headline">Built-In Quaternion Functions</span></h2>
+<dl>
+<dt>Quat QuatProduct (Quat A, Quat B) [static]&#160;</dt>
+<dd>Multiplies two Quaternions together. Interestingly enough, this will return a Quaternion representing the addition of the two rotations that the original Quaternions represented. So, for example you had one quaternion representing Yaw 0, Pitch 0, Roll 90 degrees, and a quaternion representing Yaw 90 degrees, Pitch 0, and Roll 0, you will end up with Yaw 90 degrees, Pitch 0, and Roll 90 degrees. Though this is a simple example that would not be hard to do without using quaternions, it could be more complicated if both angles were jutting out at arbitrary angles unknown at compile time. Note that multiplication of quaternions is not commutative. To apply a rotation A followed by a rotation B, use the result of QuatProduct(B, A).</dd>
+</dl>
+<dl>
+<dt>Quat QuatInvert (Quat A) [static]&#160;</dt>
+<dd>Inverts a Quaternion. The restlt will be facing the opposite direction and be rolled the opposite direction about it's axis.</dd>
+<dt>vector QuatRotateVector (Quat A, vector B) [static]&#160;</dt>
+<dd>Rotates the given vector around the axis specified by the Quaternion, by the amount specified by the quaternion.</dd>
+<dt>Quat QuatFindBetween (Vector A, Vector B) [static]&#160;</dt>
+<dd>If vector A and vector B both have lengths of 1, this will return a quaternion representing a rotation that can turn the first vector into the second. So, for instance, QuatRotateVector( QuatFindBetween( A, B ), A ) would return B.</dd>
+<dt>Quat QuatFromAxisAndAngle (Vector Axis, Float Angle) [static]&#160;</dt>
+<dd>Allows you to manually specify a quaternion by providing the axis (aka the facing of the quaternion) as a vector and the "roll" of that axis. (aka facing) Because Quaternions use radians for their "roll," I believe that the angle must be specified in radians.</dd>
+</dl>
+<p><b>Shambler:</b> N.B. QuatFindBetween seems to have a bug with inverted input vectors, QuatFindBetween(vect(-1,0,0), vect(1,0,0)) will return a quaternion with absoloutly no rotational info.</p>
+<p><a name="Other_Useful_Functions" id="Other_Useful_Functions"></a></p>
+<h2><span class="mw-headline">Other Useful Functions</span></h2>
+<p><a name="Identity_Quaternion" id="Identity_Quaternion"></a></p>
+<h3><span class="mw-headline">Identity Quaternion</span></h3>
+<p>An identity quaternion is just like an identity matrix in that multiplication with it produces an ouput equal to the input.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">quat</span> QuatIdentity<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">quat</span> result;
+        result.<span class="me1">x</span> = <span class="nu0">0</span>;
+        result.<span class="me1">y</span> = <span class="nu0">0</span>;
+        result.<span class="me1">z</span> = <span class="nu0">0</span>;
+        result.<span class="me1">w</span> = <span class="nu0">1</span>;
+        <span class="kw1">return</span> result;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Foxpaw:</b> No offense, but what is the point of this function? Why would one need an identity quaternion?</p>
+<p><b>Mychaeel:</b> That's a bit like asking "What does one need the number 1 for?" &#160;:-)</p>
+<p><b>Pingz:</b> It's like setting a float to 1 so that anything multiplyed with it returns itself insted of zero. Just like an identity matrix. Saying q = QuatIdentity(); was much nicer than putting all that junk inline.</p>
+<p><b>Foxpaw:</b> Yeah, but what is the point of multiplying something by 1? The 1 is err. something about "tacit rules of a number." Anyways.. if something is multiplied by 1, then the result will always be the same as the other operand, so why bother? Wouldn't it be better to save the cycles and just remove the expression entirely?</p>
+<p><b>Tarquin:</b> You might want to check if something is <i>equal</i> to the identity.</p>
+<p><b>Mychaeel:</b> Foxpaw, stop a minute to <i>think</i>. Is multiplying a variable with the unity value <i>constant</i> really the only thing that comes into your mind?</p>
+<p><b>Dirk Fist:</b> It can be used as a place holder, in a chain for a missing componnent</p>
+<p><b>Searcher:</b> Foxpaw, I came to this page searching for an identity quaternion - because I needed to reset the orientation of an object via a function that took a quaternion as an argument.</p>
+<p><a name="Converting_a_Rotator_to_a_Quaternion" id="Converting_a_Rotator_to_a_Quaternion"></a></p>
+<h3><span class="mw-headline">Converting a Rotator to a Quaternion</span></h3>
+<p>This function converts the specified rotation into a quaternion representing that rotation.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">const</span> URotToRadian=<span class="nu0">0.000095873799</span>;
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">postoperator</span> <span class="kw4">float</span> URotations<span class="br0">(</span> <span class="kw4">float</span> URots <span class="br0">)</span>
+<span class="br0">{</span> <span class="kw1">return</span> URots * URottoRadian; <span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">Quat</span> RotToQuat<span class="br0">(</span> <span class="kw4">rotator</span> Rot <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">Quat</span> X, Y, Z;
+ 
+  X = QuatFromAxisAndAngle<span class="br0">(</span> <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>, Rot.<span class="me1">Roll</span> URotations <span class="br0">)</span>;
+  Y = QuatFromAxisAndAngle<span class="br0">(</span> <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>, Rot.<span class="me1">Pitch</span> URotations <span class="br0">)</span>;
+  Z = QuatFromAxisAndAngle<span class="br0">(</span> <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>, Rot.<span class="me1">Yaw</span> URotations <span class="br0">)</span>;
+ 
+  X = QuatProduct<span class="br0">(</span> X, Y <span class="br0">)</span>;
+  X = QuatProduct<span class="br0">(</span> X, Z <span class="br0">)</span>;
+ 
+  <span class="kw1">return</span> X;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Converting_Quaternion_to_a_Rotator" id="Converting_Quaternion_to_a_Rotator"></a></p>
+<h3><span class="mw-headline">Converting Quaternion to a Rotator</span></h3>
+<p>Returns a normalized rotator from the input quaternion.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// 65535 / 2PI</span>
+<span class="kw5">const</span> RADIANS_TO_UU = <span class="nu0">10430</span>.21919552736082f;
+ 
+<span class="co1">// 65535 / 4</span>
+<span class="kw5">const</span> UU_90_DEGREES = <span class="nu0">16383</span>.75f;
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">Rotator</span> QuatToRotator<span class="br0">(</span> <span class="kw4">quat</span> Q <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> x, y, z, w, s;
+        <span class="kw5">local</span> <span class="kw4">rotator</span> result;
+ 
+        x = Q.<span class="me1">x</span>;
+        y = Q.<span class="me1">y</span>;
+        z = Q.<span class="me1">z</span>;
+        w = Q.<span class="me1">w</span>;
+        s = <span class="nu0">2</span>.0f * <span class="br0">(</span> w * y - x * z <span class="br0">)</span>;
+ 
+        <span class="co1">// It is invalid to pass values outside</span>
+        <span class="co1">// of the range -1,1 to asin()... so don't.</span>
+        <span class="kw1">if</span> <span class="br0">(</span> s &lt; <span class="nu0">1</span>.0f <span class="br0">)</span> <span class="br0">{</span>
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="nu0">-1</span>.0f &lt; s <span class="br0">)</span> <span class="br0">{</span>
+ 
+                        result.<span class="me1">yaw</span>             = <span class="kw7">atan</span><span class="br0">(</span> <span class="nu0">2</span>.0f*<span class="br0">(</span>x*y+w*z<span class="br0">)</span>, <span class="nu0">1</span>.0f<span class="nu0">-2</span>.0f*<span class="br0">(</span>y*y+z*z<span class="br0">)</span> <span class="br0">)</span> * RADIANS_TO_UU;
+                        result.<span class="me1">pitch</span>   = <span class="kw7">asin</span><span class="br0">(</span> s <span class="br0">)</span> * RADIANS_TO_UU;
+                        result.<span class="me1">roll</span>            = <span class="kw7">atan</span><span class="br0">(</span> <span class="nu0">2</span>.0f*<span class="br0">(</span>y*z+w*x<span class="br0">)</span>, <span class="nu0">1</span>.0f<span class="nu0">-2</span>.0f*<span class="br0">(</span>x*x+y*y<span class="br0">)</span> <span class="br0">)</span> * RADIANS_TO_UU;
+ 
+                <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+ 
+                        result.<span class="me1">yaw</span>             = <span class="nu0">0</span>;
+                        result.<span class="me1">pitch</span>   = -UU_90_DEGREES;
+                        result.<span class="me1">roll</span>            = -<span class="kw7">atan</span><span class="br0">(</span> <span class="nu0">2</span>.0f*<span class="br0">(</span>x*y-w*z<span class="br0">)</span>, <span class="nu0">1</span>.0f<span class="nu0">-2</span>.0f*<span class="br0">(</span>x*x+z*z<span class="br0">)</span> <span class="br0">)</span> * RADIANS_TO_UU;
+                <span class="br0">}</span>
+ 
+        <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+ 
+                result.<span class="me1">yaw</span>             = <span class="nu0">0</span>;
+                result.<span class="me1">pitch</span>   = UU_90_DEGREES;
+                result.<span class="me1">roll</span>            = <span class="kw7">atan</span><span class="br0">(</span> <span class="nu0">2</span>.0f*<span class="br0">(</span>x*y-w*z<span class="br0">)</span>, <span class="nu0">1</span>.0f<span class="nu0">-2</span>.0f*<span class="br0">(</span>x*x+z*z<span class="br0">)</span> <span class="br0">)</span> * RADIANS_TO_UU;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span> Normalize<span class="br0">(</span> result <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><b>DemonThing:</b> Wouldn't the first lines be</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// 65536 / 2PI</span>
+<span class="kw5">const</span> RADIANS_TO_UU = <span class="nu0">10430</span>.37835047045272f;
+ 
+<span class="co1">// 65536 / 4</span>
+<span class="kw5">const</span> UU_90_DEGREES = <span class="nu0">16384</span>.0f;
+</pre></div>
+<p>? I thought a full circle is 65536 = 2<sup>16</sup> UU.</p>
+<p><b>MythOpus:</b> Rotations go 0 - 65535&#160;:)</p>
+<p><a name="Normalizing_a_Quaternion" id="Normalizing_a_Quaternion"></a></p>
+<h3><span class="mw-headline">Normalizing a Quaternion</span></h3>
+<p>Returns a unit quaternion which is any quaternion with a magnitude of 1.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">quat</span> QuatNormalize<span class="br0">(</span> <span class="kw4">quat</span> q <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> mag;
+ 
+        mag = <span class="br0">(</span> q.<span class="me1">x*q</span>.<span class="me1">x</span> <span class="br0">)</span> + <span class="br0">(</span> q.<span class="me1">y*q</span>.<span class="me1">y</span> <span class="br0">)</span> + <span class="br0">(</span> q.<span class="me1">z*q</span>.<span class="me1">z</span> <span class="br0">)</span> + <span class="br0">(</span> q.<span class="me1">w*q</span>.<span class="me1">w</span> <span class="br0">)</span>;
+        q.<span class="me1">x</span> = q.<span class="me1">x</span> / mag;
+        q.<span class="me1">y</span> = q.<span class="me1">y</span> / mag;
+        q.<span class="me1">z</span> = q.<span class="me1">z</span> / mag;
+        q.<span class="me1">w</span> = q.<span class="me1">w</span> / mag;
+ 
+        <span class="kw1">return</span> q;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Slerp_Between_Quaternions" id="Slerp_Between_Quaternions"></a></p>
+<h3><span class="mw-headline">Slerp Between Quaternions</span></h3>
+<p>This function performs a spherical linear interpolation between quaternion U and V. F is a value between 0 and 1 where 0 returns U, 1 returns V, and all other values return a smooth interpolation between them.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">quat</span> QuatSlerp<span class="br0">(</span> <span class="kw4">quat</span> u, <span class="kw4">quat</span> v, <span class="kw4">float</span> f <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> alpha,beta,theta,sin_t,cos_t;
+        <span class="kw5">local</span> <span class="kw4">int</span>     flip;
+        <span class="kw5">local</span> <span class="kw4">quat</span>    result;
+ 
+    flip = <span class="nu0">0</span>;
+ 
+        <span class="co1">// Force the input within range.</span>
+        f = <span class="kw7">fmin</span><span class="br0">(</span> f, <span class="nu0">1</span>.0f <span class="br0">)</span>;
+        f = <span class="kw7">fmax</span><span class="br0">(</span> f, <span class="nu0">0</span>.0f <span class="br0">)</span>;
+ 
+        cos_t = u.<span class="me1">x*v</span>.<span class="me1">x</span>+u.<span class="me1">y*v</span>.<span class="me1">y</span>+u.<span class="me1">z*v</span>.<span class="me1">z</span>+u.<span class="me1">w*v</span>.<span class="me1">w</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> cos_t &lt; <span class="nu0">0</span>.0f <span class="br0">)</span> <span class="br0">{</span> cos_t = -cos_t; flip=<span class="nu0">1</span>; <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span> <span class="nu0">1</span>.0f - cos_t <span class="br0">)</span> &lt; <span class="nu0">0</span>.000001f <span class="br0">)</span> <span class="br0">{</span>
+ 
+                beta    = <span class="nu0">1</span>.0f - f;
+                alpha   = f;
+ 
+        <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+ 
+                theta   = <span class="kw7">acos</span><span class="br0">(</span> cos_t <span class="br0">)</span>;
+                sin_t   = <span class="kw7">sin</span><span class="br0">(</span> theta <span class="br0">)</span>;
+                beta    = <span class="kw7">sin</span><span class="br0">(</span> theta - f * theta <span class="br0">)</span> / sin_t;
+                alpha   = <span class="kw7">sin</span><span class="br0">(</span> f * theta <span class="br0">)</span> / sin_t;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> flip != <span class="nu0">0</span> <span class="br0">)</span> alpha = -alpha;
+ 
+        result.<span class="me1">x</span> = beta * u.<span class="me1">x</span> + alpha * v.<span class="me1">x</span>;
+        result.<span class="me1">y</span> = beta * u.<span class="me1">y</span> + alpha * v.<span class="me1">y</span>;
+        result.<span class="me1">z</span> = beta * u.<span class="me1">z</span> + alpha * v.<span class="me1">z</span>;
+        result.<span class="me1">w</span> = beta * u.<span class="me1">w</span> + alpha * v.<span class="me1">w</span>;
+ 
+        <span class="kw1">return</span> result;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>MythOpus:</b> So basically you're better off to use Quats for something like a spacecraft than using rotators+vectors? I assumed the 'gimble lock' on the player view was add intentionally and not the fault of how rotators+vectors work. I haven't really come accross that issue as of yet anyways.</p>
+<p><b>Wormbo:</b> I'm pretty sure rotators work like they do because it makes most sense for on-foot movement with its fixed upward reference axis. The "gimbal lock" in player rotations when looking straight up or down is a combined result of the controls and how rotators work, because look input is directly mapped to rotator components. (up/down-&gt;pitch, left/right-&gt;yaw) This entire system assumes a hard-coded vertical axis and is not suited for games like Prey where you literally walk on walls and need a rotation system based on a local coordinate system. There is, actually, no reason to use quaternions if you're happy with vector operations to calculate your rotations. Quaternions are just a little more elegant.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/b/u/i/Legacy%7EBuilt-In_Struct_1f60.html" title="Legacy:Built-In Struct">Built-In Struct</a></li>
+<li><a href="../../../../articles/q/u/a/Legacy%7EQuaternion_Rotation_e5f0.html" title="Legacy:Quaternion Rotation">Quaternion Rotation</a></li>
+<li><a href="../../../../articles/q/u/a/Legacy%7EQuaternions_In_Unreal_Tournament_3b10.html" title="Legacy:Quaternions In Unreal Tournament">Quaternions In Unreal Tournament</a></li>
+</ul>
+<p><a name="Related_Links" id="Related_Links"></a></p>
+<h2><span class="mw-headline">Related Links</span></h2>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/complex_number" class="extiw" title="wikipedia:complex_number">Wikipedia:complex number</a></li>
+<li><a href="http://en.wikipedia.org/wiki/quaternion" class="extiw" title="wikipedia:quaternion">Wikipedia:quaternion</a></li>
+<li><a href="http://http.cs.berkeley.edu/~laura/cs184/quat/quaternion.html" class="external text" title="http://http.cs.berkeley.edu/~laura/cs184/quat/quaternion.html" rel="nofollow">Using Quaternions to Represent Rotation</a></li>
+<li><a href="http://graphics.cs.uiuc.edu/~jch/papers/vqr.pdf" class="external text" title="http://graphics.cs.uiuc.edu/~jch/papers/vqr.pdf" rel="nofollow">Visualizing Quaternion Rotations</a></li>
+<li><a href="http://www.gamedev.net/reference/articles/article1095.asp" class="external text" title="http://www.gamedev.net/reference/articles/article1095.asp" rel="nofollow">GameDev.net - Quaternion Powers</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 40/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/q/u/a/Legacy%7EQuaternion_eb92.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/q/u/a/Legacy_talk%7EQuaternion_97ed.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Quaternion">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 14:45, 13 February 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Maya PLE Character Model Tutorial Part 3 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Maya PLE Character Model Tutorial Part 3</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Animation_101:_A_Walk_Cycle" id="Animation_101:_A_Walk_Cycle"></a></p>
+<h2><span class="mw-headline">Animation 101: A Walk Cycle</span></h2>
+<p>Animating all the sequences that the UT2003 characters use seems like quite a task, even for seasoned animators. Luckily, as mentioned, that need not be done. For this tutorial a walk cycle and an "idling" sequence will be enough to illustrate many later procedures.</p>
+<p>69. First adjust the animation-related UI elements: set the Range Slider to Start Time=0, Playback Start Time=0, Playback End Time=50, End Time=50. In Animation Preferences, set the Playback prefs to Update View=Active, Looping=Continuous, and Playback Speed to Other, entering 1.25 in the Other text entry field on the right (this equals 24fps x 1.25 = 30fps, a de facto "standard" for playback rates of game animations). Click Save. Use <b>Window&gt;Animation Editors&gt;Graph Editor</b> to open the Graph Editor dialog.</p>
+<p>70. Drag the Time Slider marker to frame 0, or enter 0 in the Current Time field.</p>
+<p>71. In the Channel Box select the channels to keyframe by clicking on their labels to the left of the data entry fields. Click-drag and Ctrl-click to select the following:</p>
+<p>Translate X, Translate Y, Translate Z, Pole Vector X, Pole Vector Y, Pole Vector Z.</p>
+<p>In Outliner, select all the <i>ikHandle_</i> objects.</p>
+<p>Use <b>Animate&gt;Set Key&gt;OPTIONS</b> to open the dialog for Set Key, and set the options as shown in FIG 20. Then click Set Key.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MCMT-20-KeyOptions.gif_57ec.html" class="image" title="FIG.20 Set Key Options"><img alt="FIG.20 Set Key Options" src="../../../../images/Legacy_MCMT-20-KeyOptions.gif" width="457" height="307" border="0" /></a></span></div>
+</div>
+<p>71. Move to frame 5 in the Time Slider, then click in the title bar of the Graph Editor and press <b>s</b> (lower case) to set a key at frame 5. In like manner set another key at frame 10.</p>
+<p>The key at frame 0 preserves the Bind Pose IK handle positions, and that at frame 5 "isolates" frame 0 from the influence of keys at frames beyond 5.</p>
+<p>Since the 2 animation sequences for TinCanMan will be done in a single file, they should be separated by a "buffer" of a number of frames, so keyframes in one sequence don't influence motion in another. For example, TinCanMan will have sequences from frame 10 to frame 42, and from frame 50 to frame 98. A key (actually a set of keys for multiple channels) placed at frame 47 will help prevent the sequences from affecting one another. The reason for this will become clearer when examining the Graph Editor's animation curves.</p>
+<p>72. A "ground plane" is a helpful reference when animating footsteps, so use <b>Create&gt;Polygon Primitives&gt;Plane&gt;OPTIONS</b> to create a poly plane with the settings in FIG 21. Move the plane to Translate Y= -23.00</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MCMT-21-GroundPlane.gif_a9dd.html" class="image" title="FIG 21. Ground plane parameters"><img alt="FIG 21. Ground plane parameters" src="../../../../images/Legacy_MCMT-21-GroundPlane.gif" width="457" height="308" border="0" /></a></span></div>
+</div>
+<p>73. In Outliner, select <i>ikHandle_R_leg</i>, and move it in Z to Translate Z=7.2.<br />
+Then select <i>ikHandle_L_leg</i> and move in Z to Translate Z= -7.0.<br />
+Select both <i>ikHandle_R_leg</i> and <i>ikHandle_L_leg</i>, select the channel label Translate Z in the Channel Box, click on the Graph Editor title bar, and press <b>s</b> to set a key at frame 10 for the changed values (alternately, use <b>Animate&gt;Set Key</b>).</p>
+<p>Note how the animation curves in the Graph Editor change – those for Translate Z of both the leg IK handles now curve.</p>
+<p>Frame 10 is the first frame of the walk cycle animation.</p>
+<p>74. Move the Time Slider to frame 42 and set a key for the legs' IK handles. Since a walk cycle loops through a series of frames, the beginning and end frames must be identical.</p>
+<p>75. Set the Time Slider to frame 26, the midpoint of the 32-frame sequence. Now switch the positions of the right &amp; left legs, easiest to accomplish by selecting each and entering the Z value of the other in the Channel Box. Set a key for these values of Translate Z.</p>
+<p>The curve in the Graph Editor now depicts the sine-wave shape of the forward &amp; backward leg movement (FIG 22).</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MCMT-22-ZCurves.gif_fea5.html" class="image" title="FIG 22. Z-axis animation curves for legs"><img alt="FIG 22. Z-axis animation curves for legs" src="../../../../images/Legacy_MCMT-22-ZCurves.gif" width="801" height="542" border="0" /></a></span></div>
+</div>
+<p>Set the <b>Playback Start Time</b> to 10, the <b>Playback End Time</b> to 42, and <b>Play Forward</b> the animation loop. Not very aesthetic, but the legs do move. The motion will be polished later.</p>
+<p>NOTE: Once keyframes are applied to the IK handles, <b>Skeleton&gt;Assume Preferred Angle</b> and <b>Skin&gt;Go To Bind Pose</b> will not work properly while the IK solver nodes are active. To use these commands with keyframed IK handles in place, use the main menu item <b>Modify&gt;Enable Nodes&gt;Disable All</b> first. With nodes disabled, the IK handle keyframes are inactive. Use <b>Modify&gt;Enable Nodes&gt;Enable All</b> to restore their operation. Or, more selectively, you can uncheck/check the IK Solvers item in the <b>Modify&gt;Enable Nodes&gt;</b> roll-out.</p>
+<p>76. Return to frame 10 to position the arms for the sequence's first frame.<br />
+Position <i>ikHandle_R_arm</i> at Translate X= -8.0 and , Translate Y= -2, Translate Z= -4.50.<br />
+Position <i>ikHandle_L_arm</i> at Translate X=8.0 and Translate Y= -2, Translate Z= 6.0.<br />
+Set a key for Translate X, Y, and Z. Move to frame 42 and set a key.</p>
+<p>77. Move to frame 26 and switch the arm positions, them set a key for Translate Z (X &amp; Y don't change, so a key isn't needed for them).</p>
+<p>78. Play Forward the animation – again, not very pretty, but functional for the tutorial. To smooth the motion a bit, especially the transition from last to first frames of the loop, select the IK handles for both arms &amp; both legs, then in the Graph Editor select all the visible keyframes.</p>
+<p>In the Graph Editor tool shelf, click on the icon for <i>Flat Tangents</i> (horizontal line with keyframe squares at either end). This will change the shape of the curves between keyframes, making the slope of the curves as they enter frame 42 the same as that leaving frame 10.</p>
+<p>79. To tweak the leg motion into something more naturalistic, set the following keys for the legs:</p>
+<table>
+<tr>
+<td style="text-align: left">FRAME NO.</td>
+<td style="text-align: left">IK HANDLE or BONE</td>
+<td style="text-align: left">CHANNEL</td>
+<td style="text-align: center">KEY VALUE</td>
+</tr>
+<tr>
+<td style="text-align: center">10 &amp; 42</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">0.45</td>
+</tr>
+<tr>
+<td style="text-align: center">26</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">- 0.45</td>
+</tr>
+<tr>
+<td style="text-align: center">10 &amp; 42</td>
+<td style="text-align: left">ikHandle_Spine02</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">0.45</td>
+</tr>
+<tr>
+<td style="text-align: center">26</td>
+<td style="text-align: left">ikHandle_Spine02</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">- 0.45</td>
+</tr>
+<tr>
+<td style="text-align: center">10 &amp; 42</td>
+<td style="text-align: left">Pelvis</td>
+<td style="text-align: left">Rotate X</td>
+<td style="text-align: center">8.0</td>
+</tr>
+<tr>
+<td style="text-align: center">26</td>
+<td style="text-align: left">Pelvis</td>
+<td style="text-align: left">Rotate X</td>
+<td style="text-align: center">- 8.0</td>
+</tr>
+<tr>
+<td style="text-align: center">10 &amp; 42</td>
+<td style="text-align: left">Neck</td>
+<td style="text-align: left">Rotate X</td>
+<td style="text-align: center">8.0</td>
+</tr>
+<tr>
+<td style="text-align: center">26</td>
+<td style="text-align: left">Neck</td>
+<td style="text-align: left">Rotate X</td>
+<td style="text-align: center">- 8.0</td>
+</tr>
+<tr>
+<td style="text-align: center">10, 26 &amp; 42</td>
+<td style="text-align: left">RootBone</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">8 &amp; 34</td>
+<td style="text-align: left">RootBone</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">0.25</td>
+</tr>
+<tr>
+<td style="text-align: center">10, 26 &amp; 42</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">13.0</td>
+</tr>
+<tr>
+<td style="text-align: center">8 &amp; 34</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">13.25</td>
+</tr>
+</table>
+<p>These keys can be selected and given Flat Tangents to keep them smooth through the cycle.</p>
+<p>Note how the settings follow a cyclical pattern. For more naturalistic movement in "organic" characters, it's often useful to shift the frame number of some keyframes forward or backward a bit so the motion isn't absolutely synchronized to certain frames numbers. Using other than Flat Tangents is another technique worthy of exploration.</p>
+<p><a name="Animation_102:_Just_Hangin.27" id="Animation_102:_Just_Hangin.27"></a></p>
+<h3><span class="mw-headline">Animation 102: Just Hangin'</span></h3>
+<p>The other animation sequence to create is an "idle" action, for when the character is not walking. This sequence will start at frame 50 and initially end at frame 82. Frames 43 - 49 will be the "buffer". "Isolating" keyframes will be set at frame 47.</p>
+<p>80. In Outliner, select <i>RootBone</i>, <i>Pelvis</i>, <i>Neck</i> and all the IK handles – these are the scene objects with keyframes. In the Graph Editor, make sure no keys are selected and press <b>f</b> (lower case). This brings all visible keys into view in the graph window. Select all keys at frame 5. Set the Current Time to 47.</p>
+<p>In the Graph Editor menu, use <b>Edit&gt;Copy</b>, then <b>Edit&gt;Paste</b> to copy the frame 5 keys to frame 47. Move to frame 50 and Edit&gt;Paste again (in the Graph Editor).</p>
+<p>The frame 5 values were chosen because they set the model back to the upright Bind Pose, which will be simpler to adjust to a new pose than having to "un-pose" the final frames of the walk animation.</p>
+<p>81. Rather than step through the keyframing for the idling sequence, the keyframe values to set are given in a table as above. Study the result in the Graph Editor to learn what the keys do to affect the model's motion.</p>
+<table>
+<tr>
+<td style="text-align: left">FRAME NO.</td>
+<td style="text-align: left">IK HANDLE or BONE</td>
+<td style="text-align: left">CHANNEL</td>
+<td style="text-align: center">KEY VALUE</td>
+</tr>
+<tr>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">RootBone</td>
+<td style="text-align: left">Translate X</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">RootBone</td>
+<td style="text-align: left">Translate X</td>
+<td style="text-align: center">0.864</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">RootBone</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">0.959</td>
+</tr>
+<tr>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">Pelvis</td>
+<td style="text-align: left">Rotate Z</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">Pelvis</td>
+<td style="text-align: left">Rotate Z</td>
+<td style="text-align: center">5.0</td>
+</tr>
+<tr>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">Neck</td>
+<td style="text-align: left">Rotate Z</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">Neck</td>
+<td style="text-align: left">Rotate Z</td>
+<td style="text-align: center">5.0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">14.0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_Spine01</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_Spine02</td>
+<td style="text-align: left">Translate X</td>
+<td style="text-align: center">0.782</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_Spine02</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">17.822</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_Spine02</td>
+<td style="text-align: left">Pole Vector X</td>
+<td style="text-align: center">0</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_R_arm</td>
+<td style="text-align: left">Translate X</td>
+<td style="text-align: center">- 6.672</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_R_arm</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">- 1.5</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_R_arm</td>
+<td style="text-align: left">Translate Z</td>
+<td style="text-align: center">- 0.25</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_L_arm</td>
+<td style="text-align: left">Translate X</td>
+<td style="text-align: center">7.53</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_L_arm</td>
+<td style="text-align: left">Translate Y</td>
+<td style="text-align: center">- 1.5</td>
+</tr>
+<tr>
+<td style="text-align: center">50</td>
+<td style="text-align: left">ikHandle_L_arm</td>
+<td style="text-align: left">Translate Z</td>
+<td style="text-align: center">0.25</td>
+</tr>
+</table>
+<p>82. After setting these keys, select all the keyframed objects. Then select their frame 50 keys in the Graph Editor. Go to frame 82, then <b>Edit&gt;Copy</b> and <b>Edit&gt;Paste</b> the selected keys using the Graph Editor's menu. Then Play Forward frames 50 - 82.</p>
+<p>When the laughter dies down, notice that even though the key values are the same at the start &amp; end of the sequence, there is still a lot of motion in the "tween" frames. Looking at the Graph Editor explains this – the tangents through the keyframes are not all flat, and in some cases produce very pronounced animation curves (FIG 23), indicating substantial value change over time from frame 50 to 82 (i.e., motion).</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MCMT-23-BigCurves.gif_e479.html" class="image" title="FIG 23. Pronounced animation curves = large motions"><img alt="FIG 23. Pronounced animation curves = large motions" src="../../../../images/Legacy_MCMT-23-BigCurves.gif" width="606" height="638" border="0" /></a></span></div>
+</div>
+<p>83. All the curves could be flattened, but that would mean setting new keys to get the motion back. Better just to edit the existing curves. Here are recommendations:</p>
+<table class="wikitable">
+<tr>
+<td style="text-align: center">IK HANDLE or BONE</td>
+<td style="text-align: center">CHANNEL</td>
+<td style="text-align: center">KEYS AT FRAME NO.</td>
+<td style="text-align: left">EDIT TO CURVE</td>
+</tr>
+<tr>
+<td style="text-align: center">RootBone</td>
+<td style="text-align: center">Translate X</td>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">RootBone</td>
+<td style="text-align: center">Translate X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">RootBone</td>
+<td style="text-align: center">Translate Y</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">Pelvis</td>
+<td style="text-align: center">Rotate Z</td>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">Pelvis</td>
+<td style="text-align: center">Rotate Z</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">Neck</td>
+<td style="text-align: center">Rotate Z</td>
+<td style="text-align: center">0 &amp; 47</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">Neck</td>
+<td style="text-align: center">Rotate Z</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_Spine01</td>
+<td style="text-align: center">Translate Y</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_Spine01</td>
+<td style="text-align: center">Pole Vector X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_Spine02</td>
+<td style="text-align: center">Translate X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_Spine02</td>
+<td style="text-align: center">Translate Y</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_Spine02</td>
+<td style="text-align: center">Pole Vector X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_R_arm</td>
+<td style="text-align: center">Translate X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_R_arm</td>
+<td style="text-align: center">Translate Y</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_R_arm</td>
+<td style="text-align: center">Translate Z</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_L_arm</td>
+<td style="text-align: center">Translate X</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_L_arm</td>
+<td style="text-align: center">Translate Y</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Make the curve shallower and symmetrical by adjusting the slope of the incoming and outgoing curves</td>
+</tr>
+<tr>
+<td style="text-align: center">ikHandle_L_arm</td>
+<td style="text-align: center">Translate Z</td>
+<td style="text-align: center">50 &amp; 82</td>
+<td style="text-align: left">Flatten</td>
+</tr>
+</table>
+<p>The idling action needs to be subtle, so some of the curves (such as Translate X &amp; Y for the arms) need to be made very shallow.</p>
+<p>83. The final keys to add to the idling sequence are:</p>
+<table>
+<tr>
+<td style="text-align: left">FRAME NO.</td>
+<td style="text-align: left">IK HANDLE or BONE</td>
+<td style="text-align: left">CHANNEL</td>
+<td style="text-align: center">KEY VALUE</td>
+</tr>
+<tr>
+<td style="text-align: center">60</td>
+<td style="text-align: left">ikHandle_R_arm</td>
+<td style="text-align: left">Translate Z</td>
+<td style="text-align: center">0.25</td>
+</tr>
+<tr>
+<td style="text-align: center">72</td>
+<td style="text-align: left">ikHandle_L_arm</td>
+<td style="text-align: left">Translate Z</td>
+<td style="text-align: center">- 0.25</td>
+</tr>
+</table>
+<p>This adds a bit of swing to the arms.</p>
+<p>Tweak the curves until you like the action, keeping in mind it should be subtle. Even with very small motions, though, TinCanMan looks a bit twitchy, so the action needs to be slowed a bit.</p>
+<p>84. Select all the keyframed objects in Outliner. In the Graph Editor, select all the keys from frame 50 to frame 82 inclusive. In the Graph Editor menu, use <b>Edit&gt;Scale&gt;OPTIONS</b> to open the Scale Keys dialog. Enable the Method: Start and Stop radio button, and check Only Scale Specified Keys. In the New Start/End Times field enter 50 and 98, respectively. Then click Scale.</p>
+<p>The animation is now 49 frames long, about 33% slower. Play Forward and see how it affects the idling action – quite a bit more relaxed-looking. FIG 24 shows the Graph Editor curves for the finished "idling" animation.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MCMT-24-IdleAnimCurves.gif_0a13.html" class="image" title="Legacy MCMT-24-IdleAnimCurves.gif"><img alt="" src="../../../../images/Legacy_MCMT-24-IdleAnimCurves.gif" width="602" height="547" border="0" /></a></span></div>
+</div>
+<p>TinCanMan's two simple animation sequences are done.<br />
+Consider for a moment the time and skill required to animate the full range of character motions in the "stock" UT2003 models – no mean feat.</p>
+<p>Next up: <a href="../../../../articles/m/a/y/Legacy%7EMaya_PLE_Character_Model_Tutorial_Part_4_e1bf.html" title="Legacy:Maya PLE Character Model Tutorial Part 4">Texturing</a> TinCanMan</p>
+<hr />
+<p><a href="../../../../articles/m/a/y/Legacy%7EMaya_PLE_Character_Model_Tutorial_0410.html" title="Legacy:Maya PLE Character Model Tutorial">Maya PLE Character Model Tutorial</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 9/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/y/Legacy%7EMaya_PLE_Character_Model_Tutorial_Part_3_4e0d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/y/Legacy_talk%7EMaya_PLE_Character_Model_Tutorial_Part_3_5836.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Maya_PLE_Character_Model_Tutorial_Part_3">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:31, 7 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

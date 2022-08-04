@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Useful UWindow Extensions/Menus - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Useful UWindow Extensions/Menus</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/u/s/e/Legacy%7EUseful_UWindow_Extensions_7604.html" title="Legacy:Useful UWindow Extensions">Legacy:Useful UWindow Extensions</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Menu_fixes" id="Menu_fixes"></a></p>
+<h2><span class="mw-headline">Menu fixes</span></h2>
+<p>The pulldown menus in UWindow have a bug that allows you to open submenus only up to one level deep. If you try to open a submenu of a submenu all opened menus will disappear. These new menu classes allow as many submenus as you like and they will automatically show up in the right location, so all submenus stay on the screen.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// EWindow by Wormbo</span>
+<span class="co1">//=============================================================================</span>
+<span class="co1">// EWindowPulldownMenu</span>
+<span class="co1">// This class can handle more than one submenu.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> EWindowPulldownMenu <span class="kw5">extends</span> UWindowPulldownMenu;
+ 
+<span class="kw5">var</span> EWindowPulldownMenu SubMenu;       <span class="co1">// currently opened submenu</span>
+<span class="kw5">var</span> UWindowPulldownMenu ParentMenu;    <span class="co1">// EWindowPulldownMenu(ParentMenu).SubMenu == Self</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bOpenedToLeft;
+ 
+<span class="kw5">function</span> Created<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        SetAcceptsFocus<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw6">Super</span><span class="br0">(</span>UWindowListControl<span class="br0">)</span>.<span class="me1">Created</span><span class="br0">(</span><span class="br0">)</span>;
+        ItemHeight = LookAndFeel.<span class="me1">Pulldown_ItemHeight</span>;
+        VBorder = LookAndFeel.<span class="me1">Pulldown_VBorder</span>;
+        HBorder = LookAndFeel.<span class="me1">Pulldown_HBorder</span>;
+        TextBorder = LookAndFeel.<span class="me1">Pulldown_TextBorder</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UWindowPulldownMenuItem AddMenuItem<span class="br0">(</span><span class="kw4">string</span> C, <a href="/Texture"><span class="kw10">Texture</span></a> G<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> UWindowPulldownMenuItem I;
+ 
+        I = UWindowPulldownMenuItem<span class="br0">(</span>Items.<span class="me1">Append</span><span class="br0">(</span>ListClass<span class="br0">)</span><span class="br0">)</span>;
+ 
+        I.<span class="me1">Owner</span> = <span class="kw8">Self</span>;
+        I.<span class="me1">SetCaption</span><span class="br0">(</span>C<span class="br0">)</span>;
+        I.<span class="me1">Graphic</span> = G;
+ 
+        EWindowPulldownMenuItem<span class="br0">(</span>I<span class="br0">)</span>.<span class="me1">AltValue</span> = C;
+ 
+        <span class="kw1">return</span> I;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> FocusOtherWindow<span class="br0">(</span>UWindowWindow W<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> UWindowPulldownMenu M;
+        <span class="kw5">local</span> <span class="kw4">string</span> tmp;
+ 
+        <span class="kw6">Super</span><span class="br0">(</span>UWindowListControl<span class="br0">)</span>.<span class="me1">FocusOtherWindow</span><span class="br0">(</span>W<span class="br0">)</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>M = SubMenu; M != <span class="kw9">None</span>; M = EWindowPulldownMenu<span class="br0">(</span>M<span class="br0">)</span>.<span class="me1">SubMenu</span><span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span> W == M <span class="br0">)</span>
+                        <span class="kw1">return</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> UWindowPulldownMenuItem<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span> UWindowPulldownMenuItem<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">Owner</span> == W <span class="br0">)</span>
+                        <span class="kw1">return</span>;
+ 
+        <span class="kw1">For</span> <span class="br0">(</span>M = ParentMenu; M != <span class="kw9">None</span>; M = EWindowPulldownMenu<span class="br0">(</span>M<span class="br0">)</span>.<span class="me1">ParentMenu</span><span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> W == M <span class="br0">)</span>
+                        <span class="kw1">return</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> EWindowPulldownMenu<span class="br0">(</span>M<span class="br0">)</span> == <span class="kw9">None</span> <span class="br0">)</span>
+                        <span class="kw1">break</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> bWindowVisible <span class="br0">)</span>
+                CloseUp<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Clear<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        SubMenu = <span class="kw9">None</span>;
+        <span class="kw6">Super</span>.<span class="me1">Clear</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> BeforePaint<span class="br0">(</span>Canvas C, <span class="kw4">float</span> X, <span class="kw4">float</span> Y<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">float</span> W, H, MaxWidth;
+        <span class="kw5">local</span> <span class="kw4">int</span> Count;
+        <span class="kw5">local</span> UWindowPulldownMenuItem I;
+        <span class="kw5">local</span> EWindowPulldownMenu Parent;
+ 
+        Parent = EWindowPulldownMenu<span class="br0">(</span>ParentMenu<span class="br0">)</span>;
+ 
+        MaxWidth = <span class="nu0">100</span>;
+        Count = <span class="nu0">0</span>;
+ 
+        C.<span class="me1">Font</span> = Root.<span class="me1">Fonts</span><span class="br0">[</span>F_Normal<span class="br0">]</span>;
+        C.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span><span class="br0">)</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>I = UWindowPulldownMenuItem<span class="br0">(</span>Items.<span class="me1">Next</span><span class="br0">)</span>; I != <span class="kw9">None</span>; I = UWindowPulldownMenuItem<span class="br0">(</span>I.<span class="me1">Next</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+                Count++;
+                TextSize<span class="br0">(</span>C, RemoveAmpersand<span class="br0">(</span>I.<span class="me1">Caption</span><span class="br0">)</span>, W, H<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> W &gt; MaxWidth <span class="br0">)</span>
+                        MaxWidth = W;
+        <span class="br0">}</span>
+ 
+        WinWidth = MaxWidth + <span class="br0">(</span>HBorder + TextBorder<span class="br0">)</span> * <span class="nu0">2</span>;
+        WinHeight = ItemHeight * Count + VBorder * <span class="nu0">2</span>;
+ 
+        <span class="co1">// Take care of bHelp items</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>UWindowMenuBarItem<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; UWindowMenuBarItem<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">bHelp</span><span class="br0">)</span>
+                        || WinLeft + WinWidth &gt; ParentWindow.<span class="me1">WinWidth</span> <span class="br0">)</span>
+                WinLeft = ParentWindow.<span class="me1">WinWidth</span> - WinWidth;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> ParentMenu != <span class="kw9">None</span> &amp;&amp; <span class="br0">(</span>WinWidth + WinLeft &gt; ParentWindow.<span class="me1">WinWidth</span>
+                        || ParentMenu.<span class="me1">WinLeft</span> + ParentMenu.<span class="me1">WinWidth</span> - ParentMenu.<span class="me1">HBorder</span> &gt; WinLeft
+                        || WinLeft + WinWidth &gt; Root.<span class="me1">WinWidth</span> || <span class="br0">(</span>Parent != <span class="kw9">None</span> &amp;&amp; Parent.<span class="me1">bOpenedToLeft</span><span class="br0">)</span><span class="br0">)</span>
+                        &amp;&amp; ParentMenu.<span class="me1">WinLeft</span> + ParentMenu.<span class="me1">HBorder</span> - WinWidth &gt; <span class="nu0">0</span> <span class="br0">)</span> <span class="br0">{</span>
+                WinLeft = ParentMenu.<span class="me1">WinLeft</span> + ParentMenu.<span class="me1">HBorder</span> - WinWidth;
+                bOpenedToLeft = <span class="kw9">True</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> ParentMenu != <span class="kw9">None</span> &amp;&amp; WinTop + WinHeight &gt; Root.<span class="me1">WinHeight</span>
+                        &amp;&amp; WinHeight &lt; WinTop + ParentMenu.<span class="me1">ItemHeight</span> + <span class="nu0">2</span> * VBorder <span class="br0">)</span>
+                WinTop -= WinHeight - ParentMenu.<span class="me1">ItemHeight</span> - <span class="nu0">2</span> * VBorder;
+ 
+        WinTop = <span class="kw7">Max</span><span class="br0">(</span><span class="kw7">Min</span><span class="br0">(</span>WinTop, Root.<span class="me1">WinHeight</span> - WinHeight<span class="br0">)</span>, <span class="nu0">0</span><span class="br0">)</span>;
+        WinLeft = <span class="kw7">Max</span><span class="br0">(</span><span class="kw7">Min</span><span class="br0">(</span>WinLeft, Root.<span class="me1">WinWidth</span> - WinWidth<span class="br0">)</span>, <span class="nu0">0</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     ListClass=<span class="kw5">Class</span><span class="st0">'EWindowPulldownMenuItem'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The right-click menu class is used for pop-up menus.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// EWindow by Wormbo</span>
+<span class="co1">//=============================================================================</span>
+<span class="co1">// EWindowRightClickMenu</span>
+<span class="co1">// This class can handle more than one submenu.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> EWindowRightClickMenu <span class="kw5">extends</span> EWindowPulldownMenu;
+ 
+<span class="kw5">function</span> Created<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        bTransient = <span class="kw9">True</span>;
+        <span class="kw6">Super</span>.<span class="me1">Created</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> RMouseDown<span class="br0">(</span><span class="kw4">float</span> X, <span class="kw4">float</span> Y<span class="br0">)</span>
+<span class="br0">{</span>
+        LMouseDown<span class="br0">(</span>X, Y<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> RMouseUp<span class="br0">(</span><span class="kw4">float</span> X, <span class="kw4">float</span> Y<span class="br0">)</span>
+<span class="br0">{</span>
+        LMouseUp<span class="br0">(</span>X, Y<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CloseUp<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">bool</span> bByOwner<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">CloseUp</span><span class="br0">(</span>bByOwner<span class="br0">)</span>;
+        HideWindow<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The pulldown menu item is a <a href="../../../../articles/u/w/i/Legacy%7EUWindowList_0501.html" title="Legacy:UWindowList">UWindowList</a> subclass that holds all the items of the menu including references to submenus.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// EWindow by Wormbo</span>
+<span class="co1">//=============================================================================</span>
+<span class="co1">// EWindowPulldownMenuItem</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> EWindowPulldownMenuItem <span class="kw5">extends</span> UWindowPulldownMenuItem;
+ 
+<span class="kw5">var</span> <span class="kw4">string</span> AltValue;
+ 
+<span class="kw5">function</span> Select<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> SubMenu != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                SubMenu.<span class="me1">WinLeft</span> = Owner.<span class="me1">WinLeft</span> + Owner.<span class="me1">WinWidth</span> - Owner.<span class="me1">HBorder</span>;
+                SubMenu.<span class="me1">WinTop</span> = ItemTop - Owner.<span class="me1">VBorder</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> EWindowPulldownMenu<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        EWindowPulldownMenu<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SubMenu</span> = EWindowPulldownMenu<span class="br0">(</span>SubMenu<span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> EWindowPulldownMenu<span class="br0">(</span>SubMenu<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        EWindowPulldownMenu<span class="br0">(</span>SubMenu<span class="br0">)</span>.<span class="me1">ParentMenu</span> = Owner;
+                SubMenu.<span class="me1">ShowWindow</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DeSelect<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> SubMenu != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> EWindowPulldownMenu<span class="br0">(</span>Owner<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; EWindowPulldownMenu<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SubMenu</span> == SubMenu <span class="br0">)</span>
+                        EWindowPulldownMenu<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">SubMenu</span> = <span class="kw9">None</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> EWindowPulldownMenu<span class="br0">(</span>SubMenu<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                        EWindowPulldownMenu<span class="br0">(</span>SubMenu<span class="br0">)</span>.<span class="me1">ParentMenu</span> = <span class="kw9">None</span>;
+                SubMenu.<span class="me1">DeSelect</span><span class="br0">(</span><span class="br0">)</span>;
+                SubMenu.<span class="me1">HideWindow</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/e/Legacy%7EUseful_UWindow_Extensions_Menus_83f9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/e/Legacy_talk%7EUseful_UWindow_Extensions_Menus_d716.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Useful_UWindow_Extensions/Menus">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:12, 10 May 2002 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

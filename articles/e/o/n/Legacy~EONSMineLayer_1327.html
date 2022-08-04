@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:EONSMineLayer - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:EONSMineLayer</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Status: Finished. Feel free to use code derived from this weapon, but please provide credit to me in the comments and/or ReadMe file of your new creation.</p>
+<p>Description: The EONS Mine Layer is a modification of the UT2004 ONS Mine Layer intended to alter the functionality of the Mine Layer to make it an effective anti-vehicle weapon and reduce its effectiveness as an anti-infantry weapon.</p>
+<p>New Features:</p>
+<p>1. Mines deploy on primary fire at a much higher velocity. Mines are significantly faster, respond to enemies in a larger area, but do not track enemies on foot. Mines will still detonate if they come in direct contact with enemy infantry.</p>
+<p>2. Maximum number of deployable mines has been reduced from 8 to 4.</p>
+<p>3. In team-based gametypes, the EONS Mine Layer's secondary fire targeting laser is team-colored.</p>
+<p>Current code is provided below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineLayer</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">// Feel free to use this content in any maps you create, but please provide credit in the readme.</span>
+<span class="co1">// Contact: wailofsuicide@gmail.com - Comments and suggestions welcome.</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineLayer <span class="kw5">extends</span> ONSMineLayer;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> NewDrawWeaponInfo<span class="br0">(</span>Canvas Canvas, <span class="kw4">float</span> YPos<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw5">local</span> <span class="kw4">float</span> ScaleFactor;
+ 
+    ScaleFactor = <span class="nu0">99</span> * Canvas.<span class="me1">ClipX</span>/<span class="nu0">3200</span>;
+    Canvas.<span class="me1">Style</span> = ERenderStyle.<span class="me1">STY_Alpha</span>;
+    Canvas.<span class="me1">DrawColor</span> = <span class="kw5">class</span><span class="st0">'HUD'</span>.<span class="kw1">Default</span>.<span class="me1">WhiteColor</span>;
+    <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; MaxMines; i++<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>i &gt;= CurrentMines<span class="br0">)</span>
+            Canvas.<span class="me1">DrawColor</span> = FadedColor;
+        Canvas.<span class="me1">SetPos</span><span class="br0">(</span>Canvas.<span class="me1">ClipX</span> - <span class="br0">(</span>i<span class="nu0">+1</span><span class="br0">)</span> * ScaleFactor * <span class="nu0">1.25</span>, YPos<span class="br0">)</span>;
+        Canvas.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'HudContent.Generic.HUD'</span>, ScaleFactor, ScaleFactor, <span class="nu0">391</span>, <span class="nu0">383</span>, <span class="nu0">44</span>, <span class="nu0">49</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ ItemName=<span class="st0">"EONS Mine Layer"</span>
+ Description=<span class="st0">"The Anti-Vehicular Spider Mine Layer is used for deploying spider mines, autonomous mobile mines that are highly effective against vehicles. While the mines to not track infantry, they will explode upon contact with enemy soldiers."</span>
+ FireModeClass<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineThrowFire'</span>
+ FireModeClass<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineLayerAltFire'</span>
+ PickupClass=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineLayerPickup'</span>
+ GroupOffset=<span class="nu0">10</span>
+ MaxMines=<span class="nu0">4</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineThrowFire</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineThrowFire <span class="kw5">extends</span> ONSMineThrowFire;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    ProjectileClass=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineProjectile'</span>
+    RedMineClass=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineProjectileRED'</span>
+    BlueMineClass=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineProjectileBLUE'</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineProjectile</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">// Projectile launched by EONSMineLayer -- Mines chase only vehicles.</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineProjectile <span class="kw5">extends</span> ONSMineProjectile;
+ 
+<span class="kw5">function</span> AcquireTarget<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Vehicle A;
+    <span class="kw5">local</span> xPawn B;
+    <span class="kw5">local</span> <span class="kw4">float</span> Dist, BestDist;
+ 
+    TargetPawn = <span class="kw9">None</span>;
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Vehicle'</span>, A, <span class="nu0">4096.0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> A != Instigator &amp;&amp; A.<span class="me1">Health</span> &gt; <span class="nu0">0</span> &amp;&amp; A.<span class="me1">GetTeamNum</span><span class="br0">(</span><span class="br0">)</span> != TeamNum
+        &amp;&amp; A.<span class="me1">Driver</span> != <span class="kw9">None</span> &amp;&amp; <span class="br0">(</span>ONSStationaryWeaponPawn<span class="br0">(</span>A<span class="br0">)</span> == <span class="kw9">None</span> || ONSStationaryWeaponPawn<span class="br0">(</span>A<span class="br0">)</span>.<span class="me1">bPowered</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            Dist = VSize<span class="br0">(</span>A.<span class="me1">Location</span> - Location<span class="br0">)</span>;
+            <span class="kw1">if</span> <span class="br0">(</span>TargetPawn == <span class="kw9">None</span> || Dist &lt; BestDist<span class="br0">)</span>
+            <span class="br0">{</span>
+                TargetPawn = A;
+                BestDist = Dist;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'xPawn'</span>, B, <span class="nu0">16.0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> B != Instigator &amp;&amp; B.<span class="me1">Health</span> &gt; <span class="nu0">0</span> &amp;&amp; B.<span class="me1">GetTeamNum</span><span class="br0">(</span><span class="br0">)</span> != TeamNum <span class="br0">)</span>
+        <span class="br0">{</span>
+            Dist = VSize<span class="br0">(</span>B.<span class="me1">Location</span> - Location<span class="br0">)</span>;
+            <span class="kw1">if</span> <span class="br0">(</span>TargetPawn == <span class="kw9">None</span> || Dist &lt; BestDist<span class="br0">)</span>
+            <span class="br0">{</span>
+                TargetPawn = B;
+                BestDist = Dist;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PhysicsVolumeChange<span class="br0">(</span> PhysicsVolume Volume <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>Volume.<span class="me1">bWaterVolume</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        BlowUp<span class="br0">(</span>Location<span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    MyDamageType=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.DamTypeEONSMineProjectile'</span>
+    Damage=<span class="nu0">50.000</span>
+    Speed=<span class="nu0">1500.0</span>
+    MaxSpeed=<span class="nu0">4000.0</span>
+    ScurryAnimRate=<span class="nu0">6.2</span>
+    ScurrySpeed=<span class="nu0">925.0</span>
+ 
+    bUnlit=<span class="kw9">false</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineProjectileBLUE</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineProjectileBLUE <span class="kw5">extends</span> EONSMineProjectile;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    Skins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'VMWeaponsTX.PlayerWeaponsGroup.SpiderMineBLUETEX'</span>
+    Skins<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'VMWeaponsTX.PlayerWeaponsGroup.SpiderMineBLUETEX'</span>
+    TeamNum=<span class="nu0">1</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineProjectileRED</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineProjectileRED <span class="kw5">extends</span> EONSMineProjectile;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    Skins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'VMWeaponsTX.PlayerWeaponsGroup.SpiderMineTEX'</span>
+    Skins<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'VMWeaponsTX.PlayerWeaponsGroup.SpiderMineTEX'</span>
+    TeamNum=<span class="nu0">0</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineLayerAltFire</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineLayerAltFire <span class="kw5">extends</span> ONSMineLayerAltFire;
+ 
+<span class="kw5">var</span> class&lt;ONSMineLayerTargetBeamEffect&gt; TeamBeamClasses<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> ModeTick<span class="br0">(</span><span class="kw4">float</span> deltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">vector</span> HitLocation, HitNormal, StartTrace, EndTrace, X, Y, Z;
+    <span class="kw5">local</span> <span class="kw4">rotator</span> Aim;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Other;
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>!bIsFiring<span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+       Weapon.<span class="me1">GetViewAxes</span><span class="br0">(</span>X,Y,Z<span class="br0">)</span>;
+ 
+    <span class="co1">// the to-hit trace always starts right in front of the eye</span>
+    StartTrace = Instigator.<span class="me1">Location</span> + Instigator.<span class="me1">EyePosition</span><span class="br0">(</span><span class="br0">)</span> + X*Instigator.<span class="me1">CollisionRadius</span>;
+    Aim = AdjustAim<span class="br0">(</span>StartTrace, AimError<span class="br0">)</span>;
+    X = <span class="kw4">Vector</span><span class="br0">(</span>Aim<span class="br0">)</span>;
+    EndTrace = StartTrace + TraceRange * X;
+ 
+    Other = Weapon.<span class="me1">Trace</span><span class="br0">(</span>HitLocation, HitNormal, EndTrace, StartTrace, <span class="kw9">false</span><span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span>Other == <span class="kw9">None</span> || Other == Instigator<span class="br0">)</span>
+        HitLocation = EndTrace;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Beam == <span class="kw9">None</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Weapon.<span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        <span class="br0">{</span>    
+             <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Instigator.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Instigator.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>.<span class="me1">TeamIndex</span> == <span class="nu0">1</span><span class="br0">)</span> <span class="br0">)</span>
+                 Beam = Weapon.<span class="me1">spawn</span><span class="br0">(</span>TeamBeamClasses<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>,,, Instigator.<span class="me1">Location</span><span class="br0">)</span>;
+             <span class="kw1">else</span>
+                 Beam = Weapon.<span class="me1">spawn</span><span class="br0">(</span>TeamBeamClasses<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,,, Instigator.<span class="me1">Location</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+            <span class="kw1">foreach</span> Weapon.<span class="me1">DynamicActors</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ONSMineLayerTargetBeamEffect'</span>, Beam<span class="br0">)</span>
+                <span class="kw1">break</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Beam != <span class="kw9">None</span><span class="br0">)</span>
+        Beam.<span class="me1">EndEffect</span> = HitLocation;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>bDoHit<span class="br0">)</span>
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; Gun.<span class="me1">Mines</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>Gun.<span class="me1">Mines</span><span class="br0">[</span>i<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                Gun.<span class="me1">Mines</span>.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;
+                i--;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>ONSMineProjectile<span class="br0">(</span>Gun.<span class="me1">Mines</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+                ONSMineProjectile<span class="br0">(</span>Gun.<span class="me1">Mines</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>.<span class="me1">SetScurryTarget</span><span class="br0">(</span>HitLocation<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ TeamBeamClasses<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="kw5">class</span><span class="st0">'Onslaught.ONSMineLayerTargetBeamEffect'</span>
+ TeamBeamClasses<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineLayerTargetBeamEffectBlue'</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineLayerTargetBeamEffectBlue</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineLayerTargetBeamEffectBlue <span class="kw5">extends</span> ONSMineLayerTargetBeamEffect;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ Begin <a href="/Object"><span class="kw10">Object</span></a> <span class="kw5">Class</span>=BeamEmitter <span class="kw4">Name</span>=BeamEmitter0
+        BeamDistanceRange=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">10000.000000</span>,<span class="kw7">Max</span>=<span class="nu0">10000.000000</span><span class="br0">)</span>
+        DetermineEndPointBy=PTEP_Distance
+        BeamTextureUScale=<span class="nu0">16.000000</span>
+        RotatingSheets=<span class="nu0">3</span>
+        LowFrequencyPoints=<span class="nu0">2</span>
+        HighFrequencyPoints=<span class="nu0">2</span>
+        AutomaticInitialSpawning=<span class="kw9">False</span>
+        ColorScale<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span><span class="kw4">Color</span>=<span class="br0">(</span>B=<span class="nu0">192</span><span class="br0">)</span><span class="br0">)</span>
+        ColorScale<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>RelativeTime=<span class="nu0">0.500000</span>,<span class="kw4">Color</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">64</span>,R=<span class="nu0">64</span><span class="br0">)</span><span class="br0">)</span>
+        ColorScale<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>RelativeTime=<span class="nu0">1.000000</span>,<span class="kw4">Color</span>=<span class="br0">(</span>B=<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>
+        ColorMultiplierRange=<span class="br0">(</span>X=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">0.000000</span>,<span class="kw7">Max</span>=<span class="nu0">0.000000</span><span class="br0">)</span>,Y=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">0.000000</span>,<span class="kw7">Max</span>=<span class="nu0">0.000000</span><span class="br0">)</span>,Z=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">0.500000</span>,<span class="kw7">Max</span>=<span class="nu0">0.500000</span><span class="br0">)</span><span class="br0">)</span>
+        MaxParticles=<span class="nu0">1</span>
+        UseRotationFrom=PTRS_Actor
+        StartSizeRange=<span class="br0">(</span>X=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">10.000000</span>,<span class="kw7">Max</span>=<span class="nu0">10.000000</span><span class="br0">)</span>,Y=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">10.000000</span>,<span class="kw7">Max</span>=<span class="nu0">10.000000</span><span class="br0">)</span><span class="br0">)</span>
+        InitialParticlesPerSecond=<span class="nu0">5000.000000</span>
+        <a href="/Texture"><span class="kw10">Texture</span></a>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'AW-2004Particles.Weapons.BeamFragment'</span>
+        LifetimeRange=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">0.020000</span>,<span class="kw7">Max</span>=<span class="nu0">0.020000</span><span class="br0">)</span>
+        StartVelocityRange=<span class="br0">(</span>X=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">1.000000</span>,<span class="kw7">Max</span>=<span class="nu0">1.000000</span><span class="br0">)</span><span class="br0">)</span>
+    End <a href="/Object"><span class="kw10">Object</span></a>
+    Emitters<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=BeamEmitter<span class="st0">'BeamEmitter0'</span>
+ 
+    bNetInitialRotation=<span class="kw9">true</span>
+    bNoDelete=<span class="kw9">false</span>
+    AutoDestroy=<span class="kw9">true</span>
+    <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+    bUpdateSimulatedPosition=<span class="kw9">true</span>
+    bReplicateInstigator=<span class="kw9">true</span>
+ 
+    EffectOffset=<span class="br0">(</span>X=<span class="nu0">-5</span>,Y=<span class="nu0">15</span>,Z=<span class="nu0">20</span><span class="br0">)</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//========================================================================</span>
+<span class="co1">// EONSMineLayerPickup</span>
+<span class="co1">// EONS Mine Layer by Wail of Suicide</span>
+<span class="co1">//========================================================================</span>
+ 
+<span class="kw5">class</span> EONSMineLayerPickup <span class="kw5">extends</span> ONSMineLayerPickup;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    InventoryType=<span class="kw5">class</span><span class="st0">'EONS-MineLayer_BETA1.EONSMineLayer'</span>
+    PickupMessage=<span class="st0">"You got the EONS Mine Layer."</span>
+ 
+    MaxDesireability=<span class="nu0">+0.65</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 25/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/o/n/Legacy%7EEONSMineLayer_1327.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/o/n/Legacy_talk%7EEONSMineLayer_debe.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:EONSMineLayer">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 06:06, 5 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

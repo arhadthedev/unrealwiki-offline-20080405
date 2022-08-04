@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Terrain Decoration Layer - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Terrain Decoration Layer</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><b>Terrain Decoration Layers</b> apply <a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_d654.html" title="Legacy:Static Mesh">static meshes</a> to a <a href="../../../../articles/t/e/r/Legacy%7ETerrain_7d48.html" title="Legacy:Terrain">terrain</a>. Each decoration layer causes multiple copies of a particlar mesh to appear over the terrain. These are placed randomly, with the density of the meshes given by a texture, just as intensity of texture is given by a texture for texture layers.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Adding_a_TDL"><span class="tocnumber">1</span> <span class="toctext">Adding a TDL</span></a></li>
+<li class="toclevel-1"><a href="#Editing"><span class="tocnumber">2</span> <span class="toctext">Editing</span></a></li>
+<li class="toclevel-1"><a href="#Changing_color_and_scale_of_static_meshes"><span class="tocnumber">3</span> <span class="toctext">Changing color and scale of static meshes</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">4</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Tips_for_creating_deco_layers"><span class="tocnumber">5</span> <span class="toctext">Tips for creating deco layers</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">7</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Adding_a_TDL" id="Adding_a_TDL"></a></p>
+<h2><span class="mw-headline">Adding a TDL</span></h2>
+<p>The Terrain Painting Tool is a bit buggy when it comes to editing a decoration layer's alpha map. So here's a method to get around it:</p>
+<ol>
+<li>Before beginning, you should have a terrain created with a visible base texture, such as a grass layer. See <a href="../../../../articles/c/r/e/Legacy%7ECreating_A_Terrain_e19c.html" title="Legacy:Creating A Terrain">Creating A Terrain</a></li>
+<li>You now need to create a <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture layer</a> with a density map for your deco layer. First go to the <a href="../../../../articles/t/e/x/Legacy%7ETexture_Browser_1a4e.html" title="Legacy:Texture Browser">Texture Browser</a> and select some texture (it doesn't matter which, we won't be looking at it.) Open the terrain editor and select your terrain, then go to the <i>layers</i> tab and hit "new" to create a new texture layer. Call it something like "decolayer1alpha" Once the layer has been created, use the up arrow to move the layer to the bottom of the layer stack (to the top of the list.) This will ensure that whatever texture you've selected will not be drawn as a layer, but lets us edit the layer's alpha map which effectively changes the density on the deco layer.<br />
+Alternatively, you could import an 8-bit grayscale texture from an external application. However, this takes more time, and you'll probably have to adjust this texture anyway to get the decorations exactly how you want them.</li>
+<li>Select a static mesh in the <a href="../../../../articles/s/t/a/Legacy%7EStatic_Mesh_Browser_8792.html" title="Legacy:Static Mesh Browser">static mesh browser</a>. This is the mesh that will appear wherever the density map is lighter.</li>
+<li>Go to the texture browser and select the "decolayer1alpha" texture that you created in step 2. Now you're ready.</li>
+<li>Click in the "Decorations" tab. Click "New". You should see a new row appear in the list box, with three red Xs. This represents your decoration layer.</li>
+<li>Right-click the row in the list -&gt; Set Density Texture from Current</li>
+<li>Right-click the row in the list -&gt; Set static mesh from Current</li>
+<li>Go back to camera mode in the <a href="../../../../articles/t/o/o/Legacy%7EToolbox_b14b.html" title="Legacy:Toolbox">toolbox</a>, find your TerrainInfo actor and <a href="../../../../articles/s/e/t/Legacy%7ESet_The_Following_Properties_ae9e.html" title="Legacy:Set The Following Properties">set the following properties</a>
+<ul>
+<li>TerrainInfo -&gt; DecoLayers -&gt; [<i>your layer's number</i>] -&gt; FadeOutRadius -&gt; Min = 500</li>
+<li>TerrainInfo -&gt; DecoLayers -&gt; [<i>your layer's number</i>] -&gt; FadeOutRadius -&gt; Max = 1200 (These numbers are just examples – you need to set the max higher than 0 so you can actually see the meshes in the editor. More details below)</li>
+</ul>
+</li>
+<li>Now go back to the terrain editor, go to the <i>layers</i> tab, select the layer which controls the density map for your deco layer, and paint it as if you would paint a <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture Layer</a></li>
+</ol>
+<p><b>Tarquin:</b> Won't this add to the texture complexity of the terrain? Should you delete the texture layer before releasing the map?</p>
+<p><a name="Editing" id="Editing"></a></p>
+<h2><span class="mw-headline">Editing</span></h2>
+<p>As stated above, editing the density of the texture layer controlling the deco layer is exactly the same as using the "paint" tool on a <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture Layer</a> Select the layer (not the deco layer!) and the paint tool Then use ctrl+lmb to make the deco layer more dense, and ctrl+rmb to make the area less dense.</p>
+<p><a name="Changing_color_and_scale_of_static_meshes" id="Changing_color_and_scale_of_static_meshes"></a></p>
+<h2><span class="mw-headline">Changing color and scale of static meshes</span></h2>
+<p>In addition to setting the density map for the texture, you can also use a texture to control the scale of individual meshes on your terrain, or a color map to change the tint of static meshes in different areas. Perhaps you want to use a grass texture, but you want certain areas to look like a bloody battlefield? this is the way to do it. The color map simply takes whatever color the original mesh looked like, and blends it with the color in the color map. This will be most apparent if your static mesh had a texture that was close to white, but can be used with any static mesh.</p>
+<p>To set a color map, select the texture you want, then go to the terrain editor-&gt;decorations tab, right click the deco layer, and select "set color texture from current"</p>
+<p>For the scale map, the R,G,B values determine the scale in the X,Y,Z directions respectively. This is probably easiest to do in a seperate image editor.</p>
+<p>To set a scale map, select the texture you want, then go to the terrain editor-&gt;decorations tab, right click the deco layer, and select "set scale texture from current"</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>int AlignToTerrain&#160;</dt>
+<dd>If this is 0, then all the static meshes will stand straight up. Otherwise, they'll stick out from the slope of the terrain.</dd>
+<dt>Texture ColorMap&#160;</dt>
+<dd>The optional color map which is streched over the terrain to modify the color of individual static meshes in the deco layer</dd>
+<dt>Texture DensityMap&#160;</dt>
+<dd>The density map which controls how many static meshes will be in one area</dd>
+<dt>range DensityMultiplier&#160;</dt>
+<dd>this is a range which you can use to tweak the density of the static meshes. Higher values will make the layer more dense.</dd>
+<dt>int DisregardTerrainLighting&#160;</dt>
+<dd>setting this to a non-zero value will basically make all of the static meshes fully lit. This could be useful, for instance, if you wanted it to look like you had lots of little lights all over the ground...</dd>
+<dt>ESortOrder DrawOrder&#160;</dt>
+<dd>This tells the engine how to sort the meshes before it draws them. Using Sort_BackToFront will probably give the results you want.</dd>
+<dt>range FadeoutRadius&#160;</dt>
+<dd>This is a range which determines how to fade out the deco layer with distance. Anything less than the min distance value will be fully opaque, and anything greater thean the max will be fully translucent. Everything in-between will be slowly blended between the two. It's important to adjust this, along with the density of your deco layer to get the best balance between performance and asthetics.</dd>
+<dt>int LitDirectional&#160;</dt>
+<dd>Setting this to a non-zero value will make the individual meshes use the level's sunlight, rather than just the light value on the terrain at that point. Use this!</dd>
+<dt>int MaxPerQuad&#160;</dt>
+<dd>The maximum number of meshes in one quad on the terrain. Probably should be left alone for most purposes.</dd>
+<dt>int RandomYaw&#160;</dt>
+<dd>Setting this to non-zero causes the meshes to have random yaw rotations, for more of a natural organic feel.</dd>
+<dt>Texture ScaleMap&#160;</dt>
+<dd>The optional scale map which determines the size of individual meshes on the terrain. The R,G,B channels affect the X,Y,Z scales, so use a grayscale texture if you want to scale everything uniformly.</dd>
+<dt>rangevector ScaleMultiplier&#160;</dt>
+<dd>This is useful for scaling all of the meshes on the layer. Actual scale value will be a random value somewhere between the min and max. Everything is set to 1 by default.</dd>
+<dt>int Seed&#160;</dt>
+<dd>Changing this will generate a new random placement for the meshes, while still obeying the guidelines set by the density map.</dd>
+<dt>int ShowOnInvisibleTerrain&#160;</dt>
+<dd>false by default, this allows you to show the static meshes even where the terrain has been set to invisible.</dd>
+<dt>int ShowOnTerrain&#160;</dt>
+<dd>obvious.</dd>
+<dt>StaticMesh StaticMesh&#160;</dt>
+<dd>The static mesh which is displayed by this deco layer.</dd>
+</dl>
+<p><a name="Tips_for_creating_deco_layers" id="Tips_for_creating_deco_layers"></a></p>
+<h2><span class="mw-headline">Tips for creating deco layers</span></h2>
+<ul>
+<li>in the <a href="../../../../articles/t/e/r/Legacy%7ETerrainInfo_1588.html" title="Legacy:TerrainInfo">TerrainInfo</a> actor properties, there is a value called "DecoLayerOffset". This is a global value for each terrain which defines the height above the terrain to move the static meshes. Unfortunately it affects all deco layers, but it can be useful if you're using a static mesh that needs the height to be adjusted somewhat.</li>
+<li>The unreal engine is not very good about handling translucent objects, so beware that if you have other translucent actors in your game, they may get overdrawn totally by deco layers.</li>
+<li>It's very important to find a good balance between performance and looks. If you want more dense meshes, then try fading them out sooner. If you want a more continuous look for something like a flight simulator, consider using relatively sparse density maps, but let things fade away further into the distance.</li>
+<li>make sure if you're going for something like grass, to turn on litdirectional and random yaw, as well as giving the ScaleMultiplier a little room to mess with the scale. This will give your layer a much more organic and natural look.</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="http://udn.epicgames.com/Two/CreatingDecoLayers" class="extiw" title="udn2:CreatingDecoLayers">udn2:CreatingDecoLayers</a></li>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerrain_7d48.html" title="Legacy:Terrain">Terrain</a> Terrain home</li>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain Texture layer</a> Creating a texture layer (which is also creates the alpha map for these deco layers)</li>
+</ul>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Category:Legacy Mapping</a></p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Enos Shenk:</b> Ive never had any trouble removing decorations. Just using the painting tool with my layer linked to my decolayer and control+rightclick un-paints them just like a texture layer.</p>
+<p><b>Tarquin:</b> I tried that, and control+rightclick seems to apply meshes same as control-left. This is UT2003 UnrealEd</p>
+<p><b>Lilguy:</b> Ok, pretty much did a total rewrite on the how to section, and using that method, it should solve your problem Tarquin.</p>
+<p><b>Lilguy:</b> Anything else someone would like to see here?</p>
+<p><b>Tarquin:</b> I like your workaround of using a hidden texture layer. Is the painting tool definitely b0rked for working on deco layers directly?</p>
+<p><b>Lilguy:</b> Yeah I think that they never intended it to be used that way...When I use the paint tool on a dec layer,it modifies the geometry...I'd like to take credit for the idea of using texture layers, but that's how I learned todo it in the 3Dbuzz vtm on terrain, and also how they do it on the udn site for deco layers.</p>
+<p><b>Legal:</b> Works fine for me... make sure that you've selected the decolayer before painting though. Btw, is there ANY way of creating decolayers with collision? Making an entire forest without DecoLayers <i>can</i> piss me off pretty much...&#160;:(</p>
+<p><b>Tarquin:</b> For me, painting a deco layer works when ADDING stuff, but not removing it.&#160;:(</p>
+<p><b>Lilguy:</b> strange, when I was playing with it yesterday, I couldn't get it to add anything when I actually had the deco layer selected. In any case, does using the texture layer method work for you? As far as collision, I *think* that using a static mesh with collision built in should solve the problem, but I could be wrong. I know in the official maps when they want to put things like trees in a map, they always just place the tree manually. I think deco layers are more indended for things like grass and things where exact placement doesn't really matter.</p>
+<p><b>Otter:</b> Say you wanted to have grass bend when you walk through it... is that possible using a terrain deco layer?</p>
+<p><b>Foxpaw:</b> No, I don't believe it is. You would probrably have to script custom grass actors.</p>
+<p><b>Legal:</b> No, not in any Unreal Engine game. I know Hidden and Dangerous 2 has it (it looks very awesome, very natural), but then again, it doesn't have an editor&#160;;)</p>
+<p><b>Otter:</b> Ok then, how's this... animated meshes, ie grass that subtley blows in the wind?</p>
+<p><b>Tarquin:</b> Static meshes can't animate</p>
+<p><b>Erdrik:</b> I thought it might be important to note that the rangevector ScaleMultiplier is not set to 1 by default.</p>
+<p>(at least not in my editor...) I had spent an hour or so after following the above steps trying to figure out why my</p>
+<p>deco's weren't working, eventually discovering that at a scale of 0 the certainly wouldn't be visable.&#160;:P lol</p>
+<p>Aaack! If you saw it I apologies for the horror I unleashed to this page I hope I fixed it... &lt;:(</p>
+<p><b>Tarquin:</b> If it is not set to 1 by default, then please correct the information in the main body of the page.</p>
+<p><b>V3rt1go:</b> The VTMs (if you believe them) say you should only paint on the layer under the layers tab, and that painting on the deco layer itself can cause problems.</p>
+<p><b>Citruspunch:</b> Can't see the grass? Ensure you've actually told unreal to display foliage. I have a low spec system and couldn't figure out whiy this wasn't showing up.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 24/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/e/r/Legacy%7ETerrain_Decoration_Layer_6ca4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/e/r/Legacy_talk%7ETerrain_Decoration_Layer_37b5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Terrain_Decoration_Layer">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 11:07, 6 July 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

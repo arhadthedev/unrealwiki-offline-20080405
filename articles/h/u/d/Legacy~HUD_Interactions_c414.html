@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:HUD Interactions - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:HUD Interactions</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Okay, so you want a <a href="../../../../articles/h/u/d/Legacy%7EHUDMutator_5e7a.html" title="Legacy:HUDMutator">HUDMutator</a> in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>? Tough - they're dead. You'll need to use something called an <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">interaction</a> instead. Interactions recieve PostRender and PreRender events from the engine, as well as intercept keypresses and messages.</p>
+<p>Interactions also contain a whole load of useful functions like "WorldToScreen", which will take a location as a vector and turn it into a set of screen co-ordinates. Of course, it's also possible to use the client-sided interaction to spawn a HUD, and use its ability to receive PostRender calls to call this function for the HUD it spawned. This allows you to use all the functionality of a HUD class, most notably the DrawSpriteWidget function, which is defined in the <a href="../../../../articles/h/u/d/Legacy%7EHudBase_bdaa.html" title="Legacy:HudBase">HudBase</a> class.</p>
+<p>More on this method of making a HUD <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a> 2003-style on the bottom of this page.</p>
+<p>A couple of nights ago, I started work on something I though would be simple. All it would do is draw a small icon around a player to make them more visible. HUD mutators are dead, so I needed to use an interaction.</p>
+<p>First off, you need to make your mutator class that will create your interaction. See <a href="../../../../articles/c/r/e/Legacy%7ECreating_An_Interaction_From_A_Mutator_2851.html" title="Legacy:Creating An Interaction From A Mutator">Creating_An_Interaction_From_A_Mutator</a> to find out how.</p>
+<p>Done that? Good...</p>
+<p>So thats the mutator part done. Next is the easy part!&#160;:)</p>
+<p>The interaction is very easy to use. Just create a subclass of Interaction, chuck in a "Simulated Function PostRender (canvas Canvas)", add a couple of lines to defaultproperties, and you're ready to go! Obviously what you want to draw on-screen goes in PostRender.</p>
+<p>You need this, at least, in defaultproperties:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+bVisible=<span class="kw9">true</span>
+bActive=<span class="kw9">true</span>
+</pre></div>
+<p>Setting <code>bActive</code> to true means that this Interaction will actually be used. Setting <code>bVisible</code> to true means it will recieve PostRender and PreRender calls.</p>
+<p>If you need to use a tick, add:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+bRequiresTick=<span class="kw9">True</span>
+</pre></div>
+<p>Remember when making your interaction, that an interaction IS NOT AN ACTOR! To use anything that requires an actor (ie: DynamicActors), use</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">ForEach</span> ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">DynamicActors</span><span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Foo'</span>, Bar<span class="br0">)</span>
+</pre></div>
+<p>Also remember than interactions are clientside. You only have access to variables and actors that are replicated to clients.</p>
+<p>If you need to do anything when the Interaction is initialized, use</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"foo"</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The interaction I have used for my mutator is detailed below for example.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> icu_interaction <span class="kw5">extends</span> interaction;
+ 
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=red FILE=TEXTURES\red.<span class="me1">PCX</span> GROUP=<span class="st0">"Icons"</span> MIPS=OFF Flags=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=green FILE=TEXTURES\green.<span class="me1">PCX</span> GROUP=<span class="st0">"Icons"</span> MIPS=OFF Flags=<span class="nu0">2</span>
+ 
+<span class="kw5">Var</span> GameReplicationInfo GRI;
+ 
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">//log("Interaction Initialized");</span>
+        <span class="kw1">foreach</span> ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">DynamicActors</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'GameReplicationInfo'</span>, GRI<span class="br0">)</span>
+                <span class="kw1">If</span> <span class="br0">(</span>GRI != <span class="kw9">None</span><span class="br0">)</span>
+                        <span class="kw1">Break</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span> canvas Canvas <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+        <span class="kw5">local</span> <span class="kw4">vector</span> CameraLocation, dir, ScreenLocation;
+        <span class="kw5">local</span> <span class="kw4">rotator</span> CameraRotation;
+        <span class="kw5">local</span> <span class="kw4">float</span> dist, draw_scale;
+ 
+        <span class="kw1">foreach</span> ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">DynamicActors</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pawn'</span>, P<span class="br0">)</span>
+                <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a> == <span class="kw9">None</span> || P == <span class="kw9">None</span><span class="br0">)</span>
+                        <span class="kw1">Return</span>;
+ 
+                <span class="co1">//A trace to tell if you can see this thing</span>
+                <span class="kw1">If</span> <span class="br0">(</span><span class="br0">(</span>Canvas.<span class="me1">Viewport</span>.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">FastTrace</span><span class="br0">(</span>P.<span class="me1">Location</span>, ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P != ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P.<span class="me1">PlayerReplicationInfo</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P.<span class="me1">Health</span> &gt; <span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                        <span class="co1">//Convert 3d location to 2d for display on the Canvas</span>
+                        ScreenLocation = WorldToScreen<span class="br0">(</span>P.<span class="me1">location</span><span class="br0">)</span>;
+                        Canvas.<span class="me1">GetCameraLocation</span><span class="br0">(</span>CameraLocation, CameraRotation<span class="br0">)</span>;
+                        dir = P.<span class="me1">Location</span> - CameraLocation;
+                        dist = VSize<span class="br0">(</span>dir<span class="br0">)</span>; <span class="co1">//Distance between me and them                   </span>
+ 
+                        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>dist &lt; <span class="nu0">8000</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>dist &gt; <span class="nu0">-8000</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>dir <span class="kw3">dot</span> <span class="kw4">vector</span><span class="br0">(</span>CameraRotation<span class="br0">)</span> &gt; <span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                draw_scale = <span class="nu0">512</span> / dist; <span class="co1">//Calculate the drawscale, 512 is the "1:1" distance.</span>
+                                <span class="co1">//Set drawing params</span>
+                                Canvas.<span class="me1">SetPos</span><span class="br0">(</span>ScreenLocation.<span class="me1">X</span> - <span class="br0">(</span><span class="nu0">32</span> * draw_scale<span class="br0">)</span>, ScreenLocation.<span class="me1">Y</span> - <span class="br0">(</span><span class="nu0">32</span> * draw_scale<span class="br0">)</span><span class="br0">)</span>;
+                                Canvas.<span class="me1">Style</span> = <span class="nu0">3</span>;
+                                Canvas.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+                                <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>P.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>.<span class="me1">TeamIndex</span> != ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>.<span class="me1">TeamIndex</span><span class="br0">)</span> || <span class="br0">(</span>!GRI.<span class="me1">bTeamGame</span><span class="br0">)</span><span class="br0">)</span>
+                                        Canvas.<span class="me1">DrawIcon</span><span class="br0">(</span><a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'red'</span>, draw_scale<span class="br0">)</span>;
+                                <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>P.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>.<span class="me1">TeamIndex</span> == ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">Team</span>.<span class="me1">TeamIndex</span><span class="br0">)</span>
+                                        Canvas.<span class="me1">DrawIcon</span><span class="br0">(</span><a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'green'</span>, draw_scale<span class="br0">)</span>;
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        bVisible=<span class="kw9">true</span>
+        bActive=<span class="kw9">true</span>
+<span class="br0">}</span>
+</pre></div>
+<p>And if you are interested what the end result of my mutator is, see ICU (I See You) on <a href="../../../../articles/w/i/l/Legacy%7EWill_fa49.html" title="Legacy:Will">Will</a>.</p>
+<p><b>Boksha:</b></p>
+<p>As stated at the top of this page, you can use interaction's PostRender calls to spawn and feed a HUD for each client. This method gives you both the ability to completely replace the old HUD, or add small features to it, only the former case allows only one modified HUD, and it would be easier to do it using only a clientside mutator. That's very similar to what Will did above, only you set the player's HUD instead of spawning an interaction for him.</p>
+<p>Anyway, if you want to make only a small addition to the player's HUD, while keeping the original HUD intact, here's how:</p>
+<p>First, make sure your mutator spawns an interaction for every client, like Will explained in <a href="../../../../articles/c/r/e/Legacy%7ECreating_An_Interaction_From_A_Mutator_2851.html" title="Legacy:Creating An Interaction From A Mutator">Creating_An_Interaction_From_A_Mutator</a>. Done that? OK, now comes the easy part. Just make sure your Interaction object contains code like this</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Class</span> MyHUDInteraction <span class="kw5">extends</span> Interaction;
+ 
+<span class="kw5">var</span> HUD ThisHudOfMine;
+ 
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        ThisHudOfMine = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">spawn</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'GravHud'</span>, ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span> canvas Canvas <span class="br0">)</span>
+<span class="br0">{</span>
+        ThisHudOfMine.<span class="me1">PostRender</span><span class="br0">(</span>Canvas<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    bVisible=<span class="kw9">true</span>
+    bActive=<span class="kw9">true</span>
+<span class="br0">}</span>
+</pre></div>
+<p>And really, that's ALL there is to it! If your interaction does that, you have a nice extra HUD that does not replace, but rather augment the original HUD. This will become very useful once the DrawSpriteWidget function is documented, as it allows you to quickly draw on the HUD independant of the resolution.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Helpful_Information"><span class="tocnumber">1</span> <span class="toctext">Helpful Information</span></a>
+<ul>
+<li class="toclevel-2"><a href="#How_do_I_draw_a_text.3F"><span class="tocnumber">1.1</span> <span class="toctext">How do I draw a text?</span></a></li>
+<li class="toclevel-2"><a href="#bVisible_is_set_to_true.2C_but_I_can.27t_see_a_text"><span class="tocnumber">1.2</span> <span class="toctext">bVisible is set to true, but I can't see a text</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">2</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">3</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Helpful_Information" id="Helpful_Information"></a></p>
+<h2><span class="mw-headline">Helpful Information</span></h2>
+<p><b>Wormbo:</b> "HUD interactions" don't even touch the HUD itself. (See <a href="../../../../articles/m/a/i/Legacy%7EMaintaining_Compatibility_7f4d.html" title="Legacy:Maintaining Compatibility">Maintaining Compatibility</a> for good reasons for that.) Once created they just draw on the <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> each frame after the HUD finished drawing on the very same Canvas. One example of using HUD interactions and <a href="../../../../articles/k/e/y/Legacy%7EKeypress_Interactions_149f.html" title="Legacy:Keypress Interactions">keypress interactions</a> is my mutator <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_Mercury_Missile_InstaGib_925e.html" title="Legacy:Mod Ideas/Mercury Missile InstaGib">Mod Ideas/Mercury Missile InstaGib</a>. Just download that, extract its UnrealScript sources and have a look at the MercZoomConfig class.<br />
+What Boksha did in his code is spawning an <i>additional</i> HUD actor and calling that HUD's PostRender() from the Interaction's PostRender(). There are only very few cases where you really need to do something like this, because e.g. the DrawSpriteWidget() function also works when called for the player's HUD from another class, like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+HudBase<span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">myHUD</span><span class="br0">)</span>.<span class="me1">DrawSpriteWidget</span><span class="br0">(</span>someSpriteWidgetVariable<span class="br0">)</span>;
+</pre></div>
+<p>Of course you can also save a reference to the HUD in a variable for easier access to it.</p>
+<p><b>Foxpaw:</b> In the mutator, you can add the interaction, and the drawing takes place in the interactions' PostRender() function. You can call a function on the Canvas to draw stuff, depending on what you want to draw. I believe that there is a Wiki page about the Canvas that details the various drawing functions you can use on the canvas.</p>
+<p><b>Wormbo:</b> If you need an example of a HUD interaction, I can offer JumpStats (see <a href="../../../../articles/m/o/v/Legacy%7EMovement_Metrics_%28UT2003%29_ad8a.html" title="Legacy:Movement Metrics (UT2003)">Movement Metrics (UT2003)</a>) which draws a lot of text.</p>
+<p><a name="How_do_I_draw_a_text.3F" id="How_do_I_draw_a_text.3F"></a></p>
+<h3><span class="mw-headline">How do I draw a text?</span></h3>
+<p><b>CorDharel:</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">50</span>,<span class="nu0">100</span><span class="br0">)</span>;
+Canvas.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"a text"</span><span class="br0">)</span>;
+</pre></div>
+<p><a name="bVisible_is_set_to_true.2C_but_I_can.27t_see_a_text" id="bVisible_is_set_to_true.2C_but_I_can.27t_see_a_text"></a></p>
+<h3><span class="mw-headline">bVisible is set to true, but I can't see a text</span></h3>
+<p>The values (0,0,0) sets the color to be black, which doesn't show up very easily. Maybe its there but you just can't see it.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a></li>
+<li><a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a></li>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a> and Mod Making</li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a></li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_An_Interaction_From_A_Mutator_2851.html" title="Legacy:Creating An Interaction From A Mutator">Creating An Interaction From A Mutator</a></li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHudOverlay_580d.html" title="Legacy:HudOverlay">HudOverlay</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>DJPaul:</b> The tone of this page could be wrong; is this page meant to be <i>about</i> HUD Interactions, or how to <i>implement</i> one? I think it should be the former, and the implementation moved to a tutorial (it sounds very tutorial-ly at the moment anyway).</p>
+<p>BTW, where should coding tutorials live?</p>
+<p><b>Foxpaw:</b> Why does the code above create a HUD and then call that? How is that better than just using the PostRender in the interaction itself?</p>
+<p><b>CorDharel:</b> I refactored this page. When I can draw a text on the hud (;)) I will expand the "how do I draw a text" section or create a new site. What do you mean?</p>
+<p><b>Lilguy:</b> It's really not a good idea to call foreach DynamicActors(class'Pawn', P)in a function that's called every frame. Even though this is faster than AllActors, it still has to iterate through a pretty big list to find all the pawns. It'd be much better to call foreach VisibleActors(...) since it uses the engine's fast collision logic to find the actors in your viewport, and it saves you all the logic of trying to determine that stuff.</p>
+<p><b>Foxpaw:</b> That seems a bit strange. VisibleActors does a trace on every thing it finds, which is not very fast. I believe that there is linked list of Pawns that would likely be faster than any iterator.</p>
+<p><b>Wormbo:</b> In a reasonably large radius and with extra checks that do not depend on traces DynamicActors is actually faster than Visible(Colliding)Actors. See Optimization Techniques for details.</p>
+<p><b>Kungfu Hampster:</b> Is there a way to contol whether the Interaction HUD will be visible or not through the user control (the bHideHud command)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 36/1000000
+Post-expand include size: 16/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/h/u/d/Legacy%7EHUD_Interactions_c414.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/h/u/d/Legacy_talk%7EHUD_Interactions_0446.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:HUD_Interactions">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:44, 18 December 2005 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:O-GL/Developer Journal - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:O-GL/Developer Journal</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/o/-/g/Legacy%7EO-GL_9a63.html" title="Legacy:O-GL">Legacy:O-GL</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy">17th November, 2003</div>
+<p>Today, I started implementing my network flow design more and came to a few conclusions and solidified my design more. I'll write my thoughts about <b>instant shots</b> and clients <b>moving instantly</b> vs clients that have a <b>full ping movement delay</b>.</p>
+<p><b>Instant movement</b> problems: 1. That all clients see all the other client positions behind the server by server-to-client time. 2. The client that made the move is ahead of the server by client-to-server time.</p>
+<p><b>Delayed movement</b> has problem #1 but not #2.</p>
+<p>-</p>
+<p>Ok, if you want to apply <b>instant shot</b> to any of these ways of movement you have to apply certain tricks.</p>
+<p>Required with instant movement:</p>
+<p>1. Server needs to rewind world reality to the time the client was behind the server when the shot occured. This will effectivily fast-forward the clients' shot so that it is running server time (really only makes sense if you think of 'slow' projectiles). So server is rewinding the time it took the reality to get to the client (server-to-client time) + the time it took to get the shot to the server (client-to-server time) = full ping time.</p>
+<p>2. Because the client is moving ahead of the server, and your view of the world is behind the server, you basically took the shot at total pings worth of movement above the server - not good!. That aside, the server will not rewind the client that made the shot's position so that the shot is the same on the server as on the client. So, here again, we see proof that the client will be 1 ping ahead of other clients, or half ahead of the server and half behind the server. This is not good because it allows someone with a high ping to be in a position to get a potentially unfair shot.</p>
+<p>Required with delayed movement:</p>
+<p>1. This is the same as above.</p>
+<p>2. Because the client is moving behind the server, as with your view of other clients, the server will also rewind your position. So, here, we basically have both your movement and the other clients' movements behind the server by server-to-client time. This is ok, but still not so good because your movement is delayed by full ping time.</p>
+<p>The <b>best solution</b> IMO, is the <b>delayed movement and instant shot</b>. This is because it, er, enables you to actually hit stuff. Low Ping Bastard's are still disadvantaged because they have to wait their ping time to move.</p>
+<p>After I get that solution done, a potential solution I can do to fix full lag wait is to decrease it to half wait, and predict halfwait in front of what the server sends you (so you're basically running at same time as server). However, the prediction would just be velocity based I dont know if the errors are worth the extra half ping until I actually implement it (later of course).</p>
+<p>-</p>
+<p>The final thing, which I found out a while ago, and I think have come to my conclusion on is: finding server-to-client time or client-to-server time is impossible! Believe me, I spent at least a few weeks on this&#160;:(. I could only figure out a way to find out how much those values have <i>changed</i>, but not what their actual values were.</p>
+<div class="infobox infobox-class infobox-legacy">31st December, 2003</div>
+<p>OMG, last day of 2003! I better write something to make that 2 updates for the year 2003 *wink wink*. I seriously gotta start writing in here more often lol .... Been doing alot of stuff since my last update like going to camps, lans, and other fun "learning" because after I implemented my network code I realised it sucked and got depressed for a bit figuring out what to do next. I cant believe how unplayable even a 100ms is on delayed movement. I also cant believe this problem was solved by JC in the Quakeworld days so long ago ... hats off to him for listening to the fans who said Quake was "unplayable" online (I read a quote saying QuakeWorld was a "BIG architectural change" and that he barely even thought about high ping playability during Quake).</p>
+<p>Only problem, is i cant do much with karma on the network. I even figured out a way to do instant shots, as well as instant movement. Instant shots are achieved by making the shot come from the position you were at one ping ago. This makes replays possible because the game state is basically the same on all machines after they have rewound time. It uses a special trick where the shot you made is coming from a previous position, but it is also hitting the same thing that you aimed at by finding the correct rotation. You would send this rotation to the server all the time instead of your simulated rotation to maintain smoothness on the server. I dont think zeroPing use this method. Anyway, I'm sure that in the future, instant movement and instant shots will make it so that everyone plays without lag ... but those with high pings get discrepancies and will still be saying bad words to their modems ^^.</p>
+<p>Interesting thing about the repulsor implementation is how simple it is. I mean, its a bit harsh to expect modellers to write code, but I think repulsors are a sorta technical thing rather than an arty thing so they should be left to the programmers. That said, it works by the vehicle spawning (usually) two repulsors at a set position. This is made even easier for you by doing the bulldog wheel placement trick where you just specify and offset.</p>
+<p>The Repulsors themselves are very simple also:</p>
+<p>var() bool bEnableRepulsion;</p>
+<p>var() vector CheckDir; // In owner ref frame</p>
+<p>var() float CheckDist;</p>
+<p>var() float Softness;</p>
+<p>var() float PenScale;</p>
+<p>// Used internally for Karma stuff - DO NOT CHANGE!</p>
+<p>var transient const int KContact;</p>
+<p>I like it alot and it seems to work well but there is problems with the placement on the vehicles in the UT2R I think because some slopes can be rather buggy. I'm still not sure how the repulsor works because it seems a bit hackish due to the softness variable and the speed at which it stabilises. Could be wrong though.</p>
+<p><a name="Later_that_day" id="Later_that_day"></a></p>
+<h3><span class="mw-headline">Later that day</span></h3>
+<p>I modified the hoverbike to only have one repulsor. One thing that is moderately disturbing is that SHover extends SVehicle and its PostBeginPlay function spawns two repulsors for you unconditionally. Therefore, if you wanted to make another hover vehicle with different numbers of repulsors, youd have to call super(classabovesuper).PostBeginPlay(). ANYWAY, not that big of a deal.</p>
+<p>I found that repulsors are similar to other constraints. For example, KConstraint Actor1 would be the vehicle and Actor2 is an actor in tries to maintain CheckDist along CheckDir. Only problem is they extend Actor (instead of KConstraint) and they are a composite of KParams (instead of being spawned on their own). Seems like bad design&#160;:(.</p>
+<p>I also went back to Tim's Networking doc to check on what he said about quakeworld. It seems QW wasn't so good after all: "lock-step prediction protocol" and the "network code and the game code are separate modules". Gee, Carmack made it sound so good&#160;:(. I still admire him tho&#160;:D.</p>
+<div class="infobox infobox-class infobox-legacy">5th December, 2005</div>
+<p>Wow, long time, no see. Going to try to update this more regularly.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 21/1000000
+Post-expand include size: 249/2097152 bytes
+Template argument size: 59/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/o/-/g/Legacy%7EO-GL_Developer_Journal_ca84.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/-/g/Legacy_talk%7EO-GL_Developer_Journal_f3a1.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:O-GL/Developer_Journal">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:50, 5 December 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

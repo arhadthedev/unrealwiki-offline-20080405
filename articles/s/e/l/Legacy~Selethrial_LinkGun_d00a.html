@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Selethrial/LinkGun - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Selethrial/LinkGun</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/s/e/l/Legacy%7ESelethrial_13a1.html" title="Legacy:Selethrial">Legacy:Selethrial</a></span></div>
+	    	    	    <!-- start content -->
+	    <div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// The Five UC Files of just trying to modify Link Gun Protectiles</span>
+ 
+<span class="co1">// MutXLinkgun.uc</span>
+<span class="kw5">class</span> MutXLinkgun <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> CheckReplacement<span class="br0">(</span> <a href="/Actor"><span class="kw10">Actor</span></a> Other, <span class="kw6">out</span> <span class="kw4">byte</span> bSuperRelevant <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw5">local</span> WeaponLocker L;
+ 
+    bSuperRelevant = <span class="nu0">0</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> xWeaponBase<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw4">string</span><span class="br0">(</span> xWeaponBase<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">WeaponType</span> <span class="br0">)</span> ~= <span class="st0">"XWeapons.Linkgun"</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            xWeaponBase<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">WeaponType</span> = <span class="kw5">class</span><span class="st0">'XLinkgun'</span>;
+            <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> WeaponPickup<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw4">string</span><span class="br0">(</span>Other.<span class="kw5">Class</span><span class="br0">)</span> ~= <span class="st0">"XWeapons.LinkgunPickup"</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            ReplaceWith<span class="br0">(</span> Other, <span class="st0">"XLinkgunPickup"</span> <span class="br0">)</span>;
+            <span class="kw1">return</span> <span class="kw9">false</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> WeaponLocker<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        L = WeaponLocker<span class="br0">(</span>Other<span class="br0">)</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; L.<span class="me1">Weapons</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span> <span class="kw4">string</span><span class="br0">(</span> L.<span class="me1">Weapons</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">WeaponClass</span> <span class="br0">)</span> ~= <span class="st0">"XWeapons.Linkgun"</span> <span class="br0">)</span>
+                L.<span class="me1">Weapons</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">WeaponClass</span> = <span class="kw5">class</span><span class="st0">'XLinkgun'</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//=============================================================================</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    GroupName=<span class="st0">"XLinkGun"</span>
+    FriendlyName=<span class="st0">"Xtreme Link Gun"</span>
+    Description=<span class="st0">"Tweaking the Link Gun"</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// XLinkGun.ux</span>
+ 
+<span class="kw5">class</span> XLinkGun <span class="kw5">extends</span> Linkgun;
+ 
+<span class="co1">//=============================================================================</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    FireModeClass<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="kw5">Class</span><span class="st0">'XLinkgunAltFire'</span>
+    PickupClass=<span class="kw5">Class</span><span class="st0">'XLinkgunPickup'</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// XLinkgunAltFire.uc</span>
+ 
+<span class="kw5">class</span> XLinkgunAltFire <span class="kw5">extends</span> LinkAltFire;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    ProjectileClass=<span class="kw5">Class</span><span class="st0">'XLinkProjectile'</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// XLinkGunPickup.uc</span>
+ 
+<span class="kw5">class</span> XLinkgunPickup <span class="kw5">extends</span> LinkgunPickup;
+ 
+<span class="co1">//=============================================================================</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    InventoryType=<span class="kw5">Class</span><span class="st0">'XLinkGun'</span>
+    PickupMessage=<span class="st0">"You got the Xtreme Linkgun."</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// XLinkProjectile.uc</span>
+ 
+<span class="kw5">class</span> XLinkProjectile <span class="kw5">extends</span> LinkProjectile;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    Speed=<span class="nu0">10.00</span>
+    MaxSpeed=<span class="nu0">100.00</span>
+    Damage=<span class="nu0">200.00</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/e/l/Legacy%7ESelethrial_LinkGun_d00a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/e/l/Legacy_talk%7ESelethrial_LinkGun_1fca.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Selethrial/LinkGun">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:06, 30 June 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

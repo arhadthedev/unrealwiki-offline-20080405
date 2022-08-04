@@ -1,0 +1,419 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:EditPackagesCommandlet - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:EditPackagesCommandlet</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This commandlet lets you modify EditPackages from OS commandline. Handy for install scripts.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Usage"><span class="tocnumber">1</span> <span class="toctext">Usage</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Paramaters"><span class="tocnumber">1.1</span> <span class="toctext">Paramaters</span></a></li>
+<li class="toclevel-2"><a href="#Examples"><span class="tocnumber">1.2</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Source_code"><span class="tocnumber">2</span> <span class="toctext">Source code</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Usage" id="Usage"></a></p>
+<h2><span class="mw-headline">Usage</span></h2>
+<pre>
+ucc package.EditPackagesCommandlet +AddPackage +AddAnother -RemovePackage
+</pre>
+<p><a name="Paramaters" id="Paramaters"></a></p>
+<h3><span class="mw-headline">Paramaters</span></h3>
+<table>
+<tr>
+<td><b>Parameter</b></td>
+<td><b>Description</b></td>
+</tr>
+<tr>
+<td><tt>--dry-run</tt></td>
+<td>Simulate the process. Changes will not be saved.</td>
+</tr>
+<tr>
+<td><tt>+Package</tt></td>
+<td>Add a package with the name Package. If it already exists it will be removed first.</td>
+</tr>
+<tr>
+<td><tt>-Package-</tt></td>
+<td>Remove the package with the name Package.</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2"><i>Advanced</i></td>
+</tr>
+<tr>
+<td><tt>+?Package</tt></td>
+<td>Don't add the package when it already exists. '?' can also be used in the commands below.</td>
+</tr>
+<tr>
+<td><tt>+Package@index</tt></td>
+<td>Add the package at the given index.</td>
+</tr>
+<tr>
+<td><tt>+Package&lt;Pkg</tt></td>
+<td>Add the package before Pkg. If Pkg isn't present it will be appended to the list.</td>
+</tr>
+<tr>
+<td><tt>+Package&gt;Pkg</tt></td>
+<td>Add the package after Pkg. If Pkg isn't present it will be appended to the list.</td>
+</tr>
+</table>
+<p>Note, you must use double quotes around the commands that use the before or after modifier when executing it from a commandline.</p>
+<p><a name="Examples" id="Examples"></a></p>
+<h3><span class="mw-headline">Examples</span></h3>
+<pre>
+ucc package.EditPackagesCommandlet "+myPackage&gt;Engine" "+MyOtherPackage&lt;myPackage" -MyOldPackage
+</pre>
+<p><a name="Source_code" id="Source_code"></a></p>
+<h2><span class="mw-headline">Source code</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/*******************************************************************************
+    EditPackagesCommandlet
+    This commandlet lets you modify EditPackages from OS commandline. Handy for
+    install scripts.
+ 
+    Usage:
+        ucc package.EditPackagesCommandlet +AddPackage +AddAnother -RemovePackage
+ 
+    +?Package
+    +Package@index
+    +Package&lt;BeforeThisPackage
+    +Package&gt;AfterThisPackage
+ 
+    Otherwise it will be added after the list. If the before or after packages
+    don't exist they will be added to the end of the list. Adding a package that
+    already exists will first remove it from the old location.
+ 
+    Credits:
+        Switch -- initial code
+        El Muerte -- major improvements
+*******************************************************************************/</span>
+<span class="kw5">class</span> EditPackagesCommandlet <span class="kw5">extends</span> Commandlet;
+ 
+<span class="coMULTI">/**
+    The contents of this will be appended to the Parms list, this can be used
+    is a subclass of the commandlet.
+*/</span>
+<span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">string</span> CmdArgs;
+ 
+<span class="coMULTI">/** the classname of the object to load, that contains the ArrayName */</span>
+<span class="kw5">var</span> <span class="kw4">string</span> ObjectClass;
+<span class="coMULTI">/** the name of the array to read\write the data to */</span>
+<span class="kw5">var</span> <span class="kw4">string</span> ArrayName;
+ 
+<span class="coMULTI">/** temporary storage of the array list */</span>
+<span class="kw5">var</span> <span class="kw6">protected</span> array&lt;string&gt; PackagesArray;
+ 
+<span class="coMULTI">/** add the package to the list */</span>
+<span class="kw5">function</span> <span class="kw4">int</span> AddPackage<span class="br0">(</span><span class="kw4">string</span> pkg, <span class="kw6">optional</span> <span class="kw4">int</span> idx<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>idx == <span class="nu0">-1</span><span class="br0">)</span> idx = PackagesArray.<span class="kw6">length</span>;
+    <span class="kw1">else</span> idx = <span class="kw7">Clamp</span><span class="br0">(</span>idx, <span class="nu0">0</span>, PackagesArray.<span class="kw6">length</span><span class="br0">)</span>;
+    PackagesArray.<span class="kw6">insert</span><span class="br0">(</span>idx, <span class="nu0">1</span><span class="br0">)</span>;
+    PackagesArray<span class="br0">[</span>idx<span class="br0">]</span> = pkg;
+    <span class="kw1">return</span> idx;
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/** remove the package from the list, returns the number of offurances deleted */</span>
+<span class="kw5">function</span> <span class="kw4">int</span> RemovePackage<span class="br0">(</span><span class="kw4">string</span> pkg<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i, deleted;
+    deleted = <span class="nu0">0</span>;
+    <span class="kw1">for</span> <span class="br0">(</span>i = PackagesArray.<span class="me1">Length</span><span class="nu0">-1</span>; i &gt;= <span class="nu0">0</span>; i--<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>PackagesArray<span class="br0">[</span>i<span class="br0">]</span> ~= pkg<span class="br0">)</span>
+        <span class="br0">{</span>
+            PackagesArray.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;
+            deleted++;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">return</span> deleted;
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/** returns the index of a package */</span>
+<span class="kw5">function</span> <span class="kw4">int</span> IndexOf<span class="br0">(</span><span class="kw4">string</span> pkg<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw1">for</span> <span class="br0">(</span>i = PackagesArray.<span class="me1">Length</span><span class="nu0">-1</span>; i &gt;= <span class="nu0">0</span>; i--<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>PackagesArray<span class="br0">[</span>i<span class="br0">]</span> ~= pkg<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">return</span> i;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">return</span> <span class="nu0">-1</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> StripQuotes<span class="br0">(</span><span class="kw4">string</span> in<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>in, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">return</span> <span class="kw7">mid</span><span class="br0">(</span>in, <span class="nu0">1</span>, <span class="kw7">len</span><span class="br0">(</span>in<span class="br0">)</span><span class="nu0">-2</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">return</span> in;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> <span class="kw4">int</span> Main<span class="br0">(</span> <span class="kw4">string</span> Parms <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw5">class</span> C;
+    <span class="kw5">local</span> <a href="/Object"><span class="kw10">object</span></a> O;
+    <span class="kw5">local</span> <span class="kw4">int</span> i,j,idx;
+    <span class="kw5">local</span> array&lt;string&gt; Commands;
+    <span class="kw5">local</span> <span class="kw4">string</span> cmd, altpkg;
+    <span class="kw5">local</span> <span class="kw4">bool</span> bSimulate;
+ 
+    bSimulate = <span class="kw9">false</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>CmdArgs != <span class="st0">""</span><span class="br0">)</span> Parms = CmdArgs@Parms;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Parms == <span class="st0">""</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw7">Log</span><span class="br0">(</span> <span class="st0">"Nothing to do. See 'ucc help "</span>$HelpCmd$<span class="st0">"' for more information."</span>, <span class="st0">'Error'</span> <span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="nu0">1</span>;
+    <span class="br0">}</span>
+    <span class="kw7">split</span><span class="br0">(</span>Parms, <span class="st0">" "</span>, Commands<span class="br0">)</span>;
+ 
+    <span class="co1">// Load class</span>
+    C = <span class="kw5">class</span><span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span> ObjectClass, <span class="kw5">class</span><span class="st0">'Class'</span>, <span class="kw9">true</span> <span class="br0">)</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span> C == <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw7">Log</span><span class="br0">(</span> <span class="st0">"Failed to load class: ["</span>$ ObjectClass $<span class="st0">"]"</span>, <span class="st0">'Error'</span> <span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="nu0">1</span>;
+    <span class="br0">}</span>
+    <span class="co1">// Create object</span>
+    O = <span class="kw6">new</span> C;
+    <span class="kw1">if</span><span class="br0">(</span> O == <span class="kw9">None</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw7">Log</span><span class="br0">(</span> <span class="st0">"Failed to create object of class: ["</span>$ C $<span class="st0">"]"</span>, <span class="st0">'Error'</span> <span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="nu0">1</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">SetPropertyText</span><span class="br0">(</span><span class="st0">"PackagesArray"</span>,O.<span class="me1">GetPropertyText</span><span class="br0">(</span>ArrayName<span class="br0">)</span><span class="br0">)</span>;
+ 
+    <span class="co1">// process commands</span>
+    <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; Commands.<span class="kw6">length</span>; i++<span class="br0">)</span>
+    <span class="br0">{</span>
+        cmd = StripQuotes<span class="br0">(</span>Commands<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>cmd ~= <span class="st0">"--dry-run"</span><span class="br0">)</span> <span class="br0">{</span>
+            bSimulate = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">left</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"+"</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            idx = <span class="nu0">-1</span>;
+            cmd = <span class="kw7">mid</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span>;
+            j = <span class="kw7">InStr</span><span class="br0">(</span>cmd, <span class="st0">"@"</span><span class="br0">)</span>; <span class="co1">// find @index</span>
+            <span class="kw1">if</span> <span class="br0">(</span>j &gt; <span class="nu0">0</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                idx = <span class="kw4">int</span><span class="br0">(</span><span class="kw7">mid</span><span class="br0">(</span>cmd, j<span class="nu0">+1</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span>idx == <span class="nu0">0</span><span class="br0">)</span> <span class="co1">// idx should never be 0, core or engine is always required</span>
+                <span class="br0">{</span>
+                    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Invalid index: "</span>$mid<span class="br0">(</span>cmd, j<span class="nu0">+1</span><span class="br0">)</span>, <span class="st0">'Error'</span><span class="br0">)</span>;
+                    <span class="kw1">continue</span>;
+                <span class="br0">}</span>
+                cmd = <span class="kw7">left</span><span class="br0">(</span>cmd, j<span class="br0">)</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="br0">{</span>
+                j = <span class="kw7">InStr</span><span class="br0">(</span>cmd, <span class="st0">"&lt;"</span><span class="br0">)</span>; <span class="co1">// before</span>
+                <span class="kw1">if</span> <span class="br0">(</span>j &gt; <span class="nu0">0</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                    altpkg = <span class="kw7">mid</span><span class="br0">(</span>cmd, j<span class="nu0">+1</span><span class="br0">)</span>;
+                    cmd = <span class="kw7">left</span><span class="br0">(</span>cmd, j<span class="br0">)</span>;
+                    idx = IndexOf<span class="br0">(</span>altpkg<span class="br0">)</span>;
+                    <span class="kw1">if</span> <span class="br0">(</span>idx == <span class="nu0">-1</span><span class="br0">)</span>
+                    <span class="br0">{</span>
+                        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Package '"</span>$altpkg$<span class="st0">"' doesn't exists; it will be appended to the list."</span>, <span class="st0">'Warning'</span><span class="br0">)</span>;
+                        idx = AddPackage<span class="br0">(</span>altpkg, <span class="nu0">-1</span><span class="br0">)</span>;
+                    <span class="br0">}</span>
+                <span class="br0">}</span>
+                <span class="kw1">else</span> <span class="br0">{</span>
+                    j = <span class="kw7">InStr</span><span class="br0">(</span>cmd, <span class="st0">"&gt;"</span><span class="br0">)</span>; <span class="co1">// after</span>
+                    <span class="kw1">if</span> <span class="br0">(</span>j &gt; <span class="nu0">0</span><span class="br0">)</span>
+                    <span class="br0">{</span>
+                        altpkg = <span class="kw7">mid</span><span class="br0">(</span>cmd, j<span class="nu0">+1</span><span class="br0">)</span>;
+                        cmd = <span class="kw7">left</span><span class="br0">(</span>cmd, j<span class="br0">)</span>;
+                        idx = IndexOf<span class="br0">(</span>altpkg<span class="br0">)</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span>idx == <span class="nu0">-1</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                            <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Package '"</span>$altpkg$<span class="st0">"' doesn't exists; it will be appended to the list."</span>, <span class="st0">'Warning'</span><span class="br0">)</span>;
+                            idx = AddPackage<span class="br0">(</span>altpkg, <span class="nu0">-1</span><span class="br0">)</span>;
+                        <span class="br0">}</span>
+                        idx++;
+                    <span class="br0">}</span>
+                <span class="br0">}</span>
+            <span class="br0">}</span>
+            <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">left</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"?"</span><span class="br0">)</span> <span class="co1">// don't add if already present</span>
+            <span class="br0">{</span>
+                cmd = <span class="kw7">mid</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span>IndexOf<span class="br0">(</span>cmd<span class="br0">)</span> &gt; <span class="nu0">-1</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Package '"</span>$cmd$<span class="st0">"' is already present."</span>, <span class="st0">'Add'</span><span class="br0">)</span>;
+                    <span class="kw1">continue</span>;
+                <span class="br0">}</span>
+            <span class="br0">}</span>
+            RemovePackage<span class="br0">(</span>cmd<span class="br0">)</span>; <span class="co1">// first remove old</span>
+            idx = AddPackage<span class="br0">(</span>cmd, idx<span class="br0">)</span>;
+            <span class="kw1">if</span> <span class="br0">(</span>idx &lt; <span class="nu0">0</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Failed to add package '"</span>$cmd$<span class="st0">"'"</span>, <span class="st0">'Error'</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="br0">{</span>
+                <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Package '"</span>$cmd$<span class="st0">"' added at index "</span>$idx, <span class="st0">'Add'</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">left</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"-"</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            cmd = <span class="kw7">mid</span><span class="br0">(</span>cmd, <span class="nu0">1</span><span class="br0">)</span>;
+            j = RemovePackage<span class="br0">(</span>cmd<span class="br0">)</span>;
+            <span class="kw1">if</span> <span class="br0">(</span>j &gt; <span class="nu0">0</span><span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Package '"</span>$cmd$<span class="st0">"' was removed "</span>$j$<span class="st0">" time(s)."</span>, <span class="st0">'Remove'</span><span class="br0">)</span>;
+            <span class="kw1">else</span> <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Package '"</span>$cmd$<span class="st0">"' was not found, therefor not removed."</span>, <span class="st0">'Warning'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>cmd != <span class="st0">""</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="kw7">Log</span><span class="br0">(</span> <span class="st0">"Unsupported argument: "</span>$cmd, <span class="st0">'Error'</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">if</span> <span class="br0">(</span>!bSimulate<span class="br0">)</span>
+    <span class="br0">{</span>
+        O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>ArrayName,GetPropertyText<span class="br0">(</span><span class="st0">"PackagesArray"</span><span class="br0">)</span><span class="br0">)</span>;
+        O.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="br0">{</span>
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Simulation; changes not saved."</span><span class="br0">)</span>;
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"New array content:"</span><span class="br0">)</span>;
+        <span class="kw7">log</span><span class="br0">(</span><span class="kw7">chr</span><span class="br0">(</span><span class="nu0">9</span><span class="br0">)</span>$GetPropertyText<span class="br0">(</span><span class="st0">"PackagesArray"</span><span class="br0">)</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">return</span> <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    HelpCmd=<span class="st0">"EditPackagesCommandlet"</span>
+    HelpOneLiner=<span class="st0">"Modify the EditPackages list."</span>
+    HelpUsage=<span class="st0">"EditPackagesCommandlet [--dry-run] package-action ..."</span>
+    HelpWebLink=<span class="st0">"http://wiki.beyondunreal.com/wiki/EditPackagesCommandlet"</span>
+    HelpParm<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="st0">"--dry-run"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="st0">"Simulate the process. Changes will not be saved."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="st0">"+Package"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="st0">"Add a package with the name Package. If it already exists it will be removed first."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>=<span class="st0">"-Package"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>=<span class="st0">"Remove the package with the name Package."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>=<span class="st0">" "</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>=<span class="st0">"Advanced commands:"</span>
+    HelpParm<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>=<span class="st0">"+?Package"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>=<span class="st0">"Don't add the package when it already exists. '?' can also be used in the commands below."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>=<span class="st0">"+Package@index"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>=<span class="st0">"Add the package at the given index."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>=<span class="st0">"+Package&lt;Pkg"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>=<span class="st0">"Add the package before Pkg. If Pkg isn't present it will be appended to the list."</span>
+    HelpParm<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>=<span class="st0">"+Package&gt;Pkg"</span>
+    HelpDesc<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>=<span class="st0">"Add the package after Pkg. If Pkg isn't present it will be appended to the list."</span>
+    ShowBanner=<span class="kw9">false</span>
+    ShowErrorCount=<span class="kw9">true</span>
+ 
+    ObjectClass=<span class="st0">"Editor.EditorEngine"</span>
+    ArrayName=<span class="st0">"EditPackages"</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 25/1000000
+Post-expand include size: 66/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Toolchain_81ed.html" title="Category:Legacy Toolchain">Legacy Toolchain</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2003%29_8e02.html" title="Category:Legacy Custom Class (UT2003)">Legacy Custom Class (UT2003)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/d/i/Legacy%7EEditPackagesCommandlet_ab8e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/d/i/Legacy_talk%7EEditPackagesCommandlet_d520.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:EditPackagesCommandlet">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:16, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,3171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:AutoLoader - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:AutoLoader</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; AutoLoader (Package: ConfigManager)</div>
+<p>Here's an <a href="../../../../articles/a/u/t/Legacy%7EAutoLoader_Example_bed1.html" title="Legacy:AutoLoader/Example">Legacy:AutoLoader/Example</a> on how to use this class</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<div class="source-uscript" style="font-family: monospace;">
+<ol>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; ConfigManager.AutoLoader</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; This class has two functions:</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//&#160; &#160; &#160; 1. Perform all required ini changes needed for your mod. &#160;Will also UNDO</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; &#160; &#160;any changes made to the ini if your mod is deactivated.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; &#160; &#160;Additional benefit of auto-installation of your mutator on a dedicated</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; &#160; &#160;server (to enable set bEnableMyLoader=True in defaultproperties)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//&#160; &#160; &#160; 2.&#160; &#160; &#160; Pass FillPlayInfo() calls to mutators which are not part of the game's</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; &#160; &#160; &#160; &#160; mutator list (such as mutators which only require ServerActors= lines in ini)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">class</span> AutoLoader <span class="kw5">extends</span> Info</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw6">abstract</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Quick note about debugging - By setting DEBUG=True in defaultproperties of your</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// AutoLoader subclass when compiling, you can receive large amounts of debug data.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// However, you will quickly encounter the 1024 byte limit if you use ucc.exe to</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// start the testing server. &#160;By starting a server using the "ut2003 -server" command,</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// you will bypass this limit, since ut2003.exe does not have these limitations.</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw5">const</span> <span class="kw4">bool</span> DEBUG;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw5">const</span> <span class="kw4">bool</span> DEBUGPROPS;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> ConfigMaster&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Manager; &#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Pointer to ConfigMaster mutator</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; InteractionClass;&#160; &#160; &#160; &#160;<span class="co1">// Not yet implemented</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//=======================================</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//&#160; &#160; &#160; Loading ServerActors</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//=======================================</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Pointer to GameEngine</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> GameEngine&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; GE;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// This loader includes a server-side only mutator or server actor</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// that will not be part of the mutator chain (will receive FillPlayInfo() calls)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bIncludeServerActor;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Classname of the ServerActor this loader loads</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// &#160; &#160; &#160;Same value as what would otherwise be your mod's</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// &#160; &#160; &#160;ServerActors= line in the .ini file.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> ActorClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Friendly Name of the Server Actor class</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// &#160; &#160; &#160;Used by webadmin/adminmenu as the name of the server actor</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; FriendlyName;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ActorDescription;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Lock this loader to a certain version (or higher) of your mod</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RequiredVersion;&#160; &#160; &#160; &#160; <span class="co1">// Required version of actor</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> &#160;VersionWarning;&#160;&#160; &#160; &#160; &#160; <span class="co1">// Message to write to server log if version not enough</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">localized</span> <span class="kw4">string</span> &#160;DownloadMsg;&#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Message to write to log</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//=======================================</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//&#160; &#160; &#160; Automatic configuration changes</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//=======================================</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// A single ini change</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw4">struct</span> IniEntry</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> ClassFrom;&#160;<span class="co1">// Class which contains the setting we want to change</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> PropName;&#160; <span class="co1">// Name of the variable we're trying to change</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> PropValue;&#160;<span class="co1">// Value to apply</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Array of ini settings required by this mod</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> &#160; array&lt;IniEntry&gt;&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RequiredIniEntries;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> &#160; &#160; array&lt;Property&gt;&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Properties;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// &#160;Public methods - should be subclassed to customize loader's response</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// if return true, loader class will be spawned</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> IsActive<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// should be subclassed - set loader to active/will be included next match</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> EnableLoader<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> SpecialActor<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// should be subclassed</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> DisableLoader<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> SpecialActor<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// called on all loader classes - used to activate loader based on active mutators</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> CheckCurrentMutators<span class="br0">(</span><span class="kw4">string</span> URL<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// called on all loader classes which have bIncludeServerActor=True - used to activate loader based on manual ServerActor entry</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> CheckStrayActors<span class="br0">(</span><span class="kw4">string</span> ServerActors<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> bAddMe;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">bIncludeServerActor</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>ServerActors,<span class="kw1">default</span>.<span class="me1">ActorClass</span><span class="br0">)</span>&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bAddMe = EnableLoader<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; <span class="kw1">default</span>.<span class="me1">RequiredIniEntries</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!bAddMe &amp;&amp; <span class="kw1">default</span>.<span class="me1">RequiredIniEntries</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ClassFrom</span> ~= <span class="st0">"Engine.GameEngine"</span> &amp;&amp; <span class="kw1">default</span>.<span class="me1">RequiredIniEntries</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span> ~= <span class="st0">"ServerActors"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span>ServerActors,<span class="kw1">default</span>.<span class="me1">RequiredIniEntries</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropValue</span><span class="br0">)</span>&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bAddMe = EnableLoader<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">DEBUG</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw1">default</span>.<span class="kw5">Class</span>@<span class="st0">"Received string value:"</span>$ServerActors,<span class="st0">'CheckStrayActors'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw1">default</span>.<span class="kw5">Class</span>@<span class="st0">"Returning"</span>@bAddMe,<span class="st0">'CheckStrayActors'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> bAddMe;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Only managed actors can be added to Ladder profiles</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Normally, only the ActorClass of your loader (if bIncludeServerActor=True) would be need to be managed</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> array&lt;string&gt; GetManagedActors<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> A, B, C;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; ABC;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; i = <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span><span class="kw6">static</span>.<span class="me1">AddManagedActor</span><span class="br0">(</span>i++,A,B,C<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ABC<span class="br0">[</span>ABC.<span class="kw6">Length</span><span class="br0">]</span> = A$<span class="st0">","</span>$B$<span class="st0">","</span>$C;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> ABC;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Managed actors will be passed FillPlayInfo() calls</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> AddManagedActor<span class="br0">(</span><span class="kw4">int</span> Idx, <span class="kw6">out</span> <span class="kw4">string</span> ActorClassName, <span class="kw6">out</span> <span class="kw4">string</span> ActorName, <span class="kw6">out</span> <span class="kw4">string</span> ActorDesc<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Idx == <span class="nu0">-1</span> &amp;&amp; <span class="kw1">default</span>.<span class="me1">bIncludeServerActor</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ActorClassName = <span class="kw1">default</span>.<span class="me1">ActorClass</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ActorName = <span class="kw1">default</span>.<span class="me1">FriendlyName</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ActorDesc = <span class="kw1">default</span>.<span class="me1">ActorDescription</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Optional hook for version filtering</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> MatchesVersion<span class="br0">(</span><span class="kw4">float</span> ActorVersion, <span class="kw6">optional</span> <span class="kw4">bool</span> bExact, <span class="kw6">optional</span> <span class="kw4">string</span> NewURL<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">float</span> CurrentVersion;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> LogText;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">RequiredVersion</span> == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; CurrentVersion = <span class="kw4">float</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">RequiredVersion</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Return false if loader version is higher than actor version</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Return false if loader version is lower than actor version and bExact=True</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>ActorVersion &lt; CurrentVersion<span class="br0">)</span> || <span class="br0">(</span>ActorVersion &gt; CurrentVersion &amp;&amp; bExact<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">VersionWarning</span>&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LogText = <span class="kw6">static</span>.<span class="me1">ReplaceTag</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">VersionWarning</span>,<span class="st0">"%CurVer%"</span>,CurrentVersion<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LogText = <span class="kw6">static</span>.<span class="me1">ReplaceTag</span><span class="br0">(</span>LogText,<span class="st0">"%ReqVer%"</span>,ActorVersion<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>LogText<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>NewURL&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw6">static</span>.<span class="me1">ReplaceTag</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">DownloadMsg</span>,<span class="st0">"%URL%"</span>,NewURL<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// To prevent your loader from causing a server crash, add your checks here</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// return false to prevent your loader from being loaded</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// You only need to override this function if bIncludeServerActor=False in your loader,</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// or if you have RequiredIniChanges that reference additional custom packages</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">bool</span> ValidateLoader<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> class&lt;Info&gt;&#160; &#160; &#160; &#160;MyActor;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">bIncludeServerActor</span> &amp;&amp; <span class="kw1">default</span>.<span class="me1">ActorClass</span>&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Specify True for 3rd param in DynamicLoadObject to prevent log spam if MyActor isn't on server</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; MyActor = class&lt;Info&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">ActorClass</span>,<span class="kw5">class</span><span class="st0">'Class'</span>,<span class="kw9">True</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>MyActor == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Hook for loader to cancel external removal request, or effect any specialized ini changes to make before removal</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> AcceptRemoval<span class="br0">(</span><span class="kw6">optional</span> array&lt;Property&gt; Props<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Props.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Properties = Props;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; RemoveMe<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// should be subclassed</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// always use "return&#160;!bEnableMyLoader;"</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// see LadderLoader.LadderLoader or TeamBalanceLoader.BalanceLoader for examples</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">bool</span> WantsToBeDisabled<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// called for each RequiredIniEntry</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// return true to apply the RequiredIniEntry.PropValue</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> ObjectNeedsUpdate<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> O, <span class="kw4">string</span> PropName, <span class="kw4">string</span> PropValue<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Temp;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Temp = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>Temp<span class="br0">)</span>,<span class="kw7">Caps</span><span class="br0">(</span>PropValue<span class="br0">)</span><span class="br0">)</span> &lt; <span class="nu0">0</span> <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// notification of pending update - return false to skip update for loader</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> ApplyUpdate<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Returning"</span>@IsActive<span class="br0">(</span><span class="br0">)</span>,<span class="st0">'ApplyUpdate'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> IsActive<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// return -1 if want to simply add entry</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// return index of array entry if want to overwrite</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">int</span> CheckArrayEntry<span class="br0">(</span><span class="kw4">string</span> PropName, array&lt;string&gt; PropArray<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="nu0">-1</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// To maintain consistency, always add to "Server Actors" page</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// static function FillPlayInfo(PlayInfo PI)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// {</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// &#160; &#160; &#160;&#160; &#160; &#160; &#160; Super.FillPlayInfo(PI);</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; &#160; &#160; &#160; &#160; PI.AddSetting("ServerActors",....</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// }</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; Public Final Methods</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; These are used to operate the internal mechanisms of the auto loader system.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Called by ConfigMaster when Level.ServerTravel is called</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Removes loader if WantsToBeDisabled() returns True</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Applies value for RequiredIniProperties if ObjectNeedsUpdate returns true</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">final</span> <span class="kw5">function</span> UpdateConfiguration<span class="br0">(</span>array&lt;Property&gt; Props<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> Property&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; P;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; N,V;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i, j;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt;&#160; &#160; &#160;&#160; &#160; &#160; &#160; Arr;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ArrS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Update configuration in"</span>@<span class="kw5">class</span>,<span class="st0">'UpdateConfiguration'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw7">ResetConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Properties = Props;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>WantsToBeDisabled<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RemoveMe<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bIncludeServerActor &amp;&amp; ActorClass&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O = GetObjectOfClass<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Engine.GameEngine'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ObjectNeedsUpdate<span class="br0">(</span>O, <span class="st0">"ServerActors"</span>, ActorClass<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ArrS = O.<span class="me1">GetPropertyText</span><span class="br0">(</span><span class="st0">"ServerActors"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ArrS&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Arr = GenerateArray<span class="br0">(</span>ArrS<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Arr.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = CheckArrayEntry<span class="br0">(</span><span class="st0">"ServerActors"</span>, Arr<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SetPropertyText</span><span class="br0">(</span><span class="st0">"ServerActors"</span>,AddDynArrayMember<span class="br0">(</span>O,<span class="st0">"ServerActors"</span>,ActorClass<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> O.<span class="kw7">SetPropertyText</span><span class="br0">(</span><span class="st0">"ServerActors"</span>,InsertArrayMember<span class="br0">(</span>O, <span class="st0">"ServerActors"</span>, ActorClass, j<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>;i&lt;RequiredIniEntries.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O = GetObjectForEntry<span class="br0">(</span>RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!ObjectNeedsUpdate<span class="br0">(</span>O, RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span>, RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropValue</span><span class="br0">)</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; N = RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; V = RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropValue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; P = GetProperty<span class="br0">(</span>O, N<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"got property"</span>@p,<span class="st0">'UpdateConfiguration'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>P == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PropIsArray<span class="br0">(</span>P<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ArrS = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>N<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ArrS&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Arr = GenerateArray<span class="br0">(</span>ArrS<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Arr.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = CheckArrayEntry<span class="br0">(</span>N, Arr<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>N,AddDynArrayMember<span class="br0">(</span>O,N,V<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>N,InsertArrayMember<span class="br0">(</span>O, N, V, j<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoreDefaultValue<span class="br0">(</span>O, N<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>N,V<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Regarding OriginalValues</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">final</span> <span class="kw5">function</span> StoreDefaultValue<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> O, <span class="kw4">string</span> PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, idx;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> IniEntry NewDefault;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> CurrentValue, Quote;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Ar;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"storing default"</span>@o@propname,<span class="st0">'StoreDefaultValue'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ClassFrom</span> == <span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span> &amp;&amp; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span> == PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; NewDefault.<span class="me1">ClassFrom</span> = <span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Check if this property name is a single array member</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="nu0">-1</span>; idx = <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span>PropName, <span class="st0">"§"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; idx = <span class="kw4">int</span><span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>PropName, i<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PropName = <span class="kw7">Mid</span><span class="br0">(</span>PropName, i + <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentValue = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Ar = GenerateArray<span class="br0">(</span>CurrentValue<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentValue = Ar<span class="br0">[</span>idx<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Remove literal string wrapper</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>CurrentValue,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentValue = <span class="kw7">Mid</span><span class="br0">(</span>CurrentValue,<span class="nu0">1</span>,<span class="kw7">Len</span><span class="br0">(</span>CurrentValue<span class="br0">)</span> - <span class="nu0">2</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Quote = <span class="st0">"¶"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentValue = idx $ <span class="st0">"§"</span> $ CurrentValue $ Quote;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span> CurrentValue = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NewDefault.<span class="me1">PropName</span> = PropName;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NewDefault.<span class="me1">PropValue</span> = CurrentValue;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"old value:"</span>@NewDefault.<span class="me1">PropValue</span>,<span class="st0">'StoreDefaultValue'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span><span class="br0">]</span> = NewDefault;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> RestoreOriginalValue<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> O, <span class="kw4">string</span> PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, j, idx;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> CurrentValue, StoredValue;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Ar;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ClassFrom</span> ~= <span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span> &amp;&amp; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span> ~= PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoredValue = ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropValue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// First check if this was a single array member</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="kw7">InStr</span><span class="br0">(</span>StoredValue, <span class="st0">"§"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; idx = <span class="kw4">int</span><span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>StoredValue, j<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoredValue = <span class="kw7">Mid</span><span class="br0">(</span>StoredValue, j + <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Right</span><span class="br0">(</span>StoredValue, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"¶"</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoredValue = <span class="kw7">Left</span><span class="br0">(</span>StoredValue, <span class="kw7">Len</span><span class="br0">(</span>StoredValue<span class="br0">)</span> - <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoredValue = <span class="st0">"<span class="es0">\"</span>"</span> $ StoredValue $ <span class="st0">"<span class="es0">\"</span>"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentValue = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Ar = GenerateArray<span class="br0">(</span>CurrentValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Ar<span class="br0">[</span>idx<span class="br0">]</span> = StoredValue;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoredValue = <span class="st0">"("</span> $ Join<span class="br0">(</span>Ar,<span class="st0">","</span>,<span class="kw9">True</span><span class="br0">)</span> $<span class="st0">")"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Assigning"</span>@StoredValue@<span class="st0">"to property"</span>@<span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span>$<span class="st0">"."</span>$PropName,<span class="st0">'RestoreOriginalValue'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>PropName, StoredValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &lt; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; Internal Methods</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; These are used to control the internal operation of the loader itself.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; These methods may only be called by other methods within the loader.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> RemoveMe<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> O;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> Property P;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"being removed."</span>,<span class="st0">'RemoveMe'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bIncludeServerActor &amp;&amp; ActorClass&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O = GetObjectOfClass<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Engine.GameEngine'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RemoveArrayEntry<span class="br0">(</span>O, <span class="st0">"ServerActors"</span>, ActorClass<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; RequiredIniEntries.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; O = GetObjectForEntry<span class="br0">(</span>RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; P = GetProperty<span class="br0">(</span>O,RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>P&#160;!= <span class="kw9">None</span> &amp;&amp; PropIsArray<span class="br0">(</span>P<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RemoveArrayEntry<span class="br0">(</span>O,RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span>,RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropValue</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> RestoreOriginalValue<span class="br0">(</span>O, RequiredIniEntries<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">PropName</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; DisableLoader<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> InsertArrayMember<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> Obj, <span class="kw4">string</span> PropName, <span class="kw4">string</span> NewValue, <span class="kw4">int</span> Pos<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> CurValue, Quote, Tmp;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt;&#160; &#160; &#160;Members;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> bStatic;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Obj == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Object is None"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CurValue = Obj.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Members = GenerateArray<span class="br0">(</span>CurValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">":Inserting new member at position"</span>@Pos@<span class="st0">"to"</span>@Obj$<span class="st0">"."</span>$PropName$<span class="st0">":"</span>@NewValue,<span class="st0">'InsertArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">":Current Value:"</span>$CurValue,<span class="st0">'InsertArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Check for literal string</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>, <span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span> &lt; <span class="nu0">0</span> &amp;&amp; Members.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bStatic = <span class="kw7">Left</span><span class="br0">(</span>Members<span class="br0">[</span>pos<span class="br0">]</span>, <span class="kw7">Len</span><span class="br0">(</span>PropName<span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span> ~= <span class="br0">(</span>PropName $ <span class="st0">"["</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Tmp = StringIf<span class="br0">(</span>bStatic, <span class="kw7">Mid</span><span class="br0">(</span>Members<span class="br0">[</span>pos<span class="br0">]</span>,<span class="kw7">InStr</span><span class="br0">(</span>Members<span class="br0">[</span>pos<span class="br0">]</span>,<span class="st0">"="</span><span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>, Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Quote = StringIf<span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Tmp,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>NewValue,<span class="nu0">1</span><span class="br0">)</span>&#160;!= <span class="st0">"<span class="es0">\"</span>"</span>,<span class="st0">"<span class="es0">\"</span>"</span>,<span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; NewValue = StringIf<span class="br0">(</span>bStatic, PropName $ <span class="st0">"="</span> $ Quote $ NewValue $ Quote, Quote $ NewValue $ Quote<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>,<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span>@<span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>,<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span>&lt;<span class="nu0">0</span>@<span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>@<span class="st0">"||"</span>@<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span>,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>NewValue&#160;!= <span class="st0">""</span> &amp;&amp; Pos &gt; <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; StoreDefaultValue<span class="br0">(</span>Obj, Pos$<span class="st0">"§"</span>$PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Members<span class="br0">[</span>Pos<span class="br0">]</span> = NewValue;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurValue = <span class="st0">"("</span> $ Join<span class="br0">(</span>Members,<span class="st0">","</span>,<span class="kw9">True</span><span class="br0">)</span> $ <span class="st0">")"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Returning:"</span>$CurValue,<span class="st0">'InsertArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">""</span>,<span class="st0">'InsertArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> CurValue;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Currently, UT2003 does not support setting static arrays through the use of SetPropertyText</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> AddStaticArrayMember<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> Obj, <span class="kw4">string</span> PropName, <span class="kw4">string</span> NewValue<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt;&#160; &#160; &#160;Members;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Quote, TempValue, CurValue;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Obj == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Object was None for property"</span>@PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; CurValue = Obj.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Members = GenerateArray<span class="br0">(</span>CurValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>, <span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span> &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Members.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; TempValue = <span class="kw7">Mid</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,<span class="kw7">InStr</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,<span class="st0">"="</span><span class="br0">)</span><span class="nu0">+1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Check for literal string</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Quote = StringIf<span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>TempValue,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>NewValue,<span class="nu0">1</span><span class="br0">)</span>&#160;!= <span class="st0">"<span class="es0">\"</span>"</span>, <span class="st0">"<span class="es0">\"</span>"</span>, <span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; Members.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Members<span class="br0">[</span>i<span class="br0">]</span> == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Members<span class="br0">[</span>i<span class="br0">]</span> = PropName $ <span class="st0">"["</span> $ i $ <span class="st0">"]="</span> $ Quote $ NewValue $ Quote;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurValue = <span class="st0">"("</span> $ Join<span class="br0">(</span>Members,<span class="st0">","</span><span class="br0">)</span> $<span class="st0">")"</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> CurValue = <span class="st0">"("</span> $ PropName $ <span class="st0">"[0]="</span> $ NewValue $ <span class="st0">")"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> CurValue;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> AddDynArrayMember<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> Obj, <span class="kw4">string</span> PropName, <span class="kw4">string</span> NewValue<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> CurValue, Quote;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt;&#160; &#160; &#160;Members;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Obj == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Object is None"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CurValue = Obj.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Members = GenerateArray<span class="br0">(</span>CurValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">":Adding new member to"</span>@Obj$<span class="st0">"."</span>$PropName$<span class="st0">":"</span>@NewValue,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">":Current Value:"</span>$CurValue,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Check for literal string</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>, <span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span> &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Members.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>,<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span>@<span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>,<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span><span class="br0">)</span>&lt;<span class="nu0">0</span>@<span class="kw7">Caps</span><span class="br0">(</span>CurValue<span class="br0">)</span>@<span class="st0">"||"</span>@<span class="kw7">Caps</span><span class="br0">(</span>NewValue<span class="br0">)</span>,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Quote = StringIf<span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>NewValue,<span class="nu0">1</span><span class="br0">)</span>&#160;!= <span class="st0">"<span class="es0">\"</span>"</span>, <span class="st0">"<span class="es0">\"</span>"</span>, <span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Members<span class="br0">[</span>Members.<span class="kw6">Length</span><span class="br0">]</span> = Quote $ NewValue $ Quote;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurValue = <span class="st0">"("</span> $ Join<span class="br0">(</span>Members,<span class="st0">","</span>,<span class="kw9">True</span><span class="br0">)</span> $ <span class="st0">")"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> CurValue = <span class="st0">"("</span> $ NewValue $ <span class="st0">")"</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Returning:"</span>$CurValue,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">""</span>,<span class="st0">'AddDynArrayMember'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> CurValue;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// UT2003 currently does not support setting the value of static arrays</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> RemoveArrayEntry<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> O, <span class="kw4">string</span> PropName, <span class="kw4">string</span> PropValue<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, j;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Members;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> ArrayString, Quote, Tmp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> bStatic;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Object was none for property"</span>@PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; ArrayString = O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ArrayString == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Property was not found:"</span>@PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">": Removing array member"</span>@<span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span>$<span class="st0">"."</span>$PropName$<span class="st0">":"</span>$ArrayString,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>$<span class="st0">": Member to be removed:"</span>$PropValue,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Members = GenerateArray<span class="br0">(</span>ArrayString<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; bStatic = <span class="kw7">Left</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, <span class="kw7">Len</span><span class="br0">(</span>PropName<span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span> ~= <span class="br0">(</span>PropName $ <span class="st0">"["</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Tmp = StringIf<span class="br0">(</span>bStatic, <span class="kw7">Mid</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,<span class="kw7">InStr</span><span class="br0">(</span>Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>,<span class="st0">"="</span><span class="br0">)</span> + <span class="nu0">1</span><span class="br0">)</span>, Members<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Quote = StringIf<span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>Tmp,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"<span class="es0">\"</span>"</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>PropValue,<span class="nu0">1</span><span class="br0">)</span>&#160;!= <span class="st0">"<span class="es0">\"</span>"</span>,<span class="st0">"<span class="es0">\"</span>"</span>,<span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; PropValue = StringIf<span class="br0">(</span>bStatic, PropName $ <span class="st0">"="</span> $ Quote $ PropValue $ Quote, Quote $ PropValue $ Quote<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; Members.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Comparing"</span>@i@PropValue@<span class="st0">"to"</span>@Members<span class="br0">[</span>i<span class="br0">]</span>,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Members<span class="br0">[</span>i<span class="br0">]</span> ~= PropValue<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &lt; Members.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Removing array member"</span>@i$<span class="st0">":"</span>$Members<span class="br0">[</span>i<span class="br0">]</span>,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Check if we should restore a previous value</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span>; j++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Checking Backup Value"</span>@j@<span class="st0">"class:"</span>$ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ClassFrom</span>@<span class="st0">"against"</span>@<span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span>,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Checking Backup Value"</span>@j@<span class="st0">"Property:"</span>$ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">PropName</span>@<span class="st0">"against"</span>@PropName,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ClassFrom</span> ~= <span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span> &amp;&amp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span><span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">PropName</span> ~= PropName <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; RestoreOriginalValue<span class="br0">(</span>O, PropName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &lt; ConfigMaster<span class="br0">(</span>Owner<span class="br0">)</span>.<span class="me1">OriginalValues</span>.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Members.<span class="kw6">Remove</span><span class="br0">(</span>i,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; PropValue = <span class="st0">"("</span> $ Join<span class="br0">(</span>Members,<span class="st0">","</span><span class="br0">)</span> $ <span class="st0">")"</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Assigning"</span>@PropValue@<span class="st0">"to property"</span>@<span class="kw4">string</span><span class="br0">(</span>O.<span class="kw5">Class</span><span class="br0">)</span>$<span class="st0">"."</span>$PropName,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; O.<span class="kw7">SetPropertyText</span><span class="br0">(</span>PropName,PropValue<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; O.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Returning"</span>@O.<span class="me1">GetPropertyText</span><span class="br0">(</span>PropName<span class="br0">)</span>,<span class="st0">'RemoveArrayEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Just a function to handle safe object creation</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <a href="/Object"><span class="kw10">Object</span></a> GetObjectForEntry<span class="br0">(</span>IniEntry ThisEntry<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> O;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> class&lt;Object&gt; OClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Getting"</span>@ThisEntry.<span class="me1">ClassFrom</span>@ThisEntry.<span class="me1">PropName</span>@ThisEntry.<span class="me1">PropValue</span>,<span class="st0">'GetObjectForEntry'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; OClass = class&lt;Object&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>ThisEntry.<span class="me1">ClassFrom</span>,<span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>OClass == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Could not load class"</span>@ThisEntry.<span class="me1">ClassFrom</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">None</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; O = GetObjectOfClass<span class="br0">(</span>OClass<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Unable to access object for class"</span>@OClass<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> O;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <a href="/Object"><span class="kw10">Object</span></a> GetObjectOfClass<span class="br0">(</span>class&lt;Object&gt; ObjClass<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> Obj;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Finding"</span>@ObjClass,<span class="st0">'GetObjectOfClass'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Check for GameEngine</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ObjClass == <span class="kw5">class</span><span class="st0">'GameEngine'</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> GE;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// First try the easy way</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">foreach</span> AllObjects<span class="br0">(</span>ObjClass,Obj<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> Obj;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="co1">// Object may not be loaded right now, so attempt to load it</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// If actor, spawn it</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span>ObjClass,<span class="kw5">class</span><span class="st0">'Actor'</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A = Spawn<span class="br0">(</span>class&lt;Actor&gt;<span class="br0">(</span>ObjClass<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A.<span class="kw7">GoToState</span><span class="br0">(</span><span class="st0">''</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> A;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// if object, new it</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Obj = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> ObjClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// might be property</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Obj == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Obj = <span class="kw6">new</span><span class="br0">(</span><span class="kw5">Class</span><span class="br0">)</span> ObjClass;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Don't know if this will even work&#160;?</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Obj == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Obj = <span class="kw6">New</span><span class="br0">(</span>ObjClass.<span class="kw1">default</span>.<span class="me1">Outer</span><span class="br0">)</span> ObjClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Could not create new object"</span>@ObjClass,<span class="st0">'GetObjectOfClass'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@ObjClass@<span class="st0">"outer is"</span>@ObjClass.<span class="kw1">default</span>.<span class="me1">Outer</span>,<span class="st0">'GetObjectOfClass'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">""</span>,<span class="st0">'GetObjectOfClass'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Obj;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> Property GetProperty<span class="br0">(</span><a href="/Object"><span class="kw10">Object</span></a> O, <span class="kw4">string</span> PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw5">Class</span> ClassOuter;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> classexact, classchild, propn, seenclass;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Properties.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; seenclass = <span class="kw5">Class</span><span class="br0">(</span>Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Outer</span><span class="br0">)</span> == ClassOuter;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ClassOuter = <span class="kw5">Class</span><span class="br0">(</span>Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Outer</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUGPROPS<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ClassOuter == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Property Outer is not a class!"</span>,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!seenclass<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Compare Obj Class"</span>@O.<span class="kw5">Class</span>@<span class="st0">"to"</span>@Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Outer</span>,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>O.<span class="kw5">Class</span>==Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Outer</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; classexact = <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!classchild &amp;&amp; <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>O.<span class="kw5">Class</span>,ClassOuter<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Obj class"</span>@O.<span class="kw5">Class</span>@<span class="st0">"is child of"</span>@ClassOuter,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; classchild = <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>!classchild &amp;&amp; <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>ClassOuter,O.<span class="kw5">Class</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Obj class"</span>@O.<span class="kw5">Class</span>@<span class="st0">"is parent of"</span>@ClassOuter,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; classchild = <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!propn &amp;&amp; classexact<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Compare Name"</span>@PropName@<span class="st0">"to"</span>@Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="kw4">Name</span>,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PropName == <span class="kw4">string</span><span class="br0">(</span>Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="kw4">Name</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; propn = <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span>O.<span class="kw5">Class</span>,ClassOuter<span class="br0">)</span>||O.<span class="kw5">Class</span> == Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Outer</span>||ClassIsChildOf<span class="br0">(</span>ClassOuter,O.<span class="kw5">Class</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="kw4">string</span><span class="br0">(</span>Properties<span class="br0">[</span>i<span class="br0">]</span>.<span class="kw4">Name</span><span class="br0">)</span> == PropName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Returning Property"</span>@Properties<span class="br0">[</span>i<span class="br0">]</span>,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">""</span>,<span class="st0">'GetProperty'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> Properties<span class="br0">[</span>i<span class="br0">]</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">None</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> PropIsArray<span class="br0">(</span>Property P<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>DEBUG<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span><span class="kw5">class</span>@<span class="st0">"Checking Property"</span>@P.<span class="me1">Outer</span>$<span class="st0">"."</span>$P.<span class="kw4">Name</span>$<span class="st0">":"</span>@P.<span class="kw5">Class</span>,<span class="st0">'PropIsArray'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> P.<span class="kw5">Class</span> == <span class="kw5">class</span><span class="st0">'ArrayProperty'</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> array&lt;string&gt; GenerateArray<span class="br0">(</span><span class="kw4">string</span> ArrayString<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt;&#160; &#160; &#160;Members;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> S;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ArrayString&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Remove the array wrapper ( )</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ArrayString = <span class="kw7">Mid</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span>,<span class="kw7">Len</span><span class="br0">(</span>ArrayString<span class="br0">)</span><span class="nu0">-2</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// If string contains internal containers, then have to split differently</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"("</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">do</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">do</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">")"</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i--;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Left</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"("</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i++;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Eat<span class="br0">(</span>S, ArrayString, <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span> <span class="kw1">until</span> <span class="br0">(</span>i == <span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Members<span class="br0">[</span>Members.<span class="kw6">Length</span><span class="br0">]</span> = S;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; S = <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ArrayString&#160;!= <span class="st0">""</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span><span class="br0">)</span> == <span class="st0">","</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ArrayString = <span class="kw7">Mid</span><span class="br0">(</span>ArrayString,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span> <span class="kw1">until</span> <span class="br0">(</span>ArrayString == <span class="st0">""</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> Split2<span class="br0">(</span>ArrayString,<span class="st0">","</span>,Members<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Members;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> NotInPlayInfo<span class="br0">(</span>PlayInfo PI, class&lt;Info&gt; NewInfo<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PI == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"Invalid PlayInfo Object!"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;PI.<span class="me1">InfoClasses</span>.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PI.<span class="me1">InfoClasses</span><span class="br0">[</span>i<span class="br0">]</span> == NewInfo<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//###################################################################</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; Utility Methods</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; These are used perform various tedious operations.</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Moves Num elements from Source to Dest</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> Eat<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">string</span> Dest, <span class="kw6">out</span> <span class="kw4">string</span> Source, <span class="kw4">int</span> Num<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Dest = Dest $ <span class="kw7">Left</span><span class="br0">(</span>Source, Num<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Source = <span class="kw7">Mid</span><span class="br0">(</span>Source, Num<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> StringIf<span class="br0">(</span><span class="kw4">bool</span> Condition, <span class="kw4">string</span> IfTrue, <span class="kw4">string</span> IfFalse<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Condition<span class="br0">)</span> <span class="kw1">return</span> IfTrue;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> IfFalse;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Based on AccessControlIni &amp; Object.ReplaceText()</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> ReplaceTag<span class="br0">(</span><span class="kw4">string</span> from, <span class="kw4">string</span> tag, <span class="kw6">coerce</span> <span class="kw4">string</span> with<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> t;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// InStr() is case-sensitive</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>from<span class="br0">)</span>, <span class="kw7">Caps</span><span class="br0">(</span>tag<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>i&#160;!= <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; t = t $ <span class="kw7">Left</span><span class="br0">(</span>from,i<span class="br0">)</span> $ with;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; from = <span class="kw7">mid</span><span class="br0">(</span>from,i+<span class="kw7">len</span><span class="br0">(</span>tag<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = <span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Caps</span><span class="br0">(</span>from<span class="br0">)</span>, <span class="kw7">Caps</span><span class="br0">(</span>tag<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; t = t $ from;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> t;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Following functions from wUtils103 by El_Muerte[TDS]</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Included by permission (copied to avoid package dependancy)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Shifts an element off a string</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// example (delim = ' '): 'this is a string' -&gt; 'is a string'</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// if quotechar = "&#160;: '"this is" a string' -&gt; 'a string'</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> StrShift<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">string</span> line, <span class="kw4">string</span> delim, <span class="kw6">optional</span> <span class="kw4">string</span> quotechar<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> delimpos, quotepos;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> result;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> quotechar&#160;!= <span class="st0">""</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>line, <span class="kw7">Len</span><span class="br0">(</span>quotechar<span class="br0">)</span><span class="br0">)</span> == quotechar <span class="br0">)</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">do</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; quotepos = InstrFrom<span class="br0">(</span>line, quotechar, quotepos + <span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span> <span class="kw1">until</span> <span class="br0">(</span>quotepos == <span class="nu0">-1</span> || quotepos + <span class="kw7">Len</span><span class="br0">(</span>quotechar<span class="br0">)</span> == <span class="kw7">Len</span><span class="br0">(</span>line<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; || <span class="kw7">Mid</span><span class="br0">(</span>line, quotepos + <span class="kw7">len</span><span class="br0">(</span>quotechar<span class="br0">)</span>, <span class="kw7">len</span><span class="br0">(</span>delim<span class="br0">)</span><span class="br0">)</span> == delim<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> quotepos&#160;!= <span class="nu0">-1</span> <span class="br0">)</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; delimpos = InstrFrom<span class="br0">(</span>line, delim, quotepos<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">else</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; delimpos = <span class="kw7">Instr</span><span class="br0">(</span>line, delim<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>delimpos == <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; result = line;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; line = <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; <span class="kw1">else</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; result = <span class="kw7">Left</span><span class="br0">(</span>line,delimpos<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; line = <span class="kw7">Mid</span><span class="br0">(</span>line,delimpos+<span class="kw7">len</span><span class="br0">(</span>delim<span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> quotechar&#160;!= <span class="st0">""</span> &amp;&amp; <span class="kw7">Left</span><span class="br0">(</span>result, <span class="kw7">Len</span><span class="br0">(</span>quotechar<span class="br0">)</span><span class="br0">)</span> == quotechar <span class="br0">)</span> <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; result = <span class="kw7">Mid</span><span class="br0">(</span>result, <span class="kw7">Len</span><span class="br0">(</span>quotechar<span class="br0">)</span>, <span class="kw7">Len</span><span class="br0">(</span>result<span class="br0">)</span>-<span class="br0">(</span><span class="kw7">Len</span><span class="br0">(</span>quotechar<span class="br0">)</span>*<span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">return</span> result;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Join the elements of a string array to an array</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> Join<span class="br0">(</span>array&lt; <span class="kw4">string</span> &gt; ar, <span class="kw6">optional</span> <span class="kw4">string</span> delim, <span class="kw6">optional</span> <span class="kw4">bool</span> bIgnoreEmpty<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw5">local</span> <span class="kw4">string</span> result;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; ar.<span class="kw6">length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bIgnoreEmpty &amp;&amp; ar<span class="br0">[</span>i<span class="br0">]</span> == <span class="st0">""</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>result&#160;!= <span class="st0">""</span><span class="br0">)</span> result = result$delim;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; result = result$ar<span class="br0">[</span>i<span class="br0">]</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw1">return</span> result;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Fixed split method</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// no problems when it starts with a delim</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// no problems with ending spaces</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// delim can be a string</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> Split2<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">string</span> src, <span class="kw4">string</span> delim, <span class="kw6">out</span> array&lt;string&gt; parts, <span class="kw6">optional</span> <span class="kw4">bool</span> ignoreEmpty, <span class="kw6">optional</span> <span class="kw4">string</span> quotechar<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw5">local</span> <span class="kw4">string</span> temp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; Parts.<span class="kw6">Remove</span><span class="br0">(</span><span class="nu0">0</span>, Parts.<span class="kw6">Length</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw1">if</span> <span class="br0">(</span>delim == <span class="st0">""</span> || Src == <span class="st0">""</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="nu0">0</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw1">while</span> <span class="br0">(</span>src&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; temp = StrShift<span class="br0">(</span>src, delim, quotechar<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>temp == <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!ignoreEmpty<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; parts.<span class="kw6">length</span> = parts.<span class="me1">length</span><span class="nu0">+1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; parts<span class="br0">[</span>parts.<span class="me1">length</span><span class="nu0">-1</span><span class="br0">]</span> = temp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; <span class="kw1">else</span> <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; parts.<span class="kw6">length</span> = parts.<span class="me1">length</span><span class="nu0">+1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; parts<span class="br0">[</span>parts.<span class="me1">length</span><span class="nu0">-1</span><span class="br0">]</span> = temp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; <span class="kw1">return</span> parts.<span class="kw6">length</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// InStr starting from an offset</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> InStrFrom<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">string</span> StrText, <span class="kw6">coerce</span> <span class="kw4">string</span> StrPart, <span class="kw6">optional</span> <span class="kw4">int</span> OffsetStart<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw5">local</span> <span class="kw4">int</span> OffsetPart;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; OffsetPart = <span class="kw7">InStr</span><span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>StrText, OffsetStart<span class="br0">)</span>, StrPart<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw1">if</span> <span class="br0">(</span>OffsetPart &gt;= <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; OffsetPart += OffsetStart;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; <span class="kw1">return</span> OffsetPart;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+</ol>
+</div>
+</div>
+<hr />
+<p><b>Wormbo:</b> Hmm, a little documentation instead of the source code wouldn't hurt. E.g. how can you use this to enable/disable a server actor?</p>
+<p><b>El Muerte TDS:</b> like this: <a href="http://el-muerte.student.utwente.nl/cgi-bin/cvsweb/UT2003/ChatFilterLoader/Classes/ChatFilterLoader.uc?rev=1.7&amp;content-type=text/x-cvsweb-markup" class="external text" title="http://el-muerte.student.utwente.nl/cgi-bin/cvsweb/UT2003/ChatFilterLoader/Classes/ChatFilterLoader.uc?rev=1.7&amp;content-type=text/x-cvsweb-markup" rel="nofollow">ChatFilter AutoLoader</a>, maybe write a [/example] based on it... first lunch</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 195/2097152 bytes
+Template argument size: 113/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2003%29_8e02.html" title="Category:Legacy Custom Class (UT2003)">Legacy Custom Class (UT2003)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/u/t/Legacy%7EAutoLoader_7e68.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/u/t/Legacy_talk%7EAutoLoader_1e52.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:AutoLoader">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:06, 18 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

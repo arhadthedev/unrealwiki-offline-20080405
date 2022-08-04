@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Wanted Pages/Discuss - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Wanted Pages/Discuss</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; Legacy:Wanted Pages</span></div>
+	    	    	    <!-- start content -->
+	    <p>Source for the Wanted Pages feature: <a href="http://www.usemod.com/cgi-bin/wiki.pl?WikiPatches/MagicWantedPages" class="extiw" title="usemod:WikiPatches/MagicWantedPages">UseMod:WikiPatches/MagicWantedPages</a></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Presentation"><span class="tocnumber">1</span> <span class="toctext">Presentation</span></a>
+<ul>
+<li class="toclevel-2"><a href="#list_order"><span class="tocnumber">1.1</span> <span class="toctext">list order</span></a></li>
+<li class="toclevel-2"><a href="#formatting"><span class="tocnumber">1.2</span> <span class="toctext">formatting</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Known_problems"><span class="tocnumber">2</span> <span class="toctext">Known problems</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Using_the_algorithm_in_wiki.cgi"><span class="tocnumber">2.1</span> <span class="toctext">Using the algorithm in wiki.cgi</span></a></li>
+<li class="toclevel-2"><a href="#Subpages_aren.27t_listed_at_all"><span class="tocnumber">2.2</span> <span class="toctext">Subpages aren't listed at all</span></a>
+<ul>
+<li class="toclevel-3"><a href="#UT"><span class="tocnumber">2.2.1</span> <span class="toctext">UT</span></a></li>
+<li class="toclevel-3"><a href="#Home_page.2FChanges"><span class="tocnumber">2.2.2</span> <span class="toctext">Home page/Changes</span></a></li>
+<li class="toclevel-3"><a href="#Repeated_links"><span class="tocnumber">2.2.3</span> <span class="toctext">Repeated links</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Presentation" id="Presentation"></a></p>
+<h2><span class="mw-headline">Presentation</span></h2>
+<p><a name="list_order" id="list_order"></a></p>
+<h3><span class="mw-headline">list order</span></h3>
+<p><b>Wormbo:</b> Maybe it would be nice to be able to change the sorting of the wanted pages list between number of requests (like now) and alphabetically-only.</p>
+<p><b>Tarquin:</b> That's relatively easy for me to code ( as long as I can figure out the sort function) but how do you suggest users access the two different flavours? I suppose I can make a Wanted Pages Alpha...</p>
+<p>I've had an idea of how to tackle this: put lines like</p>
+<pre>
+#MAGIC throttle=1
+#MAGIC order=alpha
+</pre>
+<p>at the very end of the page. I'm having a few problems implementing it. These lines have to be read <i>before</i> the wikitext is parsed, because I want to pull them out. But the call to Magic module is after. So I have to store them in the function (yet another function var) and then pass them, probably as a hash to the module, which has to reconstruct the hash from the flat var list. all sounding <i>rather</i> complicated&#160;:(</p>
+<p><b>Mychaeel:</b> I think the neatest way would be designing your "Wanted Pages" class in a way that it can be easily subclassed to sort its results alphabetically (or by number of consonants in the page title, or whatever) – then create "Wanted Pages/By Name" and "Wanted Pages/By Requests" that use those "Wanted Pages" MagicPage classes.</p>
+<p><b>Tarquin:</b> following debate with Sunir over at UseMod, I wanted to give control of the page count throttle to users, rather than hard-coded in the script. I agree though, it's probably best to be able to view both sort orders without any fiddly editing. Not sure I can use a "/" in the package name though</p>
+<p><b>Mychaeel:</b> You also can't have blanks in package names even though "Wanted Pages" contains one, right? There must be <i>some</i> abstraction layer between the package name and the actual page name...</p>
+<p><b>Tarquin:</b> I guess I have three options:</p>
+<ol>
+<li>use some sort of system that represents a "/" in the package name</li>
+<li>switch to using an arbitrary package name, which holds a $pageName. Complication: The registering process must then store two things: "this page name =&gt; has a script in this package". Advantage: page name can be anything</li>
+<li>as discussed with Sunir a while ago, move the information about which pages are magic to the wiki content itself, allowing the community to choose which pages are magic. Something like: "#MAGIC WantedPages throttle=1" at the foot of the page. Advantage: it's the WikiWay&#160;:D complication: I need to work out a simple syntax which also allows parameters (like the pagecount throttle) to be passed.</li>
+</ol>
+<p><b>Mychaeel:</b> The third option is probably the best. The #MAGIC header should be at the top of the page though, not the bottom... – Parsing the parameters isn't very complicated. Be $line the variable holding everything that follows "#MAGIC WantedPages", here's a regular expression to parse it:</p>
+<pre>
+ %params = map { s/^"|"$//g; $_ } ($line =~ m[(\w+)\s*=\s*("[^"]*"?|\S+)]g);
+</pre>
+<p>Be sure to do some tight security checks on the "package name" parameter following #MAGIC before using it; we don't want to introduce security holes by this.</p>
+<p><b>Tarquin:</b> basically, if it's a package in MagicPages.pm, run it. If not – ignore. Thanks for your advice Mych, it's much appreciated&#160;:D</p>
+<p><b>Tarquin:</b> Slowly reading the above regexp... it's this, right?</p>
+<pre>
+m[
+(\w+) # grab word as $1
+\s*   # optional whitespace
+=     # equals sign
+\s*   # optional whitespace
+(     # now grab as $2... either:
+"[^"]*"?  # something in quotes
+|         # or
+\S+       # some non-whitespace
+)     # end of $2 grab
+]gx
+</pre>
+<p>but I'm confused about $2. Why is the " at the end of "something in quotes" optional?</p>
+<p><b>Mychaeel:</b> Just in order to capture something like that as well:</p>
+<pre>
+ foo=bar name="Michael Buschbeck" baz=quux base="Unreal Wiki
+</pre>
+<p><b>Tarquin:</b> ah... MagicContent is about ready to run&#160;:) Future exansion:</p>
+<ul>
+<li>MAGIC Category – appends the search results for the page name to the page content</li>
+</ul>
+<p><a name="formatting" id="formatting"></a></p>
+<h3><span class="mw-headline">formatting</span></h3>
+<p>I think a nice formatting would be</p>
+<ul>
+<li><a href="../../../../articles/l/e/g/Category%7ELegacy_Wanted_Pages_61ee.html" title="Category:Legacy Wanted Pages">The Weather In London</a> (4 requests)<br />
+<font size="-2">Requested by <a href="../../../../articles/m/y/c/Legacy%7EMychaeel_0406.html" title="Legacy:Mychaeel">Mychaeel</a>, <a href="../../../../articles/t/a/r/Legacy%7ETarquin_1d9d.html" title="Legacy:Tarquin">Tarquin</a>, <a href="../../../../articles/l/e/g/Category%7ELegacy_Wanted_Pages_61ee.html" title="Category:Legacy Wanted Pages">Category:Legacy Wanted Pages</a>, <a href="../../../../articles/w/i/k/Legacy%7EWiki_Markup_8a14.html" title="Legacy:Wiki Markup">Wiki Markup</a></font></li>
+</ul>
+<p>Or don't add links to the pages but just put their titles in the edit link's "title" attribute; when you hover the link you see where the page was requested from.</p>
+<p><a name="Known_problems" id="Known_problems"></a></p>
+<h2><span class="mw-headline">Known problems</span></h2>
+<p><a name="Using_the_algorithm_in_wiki.cgi" id="Using_the_algorithm_in_wiki.cgi"></a></p>
+<h3><span class="mw-headline">Using the algorithm in wiki.cgi</span></h3>
+<p>It causes the <b>Umake bug</b>:</p>
+<dl>
+<dd>It's the dot in <a href="http://forums.beyondunreal.com/showthread.php?threadid=138091" class="external text" title="http://forums.beyondunreal.com/showthread.php?threadid=138091" rel="nofollow">UMake 1.1</a> ...which means the bug is NOT in my code (yay!) it's in <a href="http://www.usemod.com/cgi-bin/wiki.pl?GetFullLinkList" class="extiw" title="usemod:GetFullLinkList">UseMod:GetFullLinkList</a>, and it's outputting: "UMake /Discuss 1.0 1.1"</dd>
+</dl>
+<p><b>Mychaeel:</b> The algorithm used in wiki.cgi to gather all page links from a given page is inherently flawed... it would be way better to make that part of the regular markup parser. The link list returned by GetPageLinks is potentially inconsistent with what is actually displayed as a link.</p>
+<p><b>Mychaeel:</b> Actually it'd be neater if that function had <a href="../../../../articles/w/o/o/Legacy%7EWookee_662e.html" title="Legacy:Wookee">Wookee</a> output a list of page links. (Wookee can do that.) However, Wookee's parsing is quite more expensive than the simplistic (and technically Wookee-incompatible) parsing in <a href="http://www.usemod.com/cgi-bin/wiki.pl?GetPageLinks" class="extiw" title="usemod:GetPageLinks">UseMod:GetPageLinks</a>.</p>
+<p><b>Tarquin:</b> I'd be inclined to keep the less expensive option, since it's already quite a slow-loading page. I'll see if I can work with <a href="http://www.usemod.com/cgi-bin/wiki.pl?GetFullLinkList" class="extiw" title="usemod:GetFullLinkList">UseMod:GetFullLinkList</a>, but it won't be for a while as there's only one place it's causing a problem (he says, HOPING no idiot will create the page "1". .... yeah, I'm an optimist). Formatting done with a DL and a little bit of CSS insterted directly into the page.&#160;:) so it's better than the OL in appearance AND semantically!&#160;:D</p>
+<p><b>Mychaeel:</b> Anyway... that bug should be fixed, regardless of who caused it.</p>
+<p><b>Tarquin:</b> I've found the bug, but I lack the perlness to fix it. It's the definition of $InterLinkPattern which can't handle faced [[InterSite:Foo bar]] correctly. The options to fix it are:</p>
+<p>1. rewrite the definition. It's in <a href="http://www.usemod.com/cgi-bin/wiki.pl?InitLinkPatterns" class="extiw" title="usemod:InitLinkPatterns">UseMod:InitLinkPatterns</a>, line 294 of wiki.cgi:</p>
+<pre>
+ $InterLinkPattern = "((?:$InterSitePattern:[^\\]\\s\"&lt;&gt;$FS]+)$QDelim)";
+</pre>
+<p><b>Mychaeel:</b> For some reason that pattern expects page names in InterWiki links not to contain any spaces. If that is the problem, just remove the "\\s" from the pattern.</p>
+<p><b>Tarquin:</b> 2. write a Wookee-based version of <a href="http://www.usemod.com/cgi-bin/wiki.pl?GetPageLinks" class="extiw" title="usemod:GetPageLinks">UseMod:GetPageLinks</a>, line 4090. (specs on usemod page)</p>
+<p><b>Mychaeel:</b> While parsing and formatting a page Wookee records information about the parsed page that can be retrieved from the BlockWiki object after calling BlockWiki-&gt;parseBlock(). That information includes a list of all page links found in the page.</p>
+<p>Obviously using that method involves having the page parsed by Wookee; and obviously having a page parsed in full by Wookee is computationally more expensive than using the simple and UseMod-specific parsing algorithm used by GetPageLinks. Whether it'd be <i>prohibitively</i> expensive would be a matter of trying it out.</p>
+<p><b>Tarquin:</b> Bug fixed.&#160;:) tx Mych</p>
+<p><a name="Subpages_aren.27t_listed_at_all" id="Subpages_aren.27t_listed_at_all"></a></p>
+<h3><span class="mw-headline">Subpages aren't listed at all</span></h3>
+<p><b>Tarquin:</b> Trying to fix this. Problem match subpages with no main page, ie "/Foo". But I have a problem matching "/Foo" when it's at the start of a string. ie:</p>
+<pre>
+"/MatchThisWithNoInitialSpace /MatchThisToo Foo/DontMatchThis DontMatchThis"
+</pre>
+<p>Hmm... I think \B/\w+ will do it ... fixed it&#160;:D</p>
+<p>Fixed&#160;:D</p>
+<p><b>Mychaeel:</b> <a href="../../../../articles/h/o/m/Legacy%7EHome_Page_Changes_24a8.html" title="Legacy:Home Page/Changes">Home Page/Changes</a> is listed as "wanted." Also, very frequently the list of referrers still includes the same page several times.</p>
+<p><b>Tarquin:</b> Aw, crap.&#160;:( will investigate. sigh... is this whole wanted pages feature actually <i>useful</i>?</p>
+<p><b>Tarquin:</b> Right. Three bugs:</p>
+<p><a name="UT" id="UT"></a></p>
+<h4><span class="mw-headline">UT</span></h4>
+<p>The pagename "UT" isn't in the output, AT ALL. So I suspect it's pagenames like "Canvas (UT)" being incorrectly parsed.... got it. It's Sunir's "while" statement.</p>
+<pre>
+while( /(\w+)\s*/g ) {
+</pre>
+<p>grrr... That should be using one of the ready-made UseMod LinkPatterns.</p>
+<p><a name="Home_page.2FChanges" id="Home_page.2FChanges"></a></p>
+<h4><span class="mw-headline">Home page/Changes</span></h4>
+<p>I suspect this is because <a href="../../../../articles/h/o/m/Legacy%7EHome_Page_Changes_24a8.html" title="Legacy:Home Page/Changes">Home_Page/Changes</a> itself requests a "/Changes" page. hmm.. the raw output line is</p>
+<pre>
+Home Page /Changes /Discuss Graphics_Design Mesh_Overview
+</pre>
+<p>That lists the requests made by <a href="../../../../articles/h/o/m/Legacy%7EHome_Page_43ed.html" title="Legacy:Home Page">Home Page</a>. <a href="http://www.usemod.com/cgi-bin/wiki.pl?GetPageLinks" class="extiw" title="usemod:GetPageLinks">UseMod:GetPageLinks</a> is the culprit again: it considers /Changes and /Discuss to be ghost links, but they are not. I know what to look for now&#160;:)</p>
+<p><a name="Repeated_links" id="Repeated_links"></a></p>
+<h4><span class="mw-headline">Repeated links</span></h4>
+<p>Same as bug 1. "Category_Class_Tree" is requested by <a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_%28UT%29_cd78.html" title="Legacy:Actor Class Hierarchy (UT)">Actor_Class_Hierarchy_(UT)</a> and <a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_bff8.html" title="Legacy:Actor Class Hierarchy">Actor_Class_Hierarchy</a>.</p>
+<p>PS: I've tracked down the above bugs without looking at the code, but with the output of an intermediary function. It's actually quite helpful to do this without the code. I'd compare this to Mychaeel's suggestion of working out a design brief before writing any code&#160;:D</p>
+<p><b>Mychaeel:</b> Good luck fixing all these bugs, but I slowly get the impression that with every fix you apply you get two more new bugs... maybe the code is at a stage at the moment where it'd be worthwhile to just create it from scratch and see to it that it's free of bugs conceptually already (probably even under the same simple premises as the original code, as opposed to using Wookee's parser for example).</p>
+<p><b>Tarquin:</b> As far as I can tell, it's now free of bugs. "UT" is no longer there, no repeated links, and I can't see "Home Page/Changes" either (though that is possibly because it only has one request. I think I know how to fix it, I just need to set up my local wiki to reproduce it, and I think I know how to do that too. Question of finding the courage to do it). It was't the fixing that caused a bug, it was fixing + me thinking "hey, now I've fixed it, let's implement subpage support". The problems were down to the code I filched from Sunir, which uses \w+ to match elements of a list delimited by space characters (and hence wasn't reading "Foo (UT)" correctly). \S+ is far more sensible. <b>Update</b> The "Home Page/Changes" bug is now fixed locally, it was the UseMod function not handling "headless" subpages correctly. Will upload soon.</p>
+<p><b>Tarquin:</b> AFAIK all bugs fixed&#160;:)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 20/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Wanted_Pages_61ee.html" title="Category:Legacy Wanted Pages">Legacy Wanted Pages</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/a/n/Legacy%7EWanted_Pages_Discuss_1b72.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/a/n/Legacy_talk%7EWanted_Pages_Discuss_a6d9.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Wanted_Pages/Discuss">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:45, 10 July 2003 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

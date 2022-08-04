@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Vehicles Pre2004/Driver - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Vehicles Pre2004/Driver</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/e/h/Legacy%7EVehicles_Pre2004_002d.html" title="Legacy:Vehicles Pre2004">Legacy:Vehicles Pre2004</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>I've added a driver to the speeder bike (I created a trike from it) this is how I’ve done it:</p>
+<p>(this isn't all the code for the trike, because it's a little much to put it all here)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Trike <span class="kw5">extends</span> KCar;
+ 
+<span class="kw5">var</span> CarDummyDriver MyDummy;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostNetBeginPlay<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">local</span> <span class="kw4">vector</span> RotX, RotY, RotZ;
+ 
+        <span class="kw6">Super</span>.<span class="me1">PostNetBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        GetAxes<span class="br0">(</span>Rotation,RotX,RotY,RotZ<span class="br0">)</span>;
+ 
+        MyDummy = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'UMS_CarDummyDriver'</span>, <span class="kw8">self</span>,, Location + DummyOffset.<span class="me1">X</span> * RotX + DummyOffset.<span class="me1">Y</span> * RotY + DummyOffset.<span class="me1">Z</span> * RotZ<span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">SetBase</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">bHidden</span> = <span class="kw9">True</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Destroyed<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw6">Super</span>.<span class="me1">Destroyed</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> KDriverEnter<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw6">Super</span>.<span class="me1">KDriverEnter</span><span class="br0">(</span>p<span class="br0">)</span>;
+ 
+        p.<span class="me1">bHidden</span> = <span class="kw9">True</span>;
+ 
+        MyDummy.<span class="me1">bHidden</span> = <span class="kw9">False</span>;
+ 
+        MyDummy.<span class="me1">LinkMesh</span><span class="br0">(</span>p.<span class="me1">Mesh</span><span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">Skins</span> = p.<span class="me1">Skins</span>;
+ 
+        <span class="co1">//Set the rotation of bones, so it looks like it's sitting on the trike</span>
+ 
+        MyDummy.<span class="me1">SetBoneRotation</span><span class="br0">(</span><span class="st0">'bip01 spine'</span>, rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">8000</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">SetBoneRotation</span><span class="br0">(</span><span class="st0">'Bip01 L UpperArm'</span>, rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">-14000</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        MyDummy.<span class="me1">SetBoneRotation</span><span class="br0">(</span><span class="st0">'Bip01 R UpperArm'</span>, rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">-14000</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> KDriverLeave<span class="br0">(</span><span class="kw4">bool</span> bForceLeave<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> OldDriver;
+ 
+        OldDriver = Driver;
+ 
+        <span class="co1">// If we successfully got out of the car, make driver visible again.</span>
+ 
+        <span class="kw1">if</span><span class="br0">(</span> <span class="kw6">Super</span>.<span class="me1">KDriverLeave</span><span class="br0">(</span>bForceLeave<span class="br0">)</span> <span class="br0">)</span>
+ 
+        <span class="br0">{</span>
+ 
+                MyDummy.<span class="me1">bHidden</span> = <span class="kw9">True</span>;
+ 
+                <span class="kw1">return</span> <span class="kw9">true</span>;
+ 
+        <span class="br0">}</span>
+ 
+        <span class="kw1">else</span>
+ 
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+ 
+        DummyOffset=<span class="br0">(</span>X=<span class="nu0">-26</span>,Y=<span class="nu0">0</span>,Z=<span class="nu0">10</span><span class="br0">)</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>And the dummy:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> CarDummyDriver <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+ 
+        Mesh=Mesh<span class="st0">'Jugg.JuggMaleA'</span>
+ 
+        Skins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'PlayerSkins.JuggMaleABodyA'</span>
+ 
+        Skins<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'PlayerSkins.JuggMaleAHeadA'</span>
+ 
+        bHardAttach=<span class="kw9">True</span>
+ 
+        DrawType=DT_Mesh
+ 
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/e/h/Legacy%7EVehicles_Pre2004_Driver_104a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/e/h/Legacy_talk%7EVehicles_Pre2004_Driver_a3cb.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Vehicles_Pre2004/Driver">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:46, 17 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:ReloadableWeapons - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:ReloadableWeapons</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Fairly_Simple_Reloadable_Weapons" id="Fairly_Simple_Reloadable_Weapons"></a></p>
+<h1><span class="mw-headline">Fairly Simple Reloadable Weapons</span></h1>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; ReloadableWeaponsBase</div>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>I am working on a modification for UT2004 that required reloadable weapons, so I sat down and I coded a really simple version of reloadable weapons. I don't have any animations atm, so I didn't bother coding in animation support or sound support, but I will do that later if need be. Also, this is only really useful for new gametypes or total conversions as you need a new hud class to show the player how many bullets/clips he has left to use. Also, this script is NOT tested online but it should work fine.</p>
+<p>Also... please note that to reload your weapon, you will have to call 'reloadme' in the console. For gametypes and mods, you should make a custom bind for this.</p>
+<p><a name="The_Script" id="The_Script"></a></p>
+<h2><span class="mw-headline">The Script</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ReloadableWeaponsBase <span class="kw5">extends</span> Weapon;
+ 
+<span class="coMULTI">/* Note: The Reloading features of this custom class will only affect FireMode(0) or Primary Fire
+   As most weapons will only have one fire that will use ammo */</span>
+ 
+ 
+   <span class="co1">//TODO:  ADD DISABLING OF THE ABILITY TO FIRE WHEN RELOADING</span>
+   <span class="co1">//TODO:  ADD ANIMATION SUPPORT</span>
+   <span class="co1">//TODO:  ADD SUPPORT BOOLS FOR MORE FIREMODES</span>
+ 
+ 
+ 
+<span class="co1">//New Reloadable Weapon System</span>
+ 
+<span class="co1">//Basic Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bReloading; <span class="co1">//True if the weapon has commenced reloading</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iReloadWait; <span class="co1">//How much time to wait before each reload is done? SET THIS ONLY IN YOUR CUSTOM WEAPON CLASS</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iTimeToReload; <span class="co1">//Internally Set... IGNORE</span>
+ 
+<span class="co1">//Clips Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bClipReload; <span class="co1">//Set to true in weapon class if you want the gun to reload like an assault rifle</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iNumberOfClips; <span class="co1">//How many clips does this gun have? SET IN WEAPON CLASS</span>
+ 
+<span class="co1">//Single Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bSingleReload; <span class="co1">//Set to true in weapon class if you want the gun to reload like a shotgun</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iNumberOfBullets; <span class="co1">//How many bullets does this gun have left? SET IN WEAPON CLASS</span>
+ 
+ 
+ 
+<span class="kw6">exec</span> <span class="kw5">function</span> ReloadMe<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+     iTimeToReload=iReloadWait; <span class="co1">//reset the amount of time to wait before you have completely reloaded</span>
+     bReloading=<span class="kw9">True</span>; <span class="co1">//reloading has commenced</span>
+     SetTimer<span class="br0">(</span><span class="nu0">1.0</span>, <span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+       <span class="kw6">Super</span>.<span class="me1">Timer</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+       <span class="kw1">if</span><span class="br0">(</span>bClipReload<span class="br0">)</span>
+       <span class="br0">{</span>
+ 
+             <span class="kw1">if</span><span class="br0">(</span>bReloading<span class="br0">)</span> <span class="co1">//Reloading</span>
+             <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span>iTimeToReload != <span class="nu0">0</span><span class="br0">)</span>
+                iTimeToReload--;  <span class="co1">//decrement the wait time</span>
+ 
+                <span class="kw1">if</span><span class="br0">(</span>iTimeToReload == <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//when iTimeToReload is 0, reload the weapon as long as...</span>
+                <span class="br0">{</span>
+                      <span class="kw1">if</span><span class="br0">(</span>iNumberOfClips != <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//You still have clips left</span>
+                      <span class="br0">{</span>
+                                        <span class="kw1">if</span> <span class="br0">(</span> AmmoClass<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                                        AmmoCharge<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = MaxAmmo<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//max out the ammo of your primary fire</span>
+ 
+                                      iNumberOfClips--; <span class="co1">//Decrement the number of clips we have as we used one up!</span>
+                      <span class="br0">}</span>
+                      bReloading=<span class="kw9">False</span>; <span class="co1">//No longer reloading</span>
+                <span class="br0">}</span>
+             <span class="br0">}</span>
+       <span class="br0">}</span>
+       <span class="kw1">if</span><span class="br0">(</span>bSingleReload<span class="br0">)</span>
+       <span class="br0">{</span>
+ 
+            <span class="kw1">if</span><span class="br0">(</span>bReloading<span class="br0">)</span> <span class="co1">//Reloading</span>
+            <span class="br0">{</span>
+ 
+                         <span class="kw1">if</span><span class="br0">(</span>iTimeToReload != <span class="nu0">0</span><span class="br0">)</span>
+                         iTimeToReload--;  <span class="co1">//decrement time to reload</span>
+ 
+ 
+                          <span class="kw1">if</span><span class="br0">(</span>iTimeToReload == <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//if time to reload is 0 (you don't have to wait anymore)</span>
+                          <span class="br0">{</span>
+                            <span class="kw1">if</span><span class="br0">(</span>iNumberOfBullets != <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//and if you still have bullets left</span>
+                            <span class="br0">{</span>
+                              AddAmmo<span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>;   <span class="co1">//give gun 1 ammo and...</span>
+                              iNumberOfBullets--; <span class="co1">//take away one bullet from the belt</span>
+                            <span class="br0">}</span>
+                          <span class="br0">}</span>
+ 
+                          <span class="kw1">if</span><span class="br0">(</span>AmmoMaxed<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">//if you can't put anymore more bullets in... stop reloading</span>
+                          <span class="br0">{</span>
+                                iTimeToReload = iReloadWait;
+                                bReloading=<span class="kw9">False</span>;
+                          <span class="br0">}</span>
+            <span class="br0">}</span>
+       <span class="br0">}</span>
+ 
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+</pre></div>
+<hr />
+<p><b>zugy:</b> Nice. We happen to have reloadable weapons for our mod, HaloUT. It looks pretty similar to this. I think the class was called Haloweapon though...either way...It has the ability to stop firing when reloading as well...Basically it checks if the gun is currently reloading in the allowfire function and if it is, returns false...</p>
+<p><b>MythOpus:</b> Well, in my mod, it's called Polarity_WeaponBase hehe... I just changed the name so it could be bit more descriptive. I tried to use the return value of allowfire (without overiding the function) by using it in an if statement but it didn't work. I will have to probably do what you did with your weapons then. Do you have animations that reload yet?</p>
+<p><b>zugy:</b> Would have answered a but sooner, but I had to wait for a temp ban to get lifted...Anyhow...We have a subclass of weaponfire called HaloFire, and we do have reload animations...our allowfire function checks if the weapon is reloading by accessing a varible in the haloweapon class and if the gun is reloading it returns false.</p>
+<p><b>MythOpus:</b> I see. Well, I don't want to complicate things by making a custom WeaponFire unless I absolutely have to... and perhaps I will absolutely have to&#160;:| It works good the way it does now though. When I add the stuff I need to add for sounds and animations, I'll most likely update this page. It sucks that you get temporailly banned for reverting sites with lots of links&#160;:(</p>
+<p><b>zugy:</b> It isn't really all that much more complicated; all you do is the check if reloading and rely on the parent class for the rest...</p>
+<p><b>Solid Snake:</b> Hmmm, simplistic, but I dont think you've got replication support.</p>
+<p><b>MythOpus:</b> I hate replication, so I decided I would do all that when I have a complete working beta, but I didn't think I really needed replication as everything is client side anyways. All that the server needs to know is that there were shots fired, which it already does.</p>
+<p><b>Solid Snake:</b> Not a good approach towards implementing replication. Its often much harder to code an entire project and then 'add' in replication which is not what you do. Often, it is much better to code with replication in mind rather than as an after thought. It shouldn't be client side, as that poses a lot of problems? Who regulates when the client needs to reload, who regulates how many bullets are in the magazine/clip, who regulates when a client can shoot and if the client shoot will it remove ammo in the magazine/clip? The client? ... I sure hope not. This isn't so much as an attack on your code example up there, but well, those are some things to consider first as more of a priority goal rather than as an after thought. That depends if your coding a MP or a SP project that is, as obviously with SP projects, replication isn't even a consideration.</p>
+<p><b>MythOpus:</b> Attacks on my code are wanted&#160;:D Gives me insight. Anyways, here's why I don't think replication is very neccesary. I'm using functions to add the ammo from the clips from the weapon base class, which means it should all be properly replicated and what not. This new weapon basically works just like a normal weapon would, except that the player has the ability to load more ammo into it. The player can reload at any time. When the player has 0 ammo left, the gun doesn't work until the player calls the reloading function (via a bind or console). The gun doesn't work when it's ammo reaches 0 anyways, but the only difference is it won't switch to a weapon with ammo in it (at least not the way I have it set up). The amount of clips left are all held in the current weapon and I didn't think the server needs to know about how many clips are left. 'Lag' only affects the server-client connection and if you're talking about variables that are just client side, like the ClipsLeft variable, the server doesn't need to deal with them because they don't really affect anything. The server just needs to know that, "Hey, that weapon doesn't have any ammo anymore so it can't fire!" and "Hey, that weapon has ammo now so he can fire."</p>
+<p>Unless I'm completely wrong about this&#160;:|</p>
+<p>Any about the coding in replication later, I think I have replication in mind. I mean, I make doubles of everything to be compared to in my code so all I have to do is replicate the doubles... right?</p>
+<p><b>Solid Snake:</b>Don't really know what you mean by doubling your code and replicating doubles...</p>
+<p><b>MythOpus:</b> Haha. Okay, here's an example then. Instead of:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> AnInt;
+ 
+AnInt = <span class="nu0">5</span>;
+</pre></div>
+<p>Do this...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> AnInt,AnotherInt;
+ 
+<span class="kw1">replication</span> blah blah
+AnotherInt
+ 
+AnInt = AnotherInt;
+</pre></div>
+<p>Haha&#160;:S</p>
+<p><b>Wormbo:</b> Uhm, what's the point of that? Generally the server should dictate, what's going on. Especially something as important as ammunition management should not be delegated to the client. Clients might be allowed to <i>simulate</i> the server's behavior, but the server still has the final word about whether the weapon may fire or not. A popular example, how client side fire control can go wrong is the UT ZeroPing InstaGib mod. In an earlier version the server didn't check the firing rate and a so-called "mass-murder" cheat was created, where the client would immediately kill everyone in sight.</p>
+<p><b>MythOpus:</b> Laughs to himself loudly. Okay... well... for replication I thought you couldn't replicate variables that are being used by the code. Instead, I thoguht you had to make another variable that would be replicated and you would set another variable that you would want to be replicated to the variable that was being replicated....</p>
+<p>Anyways... Can you show me how I would do this clip/bullet left replication then?</p>
+<p><b>zugy:</b> Well I don't understand much about replication, but this was in our weapons class, maybe it'll give you some ideas...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+    <span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        ClipCount;
+ 
+ 
+    <span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        ReloadMeNow, FinishReloading;
+ 
+ 
+    <span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        ClientReload, ClientFinishReloading, ClientReloadEffects;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Brian_The_Black:</b> And here is my quick and dirty method for reloading weapons:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ReloadableWepFire <span class="kw5">extends</span> WeaponFire;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">float</span>  ReloadTime;
+<span class="kw5">var</span>    <span class="kw4">int</span>    ShotsFired;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">int</span>    ClipSize;
+ 
+<span class="kw5">event</span> ModeDoFire<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>ShotsFired&lt;=<span class="br0">(</span>ClipSize - <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>
+                <span class="br0">{</span>
+ 
+                  <span class="kw1">if</span> <span class="br0">(</span>FireRate==ReloadTime<span class="br0">)</span>
+                        FireRate=<span class="kw1">Default</span>.<span class="me1">FireRate</span>;
+ 
+                  ShotsFired = <span class="br0">(</span>ShotsFired<span class="nu0">+1</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="kw1">else</span>
+                <span class="br0">{</span>
+                  FireRate=ReloadTime;
+                  ShotsFired = <span class="nu0">0</span>;
+                  ReloadableWep<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">Reload</span><span class="br0">(</span>ReloadTime<span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+        <span class="kw6">super</span>.<span class="me1">ModeDoFire</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     ClipSize=<span class="nu0">5</span>
+     ReloadTime=<span class="nu0">2.000000</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The animation and sounds are done in the weapon:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ReloadableWeapon <span class="kw5">extends</span> Weapon
+    <span class="kw6">config</span><span class="br0">(</span>user<span class="br0">)</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">Name</span> ReloadAnim;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">Name</span> ReloadDownAnim;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">Name</span> ReloadUpAnim;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a> ReloadSound;
+<span class="kw5">var</span>   <span class="kw4">Float</span> SepReloadAnimRate;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Reload<span class="br0">(</span><span class="kw4">float</span> ReloadTime<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> HasAnim<span class="br0">(</span>ReloadAnim<span class="br0">)</span> <span class="br0">)</span>
+                PlayAnim<span class="br0">(</span>ReloadAnim, ReloadTime, <span class="nu0">0.0</span><span class="br0">)</span>;
+        <span class="kw1">else</span>
+                <span class="br0">{</span>
+                  SepReloadAnimRate = <span class="br0">(</span>ReloadTime<span class="nu0">-2</span><span class="br0">)</span>;
+ 
+                  PlaySound<span class="br0">(</span>ReloadSound, SLOT_None, <span class="nu0">1.0</span><span class="br0">)</span>;
+                  PlayAnim<span class="br0">(</span>ReloadDownAnim, <span class="nu0">0.5</span>, <span class="nu0">0.0</span><span class="br0">)</span>;
+                  SetTimer<span class="br0">(</span>SepReloadAnimRate, <span class="kw9">false</span><span class="br0">)</span>;
+                  PlayAnim<span class="br0">(</span>ReloadUpAnim, <span class="nu0">0.5</span>,<span class="nu0">0.0</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     ReloadUpAnim=<span class="st0">"Pickup"</span>
+     ReloadDownAnim=<span class="st0">"PutDown"</span>
+     ReloadSound=<a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'NewWeaponSounds.NewSniper_load'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>I have just made this today, my only problem with it is that the timer dosent seem to work. What is it's problem?</p>
+<p>Oh yea, and I need to sort the HUD out to display the ammo (but I shouldnt have a problem with this)</p>
+<p>Anyway, this is part of a project I have been doing in making a uber rocket launcher which has several intresting features:</p>
+<p>1. Scope, with target tracking (possible targets have a white box drawn around them)</p>
+<p>2. Homming missiles, missile launcher automaticaly locks onto target closest to the cross hairs (the current locked target has a red box instead of white)</p>
+<p>3. Once missiles are locked on to targets, they follow them with reasonable agility, even if the missile launcher has selected a new target (or gone out of target locking range, or controller died, or target is no longer visible)</p>
+<p>4. To make this weapon fairer, it fires 5 missiles and then has to reload.</p>
+<p>Anyway, I have almost finished it, just need to make a nice mesh for it.... problem is I cant find a converter for lightwave 9 files that works!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 28/1000000
+Post-expand include size: 132/2097152 bytes
+Template argument size: 76/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/l/Legacy%7EReloadableWeapons_540e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/l/Legacy_talk%7EReloadableWeapons_afe4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:ReloadableWeapons">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:11, 28 April 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:TrueTypeFontFactory/UFontMaterial - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:TrueTypeFontFactory/UFontMaterial</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/t/r/u/Legacy%7ETrueTypeFontFactory_d397.html" title="Legacy:TrueTypeFontFactory">Legacy:TrueTypeFontFactory</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>UFontMaterial is a little plugin for UnrealEd's material factory based on TrueTypeFontFactory created by <a href="../../../../articles/j/a/n/Legacy%7EJan_aa08.html" title="Legacy:Jan">Jan "eGo" Urbansky</a></p>
+<div class="floatright"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_UFontMaterial.gif_2a08.html" class="image" title="UFontMaterial Factory in UnrealEd in action"><img alt="UFontMaterial Factory in UnrealEd in action" src="../../../../images/Legacy_UFontMaterial.gif" width="614" height="530" border="0" /></a></span></div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Source_Code"><span class="tocnumber">1</span> <span class="toctext">Source Code</span></a></li>
+<li class="toclevel-1"><a href="#Releases"><span class="tocnumber">2</span> <span class="toctext">Releases</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Source_Code" id="Source_Code"></a></p>
+<h2><span class="mw-headline">Source Code</span></h2>
+<div class="hidden-block"><span class="hint">EC_UFontMaterial.uc</span>
+<div class="hidden">
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Package/class   :       ECTools.EC_UFontMaterial</span>
+<span class="co1">//    Autor                   :       Jan "eGo" Urbansky</span>
+<span class="co1">//    WWW                             :       http://www.ego-creations.de</span>
+<span class="co1">//    Script Version  :       0.6</span>
+<span class="co1">//    last changed    :       12.03.2005 - 08:33</span>
+<span class="co1">//</span>
+<span class="co1">//    NOTE!!!!!!!!!!!!!</span>
+<span class="co1">//    This script only works correctly with UT2004. Recommend usage with v3186 and higher.</span>
+<span class="co1">//</span>
+<span class="co1">//    Used information:</span>
+<span class="co1">//    http://udn.epicgames.com/Two/FontTutorial</span>
+<span class="co1">//    http://wiki.beyondunreal.com/wiki/TrueTypeFontFactory</span>
+<span class="co1">// ========================================================================================</span>
+ 
+<span class="kw5">class</span> EC_UFontMaterial <span class="kw5">extends</span> MaterialFactory;
+ 
+<span class="kw5">var</span> class&lt;Texture&gt; MaterialClass;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> FontName;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> FontSize;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">enum</span> EFontStyle
+<span class="br0">{</span>
+        Normal,
+        Italic,
+        Bold,
+        Bold_Italic,
+        Bolder,
+        Bolder_Italic,
+<span class="br0">}</span> FontStyle;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">enum</span> EFormat
+<span class="br0">{</span>
+        RGBA8,
+        DXT1,
+        DXT3,
+        DXT5,
+<span class="br0">}</span> TextureFormat;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> AntiAlias;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Chars;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Count;
+<span class="co1">//var() int CharactersPerPage;                // obsolete UEngine stuff???</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> DropShadowX;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> DropShadowY;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> ExtendBoxBottom;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> ExtendBoxLeft;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> ExtendBoxRight;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> ExtendBoxTop;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> Gamma;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Kerning;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Path;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> Underline;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> UnicodeRange;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> USize;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> VSize;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> Wildcard;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> XPad;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> YPad;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw5">const</span> <span class="kw6">editconst</span> <span class="kw4">string</span> Copyright;
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Returns the font style</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw6">private</span> <span class="kw5">function</span> <span class="kw4">string</span> GetFontStyle<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">string</span> FS;
+ 
+        <span class="kw1">switch</span><span class="br0">(</span> <span class="kw4">string</span><span class="br0">(</span> <span class="kw7">GetEnum</span><span class="br0">(</span> <span class="kw4">enum</span><span class="st0">'EFontStyle'</span>,FontStyle <span class="br0">)</span> <span class="br0">)</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">case</span> <span class="st0">"Normal"</span>:                              FS = <span class="st0">" STYLE=500 ITALIC=FALSE"</span>; <span class="kw1">break</span>;
+                <span class="kw1">case</span> <span class="st0">"Italic"</span>:                              FS = <span class="st0">" STYLE=500 ITALIC=TRUE"</span>; <span class="kw1">break</span>;
+                <span class="kw1">case</span> <span class="st0">"Bold"</span>:                                FS = <span class="st0">" STYLE=600 ITALIC=FALSE"</span>; <span class="kw1">break</span>;
+                <span class="kw1">case</span> <span class="st0">"Bold_Italic"</span>:                 FS = <span class="st0">" STYLE=600 ITALIC=TRUE"</span>; <span class="kw1">break</span>;
+                <span class="kw1">case</span> <span class="st0">"Bolder"</span>:                              FS = <span class="st0">" STYLE=700 ITALIC=FALSE"</span>; <span class="kw1">break</span>;
+                <span class="kw1">case</span> <span class="st0">"Bolder_Italic"</span>:               FS = <span class="st0">" STYLE=700 ITALIC=TRUE"</span>; <span class="kw1">break</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span> FS;
+<span class="br0">}</span>
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Returns the compression value</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw6">private</span> <span class="kw5">function</span> <span class="kw4">string</span> GetCompression<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">string</span> CS;
+ 
+        <span class="kw1">switch</span><span class="br0">(</span> <span class="kw4">string</span><span class="br0">(</span> <span class="kw7">GetEnum</span><span class="br0">(</span> <span class="kw4">enum</span><span class="st0">'EFormat'</span>,TextureFormat <span class="br0">)</span> <span class="br0">)</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">case</span> <span class="st0">"RGBA8"</span>:       CS = <span class="st0">""</span>; <span class="kw1">break</span>;                                     <span class="co1">// RGBA8</span>
+                <span class="kw1">case</span> <span class="st0">"DXT1"</span>:        CS = <span class="st0">" COMPRESSION=3"</span>; <span class="kw1">break</span>;       <span class="co1">// DXT1</span>
+                <span class="kw1">case</span> <span class="st0">"DXT3"</span>:        CS = <span class="st0">" COMPRESSION=7"</span>; <span class="kw1">break</span>;       <span class="co1">// DXT3</span>
+                <span class="kw1">case</span> <span class="st0">"DXT5"</span>:        CS = <span class="st0">" COMPRESSION=8"</span>; <span class="kw1">break</span>;       <span class="co1">// DXT5</span>
+        <span class="br0">}</span>
+        <span class="kw1">return</span> CS;
+<span class="br0">}</span>
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Builds the console command for the TrueTypeFontFactory</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw6">private</span> <span class="kw5">function</span> <span class="kw4">string</span> NewTTFMaterial<span class="br0">(</span> <span class="kw4">string</span> InPackage, <span class="kw4">string</span> InGroup, <span class="kw4">string</span> InName <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">string</span> S;                                                                                                                               <span class="co1">// command string declaration</span>
+ 
+        S = <span class="st0">"NEW TrueTypeFontFactory"</span>;                                                       <span class="co1">// create font with TTF factory</span>
+        S = S $ <span class="st0">" NAME=<span class="es0">\"</span>"</span> $ InName $ <span class="st0">"<span class="es0">\"</span>"</span>;                                                                   <span class="co1">// name of texture</span>
+        S = S $ <span class="st0">" CLASS=<span class="es0">\"</span>"</span> $ <span class="kw4">string</span><span class="br0">(</span>MaterialClass<span class="br0">)</span> $ <span class="st0">"<span class="es0">\"</span>"</span>;     <span class="co1">// name of class</span>
+        S = S $ <span class="st0">" GROUP=<span class="es0">\"</span>"</span> $ InGroup $ <span class="st0">"<span class="es0">\"</span>"</span>;                                                         <span class="co1">// name of group</span>
+        S = S $ <span class="st0">" PACKAGE=<span class="es0">\"</span>"</span> $ InPackage $ <span class="st0">"<span class="es0">\"</span>"</span>;                                             <span class="co1">// name of package</span>
+        S = S $ <span class="st0">" HEIGHT="</span> $ <span class="kw4">string</span><span class="br0">(</span>FontSize<span class="br0">)</span>;                                            <span class="co1">// font height</span>
+        S = S $ <span class="st0">" USIZE="</span> $ <span class="kw4">string</span><span class="br0">(</span>USize<span class="br0">)</span>;                                                                <span class="co1">// texture horizontal size</span>
+        S = S $ <span class="st0">" VSIZE="</span> $ <span class="kw4">string</span><span class="br0">(</span>VSize<span class="br0">)</span>;                      <span class="co1">// texture vertical size</span>
+        S = S $ <span class="st0">" FONTNAME=<span class="es0">\"</span>"</span> $ FontName $ <span class="st0">"<span class="es0">\"</span>"</span>;                                     <span class="co1">// Windows font name</span>
+        S = S $ <span class="st0">" YPAD="</span> $ <span class="kw4">string</span><span class="br0">(</span>YPad<span class="br0">)</span>;                                                                  <span class="co1">// texture tiles</span>
+        S = S $ <span class="st0">" XPAD="</span> $ <span class="kw4">string</span><span class="br0">(</span>XPad<span class="br0">)</span>;                                                                  <span class="co1">// texture tiles</span>
+        S = S $ <span class="st0">" ANTIALIAS="</span> $ <span class="kw4">string</span><span class="br0">(</span>AntiAlias<span class="br0">)</span>;                                <span class="co1">// antialiasing</span>
+        S = S $ <span class="st0">" COUNT="</span> $ <span class="kw4">string</span><span class="br0">(</span>Count<span class="br0">)</span>;                                                                <span class="co1">// char count</span>
+        S = S $ <span class="st0">" DROPSHADOWX="</span> $ <span class="kw4">string</span><span class="br0">(</span>DropShadowX<span class="br0">)</span>;            <span class="co1">// shadow width X</span>
+        S = S $ <span class="st0">" DROPSHADOWY="</span> $ <span class="kw4">string</span><span class="br0">(</span>DropShadowY<span class="br0">)</span>;            <span class="co1">// shadow width Y</span>
+        S = S $ <span class="st0">" GAMMA="</span> $ <span class="kw4">string</span><span class="br0">(</span>Gamma<span class="br0">)</span>;                                                                <span class="co1">// gamma value</span>
+<span class="co1">//    S = S $ " CHARACTERSPERPAGE=" $ string(CharactersPerPage);</span>
+        S = S $ <span class="st0">" UNICODERANGE=<span class="es0">\"</span>"</span> $ UnicodeRange $ <span class="st0">"<span class="es0">\"</span>"</span>;                     <span class="co1">// Unicode characters, use Hex values comma separated</span>
+        S = S $ <span class="st0">" WILDCARD=<span class="es0">\"</span>"</span> $ Wildcard $ <span class="st0">"<span class="es0">\"</span>"</span>;                                             <span class="co1">// includes a file with Unicode characters (e.g. MyChars.*)</span>
+        S = S $ <span class="st0">" EXTENDBOXBOTTOM="</span> $ <span class="kw4">string</span><span class="br0">(</span>ExtendBoxBottom<span class="br0">)</span>;    <span class="co1">// size box of the character letter (bottom edge)</span>
+        S = S $ <span class="st0">" EXTENDBOXTOP="</span> $ <span class="kw4">string</span><span class="br0">(</span>ExtendBoxTop<span class="br0">)</span>;                          <span class="co1">// size box of the character letter (top edge)</span>
+        S = S $ <span class="st0">" EXTENDBOXLEFT="</span> $ <span class="kw4">string</span><span class="br0">(</span>ExtendBoxLeft<span class="br0">)</span>;                        <span class="co1">// size box of the character letter (left edge)</span>
+        S = S $ <span class="st0">" EXTENDBOXRIGHT="</span> $ <span class="kw4">string</span><span class="br0">(</span>ExtendBoxRight<span class="br0">)</span>;              <span class="co1">// size box of the character letter (right edge)</span>
+        S = S $ <span class="st0">" UNDERLINE="</span> $ <span class="kw4">string</span><span class="br0">(</span>Underline<span class="br0">)</span>;                                                        <span class="co1">// underline style</span>
+        S = S $ <span class="st0">" PATH=<span class="es0">\"</span>"</span> $ Path $ <span class="st0">"<span class="es0">\"</span>"</span>;                                                                                             <span class="co1">// use it with Unicoderange (e.g. ".")</span>
+        S = S $ <span class="st0">" KERNING="</span> $ <span class="kw4">string</span><span class="br0">(</span>Kerning<span class="br0">)</span>;                                                                    <span class="co1">// spaces between the characters</span>
+        S = S $ GetFontStyle<span class="br0">(</span><span class="br0">)</span>;                                                                                                                                       <span class="co1">// font style</span>
+        S = S $ GetCompression<span class="br0">(</span><span class="br0">)</span>;                                                                                                                             <span class="co1">// compression type</span>
+ 
+        <span class="co1">// add backslashes to a string variable</span>
+        <span class="kw5">class</span><span class="st0">'EC_StrUtils'</span>.<span class="kw6">static</span>.<span class="me1">StrReplace</span><span class="br0">(</span> Chars , <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">92</span><span class="br0">)</span> , <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">92</span><span class="br0">)</span> $ <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">92</span><span class="br0">)</span> <span class="br0">)</span>;
+        <span class="kw5">class</span><span class="st0">'EC_StrUtils'</span>.<span class="kw6">static</span>.<span class="me1">StrReplace</span><span class="br0">(</span> Chars , <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">34</span><span class="br0">)</span> , <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">92</span><span class="br0">)</span> $ <span class="kw7">Chr</span><span class="br0">(</span><span class="nu0">34</span><span class="br0">)</span> <span class="br0">)</span>;
+ 
+        S = S $ <span class="st0">" CHARS=<span class="es0">\"</span>"</span> $ Chars $ <span class="st0">"<span class="es0">\"</span>"</span>;                       <span class="co1">// chars to include</span>
+ 
+  <span class="kw7">Log</span><span class="br0">(</span> S <span class="br0">)</span>;                                                                                                                                                                                          <span class="co1">// log the command</span>
+ 
+        <span class="kw1">return</span> S;
+<span class="br0">}</span>
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Returns the created font material</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw5">function</span> <a href="/Material"><span class="kw10">Material</span></a> CreateMaterial<span class="br0">(</span> <a href="/Object"><span class="kw10">Object</span></a> InOuter, <span class="kw4">string</span> InPackage, <span class="kw4">string</span> InGroup, <span class="kw4">string</span> InName <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">string</span> sMaterialPath;
+ 
+        ConsoleCommand <span class="br0">(</span> NewTTFMaterial<span class="br0">(</span> InPackage, InGroup, InName <span class="br0">)</span> <span class="br0">)</span>;
+ 
+        <span class="co1">// Package.Group.Name</span>
+        sMaterialPath = InPackage $ <span class="st0">"."</span> $ InName $ <span class="st0">"."</span> $ InName;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> MaterialClass == <span class="kw9">none</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">return</span> <span class="kw9">none</span>;
+        <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+                <span class="kw1">return</span> <a href="/Material"><span class="kw10">Material</span></a><span class="br0">(</span> <span class="kw7">FindObject</span><span class="br0">(</span> sMaterialPath $ <span class="st0">"_PageA"</span> , MaterialClass<span class="br0">)</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    Default Properties for this Class</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        MaterialClass=Engine.<a href="/Texture"><span class="kw10">Texture</span></a>
+        AntiAlias=<span class="kw9">False</span>
+        Chars=<span class="st0">" 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`~!@#$%^&amp;*()_+-=[]<span class="es0">\\</span>{}|;:',./?&gt;&lt;<span class="es0">\"</span>¡«°»¿ÀÁÄÈÉÊËÌÍÑÒÓÖÙÚÜßàáâäçèéêëìíîïñòóôöùúûüæøå"</span>
+        Count=<span class="nu0">256</span>
+        FontName=<span class="st0">"Arial"</span>
+        FontSize=<span class="nu0">10.000000</span>
+        Gamma=<span class="nu0">0.700000</span>
+        Kerning=<span class="nu0">0</span>
+        YPad=<span class="nu0">1</span>
+        XPad=<span class="nu0">1</span>
+        USize=<span class="nu0">256</span>
+        VSize=<span class="nu0">256</span>
+        Description=<span class="st0">"TrueType Font Texture"</span>
+        Copyright=<span class="st0">"UnrealED Plugin (c) 2004-2005, EGO-CREATIONS"</span>
+<span class="br0">}</span>
+</pre></div>
+</div>
+</div>
+<div class="hidden-block"><span class="hint">EC_StrUtils.uc</span>
+<div class="hidden">
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//  Package/class     :       ECTools.EC_StrUtils</span>
+<span class="co1">//    Autor                   :       Jan "eGo" Urbansky</span>
+<span class="co1">//    WWW                             :       http://www.ego-creations.de</span>
+<span class="co1">//    Script Version  :       0.1</span>
+<span class="co1">//    last changed    :       12.03.2005 - 08:24</span>
+<span class="co1">//</span>
+<span class="co1">//    Description             :       some string functions</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw5">class</span> EC_StrUtils <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+ 
+<span class="co1">// ========================================================================================</span>
+<span class="co1">//    String Replacement</span>
+<span class="co1">// ========================================================================================</span>
+<span class="kw6">simulated</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> StrReplace<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">string</span> Text, <span class="kw4">string</span> OldString, <span class="kw4">string</span> NewString<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+        <span class="kw5">local</span> <span class="kw4">string</span> s;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> Text == <span class="st0">""</span> || OldString == <span class="st0">""</span> <span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        s = Text;
+        Text = <span class="st0">""</span>;
+        i = <span class="kw7">InStr</span><span class="br0">(</span>s, OldString<span class="br0">)</span>;
+        <span class="kw1">while</span><span class="br0">(</span>i != <span class="nu0">-1</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                Text = Text $ <span class="kw7">Left</span><span class="br0">(</span>s, i<span class="br0">)</span> $ NewString;
+                s = <span class="kw7">Mid</span><span class="br0">(</span>s, i + <span class="kw7">Len</span><span class="br0">(</span>OldString<span class="br0">)</span><span class="br0">)</span>;
+                i = <span class="kw7">InStr</span><span class="br0">(</span>s, OldString<span class="br0">)</span>;
+        <span class="br0">}</span>
+        Text = Text $ s;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+</pre></div>
+</div>
+</div>
+<p><a name="Releases" id="Releases"></a></p>
+<h2><span class="mw-headline">Releases</span></h2>
+<p>Download: <a href="http://www.ego-creations.de/index.php?f=files&amp;T=2&amp;S=5" class="external text" title="http://www.ego-creations.de/index.php?f=files&amp;T=2&amp;S=5" rel="nofollow">UFontMaterial (UT2003)</a> (72 kB) v0.4</p>
+<p>Download: <a href="http://www.ego-creations.de/index.php?f=files&amp;T=2&amp;S=5" class="external text" title="http://www.ego-creations.de/index.php?f=files&amp;T=2&amp;S=5" rel="nofollow">UFontMaterial (UT2004)</a> (83 kB) v0.5</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/r/u/Legacy%7ETrueTypeFontFactory_d397.html" title="Legacy:TrueTypeFontFactory">TrueTypeFontFactory</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Mychaeel:</b> That's a pretty cool idea, actually... &#160;:-)</p>
+<p><b>SuperApe:</b> Well done. I recommend this plug-in.&#160;:tup:</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 23/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/u/Legacy%7ETrueTypeFontFactory_UFontMaterial_237d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/u/Legacy_talk%7ETrueTypeFontFactory_UFontMaterial_43cc.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:TrueTypeFontFactory/UFontMaterial">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:59, 10 May 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

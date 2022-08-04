@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Ideas/LocalGravity - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Ideas/LocalGravity</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_bf77.html" title="Legacy:Mod Ideas">Legacy:Mod Ideas</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>Moved from my Personal Projects page</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Local_Gravity"><span class="tocnumber">1</span> <span class="toctext">Local Gravity</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_Idea"><span class="tocnumber">1.1</span> <span class="toctext">The Idea</span></a></li>
+<li class="toclevel-2"><a href="#The_Progress"><span class="tocnumber">1.2</span> <span class="toctext">The Progress</span></a></li>
+<li class="toclevel-2"><a href="#To_Do"><span class="tocnumber">1.3</span> <span class="toctext">To Do</span></a></li>
+<li class="toclevel-2"><a href="#Comments"><span class="tocnumber">1.4</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Local_Gravity" id="Local_Gravity"></a></p>
+<h2><span class="mw-headline">Local Gravity</span></h2>
+<p><a name="The_Idea" id="The_Idea"></a></p>
+<h3><span class="mw-headline">The Idea</span></h3>
+<p>The Idea is to allow mappers greater control of the gravity in the map, allowing people to walk on walls, around a planet, or in general whatever can make a level more fun.</p>
+<p><a name="The_Progress" id="The_Progress"></a></p>
+<h3><span class="mw-headline">The Progress</span></h3>
+<p>My progress thus far has been with editing the PlayerSpidering state of the Playercontroller, and here is most of my code thus far.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+ 
+<span class="co1">// GravPlayer.uc</span>
+ 
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw5">class</span> GravPlayer <span class="kw5">extends</span> xPlayer;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> MaxAcceleration, AccelerationDampening;
+ 
+<span class="kw5">function</span> Possess<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> aPawn<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw6">Super</span>.<span class="me1">Possess</span><span class="br0">(</span>aPawn<span class="br0">)</span>;
+ 
+        <span class="kw7">GoToState</span><span class="br0">(</span><span class="st0">'PlayerSpidering'</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> PlayerSpidering
+ 
+<span class="br0">{</span>
+ 
+<span class="kw5">function</span> ProcessMove<span class="br0">(</span><span class="kw4">float</span> DeltaTime, <span class="kw4">vector</span> NewAccel, eDoubleClickDir DoubleClickMove, <span class="kw4">rotator</span> DeltaRot<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">local</span> <span class="kw4">vector</span> OldAccel;
+ 
+        OldAccel = <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span> != NewAccel <span class="br0">)</span>
+ 
+                <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span> = NewAccel;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> bPressedJump <span class="br0">)</span>
+ 
+                DoJump<span class="br0">(</span>bUpdating<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="co1">//Should put in the Pawn if possible, to eaise bot Implementation.</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> DoJump<span class="br0">(</span> <span class="kw4">bool</span> bUpdating <span class="br0">)</span>
+ 
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span> !<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bIsCrouched</span> &amp;&amp; !<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bWantsToCrouch</span> &amp;&amp; <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Physics</span> == PHYS_Spider <span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameDifficulty</span> &gt; <span class="nu0">2</span><span class="br0">)</span> <span class="br0">)</span>
+        MakeNoise<span class="br0">(</span><span class="nu0">0.1</span> * <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameDifficulty</span><span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bCountJumps</span> &amp;&amp; <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Inventory</span> != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+        <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Inventory</span>.<span class="me1">OwnerEvent</span><span class="br0">(</span><span class="st0">'Jumped'</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Physics</span> == PHYS_Spider <span class="br0">)</span>
+      <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span> += <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">JumpZ</span> * <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Floor</span>;
+     <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; !<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span>.<span class="me1">bWorldGeometry</span> <span class="br0">)</span>
+      <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span>.<span class="me1">Z</span> += <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span>.<span class="me1">Velocity</span>.<span class="me1">Z</span>;
+ 
+           <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">PhysicsVolume</span>.<span class="me1">Gravity</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+    <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+  <span class="br0">}</span>
+    <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UpdateRotation<span class="br0">(</span><span class="kw4">float</span> DeltaTime, <span class="kw4">float</span> maxPitch<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">rotator</span> ViewRotation;
+  <span class="kw5">local</span> <span class="kw4">vector</span> MyFloor, CrossDir, FwdDir, OldFwdDir, OldX, RealFloor, PawnX, PawnZ;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> bInterpolating || <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">bInterpolating</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+      ViewShake<span class="br0">(</span>deltaTime<span class="br0">)</span>;
+      <span class="kw1">return</span>;
+  <span class="br0">}</span>
+ 
+  TurnTarget = <span class="kw9">None</span>;
+  bRotateToDesired = <span class="kw9">false</span>;
+  bSetTurnRot = <span class="kw9">false</span>;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span> == <span class="kw9">None</span><span class="br0">)</span> || <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Floor</span> == <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>OldFloor == <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>
+    OldFloor = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>;
+    MyFloor = OldFloor;
+  <span class="br0">}</span>
+  <span class="kw1">else</span>
+      MyFloor = <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Floor</span>;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> MyFloor != OldFloor <span class="br0">)</span>
+  <span class="br0">{</span>
+      <span class="co1">// smoothly change floor</span>
+      RealFloor = MyFloor;
+      MyFloor = Normal<span class="br0">(</span><span class="nu0">6</span>*DeltaTime * MyFloor + <span class="br0">(</span><span class="nu0">1</span> - <span class="nu0">6</span>*DeltaTime<span class="br0">)</span> * OldFloor<span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>RealFloor <span class="kw3">Dot</span> MyFloor<span class="br0">)</span> &gt; <span class="nu0">0.999</span> <span class="br0">)</span>
+          MyFloor = RealFloor;
+      <span class="kw1">else</span>
+      <span class="br0">{</span>
+      <span class="co1">// translate view direction</span>
+        CrossDir = Normal<span class="br0">(</span>RealFloor <span class="kw3">Cross</span> OldFloor<span class="br0">)</span>;
+        FwdDir = CrossDir <span class="kw3">Cross</span> MyFloor;
+        OldFwdDir = CrossDir <span class="kw3">Cross</span> OldFloor;
+        ViewX = MyFloor * <span class="br0">(</span>OldFloor <span class="kw3">Dot</span> ViewX<span class="br0">)</span>
+              + CrossDir * <span class="br0">(</span>CrossDir <span class="kw3">Dot</span> ViewX<span class="br0">)</span>
+              + FwdDir * <span class="br0">(</span>OldFwdDir <span class="kw3">Dot</span> ViewX<span class="br0">)</span>;
+        ViewX = Normal<span class="br0">(</span>ViewX<span class="br0">)</span>;
+ 
+        ViewZ = MyFloor * <span class="br0">(</span>OldFloor <span class="kw3">Dot</span> ViewZ<span class="br0">)</span>
+              + CrossDir * <span class="br0">(</span>CrossDir <span class="kw3">Dot</span> ViewZ<span class="br0">)</span>
+              + FwdDir * <span class="br0">(</span>OldFwdDir <span class="kw3">Dot</span> ViewZ<span class="br0">)</span>;
+        ViewZ = Normal<span class="br0">(</span>ViewZ<span class="br0">)</span>;
+        OldFloor = MyFloor;
+        ViewY = Normal<span class="br0">(</span>MyFloor <span class="kw3">Cross</span> ViewX<span class="br0">)</span>;
+      <span class="br0">}</span>
+  <span class="br0">}</span>
+ 
+  <span class="co1">//Moved here because it is already calculated here</span>
+  <span class="co1">//Pawn.FaceRotation(OrthoRotation(ViewX,ViewY,ViewZ), deltaTime );</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>aTurn != <span class="nu0">0</span><span class="br0">)</span> || <span class="br0">(</span>aLookUp != <span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="co1">// adjust Yaw based on aTurn</span>
+    <span class="kw1">if</span> <span class="br0">(</span> aTurn != <span class="nu0">0</span> <span class="br0">)</span>
+        ViewX = Normal<span class="br0">(</span>ViewX +  ViewY * <span class="kw7">Sin</span><span class="br0">(</span><span class="nu0">0.0031</span>*DeltaTime*aTurn<span class="br0">)</span><span class="br0">)</span>;
+ 
+    <span class="co1">// adjust Pitch based on aLookUp</span>
+    <span class="kw1">if</span> <span class="br0">(</span> aLookUp != <span class="nu0">0</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        OldX = ViewX;
+        ViewX = Normal<span class="br0">(</span>ViewX +  ViewZ * <span class="kw7">Sin</span><span class="br0">(</span><span class="nu0">0.0031</span>*DeltaTime*aLookUp<span class="br0">)</span><span class="br0">)</span>;
+        ViewZ = Normal<span class="br0">(</span>ViewX <span class="kw3">Cross</span> ViewY<span class="br0">)</span>;
+ 
+        <span class="co1">//bound max pitch</span>
+        <span class="co1">//Redo this now</span>
+        <span class="coMULTI">/*if ( (ViewZ Dot MyFloor) &lt; 0.1   )
+        {
+            OldX = Normal(OldX - MyFloor * (MyFloor Dot OldX));
+            if ( (ViewX Dot MyFloor) &gt; 0)
+                ViewX = Normal(OldX + MyFloor);
+            else
+                ViewX = Normal(OldX - MyFloor);
+ 
+            ViewZ = Normal(ViewX Cross ViewY);
+        }*/</span>
+    <span class="br0">}</span>
+ 
+    <span class="co1">// calculate new Y axis</span>
+    ViewY = Normal<span class="br0">(</span>MyFloor <span class="kw3">Cross</span> ViewX<span class="br0">)</span>;
+  <span class="br0">}</span>
+  ViewRotation =  OrthoRotation<span class="br0">(</span>ViewX,ViewY,ViewZ<span class="br0">)</span>;
+  SetRotation<span class="br0">(</span>ViewRotation<span class="br0">)</span>;
+  ViewShake<span class="br0">(</span>deltaTime<span class="br0">)</span>;
+  ViewFlash<span class="br0">(</span>deltaTime<span class="br0">)</span>;
+  PawnX = Normal<span class="br0">(</span>ViewY <span class="kw3">Cross</span> MyFloor<span class="br0">)</span>;
+  PawnZ = Normal<span class="br0">(</span>PawnX <span class="kw3">Cross</span> ViewY<span class="br0">)</span>;
+  <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">FaceRotation</span><span class="br0">(</span>OrthoRotation<span class="br0">(</span>PawnX,ViewY,PawnZ<span class="br0">)</span>, deltaTime <span class="br0">)</span>;
+  <span class="co1">//Pawn.FaceRotation(ViewRotation, deltaTime );</span>
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PlayerTick<span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">local</span> <span class="kw4">Vector</span> HitLocation, HitNormal, X, Y, Z;
+ 
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> HitActor;
+ 
+        <span class="kw6">Super</span>.<span class="me1">PlayerTick</span><span class="br0">(</span>DeltaTime<span class="br0">)</span>;
+ 
+        GetAxes<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Rotation</span>, X, Y, Z<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Physics</span> == PHYS_Falling<span class="br0">)</span>
+ 
+        <span class="br0">{</span>
+ 
+          <span class="kw1">if</span><span class="br0">(</span>VSize<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span><span class="br0">)</span> &gt; MaxAcceleration<span class="br0">)</span>
+ 
+           <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span> = Normal<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span><span class="br0">)</span> * MaxAcceleration;
+ 
+          <span class="kw1">else</span>
+ 
+           <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span> *= AccelerationDampening;
+ 
+          <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration</span> += Z * <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">PhysicsVolume</span>.<span class="kw1">default</span>.<span class="me1">Gravity</span>.<span class="me1">Z</span>;
+ 
+          <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span> += <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Acceleration*DeltaTime</span>;
+ 
+          <span class="co1">//Pawn.Acceleration = vect(0,0,0);</span>
+ 
+          <span class="co1">//Change 70 to something less, static.</span>
+      HitActor = Trace<span class="br0">(</span>HitLocation, HitNormal, <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span>+Normal<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span><span class="br0">)</span>*<span class="nu0">100</span>, <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span>;
+      <span class="kw1">if</span><span class="br0">(</span>HitActor != <span class="kw9">None</span> &amp;&amp; HitActor.<span class="me1">bWorldGeometry</span><span class="br0">)</span>
+      <span class="br0">{</span>
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Here2"</span><span class="br0">)</span>;
+        <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Spider<span class="br0">)</span>;
+        <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">SetBase</span><span class="br0">(</span>HitActor , HitNormal<span class="br0">)</span>;
+      <span class="br0">}</span>
+ 
+        <span class="br0">}</span>
+ 
+<span class="br0">}</span>
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+  AccelerationDampening=<span class="nu0">0.1</span>
+  MaxAcceleration=<span class="nu0">200</span>
+  PawnClass=<span class="kw5">class</span><span class="st0">'LocalGravity.GravPawn'</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>ProcessMove is overridden to use a DoJump in this class, will probally get rid of this when I move that code back to the Pawn.</p>
+<p>UpdateRotation is mostly the same as in PlayerController.uc, except for a bit of math, that being in the middle of the function, no real way I could reuse it without copying it.</p>
+<p>Now, what I would like some suggestions on, are in my PlayerTick. the Trace that I am doing has a static number in there, I kinda need a better way, this will make you stick to soon when falling straight down, or not at all when falling too diagonal.</p>
+<p>Ohh yes, and we want to be able to get it into our map. So, an Actor!</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+ 
+<span class="co1">// LocalGravActor.uc</span>
+ 
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw5">class</span> LocalGravActor <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>
+  <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> Class&lt;PlayerController&gt; PCClass;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">string</span> PlayerClassName;
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+  <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">PlayerControllerClass</span> = PCClass;
+  <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DefaultPlayerClassName</span> = PlayerClassName;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+  PCClass=<span class="kw5">class</span><span class="st0">'LocalGravity.GravPlayer'</span>
+  PlayerClassName=<span class="st0">"LocalGravity.GravPawn"</span>
+  bHidden=<span class="kw9">true</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="To_Do" id="To_Do"></a></p>
+<h3><span class="mw-headline">To Do</span></h3>
+<p>The most pressing matters are finding a better way to see if we should be on something then</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+HitActor = Trace<span class="br0">(</span>HitLocation, HitNormal, <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span>+Normal<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span><span class="br0">)</span>*<span class="nu0">100</span>, <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span>;
+      <span class="kw1">if</span><span class="br0">(</span>HitActor != <span class="kw9">None</span> &amp;&amp; HitActor.<span class="me1">bWorldGeometry</span><span class="br0">)</span>
+</pre></div>
+<p>Then fix thirdperson camera, allow more flexibality when creating the level, and giving bots the same flexibility</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h3><span class="mw-headline">Comments</span></h3>
+<p><b>Glacian:</b> I am working on a similar mod, maybe we could combine forces....muwahaha! I fixed the bounded view angle problem by substituting in quaternion rotation, and I've coded up some modified gravity, doublejumping, and dodging code to work at any angle. I stuck only on the problem of getting the physics to allow the pawn to walk on the wall, and phys_spidering has some behaviors I don't like. If you (or anyone else) are interested, my email is focusgir (at) yahoo (dot) com.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 15/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_LocalGravity_fceb.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Ideas_LocalGravity_4c6e.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Ideas/LocalGravity">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:34, 11 June 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

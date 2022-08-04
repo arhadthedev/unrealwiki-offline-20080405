@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Scripting Movers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Scripting Movers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>When the Epic movers aren't enough, it's relatively easy to script your own. These can be embedded in a map's <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a> package.</p>
+<p>Basic steps:</p>
+<ol>
+<li>Subclass a mover class (see <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create A Subclass</a> for more on this)</li>
+<li>Write the script</li>
+<li>Compile</li>
+<li>Make the <a href="../../../../articles/r/e/d/Legacy%7ERed_Builder_Brush_1934.html" title="Legacy:Red Builder Brush">red builder brush</a> into a mover template</li>
+<li>Right-click the Add Mover button in the <a href="../../../../articles/t/o/o/Legacy%7EToolbox_b14b.html" title="Legacy:Toolbox">toolbox</a>. The name of the new mover class appears here (not sure if subclasses of subclasses appear here though)</li>
+</ol>
+<p><a name="Example" id="Example"></a></p>
+<h2><span class="mw-headline">Example</span></h2>
+<p><i>Tarquin writes:</i></p>
+<p>StandTriggerMover adds a new state. Expanding from a state wasn't really necessary, since I ended up having to copy the Attach() function across as well, since StandOpenTimed's Attach() function explicitly sends it to that state to open. (See <a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">State</a> for more on states...)</p>
+<p>This mover is activated both by being stood on by a player and a trigger. I've tested it and it works fine. Feel free to use it, though please credit the Wiki if you do. If you make any alterations, comment &amp; document them here.</p>
+<p>Turns out this script is largely pointless, and you can use BumpEvent or something to get the mover to trigger itself when stood on... sigh...</p>
+<p>PS. The best way to credit the Wiki, besides a mention in a map's helpfile, is to add to it...&#160;:-)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// StandTriggerMover.</span>
+<span class="co1">// This mover responds to both triggering and being stood on.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> StandTriggerMover <span class="kw5">extends</span> Mover;
+ 
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> TriggerStandOpenTimed <span class="kw5">extends</span> StandOpenTimed
+<span class="br0">{</span>
+ <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+ <span class="br0">{</span>
+  SavedTrigger = Other;
+  Instigator = EventInstigator;
+  <span class="kw1">if</span> <span class="br0">(</span> SavedTrigger != <span class="kw9">None</span> <span class="br0">)</span>
+   SavedTrigger.<span class="me1">BeginEvent</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+  <span class="kw7">GotoState</span><span class="br0">(</span> <span class="st0">'TriggerStandOpenTimed'</span>, <span class="st0">'Open'</span> <span class="br0">)</span>;
+ <span class="br0">}</span>
+ 
+ <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>
+ <span class="br0">{</span>
+  bOpening = <span class="kw9">false</span>;
+ <span class="br0">}</span>
+ 
+ <span class="kw5">function</span> Attach<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+ <span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">pawn</span></a>  P;
+ 
+  P = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>BumpType != BT_AnyBump<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P == <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+   <span class="kw1">return</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>BumpType == BT_PlayerBump<span class="br0">)</span> &amp;&amp; !P.<span class="me1">bIsPlayer</span> <span class="br0">)</span>
+   <span class="kw1">return</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>BumpType == BT_PawnBump<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Other.<span class="me1">Mass</span> &lt; <span class="nu0">10</span><span class="br0">)</span> <span class="br0">)</span>
+   <span class="kw1">return</span>;
+  SavedTrigger = <span class="kw9">None</span>;
+  <span class="kw7">GotoState</span><span class="br0">(</span> <span class="st0">'TriggerStandOpenTimed'</span>, <span class="st0">'Open'</span> <span class="br0">)</span>;
+ <span class="br0">}</span>
+ 
+Open:
+ <span class="kw7">Disable</span><span class="br0">(</span> <span class="st0">'Attach'</span> <span class="br0">)</span>;
+ <span class="kw7">Disable</span><span class="br0">(</span> <span class="st0">'Trigger'</span> <span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> DelayTime &gt; <span class="nu0">0</span> <span class="br0">)</span>
+ <span class="br0">{</span>
+  bDelaying = <span class="kw9">true</span>;
+  Sleep<span class="br0">(</span>DelayTime<span class="br0">)</span>;
+ <span class="br0">}</span>
+ DoOpen<span class="br0">(</span><span class="br0">)</span>;
+ FinishInterpolation<span class="br0">(</span><span class="br0">)</span>;
+ FinishedOpening<span class="br0">(</span><span class="br0">)</span>;
+ Sleep<span class="br0">(</span> StayOpenTime <span class="br0">)</span>;
+ <span class="kw1">if</span><span class="br0">(</span> bTriggerOnceOnly <span class="br0">)</span>
+  <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">''</span><span class="br0">)</span>;
+Close:
+ DoClose<span class="br0">(</span><span class="br0">)</span>;
+ FinishInterpolation<span class="br0">(</span><span class="br0">)</span>;
+ FinishedClosing<span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Trigger'</span> <span class="br0">)</span>;
+ <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Attach'</span> <span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/v/a/r/Legacy%7EVariableTimedMover_299a.html" title="Legacy:VariableTimedMover">VariableTimedMover</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a></li>
+<li><a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a></li>
+<li><a href="../../../../articles/c/u/s/Legacy%7ECustom_Mover_0ffe.html" title="Legacy:Custom Mover">Custom Mover</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Dr.AwkwArD:</b> Was this for UT99?</p>
+<p><b>Tarquin:</b> yes. Though in principle it should work with any version, with maybe tweaks.</p>
+<p><b>Vitaloverdose</b> About the Function attach...i cant see any attaching going on, is there any chance you could provide some info as to what its doing? Maybe some line comments?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 48/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/c/r/Legacy%7EScripting_Movers_b53b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/c/r/Legacy_talk%7EScripting_Movers_fd44.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Scripting_Movers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:49, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

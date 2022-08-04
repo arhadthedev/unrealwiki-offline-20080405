@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Unreal Engine And Game Code Overview - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Unreal Engine And Game Code Overview</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The original PDF is here: * <a href="http://udn.epicgames.com/pub/Technical/GameAndAIHandout/gameai.pdf" class="external free" title="http://udn.epicgames.com/pub/Technical/GameAndAIHandout/gameai.pdf" rel="nofollow">http://udn.epicgames.com/pub/Technical/GameAndAIHandout/gameai.pdf</a></p>
+<p>Note that this handout is a couple of years old, so some of the information is outdated. Also, the weapon system in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> is completely different from the one described in the Game/AI handout (the UT2003 weapon system was developed by DE).</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Unreal_Engine_AI_and_Game_Code_Overview"><span class="tocnumber">1</span> <span class="toctext">Unreal Engine AI and Game Code Overview</span></a>
+<ul>
+<li class="toclevel-2"><a href="#PART_I_-_Engine_Classes_defined_in_UnrealScript"><span class="tocnumber">1.1</span> <span class="toctext">PART I - Engine Classes defined in UnrealScript</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Actor"><span class="tocnumber">1.1.1</span> <span class="toctext">Actor</span></a></li>
+<li class="toclevel-3"><a href="#Pawn_and_Controller"><span class="tocnumber">1.1.2</span> <span class="toctext">Pawn and Controller</span></a></li>
+<li class="toclevel-3"><a href="#GameInfo_and_related_classes"><span class="tocnumber">1.1.3</span> <span class="toctext">GameInfo and related classes</span></a></li>
+<li class="toclevel-3"><a href="#PlayerReplicationInfo.2C_GameReplicationInfo_and_TeamInfo"><span class="tocnumber">1.1.4</span> <span class="toctext">PlayerReplicationInfo, GameReplicationInfo and TeamInfo</span></a></li>
+<li class="toclevel-3"><a href="#LevelInfo"><span class="tocnumber">1.1.5</span> <span class="toctext">LevelInfo</span></a></li>
+<li class="toclevel-3"><a href="#Volume.2C_PhysicsVolume.2C_and_BlockingVolume"><span class="tocnumber">1.1.6</span> <span class="toctext">Volume, PhysicsVolume, and BlockingVolume</span></a></li>
+<li class="toclevel-3"><a href="#NavigationPoints"><span class="tocnumber">1.1.7</span> <span class="toctext">NavigationPoints</span></a></li>
+<li class="toclevel-3"><a href="#Inventory.2C_Pickup.2C_and_AttachedInventory"><span class="tocnumber">1.1.8</span> <span class="toctext">Inventory, Pickup, and AttachedInventory</span></a></li>
+<li class="toclevel-3"><a href="#Weapon.2C_AttachedWeapon.2C_Projectile_and_Ammunition"><span class="tocnumber">1.1.9</span> <span class="toctext">Weapon, AttachedWeapon, Projectile and Ammunition</span></a></li>
+<li class="toclevel-3"><a href="#Mover"><span class="tocnumber">1.1.10</span> <span class="toctext">Mover</span></a></li>
+<li class="toclevel-3"><a href="#Trigger"><span class="tocnumber">1.1.11</span> <span class="toctext">Trigger</span></a></li>
+<li class="toclevel-3"><a href="#Effects"><span class="tocnumber">1.1.12</span> <span class="toctext">Effects</span></a></li>
+<li class="toclevel-3"><a href="#Damagetype"><span class="tocnumber">1.1.13</span> <span class="toctext">Damagetype</span></a></li>
+<li class="toclevel-3"><a href="#LocalMessage"><span class="tocnumber">1.1.14</span> <span class="toctext">LocalMessage</span></a></li>
+<li class="toclevel-3"><a href="#HUD_and_Scoreboard"><span class="tocnumber">1.1.15</span> <span class="toctext">HUD and Scoreboard</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#PART_II_-_Game_code_in_C.2B.2B"><span class="tocnumber">1.2</span> <span class="toctext">PART II - Game code in C++</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Navigation_AI"><span class="tocnumber">1.2.1</span> <span class="toctext">Navigation AI</span></a></li>
+<li class="toclevel-3"><a href="#Actor_creation_and_destruction"><span class="tocnumber">1.2.2</span> <span class="toctext">Actor creation and destruction</span></a></li>
+<li class="toclevel-3"><a href="#Physics_and_world_interaction"><span class="tocnumber">1.2.3</span> <span class="toctext">Physics and world interaction</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Unreal_Engine_AI_and_Game_Code_Overview" id="Unreal_Engine_AI_and_Game_Code_Overview"></a></p>
+<h2><span class="mw-headline">Unreal Engine AI and Game Code Overview</span></h2>
+<p>Steven Polge Epic Games October 16, 2001</p>
+<p><a name="PART_I_-_Engine_Classes_defined_in_UnrealScript" id="PART_I_-_Engine_Classes_defined_in_UnrealScript"></a></p>
+<h3><span class="mw-headline">PART I - Engine Classes defined in UnrealScript</span></h3>
+<p><a name="Actor" id="Actor"></a></p>
+<h4><span class="mw-headline"><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a></span></h4>
+<dl>
+<dd>Base class of all gameplay objects.</dd>
+<dd>A large number of properties, behaviors and interfaces are implemented in the</dd>
+<dd>base Actor class, including:
+<dl>
+<dd>Display</dd>
+<dd>Animation</dd>
+<dd>Physics and world interaction (discussed later)</dd>
+<dd>Making sounds</dd>
+<dd>Networking properties (discussed in networking session).</dd>
+<dd>Actor creation and destruction (discussed later)</dd>
+<dd>Triggering and timers
+<dl>
+<dd>When an actor with a defined event calls TriggerEvent() or UntriggerEvent(), the Trigger() or Untrigger() function is called for all actors with the matching tag.</dd>
+<dd>An actor’s event is triggered for the following events:
+<dl>
+<dd>Decoration - when it’s destroyed.</dd>
+<dd>PlayerStart - when a pawn spawns in it.</dd>
+<dd>GameInfo - when the game ends, it triggers an event named ‘EndGame’.</dd>
+<dd>Mover - when it finisheds opening.</dd>
+<dd>Mover - when it bumps an actor, it triggers its BumpEvent or PlayerBumpEvent.</dd>
+<dd>Pawn - when it’s killed.</dd>
+<dd>Pickup - when it’s picked up.</dd>
+<dd>Teleporter - when it’s used.</dd>
+<dd>Trigger - when touched by a relevant actor, or damaged if it’s a damageable trigger.</dd>
+<dd>PhysicsVolume - when a player enters the volume.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dd>Actor iterator functions
+<dl>
+<dd>AllActors is slooow.</dd>
+<dd>DynamicActors faster, since it skips all actors with bStatic==true</dd>
+<dd>TouchingActors very fast (goes through actors Touching array)</dd>
+<dd>CollidingActors fast for relatively small radii (uses collision hash)
+<dl>
+<dd>Radius relative to level size - as long as only a small percentage of actors will be considered</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dd>Message broadcasting</dd>
+<dd>Tick() and PlayerTick() - called every frame
+<dl>
+<dd>PlayerControllers get PlayerTick()</dd>
+<dd>Avoid implementing tick() - scripts should be event driven to be efficient</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="Pawn_and_Controller" id="Pawn_and_Controller"></a></p>
+<h4><span class="mw-headline"><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> and <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a></span></h4>
+<dl>
+<dd><b>Pawn</b> is physical representation of players/ NPC AIs in a level.
+<dl>
+<dd>Pawn specific physics properties (movement speed, etc.) AI related flags (hearing, seeing capabilities</dd>
+<dd>Weapon/Inventory handling functions - adding, removing, finding, selecting</dd>
+<dd>TakeDamage(), Dying state</dd>
+<dd>NEW animation interface for pawns
+<dl>
+<dd>Animations are generated client-side, reducing network bandwidth</dd>
+<dd>Pawns handle animend(), not their controller (except for ScriptedControllers)</dd>
+<dd>Per tick blending changes for smooth movement transitions Still prototype - will use animation object interface</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl>
+<dd><b>Controllers</b> are non-physical actors which can be attached to a pawn to control its actions.
+<dl>
+<dd><b>PlayerControllers</b> are used by human players to control pawns</dd>
+<dd><b>AIControllers</b> are used to implement the artificial intelligence for the pawns they control.
+<dl>
+<dd><b>AIScripts</b> can be associated with pawns placed in levels to modify their AIControllers.</dd>
+</dl>
+</dd>
+<dd><b>ScriptedControllers</b> can be used to make a pawn follow a scripted sequence, defined by <b>ScriptedSequence</b> ( a subclass of AIScript) actors.</dd>
+<dd>Controllers use Possess() and UnPossess() to take or relinquish control of a pawn.</dd>
+<dd>Controllers receive notifications for many of the events occurring for the pawn they are controlling, giving them the opportunity to intercept the event and supercede the Pawn’s default behavior.</dd>
+</dl>
+</dd>
+<dd><b>PlayerController</b>
+<dl>
+<dd>
+<dl>
+<dd>Player control pre-processed by PlayerInput object</dd>
+<dd>PlayerTick() called every frame to allow PlayerController to control pawn based on player inputs.</dd>
+<dd>Player Movement states (PlayerWalking, PlayerSwimming, etc) for each mode that has different control.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="GameInfo_and_related_classes" id="GameInfo_and_related_classes"></a></p>
+<h4><span class="mw-headline">GameInfo and related classes</span></h4>
+<dl>
+<dd>Defines the game being played: the game rules, scoring, what actors are allowed to exist in this game type, and who may enter the game.</dd>
+<dd>GameInfo actor class is determined by (in order) either the DefaultGameType if specified in the LevelInfo, or the DefaultGame entry in the game’s .ini file (in the Engine.Engine section), unless it’s a network game in which case the DefaultServerGame entry is used</dd>
+<dd>The GameInfo’s InitGame() function is called before any other scripts (including PreBeginPlay() ), and is used by the GameInfo to initialize parameters and spawn its helper classes.</dd>
+<dd>The login process
+<dl>
+<dd>Used even in single player game</dd>
+<dd>In a network game, the <b>AccessControl</b> class determines whether or not player is allowed to login in PreLogin() function. It also controls whether a player can enter as a participant, a spectator, or a game administrator.</dd>
+<dd>Ulevel::SpawnPlayActor() calls the GameInfo Login() function to spawn a player controller, then attaches a Player to the returned PlayerController, then handles traveling inventory and properties.</dd>
+<dd>The GameInfo Login() function
+<dl>
+<dd>Sets the player team, if relevant (by calling PickTeam() and ChangeTeam())</dd>
+<dd>Finds an appropriate player start (by calling FindPlayerStart() )</dd>
+<dd>Initializes the PlayerReplicationInfo</dd>
+<dd>Validates the desired pawn class.</dd>
+<dd>If not a delayed start, start match or spawn player pawn immediately, else wait for match to start.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dd><b>Mutators</b> allow modifications to gameplay while keeping game rules intact.</dd>
+<dd>Multiple mutators can be used together. (intended for mod authors)
+<dl>
+<dd>ModifyLogin() used to modify player login parameters.</dd>
+<dd>ModifyPlayer() used to modify player pawn properties.</dd>
+<dd>GetDefaultWeapon() used to modify the default weapon for players.</dd>
+<dd>CheckRelevance() used to modify, replace, or remove all actors. Called from the PreBeginPlay() function of all actors except those (Decals, Effects and Projectiles for performance reasons) which have bGameRelevant==true.</dd>
+</dl>
+</dd>
+<dd><b>GameRules</b> specify optional modifications to game rules, such as scoring, finding player starts, and damage modification. (intended for mod authors)</dd>
+<dd><b>BroadcastHandler</b> handles both text messages (typed by a player) and localized messages (which are identified by a LocalMessage class and id).
+<dl>
+<dd>GameInfos produce localized messages using their DeathMessageClass and GameMessageClass classes.</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="PlayerReplicationInfo.2C_GameReplicationInfo_and_TeamInfo" id="PlayerReplicationInfo.2C_GameReplicationInfo_and_TeamInfo"></a></p>
+<h4><span class="mw-headline">PlayerReplicationInfo, GameReplicationInfo and TeamInfo</span></h4>
+<dl>
+<dd>Are always relevant, and contain replicated attributes which are important to keep updated for all clients.</dd>
+<dd>Each player has an associated PlayerReplicationInfo, and the GameInfo has an associated GameReplicationInfo.</dd>
+</dl>
+<p><a name="LevelInfo" id="LevelInfo"></a></p>
+<h4><span class="mw-headline">LevelInfo</span></h4>
+<dl>
+<dd>Each level has one LevelInfo, automatically generated by the level editor when the level is created.</dd>
+<dd>Always the first actor in the actor list.</dd>
+<dd>Holds properties of global importance in the level, such as the time (TimeSeconds), and the networking mode (NetMode - server or client).</dd>
+<dd>All actors in the level have access to the LevelInfo through their Level attribute.</dd>
+<dd>Has a reference to the level’s GameInfo actor through its Game attribute. While there is a valid LevelInfo actor for all servers and clients, only servers and standalone games have GameInfos.</dd>
+<dd>The LevelInfo also contains two specialized actor lists that are used for fast access to certain actor types. The ControllerList is a linked list of all controllers in the level, and the NavigationPointList is a linked list of all NavigationPoints in the level. These lists will probably become obsolete when we change the Actor list to a TMap.</dd>
+</dl>
+<p><a name="Volume.2C_PhysicsVolume.2C_and_BlockingVolume" id="Volume.2C_PhysicsVolume.2C_and_BlockingVolume"></a></p>
+<h4><span class="mw-headline">Volume, PhysicsVolume, and BlockingVolume</span></h4>
+<dl>
+<dd>Used for defining areas with gameplay implications.</dd>
+<dd>Touch() and Untouch() notifications to the volume as actors enter or leave it</dd>
+<dd>ActorEnteredVolume() and ActorLeftVolume() notifications when center of actor enters the volume</dd>
+<dd>Pawns with bIsPlayer==true cause PlayerEnteredVolume() and PlayerLeftVolume() notifications instead.</dd>
+<dd>AssociatedActor also gets touch() and untouch() notifications (for example, to create non-cylindrical triggers).</dd>
+<dd><b>BlockingVolumes</b> used to provide fast, simple collision (around static meshes for example). By default, they collide with non-zero extent traces only.</dd>
+<dd><b>PhysicsVolumes</b> contain properties which affect physics of actors in them (gravity, etc.)
+<dl>
+<dd>This functionality used to be in ZoneInfo.</dd>
+<dd>Priority attribute determines which PhysicsVolume has precedence.</dd>
+<dd>PhysicsVolumes also have built in support for entry and exit sounds/actors.</dd>
+<dd>PhysicsVolumes can cause recurring damage to actors in them.</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="NavigationPoints" id="NavigationPoints"></a></p>
+<h4><span class="mw-headline">NavigationPoints</span></h4>
+<dl>
+<dd>Organized into network to provide AIControllers the capability of determining paths to arbitrary destinations in a level.</dd>
+<dd>Each NavigationPoint has a PathList of ReachSpecs which describe paths which can be reached from that node.</dd>
+<dd>Each ReachSpec specifies a destination, and the movement requirements (size, physics modes, etc.) required to take that path.</dd>
+<dd>NEW UpstreamPaths[] and PrunedPaths[] were removed from the latest code, and Reachspecs are now UnrealScript defined actors. PathList is now a dynamic array.</dd>
+<dd>Special NavigationPoint types (door, ladder, liftcenter and liftexit) used to specify navigation in conjunction with movers. Interface for telling AI how to use these paths described later.</dd>
+</dl>
+<p><a name="Inventory.2C_Pickup.2C_and_AttachedInventory" id="Inventory.2C_Pickup.2C_and_AttachedInventory"></a></p>
+<h4><span class="mw-headline">Inventory, Pickup, and AttachedInventory</span></h4>
+<dl>
+<dd><b>Pickup</b> is the base class of actors that when touched by an appropriate pawn, will create and place an Inventory actor in that pawn’s inventory chain.
+<dl>
+<dd>Has an associated inventory class (its InventoryType).</dd>
+<dd>Placed by level designers.</dd>
+<dd>Can only interact with pawns when in their default Pickup state. Pickups verify that they can give inventory to a pawn by calling the GameInfo’s PickupQuery() function. After a pickup spawns an inventory item for a pawn, it then queries the GameInfo by calling the GameInfo’s ShouldRespawn() function about whether it should remain active, enter its Sleep state and later become active again, or destroy itself.</dd>
+<dd>Has an AI interface to allow AIControllers, such as bots, to assess the desireability of acquiring that pickup. The BotDesireability() method returns a float typically between 0 and 1 describing how valuable the pickup is to the AIController. This method is called when an AIController uses the FindPathToBestInventory() navigation intrinsic.</dd>
+<dd>When navigation paths are built, each pickup has an InventorySpot (a subclass of NavigationPoint) placed on it and associated with it (the Pickup’s MyMarker== the InventorySpot, and the InventorySpot’s markedItem == the pickup).</dd>
+</dl>
+</dd>
+</dl>
+<dl>
+<dd><b>Inventory</b> is the parent class of all actors that can be carried by other actors.
+<dl>
+<dd>Placed in the holding actor’s inventory chain, a linked list of inventory actors.</dd>
+<dd>Each inventory class knows what pickup can spawn it (its PickupClass).</dd>
+<dd>When tossed out (using the DropFrom() function), inventory items replace themselves with an actor of their Pickup class.</dd>
+<dd>Most Inventory actors are never rendered. The common exception is Weapon actors. Inventory actors may be rendered in the first person view of the player holding them, with the Inventory function, using the RenderOverlays() function. The CalcDrawOffset() function determines where to render the item on the player’s screen.</dd>
+<dd>Inventory items may also be rendered attached to the player’s mesh, by spawning an appropriate <b>InventoryAttachment</b> actor.</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="Weapon.2C_AttachedWeapon.2C_Projectile_and_Ammunition" id="Weapon.2C_AttachedWeapon.2C_Projectile_and_Ammunition"></a></p>
+<h4><span class="mw-headline">Weapon, AttachedWeapon, Projectile and Ammunition</span></h4>
+<dl>
+<dd>Pawns use weapons by calling the weapon’s fire() or altfire() function. Each pawn has one currently active weapon (specified by its Weapon attribute).</dd>
+<dd>NEW All weapons require ammunition. When a weapon is given to a pawn, it will spawn the appropriate Ammunition actor (as determined by the weapon’s AmmoName attribute) in the pawn’s inventory chain if it does not exist, or adding the weapon’s PickupAmmoCount to the ammunition if it does. Whenever a weapon fires, it will first call its Ammunition’s UseAmmo() function to verify that ammunition is available, and if so reduce the remaining ammunition.</dd>
+<dd>NEW Ammunition is now responsible for spawning the appropriate Projectile or processing a trace hit. This allows weapons to have multiple ammunition types each with different behavior (replaces old fire()/altfire() behavior).</dd>
+<dd>NEW weapon firing code updated - described in detail in networking session.</dd>
+<dd>Weapon AI interface used for picking the appropriate weapon (the RecommendWeapon() function, which compares the value of the weapons available in the inventory chain), and determining the tactics to use with it.</dd>
+<dd>RateSelf() specifies how valuable the weapon is in the controller’s current tactical situation.</dd>
+<dd>SuggestAttackStyle() tells the controller whether it should be aggressive or cautious when using this type of weapon, while SuggestDefenseStyle() tells the controller whether it should be aggressive or cautious when being attacked by an enemy wielding this weapon. Ammunition now also has an AI interface ( RateSelf() ) because of its expanded role.</dd>
+</dl>
+<p><a name="Mover" id="Mover"></a></p>
+<h4><span class="mw-headline">Mover</span></h4>
+<dl>
+<dd>Movers are Actors with a StaticMesh that moves between its keyframes when triggered depending on its initial state.</dd>
+<dd>Movers send notifications to AIs that have sent them as their PendingMover.</dd>
+</dl>
+<p><a name="Trigger" id="Trigger"></a></p>
+<h4><span class="mw-headline">Trigger</span></h4>
+<dl>
+<dd>When enabled generates events when triggered by an appropriate actor (usually by touching, or by shooting.</dd>
+</dl>
+<p><a name="Effects" id="Effects"></a></p>
+<h4><span class="mw-headline">Effects</span></h4>
+<dl>
+<dd>Base class of all gratuitous special effects.</dd>
+<dd>Generally should not be replicated, but rather spawned on client side by other replicated actors.</dd>
+</dl>
+<p><a name="Damagetype" id="Damagetype"></a></p>
+<h4><span class="mw-headline">Damagetype</span></h4>
+<dl>
+<dd>Abstract classes which are responsible for specifiying many damage related attributes, such as the effects (blood, screen flash, etc.) associated with that damage, and the string to print to describe deaths by that type of damage.</dd>
+<dd>Passed as a parameter of the actor TakeDamage() function.</dd>
+</dl>
+<p><a name="LocalMessage" id="LocalMessage"></a></p>
+<h4><span class="mw-headline">LocalMessage</span></h4>
+<dl>
+<dd>Abstract classes which contain an array of localized text .</dd>
+<dd>The PlayerController function ReceiveLocalizedMessage() is used to send messages to a specific player by specifying the LocalMessage class and index. This allows the message to be localized on the client side, and saves network bandwidth since the text is not sent.</dd>
+</dl>
+<p><a name="HUD_and_Scoreboard" id="HUD_and_Scoreboard"></a></p>
+<h4><span class="mw-headline">HUD and Scoreboard</span></h4>
+<dl>
+<dd>The <b>HUD</b> is responsible for drawing any information overlay.
+<dl>
+<dd>The local player always has a valid HUD.</dd>
+<dd>The HUD type is defined by the GameInfo actor.</dd>
+<dd>Every frame, the HUD’s postrender function is called after the world has been rendered.</dd>
+<dd>ShowDebug exec will show debug parameters of currently viewed actor (use ViewClass xxx to change viewed actor).</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="PART_II_-_Game_code_in_C.2B.2B" id="PART_II_-_Game_code_in_C.2B.2B"></a></p>
+<h3><span class="mw-headline">PART II - Game code in C++</span></h3>
+<p><a name="Navigation_AI" id="Navigation_AI"></a></p>
+<h4><span class="mw-headline">Navigation AI</span></h4>
+<dl>
+<dd>
+<dl>
+<dd>Reachspecs must be built before navigation network can be used (in the UnrealEd build menu).</dd>
+<dd>Controllers can check if a nearby point or actor (less than MAXPATHDIST away) is directly reachable using PointReachable() and ActorReachable().</dd>
+<dd>MoveToward() and MoveTo() are latent functions which cause the Controller’s pawn to move toward the specified destination. State code execution continues when either the destination is reached, or progress is no longer possible.
+<dl>
+<dd>If the move is from one NavigationPoint to another, the destination NavigationPoint’s SuggestMovePreparation() is called if it isimplemented, to allow it to direct the pawn to perform some action first.</dd>
+<dd>The AIController functions WaitForMover() and MoverFinished() provide an interface between a mover/its navigationpoint and the controller.</dd>
+<dd>If the current pawn’s collision or other properties are not supported by the path between the navigation points, the AIController’s PrepareForMove() is called (to allow it to crouch, for example).</dd>
+<dd>While the pawn’s bPreparingMove== true, the movement is suspended.</dd>
+</dl>
+</dd>
+<dd>For destinations that aren’t directly reachable, FindPathToward() and FindPathTo () will return the NavigationPoint to move directly toward to reach that destination. When the NavigationPoint is reached, call FindPathxxx() again to determine the next path (with any dynamic path network changes considered).
+<dl>
+<dd>The Controller’s RouteCache[] array contains the first 16</dd>
+<dd>NavigationPoints in the best path determined toward the destination.</dd>
+</dl>
+</dd>
+<dd>NodeEvaluator functions can be defined to specify node desireability for routing when a specific destination is not specified. Path finding code drops out immediately if result is &gt;= 1.0. FindPathTowardNearest(), FindRandomDest() are example native script functions which take advantage of this capability.</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="Actor_creation_and_destruction" id="Actor_creation_and_destruction"></a></p>
+<h4><span class="mw-headline">Actor creation and destruction</span></h4>
+<dl>
+<dd>
+<dl>
+<dd>Spawn() in script calls SpawnActor() in C++
+<dl>
+<dd>For script spawned actors, the spawned actor’s instigator is automatically set to be the instigator of the actor which is calling Spawn().</dd>
+<dd>Actor must fit where it is placed in the world, or it won’t be spawned.</dd>
+<dd>After initialization (with exceptions noted below), the following actor events are called:
+<dl>
+<dd>Spawned() - C++</dd>
+<dd>PreBeginPlay() - script (handles destruction if not game relevant) BeginPlay() - script</dd>
+<dd>PostBeginPlay() - script</dd>
+<dd>PostNetBeginPlay() - script (Called after replicated properties of actor have been updated - note that replication at this point isn’t guaranteed)</dd>
+<dd>If actor has an auto state, its BeginState() is called.</dd>
+</dl>
+</dd>
+<dd>Final initialization of the actor is done just before calling PostBeginPlay() in the following order:
+<dl>
+<dd>The actor’s ZoneInfo and PhysicsVolume are set.</dd>
+<dd>Collision with blocking non-world geometry actors is resolved using actor events EncroachingOn() and EncroachedBy().</dd>
+</dl>
+</dd>
+<dd>Touching notifies currently don’t happen when actor is spawned.</dd>
+</dl>
+</dd>
+<dd>Actor creation at level startup
+<dl>
+<dd>InitGame is called on the GameInfo</dd>
+<dd>Spawned() is not called.</dd>
+<dd>PreBeginPlay() is called for all actors</dd>
+<dd>BeginPlay() called for all actors</dd>
+<dd>ZoneInfos and Volumes set for all actors</dd>
+<dd>PostBeginPlay() called for all actors</dd>
+<dd>PostNetBeginPlay() called for all actors</dd>
+<dd>BeginState() is called for all actors with initial state</dd>
+</dl>
+</dd>
+<dd>Actor destruction
+<dl>
+<dd>Initially bDeleteMe is set</dd>
+<dd>When 255 actors marked for deletion, they are cleaned up, with all actor references to other actors removed.</dd>
+<dd>Currently, deleted actors may still be visible to script before cleanup. Will be changed in next version - note potential issues to avoid.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><a name="Physics_and_world_interaction" id="Physics_and_world_interaction"></a></p>
+<h4><span class="mw-headline">Physics and world interaction</span></h4>
+<dl>
+<dd>
+<dl>
+<dd>Touch() and Untouch() notifications used for collisions between actors for whom collision is enabled, but which don’t block each other.
+<dl>
+<dd>Occurs during one actor’s physics. Avoid infinite loops (singular keyword is simple fix).</dd>
+<dd>Use PendingTouch actor list for actors which want to add an effect after the move completes using the PostTouch() notification.</dd>
+</dl>
+</dd>
+<dd>Bump() notification sent when actors which block each other collide.
+<dl>
+<dd>Occurs during one actor’s physics. Avoid infinite loops (singular keyword is simple fix).</dd>
+</dl>
+</dd>
+<dd>Base/Attached actors
+<dl>
+<dd>When actor gets its base set, it is added to the base’s Attached array</dd>
+<dd>Base gets Detach() and Attach()notifications</dd>
+<dd>Actor gets BaseChanged() notification</dd>
+<dd>Base can change when:
+<dl>
+<dd>Change physics mode</dd>
+<dd>Teleport (lose attached actors)</dd>
+<dd>Pawn walking</dd>
+<dd>SetBase() from script</dd>
+</dl>
+</dd>
+<dd>Special case if AttachmentBone!=None</dd>
+</dl>
+</dd>
+<dd>Actor Physics modes
+<dl>
+<dd>PHYS_Projectile</dd>
+<dd>PHYS_Falling:</dd>
+<dd>PHYS_Rotating: Rotation, no translation</dd>
+<dd>PHYS_Trailer: soon obsolete</dd>
+<dd>PHYS_RootMotion: under construction</dd>
+<dd>Rotation
+<dl>
+<dd>Not updated if PHYS_None</dd>
+<dd>If bFixedRotationDir==true, will continue rotating in same direction, even after reaching DesiredRotation.</dd>
+<dd>If bRotateToDesired==true, will rotate to DesiredRotation and stop.</dd>
+</dl>
+</dd>
+<dd>Physics notifications:
+<dl>
+<dd>HitWall()</dd>
+<dd>Landed() (HitNormal.Z &gt; MINFLOORZ)</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dd>Pawn physics modes
+<dl>
+<dd>PHYS_Walking
+<dl>
+<dd>Optional Check for ledges - MayFall() notification
+<dl>
+<dd>For AI if&#160;!bCanWalkOffLedges, with optional</dd>
+<dd>bAvoidLedges (keep away from them).</dd>
+</dl>
+</dd>
+<dd>MinHitWall to limit HitWall() notifications</dd>
+</dl>
+</dd>
+<dd>PHYS_Falling</dd>
+<dd>PHYS_Flying</dd>
+<dd>PHYS_Swimming</dd>
+<dd>PHYS_Spider</dd>
+<dd>PHYS_Ladder</dd>
+<dd>PHYS_RootMotion: under construction</dd>
+<dd>Rotation ( APawn&#160;:: PhysicsRotation() )
+<dl>
+<dd>bCrawler to orient in floor direction</dd>
+<dd>No pitching when on ground.</dd>
+<dd>If not bCrawler, roll when angular momentum</dd>
+</dl>
+</dd>
+<dd>Crouching:
+<dl>
+<dd>Can only crouch if bCanCrouch==true</dd>
+<dd>To request crouch, set bWantsToCrouch</dd>
+<dd>bIsCrouched==true while crouched</dd>
+<dd>bTryToUncrouch is true for AI pawns which automatically crouched during movement - they continually try to stand up.</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><b>OBWANDO:</b> I've tried to keep all formatting correct and in place. If anyone wants to help link up the major portions of the areas, it would be appreciated. Ill do as much as I can. Also, if someone wants to start a UT2003 page like this one, Ill donate to it as well to make it as complete as possible.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 22/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_And_Game_Code_Overview_3b71.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnreal_Engine_And_Game_Code_Overview_5e28.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Unreal_Engine_And_Game_Code_Overview">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:24, 6 July 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

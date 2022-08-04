@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Placing PlayerStart - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Placing PlayerStart</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Properly placing the <a href="../../../../articles/p/l/a/Legacy%7EPlayerStart_0952.html" title="Legacy:PlayerStart">PlayerStart</a> actors, which mark player spawn points on a map, can be a tricky task. Most importantly, if there are not enough starting points you will get players being killed by other spawning players when the map first starts (aka, telefragging). If the start points are too exposed, players will complain about <b>spawn camping</b>: the practice of waiting at a PlayerStart to kill the next player who spawns at it. Adding start positions too close to powerful weapons or power-ups can also throw off the flow of a map and lead to complaints from some players. In addition to this, the considerations required for effective PlayerStart placement can be different for each game type.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Discouraging_Spawn_Camping"><span class="tocnumber">1</span> <span class="toctext">Discouraging Spawn Camping</span></a></li>
+<li class="toclevel-1"><a href="#Important_Considerations"><span class="tocnumber">2</span> <span class="toctext">Important Considerations</span></a></li>
+<li class="toclevel-1"><a href="#Gametype_Specific_Notes"><span class="tocnumber">3</span> <span class="toctext">Gametype Specific Notes</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Deathmatch_and_TeamDeathmatch"><span class="tocnumber">3.1</span> <span class="toctext">Deathmatch and TeamDeathmatch</span></a></li>
+<li class="toclevel-2"><a href="#Capture_the_Flag"><span class="tocnumber">3.2</span> <span class="toctext">Capture the Flag</span></a></li>
+<li class="toclevel-2"><a href="#Bombing_Run"><span class="tocnumber">3.3</span> <span class="toctext">Bombing Run</span></a></li>
+<li class="toclevel-2"><a href="#Double_Domination"><span class="tocnumber">3.4</span> <span class="toctext">Double Domination</span></a></li>
+<li class="toclevel-2"><a href="#Domination"><span class="tocnumber">3.5</span> <span class="toctext">Domination</span></a></li>
+<li class="toclevel-2"><a href="#Onslaught"><span class="tocnumber">3.6</span> <span class="toctext">Onslaught</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Discouraging_Spawn_Camping" id="Discouraging_Spawn_Camping"></a></p>
+<h2><span class="mw-headline">Discouraging Spawn Camping</span></h2>
+<p>It is the responsibility of the mapper to design the map so that players are not freely availble to take advantage of (technically legal, but) obviously unfair tactics. Just as you should not overload one area of a map with powerups and ammo or design an instakill deathtrap device in your map, spawn camping should be discouraged through design. Here are some general thoughts on designing to discourage spawn camping.</p>
+<p>First and foremost, have plenty of PlayerStarts. Twice as many PlayerStarts as the maximum number of players the map is rated for is a good place to start. Perhaps even three or four times as many. Even if you're working with a small (1-on-1) map, it's a good idea to have a minimum of 8 PlayerStarts.</p>
+<p>Avoid grouping the PlayerStarts so close together that they occupy the same area. If a spawn camper could sit at one spot and easily view a few PlayerStarts, they should be moved. Spacing the PlayerStarts so that none have a line of sight to another would be ideal, but that's not always practical or possible.</p>
+<p>Place PlayerStarts closer to walls or in corners so they may spawn with their backs safe from attack. In other words, avoid leaving an obvious "camp spot" behind spawning players.</p>
+<p>Sometimes it's possible to build a special place for spawning players, one that will be protected from spawn camping (or even detection from other players). These places should be small (only big enough for a player) and have really only one way out: towards the field of play. This can be in the form of a small ledge or hole in the wall, above the action, so that once a player spawns they will drop down and be unable to go back up to spawn camp. Other one-way devices are sometimes used in this capacity: teleporters, etc.</p>
+<p><a name="Important_Considerations" id="Important_Considerations"></a></p>
+<h2><span class="mw-headline">Important Considerations</span></h2>
+<p>Before we get into the game specific constraints and considerations there are a few things worth remembering.</p>
+<ul>
+<li>It's a good idea to add twice (or more) as many PlayerStarts as the map is designed for when possible. You might think that no one is going to try and play your 8 player CTF map with 16 players, but you'd be wrong.</li>
+<li>Never place a PlayerStart next to the edge of a cliff (or other near terminal position). Sometimes momentum after a death is carried through to the spawning player. It's annoying to spawn only to immediately fall to a messy end.</li>
+<li>Check the orientation of your player start positions and ensure that they face sensible directions, don't make them spawn and have a wall in their face. Again, to change the direction of directional actors, like PlayerStarts, use the Top View to select the actor and use the Right mouse button to click and drag the red arrow indicator in a new direction.</li>
+<li>When a player spawns, the first thing he'll look for is a weapon. If not close to a weapon, at least try to orient the PlayerStart to face the nearest one.</li>
+<li>In team games always check the owning team of your player start. Set the <a href="../../../../articles/t/e/a/Legacy%7ETeam_Number_2fba.html" title="Legacy:Team Number">team number</a> in the PlayerStart -&gt; TeamNumber property (0=red, 1=blue)</li>
+</ul>
+<p><a name="Gametype_Specific_Notes" id="Gametype_Specific_Notes"></a></p>
+<h2><span class="mw-headline">Gametype Specific Notes</span></h2>
+<p><a name="Deathmatch_and_TeamDeathmatch" id="Deathmatch_and_TeamDeathmatch"></a></p>
+<h3><span class="mw-headline">Deathmatch and TeamDeathmatch</span></h3>
+<p>Placing the playerstarts in Deathmatch is the easiest out of the other team based gametypes to do, but you have to, like the other gametypes, place them carefully. You should make the playerstart points approxamently equidistant from any power-ups in the level, like the damage amp or the big keg o' health, as you can. Also avoid placing the playerstart points in areas of the map that see a lot of action, because that will lead to spawn killing. Try to place the playerstart points in cover, such as girders, if you can. The more playerstart positions you have, the better as this makes spawn camping that much harder. Also it adds more diversity to the level.</p>
+<p><a name="Capture_the_Flag" id="Capture_the_Flag"></a></p>
+<h3><span class="mw-headline">Capture the Flag</span></h3>
+<p>Start positions for CTF games must be placed carefully, and, if at all possible, symmetrically for each team. It is important that respawning players can get back into the action quickly, especially if they have just been killed defending the flag. Be wary of putting player start positions too close to the middle of the map. It can make escaping with the flag incredibly difficult if you have to kill any given defender three times before you reach the center of the map. As a general rule of thumb it's a good idea to keep the central area clear of player start points. It's also worth only placing start points in the "back" 3/4 of a base.</p>
+<p>Possibly the best examples of poor start point placement in CTF games come from the "Face" series. Face placed players in full view of enemy snipers, miles away from any real weapons or ammo. Face][ has a number of start points at the bottom of not one but two very slow lifts. Not only does it make getting back into the game extremely slow, but it also means that other spawning players can "steal" the lift from players already waiting. Face3 (of UT2003 fame) has players respawn in "Pods". The problem with this is that if you get killed after the enemy team has grabbed your flag you are effectively out of the game. You will find it extremely hard to catch up to the enemy flag carrier. In the unlikely event that you do manage to catch the flag carrier you'll have not had time to collect anything to help you dispose of them.</p>
+<p><a name="Bombing_Run" id="Bombing_Run"></a></p>
+<h3><span class="mw-headline">Bombing Run</span></h3>
+<p>The Bombing Run game type is one of the easier game types to place player starts for. This is because the spawn point use is more consistent due to the player reset after each round. The spawn points for each of the teams should be equidistant from the ball starting position. Giving one team an advantage by having them able to get to the ball faster (or get more players to the ball faster) will dramatically unbalance the gameplay.</p>
+<p>Never place player start points next to a bombing run goal. Instead place them a little way away or off to one side. You should try and avoid an attacker coming under fire immediately from a player they have just killed should they be in sight of the goal. Having said that, there should be a couple of player start points reasonably close to the goal mouth to allow the goal keepers to get back into position reasonably quickly.</p>
+<p>Player start positions should also be placed reasonably close to mid and low power weapons. It's fine to make players do a bit of extra work to get to the rocket launcher (or other powerful weapons) but don't force them to run around with the Assault Rifle for an age.</p>
+<p>Try not to place start points along the main routes to the goal mouth. It will make scoring very difficult. Sometimes this is unavoidable, simply because of the structure of the map, but if it can be avoided it's worth doing. Consider starting players in side rooms away from the main areas of conflict.</p>
+<p><a name="Double_Domination" id="Double_Domination"></a></p>
+<h3><span class="mw-headline">Double Domination</span></h3>
+<p>The Double Domination game type is perhaps the hardest gametype to place player starts for. The nature of the game type inherently encourages spawn camping - it's way easier to hold control points if you can kill the enemy team when they are vulnerable (ie. have no weapons after respawning). There needs to be enough start points that spawn camping is difficult, but not so many that the map becomes unbalanced.</p>
+<p>All start points must be equidistant (as much as the map structure allows) from the control points. It is reasonable to place one set of player starts near one control point, and another set of player starts near another. However, if you do this, make sure that both sets are the same distance away from their closest control point.</p>
+<p>How close you place the start points to the control points will very much determine the pace of the game. If you want a fast paced game where it's very hard to score then move the player start points closer to the control points. If you want a slower paced game with more scoring then move the player starts away from the control points. It is suggested that it should take a minimum of 3 seconds to reach a control point from a player start, and a maximum of 9 seconds.</p>
+<p><a name="Domination" id="Domination"></a></p>
+<h3><span class="mw-headline">Domination</span></h3>
+<ul>
+<li>Spawn points should be well spread throughout the level</li>
+<li>Players should have to travel to reach Control points.</li>
+<li>Players should be able to obtain weapons en-route to a control point without travelling a significant amount of distance in the wrong direction.</li>
+<li>Try to avoid placing a start point within direct sight of a Control Point.</li>
+</ul>
+<p><a name="Onslaught" id="Onslaught"></a></p>
+<h3><span class="mw-headline">Onslaught</span></h3>
+<p>Each base should contain AT LEAST enough PlayerStarts to fit half of the maximum player amount. In addition, nodes are probably best off with about half that amount. This may sound like a lot, but you never know what kind of crazy link setups players come up with.</p>
+<p>Each respawn point should have a weapon locker nearby and should be facing it. If possible, also try to orient them so that players don't start facing the outside of the level. If you have a large map, having 8 PlayerStarts in a half or a full circle around a weapon locker is a good rule of thumb.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/a/p/Legacy%7EMap_Flow_640e.html" title="Legacy:Map Flow">Map Flow</a>
+<ul>
+<li><a href="../../../../articles/i/n/v/Legacy%7EInventory_Item_Placement_46f5.html" title="Legacy:Inventory Item Placement">Inventory Item Placement</a></li>
+</ul>
+</li>
+<li><a href="../../../../articles/m/a/p/Legacy%7EMap_Design_4aee.html" title="Legacy:Map Design">Map Design</a></li>
+<li><a href="../../../../articles/t/o/p/Legacy%7ETopics_On_Mapping_d4e6.html" title="Legacy:Topics On Mapping">Topics on Mapping</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 19/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/l/a/Legacy%7EPlacing_PlayerStart_c017.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/l/a/Legacy_talk%7EPlacing_PlayerStart_e0bc.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Placing_PlayerStart">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:55, 31 May 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

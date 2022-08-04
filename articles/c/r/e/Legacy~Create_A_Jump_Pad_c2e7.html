@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Create A Jump Pad - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Create A Jump Pad</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Adding a Jump Pad in UT2004 is a little different from adding one in UT. It will be covered here in two parts. The first part will cover adding the jump pad to the map so that it works. The second part covers the <i>visual</i> side of a jump pad.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Adding_the_Jump_Pad_Effect"><span class="tocnumber">1</span> <span class="toctext">Adding the Jump Pad Effect</span></a>
+<ul>
+<li class="toclevel-2"><a href="#You_will_need"><span class="tocnumber">1.1</span> <span class="toctext">You will need</span></a></li>
+<li class="toclevel-2"><a href="#Add_the_jump.27s_destination"><span class="tocnumber">1.2</span> <span class="toctext">Add the jump's destination</span></a></li>
+<li class="toclevel-2"><a href="#Add_the_jump"><span class="tocnumber">1.3</span> <span class="toctext">Add the jump</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Adding_the_Jump_Pad_Visuals"><span class="tocnumber">2</span> <span class="toctext">Adding the Jump Pad Visuals</span></a>
+<ul>
+<li class="toclevel-2"><a href="#You_will_need_2"><span class="tocnumber">2.1</span> <span class="toctext">You will need</span></a></li>
+<li class="toclevel-2"><a href="#Add_the_Mesh_and_Emitter"><span class="tocnumber">2.2</span> <span class="toctext">Add the Mesh and Emitter</span></a></li>
+<li class="toclevel-2"><a href="#Configuring_the_Emitter"><span class="tocnumber">2.3</span> <span class="toctext">Configuring the Emitter</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Configure_SpriteEmitter0"><span class="tocnumber">2.3.1</span> <span class="toctext">Configure SpriteEmitter0</span></a></li>
+<li class="toclevel-3"><a href="#Configure_SpriteEmitter1"><span class="tocnumber">2.3.2</span> <span class="toctext">Configure SpriteEmitter1</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Job_Done"><span class="tocnumber">3</span> <span class="toctext">Job Done</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Gotchas"><span class="tocnumber">3.1</span> <span class="toctext">Gotchas</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Adding_the_Jump_Pad_Effect" id="Adding_the_Jump_Pad_Effect"></a></p>
+<h2><span class="mw-headline">Adding the Jump Pad Effect</span></h2>
+<p>The Jump Pad effect is literally the effect of bouncing the player up in the air to a specific spot. In UT2004 this is accomplished by adding two Actors to the level. A jump pad object to cause the player to <i>bounce</i> and a path node to act as the target for the player's <i>bounce</i>.</p>
+<p><a name="You_will_need" id="You_will_need"></a></p>
+<h3><span class="mw-headline">You will need</span></h3>
+<ol>
+<li>UTJumppad object (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> -&gt; <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> -&gt; <a href="../../../../articles/j/u/m/Legacy%7EJumpPad_c593.html" title="Legacy:JumpPad">JumpPad</a> -&gt; UTJumppad)</li>
+<li>A PathNode (<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> -&gt; <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> -&gt; <a href="../../../../articles/p/a/t/Legacy%7EPathNode_ad03.html" title="Legacy:PathNode">PathNode</a>)</li>
+</ol>
+<p><a name="Add_the_jump.27s_destination" id="Add_the_jump.27s_destination"></a></p>
+<h3><span class="mw-headline">Add the jump's destination</span></h3>
+<p>Add the PathNode object at the point you wish to land and open up it's properties and make a note of the Object-&gt;Name property.</p>
+<p><a name="Add_the_jump" id="Add_the_jump"></a></p>
+<h3><span class="mw-headline">Add the jump</span></h3>
+<p>Add a UTJumppad object at the point you wish to cause the player to bounce from and open up it's properties and do the following:</p>
+<ul>
+<li>Set the NavigationPoint-&gt;bPropagatesSound to True</li>
+<li>Set the NavigationPoint-&gt;ForcedPaths-&gt;[0] to the target PathNode's Object-&gt;Name property (the one you took note of above).</li>
+<li>Set the JumpPad-&gt;JumpSound and JumpPad-&gt;JumpZModifier to values that fit your map (good defaults are wm_sounds.wm_BootJump for the sound and 1 for the Z modifier).</li>
+</ul>
+<p><a name="Adding_the_Jump_Pad_Visuals" id="Adding_the_Jump_Pad_Visuals"></a></p>
+<h2><span class="mw-headline">Adding the Jump Pad Visuals</span></h2>
+<p>The most complex part about creating a jump pad is sorting out the visual side of it. All jumps pads in UT2004 (I can't think of any exceptions off the top of my head) have some form of visual "effect" that indicates the jump pad is there. Sometimes the <i>effect</i> will also indicate the direction the jump pad will take you. ONS-Junkyard and DM-Plunge are two maps that spring readily to mind when thinking about the visual effects for a jump pad.</p>
+<p><a name="You_will_need_2" id="You_will_need_2"></a></p>
+<h3><span class="mw-headline">You will need</span></h3>
+<ol>
+<li>A static mesh for the Jump-Pad (XGame_rc.AmmoChargerMesh is a typical default).</li>
+<li>An Emitter (Actor -&gt; Emitter) for the Jump-Pad glowy effect.</li>
+</ol>
+<p><a name="Add_the_Mesh_and_Emitter" id="Add_the_Mesh_and_Emitter"></a></p>
+<h3><span class="mw-headline">Add the Mesh and Emitter</span></h3>
+<p>This is the easiest step in the process of making your jump pad look great.</p>
+<ul>
+<li><a href="../../../../articles/a/d/d/Legacy%7EAdd_A_Static_Mesh_c116.html" title="Legacy:Add A Static Mesh">Add a static mesh</a> to your map just below the point your UTJumppad object has been placed to provide the base of the jump pad.</li>
+<li>Add the Emitter object (see <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an Actor</a>) between the jump-pad's static mesh and the UTJumppad object. Before the Emitter will look nice it needs to be configured.</li>
+</ul>
+<p><a name="Configuring_the_Emitter" id="Configuring_the_Emitter"></a></p>
+<h3><span class="mw-headline">Configuring the Emitter</span></h3>
+<p>An Emitter itself doesn't really do very much. Instead it contains a list of specific types of emitter (srpite, beam, etc). Confusingly this list has been given the name of <i>Emitter</i>. It is these "specific types" of emitter that actually provide the Emitter placed on the map with its visual component.</p>
+<ul>
+<li>Open up the Emitter's properties.</li>
+<li>Open the Emitter node followed by the Emitters node and press the "Add" button.</li>
+<li>Click on the "BeamEmitter" line that will appear and use the drop-list to select "SpriteEmitter"</li>
+<li>Then click on the "New" button. This will create a new SpriteEmitter called myLevel.SpriteEmitter0</li>
+</ul>
+<p>Repeat the last three steps above so that you have 2 <a href="../../../../articles/s/p/r/Legacy%7ESpriteEmitter_57fc.html" title="Legacy:SpriteEmitter">SpriteEmitters</a> in your list.</p>
+<p><a name="Configure_SpriteEmitter0" id="Configure_SpriteEmitter0"></a></p>
+<h4><span class="mw-headline">Configure SpriteEmitter0</span></h4>
+<p>Open up the properties of SpriteEmitter0 and set the following:</p>
+<pre>
+ Acceleration -&gt; Z=50
+ Color -&gt; UserColorScale = True
+ Color -&gt; ColorScale -&gt; Add button
+ Color -&gt; ColorScale[0] -&gt; Color (G=162,R=185,A=255)
+ Color -&gt; ColorScale -&gt; Add button
+ Color -&gt; ColorScale[1] -&gt; Color (B=92,G=44,R=69,A=50)
+ Color -&gt; ColorScale[1] -&gt; RelativeTime=1
+ Fading -&gt; FadeOut=True
+ Fading -&gt; FadeIn=True
+ Fading -&gt; FadeOutStartTime=0.8
+ Fading -&gt; FadeInEndTime=0.1
+ General -&gt; MaxParticles=5
+ Size -&gt; StartSizeRange=(X=(Min=35,Max=35),Y=(Min=30,Max=30),Z=(Min=40,Max=40))
+ Sprite -&gt; UseDirectionAs=PTDU_Normal
+ Texture -&gt; Texture=EpicParticles.JumpPad.GridPlate
+ Time -&gt; LifetimeRange=(Min=1.4,Max=1.4)
+ Warmup -&gt; WarmupTicksPerSecond=2
+ Warmup -&gt; RelativeWarmupTime=2
+</pre>
+<p><a name="Configure_SpriteEmitter1" id="Configure_SpriteEmitter1"></a></p>
+<h4><span class="mw-headline">Configure SpriteEmitter1</span></h4>
+<p>Open up the properties of SpriteEmitter1 and set the following:</p>
+<pre>
+ Aceleration -&gt; Z=80
+ Color -&gt; UseColorScale=True
+ Color -&gt; ColorScale[0] -&gt; Color (B=27,G=95,R=124)
+ Color -&gt; ColorScale[1] -&gt; Color (B=82,G=123,R=169)
+ Color -&gt; ColorScale[1] -&gt; RelativeTime=1
+ Fading -&gt; FadeOut=True
+ Fading -&gt; FadeIn=True
+ Fading -&gt; FadeOutStartTime=0.75
+ Fading -&gt; FadeInEndTime=0.2
+ General -&gt; MaxParticles=100
+ Location -&gt; StartLocationRange=(X=(Min=-30,Max=30),Y=(Min=-24,Max=24),Z=(Min=0,Max=0) )
+ Rotation -&gt; StartSpinRange=( X=(Min=-0.25,Max=-0.25),Y=(Min=0,Max=0),Z=(Min=0,Max=0) )
+ Size -&gt; StartSizeRange=( X=(Min=6,Max=6),Y=(Min=4,Max=4),Z=(Min=100,Max=100) )
+ Sprite -&gt; UseDirectionAs=PTDU_Right
+ Texture -&gt; Texture=EpicParticles.Beams.WhiteStreak01aw
+ Time -&gt; LifetimeRange=(Min=1.25,Max=1.5)
+ Veolocity -&gt; StartVelocityRange=(X=(Min=0,Max=0),Y=(Min=0,Max=0),Z=(Min=0,Max=20))
+ Warmup -&gt; WarmupTicksPerSecond=2.000000
+ Warmup -&gt; RelativeWarmupTime=2.000000
+</pre>
+<p><a name="Job_Done" id="Job_Done"></a></p>
+<h2><span class="mw-headline">Job Done</span></h2>
+<p>You should now be in a position to rebuild your level and view your jump pad in all it's glory. If you are still working on pathing the level you will get some errors about the lack of paths from the jump pad's destination path node. These can be safely ignored unless you are actually Bot-Pathing your level.</p>
+<p><a name="Gotchas" id="Gotchas"></a></p>
+<h3><span class="mw-headline">Gotchas</span></h3>
+<p>If you have mutliple Jump Pads within your level you might think that you can reference the same Sprite Emitter in the Emitter list of multiple jump-pads. If you do this you will notice all sorts of visual anomolies with the jump-pad visuals.</p>
+<p>When a jump pad is duplicated, copies of its SpriteEmitters are made and added automatically to the new jump pad rather than simply having it reference the existing ones - therefore this problem will not arise unless the values are deliberately changed back after copying.</p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SuperApe:</b> I have run into problems editing the JumpZModifier property lately. It used to be a no brainer: edit the Z, RebuildChangedPaths, see the change. Some Jumppads in new maps I've seen refuse to have any ZMod except (what looks like) 1.0. Some older maps, like AS-Junkyard allow it to change properly. It's bizzare. In the code for the Jumppad, there is a curious PostBeginPlay check for <i>if (JumpVelocity&#160;!= JumpVelocity)</i>, but whether that condition is met or not, it essentially Resets that property by <i>JumpVelocity = BACKUP_JumpVelocity</i>. This Actor seems to be behaving strangely compared to when I worked on the <a href="../../../../articles/t/r/i/Legacy%7ETriggerJumpPad_66a8.html" title="Legacy:TriggerJumpPad">TriggerJumpPad</a>. Anyone else see wierd things with the UTJumpPad and are there any ways to fix or force it? I tried something like this to force the original vector:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// SuperUTJumpPad.</span>
+<span class="co1">// An attempt to fix a bug that constantly resets the JumpVelocity vector.</span>
+<span class="co1">// by SuperApe -- July 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> SuperUTJumpPad <span class="kw5">extends</span> UTJumppad 
+        <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span>    <span class="kw4">vector</span> VelocityVector;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        VelocityVector = JumpVelocity;
+ 
+        <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> JumpVector.<span class="me1">Z</span> = BACKUP_JumpVelocity.<span class="me1">Z</span> <span class="br0">)</span>
+                JumpVelocity = VelocityVector;
+<span class="br0">}</span>
+</pre></div>
+<p>Anyone else have thoughts on this?</p>
+<p><b>Blip2:</b> Quite possible they changed the code (in one of the patches) and obviously not found the problem as they dont rebuild maps like junky</p>
+<p><b>Lobo:</b> Changed "Revolution" to "Rotation" for SpriteEmitter1 up there.</p>
+<p><b>Janzak:</b> I can't seem to figure out how to angle the emitter for a more horizontal jump? The jump works but the emitter is still pointing upward</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 19/1000000
+Post-expand include size: 34/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Basic_Procedure_8702.html" title="Category:Legacy Basic Procedure">Legacy Basic Procedure</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Jump_Pad_c2e7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/r/e/Legacy_talk%7ECreate_A_Jump_Pad_45b5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Create_A_Jump_Pad">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:40, 6 June 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

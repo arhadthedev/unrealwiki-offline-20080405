@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MiceMenGrav Mutator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MiceMenGrav Mutator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>MiceMenGrav: A Mutator Tutorial for <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>.</p>
+<ul>
+<li>Coders: Wedge, <a href="../../../../articles/t/h/e/Legacy%7EThePelkus_ed2a.html" title="Legacy:ThePelkus">ThePelkus</a></li>
+<li>Author: <a href="../../../../articles/t/h/e/Legacy%7EThePelkus_ed2a.html" title="Legacy:ThePelkus">ThePelkus</a></li>
+</ul>
+<p>This is a beginner level mutator development tutorial. The reader should have a basic knowledge of UnrealScript and should be able to make a basic mutator. This tutorial will help the reader understand potential uses for the following classes:</p>
+<ul>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a></li>
+<li><a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a></li>
+<li><a href="../../../../articles/g/u/i/Legacy%7EGUIPage_02a6.html" title="Legacy:GUIPage">GUIPage</a></li>
+<li><a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a></li>
+</ul>
+<p>This mutator was implemented in UT2003. We have no development experience on other versions of Unreal, so we are not sure how specific this code is to UT2003.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Conceptual_Origins"><span class="tocnumber">1</span> <span class="toctext">Conceptual Origins</span></a></li>
+<li class="toclevel-1"><a href="#Code_Download"><span class="tocnumber">2</span> <span class="toctext">Code Download</span></a></li>
+<li class="toclevel-1"><a href="#Making_your_own_GameRules"><span class="tocnumber">3</span> <span class="toctext">Making your own GameRules</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Placing_your_rules_in_your_project"><span class="tocnumber">3.1</span> <span class="toctext">Placing your rules in your project</span></a></li>
+<li class="toclevel-2"><a href="#Building_GravShot_into_our_custom_rules"><span class="tocnumber">3.2</span> <span class="toctext">Building GravShot into our custom rules</span></a></li>
+<li class="toclevel-2"><a href="#Building_MiceMen_into_our_custom_rules"><span class="tocnumber">3.3</span> <span class="toctext">Building MiceMen into our custom rules</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Making_your_own_Mutator.2C_briefly"><span class="tocnumber">4</span> <span class="toctext">Making your own Mutator, briefly</span></a>
+<ul>
+<li class="toclevel-2"><a href="#PostBeginPlay.28.29"><span class="tocnumber">4.1</span> <span class="toctext">PostBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#ModifyPlayer.28.29"><span class="tocnumber">4.2</span> <span class="toctext">ModifyPlayer()</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Making_your_own_Inventory_items"><span class="tocnumber">5</span> <span class="toctext">Making your own Inventory items</span></a></li>
+<li class="toclevel-1"><a href="#Using_GUIPage_to_configure_your_muator.2C_super_briefly.21"><span class="tocnumber">6</span> <span class="toctext">Using GUIPage to configure your muator, super briefly!</span></a></li>
+<li class="toclevel-1"><a href="#Problems"><span class="tocnumber">7</span> <span class="toctext">Problems</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Levitating_players"><span class="tocnumber">7.1</span> <span class="toctext">Levitating players</span></a></li>
+<li class="toclevel-2"><a href="#Funny_skeletons"><span class="tocnumber">7.2</span> <span class="toctext">Funny skeletons</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#About_this_mutator"><span class="tocnumber">8</span> <span class="toctext">About this mutator</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Conceptual_Origins" id="Conceptual_Origins"></a></p>
+<h2><span class="mw-headline">Conceptual Origins</span></h2>
+<p>This mutator is the combination of two other mutators:</p>
+<ul>
+<li><i>MiceMen</i>, coded by Wedge, affects the player size based on the current configuration and the number of player kills.</li>
+</ul>
+<ul>
+<li><i>GravMod</i>, coded by ThePelkus, draws players together when they attack each other.</li>
+</ul>
+<p><a name="Code_Download" id="Code_Download"></a></p>
+<h2><span class="mw-headline">Code Download</span></h2>
+<p>While snippets of the source are shown below when relevant, the full source is available <a href="http://kai.curtisforhire.com/downloads/micemengrav.zip" class="external text" title="http://kai.curtisforhire.com/downloads/micemengrav.zip" rel="nofollow">here</a>. While there is no candy surprise, there are plenty of comments to keep you in the know.</p>
+<p><a name="Making_your_own_GameRules" id="Making_your_own_GameRules"></a></p>
+<h2><span class="mw-headline">Making your own GameRules</span></h2>
+<p>The <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> class is easy to bend to your purposes. Like the <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> objects, the <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> objects live in a linked list. When the game needs to do something using the <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> objects, it recurses through the list, giving each object a chance to do its thing. Technically speaking, the game is not responsible for making sure that every object in the list gets its turn at bat – that's why you'll need lines like this one:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/* Sampled from a ModifyPlayer definition in a custom mutator */</span>
+        <span class="co1">// If there is another mutator in the chain</span>
+        <span class="kw1">if</span> <span class="br0">(</span> NextMutator != <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="co1">// Call this method in the next mutator; pass the same parameters</span>
+                NextMutator.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+</pre></div>
+<p>Keeping this list structure in mind, all we need to do to have a little fun is derive our own rules and override some of the member functions!</p>
+<p><a name="Placing_your_rules_in_your_project" id="Placing_your_rules_in_your_project"></a></p>
+<h3><span class="mw-headline">Placing your rules in your project</span></h3>
+<p>Before you go overriding functions left and right, you want to incorporate your custom rules into your mutator so that you can check changes as you make them. As we just said, the hook for the engine is a chain of <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> objects that lives somewhere in the system. Specifically, this chain is accessed as <b>Level.Game.GameRulesModifiers</b> from any <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> class. How convenient, then, that <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> is a subclass of <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>!</p>
+<p>To add your rules to the chain, just add the following code to PostBeginPlay() in the mutator that you derived from the <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/* The following code assumes that you have a variable called myRules representing your rules; see MutMiceMen.uc for an example. */</span>
+ 
+        <span class="co1">// Add the rules object to the list of GameRules in the game</span>
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> == <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> = myRules;
+        <span class="kw1">else</span>
+                <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span>.<span class="me1">AddGameRules</span><span class="br0">(</span>myRules<span class="br0">)</span>;
+</pre></div>
+<p><a name="Building_GravShot_into_our_custom_rules" id="Building_GravShot_into_our_custom_rules"></a></p>
+<h3><span class="mw-headline">Building GravShot into our custom rules</span></h3>
+<p>We derived a class called MiceMenRules from <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> so that we could take advantage of some of the built-in functionality. In fact, almost all of the GravShot functionality lives in the NetDamage function of our custom rules.</p>
+<p>As stated in the <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> page, the NetDamage function "<i>allows the GameRules to modify the damage (return value) and momentum. The OriginalDamage parameter should be passed to the next GameRules without any modifications.</i>" Technically, GravShot doesn't alter either of these values. But NetDamage also takes as parameters the attacking pawn (InstigatedBy) and the target pawn (Injureed). Using these two pawns, our rules:</p>
+<ul>
+<li>Calculate the normalized vector from the victim to the instigator</li>
+</ul>
+<dl>
+<dd>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Get normalized vector from target to shooter</span>
+</pre></div>
+</dd>
+</dl>
+<p>myVec = Normal<span class="br0">(</span>InstigatedBy.<span class="me1">Location</span> - Injured.<span class="me1">Location</span><span class="br0">)</span>;</p>
+<ul>
+<li>Scale that vector</li>
+</ul>
+<dl>
+<dd>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Set up multiplier vector</span>
+</pre></div>
+</dd>
+</dl>
+<p>multVec.<span class="me1">x</span> = mutInstance.<span class="me1">MovementMultiplier</span> * <span class="nu0">100</span>; multVec.<span class="me1">y</span> = mutInstance.<span class="me1">MovementMultiplier</span> * <span class="nu0">100</span>; multVec.<span class="me1">z</span> = mutInstance.<span class="me1">MovementMultiplier</span> * <span class="nu0">100</span>; &#160; <span class="co1">// scale normalized vector; better way?</span></p>
+<p>myVec = myVec * multVec;</p>
+<ul>
+<li>Add the scaled vector to the victim's velocity.</li>
+</ul>
+<dl>
+<dd>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Injured.<span class="me1">AddVelocity</span><span class="br0">(</span>myVec<span class="br0">)</span>;
+</pre></div>
+</dd>
+</dl>
+<p>Note once again that, after all of the GravShot code, the NetDamage member of the next <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> object (if it exists) is called with the same parameters.</p>
+<p>With this mutator active, the Injured pawn is moved towards the InstigatedBy pawn by some fixed amount. We'll see where this amount is set later when we look at the config menu. For practice you might try making the scaling factor situational e.g. scale based on distance or damage inflicted.</p>
+<p><a name="Building_MiceMen_into_our_custom_rules" id="Building_MiceMen_into_our_custom_rules"></a></p>
+<h3><span class="mw-headline">Building MiceMen into our custom rules</span></h3>
+<p>The MiceMen part of the mutator overrides the ScoreKill member of the rules. From the <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> page, we know that the ScoreKill function "<i>Augements the action taken when a player scores a kill. Not the score itself, but having to do with the Controllers involved in the Kill.</i>"</p>
+<p>The following two lines of code are all that we added to the ScoreKill method:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Killer != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Killer.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+                mutInstance.<span class="me1">ChangePlayerSize</span><span class="br0">(</span>Killer.<a href="/Pawn"><span class="kw10">Pawn</span></a>, mutInstance.<span class="me1">GetScaleFor</span><span class="br0">(</span>Killer.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p>In this case, the Killer parameter (a <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a>) is used for its associated pawn. This pawn is passed to ChangePlayerSize(), a custom function in our mutator, along with a scaling factor. The scaling factor is calculated using GetScaleFor(), yet another custom function in our mutator, which also takes the pawn associated with Killer as a parameter. Again, after our code is called, ScoreKill is called in the next <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> object.</p>
+<p>Clearly a lot of the logic for MiceMen is included in the mutator, so let's take a look at that now!</p>
+<p><a name="Making_your_own_Mutator.2C_briefly" id="Making_your_own_Mutator.2C_briefly"></a></p>
+<h2><span class="mw-headline">Making your own Mutator, briefly</span></h2>
+<p>Presumably you already have the basics of making a mutator down, so we're just going to show you what we did with ours.</p>
+<p><a name="PostBeginPlay.28.29" id="PostBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">PostBeginPlay()</span></h3>
+<p>Our PostBeginPlay() code is pretty standard, going through the following steps:</p>
+<ol>
+<li>Call method in parent class</li>
+<li>Instantiate derived <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a></li>
+<li>Initialize mutator instance in derived <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a></li>
+<li>Add <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> to GameRulesModifiers linked list</li>
+</ol>
+<p>The only really odd step in there is Step 3. Because the mutator class contains functions and data needed for the MiceMen scaling in the rules, the rules contain an instance of the mutator. It may seem a little circular, but it works out fine.</p>
+<p><a name="ModifyPlayer.28.29" id="ModifyPlayer.28.29"></a></p>
+<h3><span class="mw-headline">ModifyPlayer()</span></h3>
+<p>The <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> page lists the following description for the ModifyPlayer() function:</p>
+<blockquote class="legacyquote">
+<p>This function can be used to update the player's inventory, speed, and other attributes. this function should always call ModifyPlayer() on the next mutator in the chain (a call to the superclass method would do the trick).</p>
+</blockquote>
+<p>We used ModifyPlayer() to do the following:</p>
+<dl>
+<dt>Scale the player&#160;</dt>
+<dd>Player scaling is handled in our custom functions called <i>ChangePlayerSize()</i> and <i>GetScaleFor()</i>. The comments included in the code make the function self-explanatory. Unfortunately, we're uncertain as to whether certain functions are necessary.</dd>
+</dl>
+<dl>
+<dt>Create a custom <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a> item to scale the player's weapon&#160;</dt>
+<dd>In order to make sure that the player's weapon model scales properly when weapons are switched, the player is given a WeaponScaler, a custom class we derived from <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a>.</dd>
+</dl>
+<p><a name="Making_your_own_Inventory_items" id="Making_your_own_Inventory_items"></a></p>
+<h2><span class="mw-headline">Making your own Inventory items</span></h2>
+<p>In earlier revisions of this mutator, the player weapon would not resize to match the player scale when the player switched weapons. Our solution: we derived a class from <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a> that would handle the resizing for us.</p>
+<p>Our use of <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a>-related functionality was very minimal. The <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a> class has a method called <i>OwnerEvent</i>. This method is called - surprise, surprise - whenever an event is triggered in owner. Since we wanted to change the rescale the player weapon whenever the weapon was changed, we watched for an event called 'ChangedWeapon':</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> OwnerEvent<span class="br0">(</span><span class="kw4">name</span> EventName<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>EventName == <span class="st0">'ChangedWeapon'</span><span class="br0">)</span>
+        <span class="br0">{</span>
+         WeaponAttachment<span class="br0">(</span>Instigator.<span class="me1">Weapon</span>.<span class="me1">ThirdPersonActor</span><span class="br0">)</span>.<span class="me1">SetCollisionSize</span><span class="br0">(</span>WeaponAttachment<span class="br0">(</span>Instigator.<span class="me1">Weapon</span>.<span class="me1">ThirdPersonActor</span><span class="br0">)</span>.<span class="kw1">Default</span>.<span class="me1">CollisionRadius</span> * Instigator.<span class="me1">DrawScale</span>, WeaponAttachment<span class="br0">(</span>Instigator.<span class="me1">Weapon</span>.<span class="me1">ThirdPersonActor</span><span class="br0">)</span>.<span class="kw1">Default</span>.<span class="me1">CollisionHeight</span> * Instigator.<span class="me1">DrawScale</span><span class="br0">)</span>;
+         WeaponAttachment<span class="br0">(</span>Instigator.<span class="me1">Weapon</span>.<span class="me1">ThirdPersonActor</span><span class="br0">)</span>.<span class="me1">SetDrawScale</span><span class="br0">(</span>WeaponAttachment<span class="br0">(</span>Instigator.<span class="me1">Weapon</span>.<span class="me1">ThirdPersonActor</span><span class="br0">)</span>.<span class="kw1">Default</span>.<span class="me1">DrawScale</span> * Instigator.<span class="me1">DrawScale</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>When this event occurred, the collision and draw size were rescaled based on the player's DrawScale. Note that these properties were only set on the third person mesh as indicated by the use of <a href="../../../../articles/w/e/a/Legacy%7EWeaponAttachment_983d.html" title="Legacy:WeaponAttachment">WeaponAttachment</a> and <i>ThirdPersonActor</i> above. Also note that the player is referred to as <i>Instigator</i> since we need a <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> to get a <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">weapon</a>.</p>
+<p><a name="Using_GUIPage_to_configure_your_muator.2C_super_briefly.21" id="Using_GUIPage_to_configure_your_muator.2C_super_briefly.21"></a></p>
+<h2><span class="mw-headline">Using GUIPage to configure your muator, super briefly!</span></h2>
+<p>This section is unnecessary as the information that would go here is explained perfectly well over in <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2003%29_ca5a.html" title="Legacy:Mutator Config GUI (UT2003)">Mutator Config GUI (UT2003)</a>. In fact, most of the config code for this mutator was taken straight from the provided example code.</p>
+<p>While <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2003%29_ca5a.html" title="Legacy:Mutator Config GUI (UT2003)">Mutator Config GUI (UT2003)</a> is fairly complete in terms of explaining the connection between GUI items and mutator variables, it's also a good idea to look through the documentation on other classes in the <a href="../../../../articles/g/u/i/Legacy%7EGUI_Class_Hierarchy_4d32.html" title="Legacy:GUI Class Hierarchy">GUI_Class_Hierarchy</a> to make sure you don't fall victim to the old problems of giant checkboxes and the like.</p>
+<p><a name="Problems" id="Problems"></a></p>
+<h2><span class="mw-headline">Problems</span></h2>
+<p>It's true - we're not perfect, which makes this problematic as a tutorial. Help us make this tutorial more useful for beginners by helping us catch the following bugs:</p>
+<p><a name="Levitating_players" id="Levitating_players"></a></p>
+<h3><span class="mw-headline">Levitating players</span></h3>
+<p>Just run around for a little while and it won't take long until you'll see some of the other players flying around in midair. It's been hard for us to establish exactly when this happens, so even figuring that out would be very useful.</p>
+<p><b>Tricadex</b> - I think this is caused by problems with the collision box and crouching</p>
+<p><a name="Funny_skeletons" id="Funny_skeletons"></a></p>
+<h3><span class="mw-headline">Funny skeletons</span></h3>
+<p>Resizing players seems to do funny things to their corpses. We attempted to fix this problem using the <i>BoneRefresh()</i> method of the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> class, but it's not clear whether there are still funny effects.</p>
+<p>Feel free to add comments to this page to help us fix these problems!</p>
+<p><a name="About_this_mutator" id="About_this_mutator"></a></p>
+<h2><span class="mw-headline">About this mutator</span></h2>
+<p>The MiceMenGrav mutator is a class project from the <a href="http://www.bcc.ctc.edu" class="external text" title="http://www.bcc.ctc.edu" rel="nofollow">Bellevue Community College</a> <a href="http://gaming.bcc.ctc.edu" class="external text" title="http://gaming.bcc.ctc.edu" rel="nofollow">gaming curriculum</a> in Bellevue, WA. This program is also responsible for the <a href="../../../../articles/v/a/m/Legacy%7EVampireShoppers_386c.html" title="Legacy:VampireShoppers">VampireShoppers</a> mutator.</p>
+<hr />
+<pre>
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a>
+</pre>
+<!-- 
+NewPP limit report
+Preprocessor node count: 44/1000000
+Post-expand include size: 290/2097152 bytes
+Template argument size: 226/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/i/c/Legacy%7EMiceMenGrav_Mutator_0644.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/i/c/Legacy_talk%7EMiceMenGrav_Mutator_e3f8.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MiceMenGrav_Mutator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:30, 30 August 2005 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Super Arena Mutator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Super Arena Mutator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial was created for an Unreal Script class at <a href="http://www.bcc.ctc.edu/gaming/" class="external text" title="http://www.bcc.ctc.edu/gaming/" rel="nofollow">Bellevue Community College</a></p>
+<p><a href="http://blog.itburns.com/" class="external text" title="http://blog.itburns.com/" rel="nofollow">Sam Beirne</a> &amp; Jesse</p>
+<p>By the end of this tutorial you should understand how to create a mutator called “Super Arena.” This mutator lowers gravity, regenerates players’ health, and increases the number of jumps that may be linked together. It also starts players off with every weapon complete with a full clip of ammo.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// SuperArenaMut:</span>
+<span class="co1">// Decreases Gravity</span>
+<span class="co1">// Increases Maximum Number of Linked Jumps</span>
+<span class="co1">// Players Regenerate Health</span>
+<span class="co1">// Players Begin With All Weapons and Full Ammo</span>
+<span class="co1">//=============================================================================</span>
+</pre></div>
+<p>The class begins with a few comments describing the function of this mutator. A comment is any line that begins with the // character. These lines are only important to other coders and have no effect on the functionality of our code.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> SuperArenaMut <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+</pre></div>
+<p>In the first real line of code after the beginning block comment we declare a new class called SuperArenaMut that exends the Mutator class. Because SuperArenaMut is a child of Mutator, it inherits all of the methods and properties found in the Mutator class.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> OBJ LOAD File=MutatorArt.<span class="me1">utx</span>
+</pre></div>
+<p>Exec directives like the one above tell the engine how it interact with real files, like models and textures. For the moment this is not important and this line had been copied only because it appears in the Regen mutator which is a basis for the regeneration portion of our mutator.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> RegenPerSecond;
+<span class="kw5">var</span> <span class="kw4">float</span> GravityZ;
+</pre></div>
+<p>Before any of our functions are declared we create two global variables to hold the amount by which players will increase health and the decrease in gravity. For greater precision, floating point values (real numbers, ex. 1.234) are used. These variables will be used later on in the code.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    SetTimer<span class="br0">(</span><span class="nu0">1.0</span>,<span class="kw9">true</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Once the global variables have been declared (remember, global variables must be declared <b>before</b> functions), we create our first function, PreBeginPlay(). PreBeginPlay is called right after the object is created, but before gameplay begins. We use the function to start a timer by calling SetTimer. The first parameter of SetTimer is the interval time, or how long to wait. The second tells the timer whether or not to repeat.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Controller C;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">ControllerList</span>; C != <span class="kw9">None</span>; C = C.<span class="me1">NextController</span><span class="br0">)</span>
+    <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>C.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> &amp;&amp; C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Health</span> &lt; C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">HealthMax</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Health</span> = <span class="kw7">Min</span><span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Health</span>+RegenPerSecond, C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">HealthMax</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The Timer() function is the code called each time the interval from SetTimer is reached. It creates a local Controller variable and checks every controller until it finds a Pawn (i.e. Player). When a Pawn is found its health is set to the minimum of its current health plus the regen rate or the max health. This allows the player to regenerate without ever going over the maximum health value.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> xPawn x;   
+    <span class="kw5">local</span> Weapon m_wTemp;
+ 
+    x = xPawn<span class="br0">(</span>Other<span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>x != <span class="kw9">None</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        x.<span class="me1">MaxMultiJump</span> = <span class="nu0">15</span>; 
+        x.<span class="me1">MultiJumpBoost</span> = <span class="nu0">50</span>;
+    <span class="br0">}</span>
+ 
+    Other.<span class="me1">Health</span> = <span class="nu0">199</span>;
+ 
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.BioRifle"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.FlakCannon"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.LinkGun"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.Minigun"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.RocketLauncher"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.ShockRifle"</span><span class="br0">)</span>;
+    Other.<span class="me1">GiveWeapon</span><span class="br0">(</span><span class="st0">"XWeapons.SniperRifle"</span><span class="br0">)</span>;
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'BioRifle'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'FlakCannon'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'LinkGun'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'MiniGun'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'RocketLauncher'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ShockRifle'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    m_wTemp = Weapon<span class="br0">(</span>Other.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'SniperRifle'</span><span class="br0">)</span><span class="br0">)</span>;
+    m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">AmmoAmount</span> = m_wTemp.<span class="me1">Ammo</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">MaxAmmo</span>;       <span class="co1">// in UT2004, instead use:  m_wTemp.MaxOutAmmo();</span>
+ 
+    <span class="kw6">Super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This next function is a little more complicated than the previous Timer() function. ModifyPlayer is called by GameInfo.RestartPlayer(), a function that executes each time a player enters the game or respawns. We start by creating a local xPawn variable to hold our player xPawn object. The local Weapon variable that is declared next will be used in a moment. First, after checking to see that our xPawn variable contains a valid object, we increase the MaxMultiJump from 2 to 15. We also increase the MultiJumpBoost to 50. This allows the players to jump higher and to link a greater number of jumps in succession. Next, using the Other object passed into the function we set the player's Health to 199.</p>
+<p>Once all of the player's abilities have been increased, it's time to equip all of the non-super weapons. Using the GiveWeapon function that is a part of the Pawn class, each weapon is added to the player's inventory by passing in the weapon name as a string. Now that every weapon has been equipped they need to be filled with ammo. Using the local weapon variable we created earlier we retrieve the weapons from the player's inventory using FindInventoryType, another function found in the Pawn class. However, this function returns an object of type Inventory when we need a Weapon. The type is changed by casting the returned value to a weapon by wrapping the function like so: Weapon( function );. Once the weapons has been retrieved and is stored in the Weapon variable (m_wTemp) we can change the AmmoAmount to the MaxAmmo. It is important to use the max ammo of each particular class because every weapon has a different maximum ammo value.</p>
+<p>On the final line of the function we call Super.ModifyPlayer(Other) to execute everything in the original ModifyPlayer class. This is an easier method to simulate copying the other lines right into our new function.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> CheckReplacement<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other, <span class="kw6">out</span> <span class="kw4">byte</span> bSuperRelevant<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> PhysicsVolume PV;
+    <span class="kw5">local</span> xPickupBase B;
+    <span class="kw5">local</span> Pickup P;
+ 
+    PV = PhysicsVolume<span class="br0">(</span>Other<span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> PV != <span class="kw9">none</span> <span class="br0">)</span>
+        PV.<span class="me1">Gravity</span>.<span class="me1">Z</span> = GravityZ;
+ 
+    B = xPickupBase<span class="br0">(</span>Other<span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> B != <span class="kw9">none</span> <span class="br0">)</span>
+        B.<span class="me1">bHidden</span> = <span class="kw9">true</span>;
+ 
+    P = Pickup<span class="br0">(</span>Other<span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> P != <span class="kw9">none</span> <span class="br0">)</span>
+        P.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The CheckReplacement() function iterates through all of the actors in a game so that they may be modified. First we create three local varibles to hold our actors. Just like in the previous function, we use casting to set these actors to the appropriate types. The first actor modified is the PhysicsVolume. This is a bounding volume that affects actor physics. We change the Gravity.Z component in order to lower the vertical gravity. Next all of the xPickupBases (the pads that sit under weapons, health, etc) are set to hidden by flipping the bHidden flag. Finally all of the Pickups (anything on the map that affects the player or changes inventory when walked over) are destroyed using the Destroy() function.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     GravityZ=<span class="nu0">-150.000000</span>
+     RegenPerSecond=<span class="nu0">1.000000</span>
+     FriendlyName=<span class="st0">"Super Arena"</span>
+     Description=<span class="st0">"Regeneration, high jumps and all weapons."</span>
+<span class="br0">}</span>
+</pre></div>
+<p>In the last part of our class we set the defaultproperties of our new class. GravityZ and RegenPerSecond are the two gloabal floating point values created at the beginning of the class. The FriendlyName is the name that will be listed in the mutators menu in UT2003 and the description is what will be seen when the mutator is selected.</p>
+<p>The new class file is completed, but we need to create a new package folder before it can be used. In the <a href="../../../../articles/b/a/s/Legacy%7EBase_Directory_665f.html" title="Legacy:Base Directory">base directory</a> of the UT2003 folder (usually C:\UT2003, but may be different depending on where the program was installed) create the following folders:</p>
+<p>..\UT2003\SuperArena\<br />
+..\UT2003\SuperArena\Classes\<br />
+Put the new class file (named SuperArena.uc) into the new Classes folder you just created.</p>
+<p>There is one final step to complete before running the mutator. We need to tell the engine about our new class. This is done using a .int file and modifying UT2003.ini. Create a file called SuperArena.int in your ..\UT2003\System directory and place the following code into it:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Public<span class="br0">]</span>
+<a href="/Object"><span class="kw10">Object</span></a>=<span class="br0">(</span><span class="kw5">Class</span>=<span class="kw5">Class</span>,MetaClass=Engine.<a href="/Mutator"><span class="kw10">Mutator</span></a>,<span class="kw4">Name</span>=SuperArena.<span class="me1">SuperArenaMut</span>,Description=<span class="st0">"SuperArena"</span><span class="br0">)</span>
+</pre></div>
+<p>Then add the new package to your UT2003.ini file (located in the same folder) by adding the following line:<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+EditPackages=SuperArena
+</pre></div>
+<p>The new class is now ready to compile and run. Open a command prompt (Start-&gt; Run-&gt; "cmd") and navigate to your system directory. Type "ucc make" without the quotes and the packages should compile. Assuming there are no errors, fire up the game and the new mutator should be availiable.</p>
+<p><b>Firestorm</b>: HI This is MY FIRST POST.</p>
+<p>HI Iv'e just completed the MOD Super Arena Mutator, compiled fine but it dose not showup in the Mutator list in game.</p>
+<p>Im running PATCH 2199 and compiled with UDE with lattest Patch,HELP PLEASE..</p>
+<p><b>LuckyStrike</b>: Experiencing some issues compiling this for UT2004 - "Error, Can't access protected variable 'Ammo' in 'Weapon'" for the attempts to max out ammo in ModifyPlayer. Replacing each "m_wTemp.Ammo[0].AmmoAmount = m_wTemp.Ammo[0].MaxAmmo;" with "m_wTemp.AddAmmo(m_wTemp.MaxAmmo(0) , 0);" appears to fix the problem.</p>
+<p><b>poorsod</b>: I looked in xLastManStandingGame.uc and found</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> AddGameSpecificInventory<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> p<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Inventory Inv;
+ 
+        <span class="kw6">Super</span>.<span class="me1">AddGameSpecificInventory</span><span class="br0">(</span>p<span class="br0">)</span>;
+ 
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.BioRifle"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.FlakCannon"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.LinkGun"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.Minigun"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.RocketLauncher"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.ShockRifle"</span><span class="br0">)</span>;
+        p.<span class="me1">CreateInventory</span><span class="br0">(</span><span class="st0">"XWeapons.SniperRifle"</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> bFullAmmo <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">For</span> <span class="br0">(</span> Inv=P.<span class="me1">Inventory</span>; Inv!=<span class="kw9">None</span>; Inv=Inv.<span class="me1">Inventory</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> Weapon<span class="br0">(</span>Inv<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                                Weapon<span class="br0">(</span>Inv<span class="br0">)</span>.<span class="me1">MaxOutAmmo</span><span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>So I copied it across and it works fine for me&#160;:)</p>
+<p><b>Geist:</b> Yep, or you could also just use <i>MaxOutAmmo()</i> (for full ammo) or <i>SuperMaxOutAmmo()</i> (for 999 ammo) Weapon functions, instead of <i>AddAmmo()</i>. <b>(UT2004)</b></p>
+<p><b>AngryPanda</b>: With the code as written, the log file (i.e., "UT2004.log") is spammed with warning messages (e.g., "Warning: SuperArenaMut DM-Antalus.SuperArenaMut (Function: SuperArenaMut.CheckReplacement:004B) Accessed None 'B'".) Adding the lines "if (B&#160;!= None)" and "if (P&#160;!= None)" before "B.bHidden = true;" and "P.Destroy();" respectively fixes this (similar to what was done with PV). I should note that this probably isn't that big a deal, since it would only happen once, at the loading of each level.</p>
+<p><b>Geist:</b> Good point, AngryPanda. I've adjusted the script (above) to fix this. I also added (UT2004-specific) comments to the max-ammo script lines as well.</p>
+<p>Oh, and I also changed the timer interval from 2 to 1 sec in PreBeginPlay(). If we want to restore RegenPerSecond health points per second, then Timer() needs to execute each second (or compensate by doubling the health increase if you keep the timer to every 2 seconds). I figured setting the timer back to 1 second was the easiest solution, esp. for readibility in a tutorial.&#160;:)</p>
+<p><b>DaWrecka:</b> There's also another way that would let us keep the same average rate regardless of the timer rate; and it involves using just that, TimerRate. It's declared in Actor and, as you might expect, defines the timer's repeat rate in seconds. A simple (RegenPerSecond * TimerRate) in the Timer() function's Min() would allow us to vary the timer rate to whatever we liked. We could even add another variable for the server admin to define their own rate if we like. Slightly more elegant would be a RegenPeriod and RegenAmount; with RegenPeriod being the timer rate and RegenAmount just being how much it restores every 'RegenPeriod' seconds.</p>
+<p>Also, in UT2004 the Pawn class has a function GiveHealth. It's defined as:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> GiveHealth<span class="br0">(</span><span class="kw4">int</span> HealAmount, <span class="kw4">int</span> HealMax<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Health &lt; HealMax<span class="br0">)</span>
+        <span class="br0">{</span>
+                Health = <span class="kw7">Min</span><span class="br0">(</span>HealMax, Health + HealAmount<span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+        <span class="br0">}</span>
+    <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>which would simplify matters a little. Using that, we could define Timer() as</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Controller C;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">ControllerList</span>; C != <span class="kw9">None</span>; C = C.<span class="me1">NextController</span><span class="br0">)</span>
+    <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>C.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">GiveHealth</span><span class="br0">(</span>RegenPerSecond, C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">HealthMax</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>That said, the code as it is should work fine, and I should probably be bearing the old "If it ain't broke don't fix it" adage in mind. Suffice it to say I have a habit of picking nits.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 48/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/u/p/Legacy%7ESuper_Arena_Mutator_095a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/u/p/Legacy_talk%7ESuper_Arena_Mutator_e3c2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Super_Arena_Mutator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 04:55, 4 April 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

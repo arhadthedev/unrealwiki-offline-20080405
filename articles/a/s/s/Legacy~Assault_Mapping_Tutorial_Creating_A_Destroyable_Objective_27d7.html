@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Assault Mapping Tutorial/Creating A Destroyable Objective - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Assault Mapping Tutorial/Creating A Destroyable Objective</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_a684.html" title="Legacy:Assault Mapping Tutorial">Legacy:Assault Mapping Tutorial</a></span></div>
+	    	    	    <!-- start content -->
+	    <hr />
+<p>This page is a section of the <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_a684.html" title="Legacy:Assault Mapping Tutorial">Assault Mapping Tutorial</a>. If you have arrived here from some other place, this page will likely make more sense if you start at the above link and read the tutorial through from beginning to end.</p>
+<p><b>Previous Section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Getting_Started_1554.html" title="Legacy:Assault Mapping Tutorial/Getting Started">Legacy:Assault Mapping Tutorial/Getting Started</a></b></p>
+<p><b>Next Section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_PlayerStarts_And_The_PlayerSpawnManager_95b8.html" title="Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager">Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager</a></b></p>
+<hr />
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Creating_a_Destroyable_Objective"><span class="tocnumber">1</span> <span class="toctext">Creating a Destroyable Objective</span></a></li>
+<li class="toclevel-1"><a href="#DestroyableObjective_SM"><span class="tocnumber">2</span> <span class="toctext">DestroyableObjective_SM</span></a></li>
+<li class="toclevel-1"><a href="#Explosions"><span class="tocnumber">3</span> <span class="toctext">Explosions</span></a></li>
+<li class="toclevel-1"><a href="#Comments:"><span class="tocnumber">4</span> <span class="toctext">Comments:</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Creating_a_Destroyable_Objective" id="Creating_a_Destroyable_Objective"></a></p>
+<h2><span class="mw-headline">Creating a Destroyable Objective</span></h2>
+<p>As you might notice from the map creation directions, or from looking at the map itself, this base isn't that hard to get into. It doesn't even have a door! Our first objective in this tutorial, therefore, is going to be a destroyable door, that will (try to) protect the entrance to the stronghold.</p>
+<p>There are a couple of different ways we can do destroyable objectives, but the one which is almost always what we'll want to use is a <a href="../../../../articles/d/e/s/Legacy%7EDestroyableObjective_SM_7dc3.html" title="Legacy:DestroyableObjective SM">DestroyableObjective_SM</a>, which uses the flexibility of static meshes to automatically adjust its representation within the world it inhabits.</p>
+<p><a name="DestroyableObjective_SM" id="DestroyableObjective_SM"></a></p>
+<h2><span class="mw-headline">DestroyableObjective_SM</span></h2>
+<p>The first step is to <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an Actor</a>&gt;&gt;NavigationPoint&gt;&gt;JumpDest&gt;&gt;JumpSpot&gt;&gt;GameObjective&gt;&gt;DestroyableObjective&gt;&gt;DestroyableObjective_SM. This actor combines several different functions in one convenient package:</p>
+<ul>
+<li>It's a <a href="../../../../articles/g/a/m/Legacy%7EGameObjective_a261.html" title="Legacy:GameObjective">GameObjective</a>. GameObjectives do several things:
+<ul>
+<li>They have text strings which display on the HUD directing people to attack or defend them when the time comes.</li>
+<li>They automatically draw the little flashing HUD displays indicating where they are, how close to completion they are, and whether they're under attack at the moment.</li>
+<li>Bots automatically know when GameObjectives need to be attacked or defended, and will act accordingly.</li>
+</ul>
+</li>
+<li>The DestroyableObjective_SM shows a static mesh, just like a <a href="../../../../articles/s/t/a/Legacy%7EStaticMesh_5bd0.html" class="mw-redirect" title="Legacy:StaticMesh">StaticMesh</a> actor does. Moreover, when this objective is the active one, this mesh will flash on the screen in addition to the HUD icon, showing players where they should be shooting.</li>
+<li>When the objective is destroyed, the DestroyableObjective_SM will also automatically change its static mesh to another one (generally, one that looks like a blown-up version of whatever it's supposed to be).</li>
+</ul>
+<p>As you can see, the actor already does most of the work for us, there are only a few things we'll need to fiddle with. First, we'll deal with the properties which apply to any objective you might place in your map. Open the properties window for the new actor and <a href="../../../../articles/s/e/t/Legacy%7ESet_The_Following_Properties_ae9e.html" title="Legacy:Set The Following Properties">set the following properties</a>:</p>
+<dl>
+<dt>Events-&gt;Tag = BaseDoor</dt>
+<dd>This property is used in many places, so you should generally make it something descriptive and easy to remember.</dd>
+<dt>GameObjective-&gt;ObjectiveName = the Base Door</dt>
+<dd>This is used to print location messages, so make it something that makes sense to a human.</dd>
+<dt>GameObjective-&gt;LocationPrefix = Near</dt>
+<dd>This is the text that's printed in front of the ObjectiveName when describing where somebody is (i.e. "Near the Base Door").</dd>
+<dt>GameObjective-&gt;LocationPostfix =&#160;</dt>
+<dd>This is the text that's printed after the ObjectiveName in location descriptions (for example, we might put "area" for "the Base Door area"). We'll just leave it at the default empty string.</dd>
+<dt>GameObjective-&gt;Score = 10</dt>
+<dd>How many points are awarded to the attacker who completes this objective?</dd>
+<dt>Assault-&gt;DrawDistThresHold = 0</dt>
+<dd>How close does an attacker have to be for the game to show the crosshairs and health bar of this objective (when it's visible) instead of the triangular icon? (0 means it's always shown as soon as the objective becomes visible, no matter how far away it is).</dd>
+<dt>Assault-&gt;Objective_Info_Attacker = Penetrate the Base's Outer Defenses</dt>
+<dd>The message shown on the screen to attackers when this is the active objective.</dd>
+<dt>Assault-&gt;Objective_Info_Defender = Prevent the Attackers from Infiltrating the Base</dt>
+<dd>The message shown to defenders when this is the active objective.</dd>
+<dt>Assault-&gt;ObjectiveDescription = Destroy the door to enter the base</dt>
+<dd>A brief message of what people need to do to accomplish this goal.</dd>
+<dt>GameObjective-&gt;DestructionMessage = Base Outer Defenses Breached!</dt>
+<dd>The message displayed to both sides when the objective has been completed.</dd>
+</dl>
+<p>Now for the bits which are specific to the DestroyableObjective_SM class. You've probably already noticed that this actor starts out with a default untextured box mesh, which we will want to change. For our purposes, we'll just borrow from RobotFactory, which has a nice door mesh we can use (and more importantly, a destroyed version we can use for the destroyed mesh). This mesh can be found in the Plutonic_BP2_static package as Door.FactoryGateDoor, so go into the DestroyableObjective_SM actor's properties and <a href="../../../../articles/s/e/t/Legacy%7ESet_The_Resource_Property_a9ef.html" title="Legacy:Set The Resource Property">set the resource property</a> Display-&gt;StaticMesh to Plutonic_BP2_static.Door.FactoryGateDoor.</p>
+<p>As you might notice, the door from RobotFactory is a bit large for our purposes, so we'll scale it down to about half size by setting the Display-&gt;DrawScale property to 0.55. Now we can position it into place over the entrance to the base. It's still a bit taller than we need, but that's ok. Just move it down so the top of the door meets the top of the door frame, and we'll let the extra stay hidden under the floor.</p>
+<p>Next, we need to set the destroyed version. The destroyed version of the factory door from RobotFactory is Plutonic_BP2_static.Factory.door_destroyed, so in the DestroyableObjective_SM Properties, simply <a href="../../../../articles/s/e/t/Legacy%7ESet_The_Resource_Property_a9ef.html" title="Legacy:Set The Resource Property">set the resource property</a> DestroyableObjective_SM-&gt;DestroyedStaticMesh to Plutonic_BP2_static.Factory.door_destroyed. That was easy, wasn't it?</p>
+<p>Now would be a good time to check to make sure that our door will look right when it's been blown up. When the destroyable objective is destroyed, it simply changes the Display-&gt;StaticMesh it's using to the value of DestroyableObjective_SM-&gt;DestroyedStaticMesh instead, so we can do the same thing in the editor to check how it will look. Just temporarily set Display-&gt;StaticMesh to Plutonic_BP2_static.Factory.door_destroyed and take a look. The particularly astute here will notice that something doesn't look right. The destroyed door actually doesn't line up the same way as the normal one does.</p>
+<p>Did we do something wrong? Nope. Believe it or not, Epic screwed up, and if you look closely at RobotFactory while you're playing it, it has the same problem. The origin of the destroyed door mesh is at the bottom, but the origin of the regular door mesh is in the center, so they don't line up. This illustrates an important point when designing meshes for destroyable objectives: Make sure their origins match up, because you can't adjust this in the actor. Also note that since the actor just changes the setting for the Display-&gt;StaticMesh property when it gets destroyed, all of the other settings will be applied to the different mesh as well. This means, for example, that any skins you use in Display-&gt;Skins to change the appearance of the original mesh will also be applied to the destroyed mesh when it gets put in place, so if you're going to use your own skins, you'll need to make sure that the two meshes map their textures in compatible ways.</p>
+<p>In any case, the glitch with the destroyed door mesh is annoying, but we'll leave it for now. For a more polished level, you'll probably want to make sure things like this are fixed (by creating your own meshes correctly, or by loading up the broken mesh in a 3D modeller, adjusting the origin, and saving the fixed version in your own package to use instead (Remember: as tempting as it may be, <a href="../../../../articles/d/o/_/Legacy%7EDo_Not_Alter_Default_Packages_4b29.html" title="Legacy:Do Not Alter Default Packages">Do Not Alter Default Packages</a>)). Anyway, moving along...</p>
+<p>The last thing we need to do is to tell the game how much punishment our door will be able to take before finally giving up the ghost. This is done by setting the DestroyableObjective-&gt;DamageCapacity property to the amount of damage it can take. For our purposes, let's set it to about 2000, which should be enough to make somebody with a rocket launcher work a bit, but still not be impossibly tough to get through.</p>
+<p>In general, there are a couple of other properties one may want to fiddle with as well:</p>
+<dl>
+<dt>DestroyableObjective-&gt;AIShootOffset</dt>
+<dd>This determines where bots will aim when trying to shoot this objective, relative to its origin. For our purposes here, (0,0,0) is fine, since that's roughly the middle of the door, but if the origin of your static mesh isn't actually in the mesh, or there's something else covering that part of it, you may want to ajust this so the bots know to shoot some other part of it instead. (Note that the crosshairs displayed to players when they approach the objective are always shown at (0,0,0), and as far as I know that can't be changed, so you will generally want to put the mesh's origin where you want people to shoot anyway, so that it looks right to human players)</dd>
+<dt>DestroyableObjective-&gt;DamageEventThreshold</dt>
+<dt>DestroyableObjective-&gt;TakeDamageEvent</dt>
+<dd>These allow you to set a threshold at which the objective will trigger an event once it has taken a certain amount of damage, but before it actually gets to the point of blowing up. This can be used, for example, to trigger an "almost destroyed" warning, or to make things look more damaged as the attackers get closer to actually breaking through.</dd>
+</dl>
+<p>There, we now have a door which can be blown up by the attackers as one of the objectives for the assault. Go ahead and fire up the game and give it a try!</p>
+<p><a name="Explosions" id="Explosions"></a></p>
+<h2><span class="mw-headline">Explosions</span></h2>
+<p>Ok, so we've got our door, and we can blow it up, and the game takes care of all the proper objectivey things like announcing it and showing it on the HUD and so forth, but there's still something missing. When the door gets blown up, sure, the mesh changes to a blown up version, but that's it. In the words of Marvin the Martian, "Where's the kaboom?! There's supposed to be an earth-shattering kaboom!"</p>
+<p>Obviously, we're going to want to make some things happen when the door goes kablooey. All GameObjectives will trigger their Events-&gt;Event when they have been completed (in this case, when the door's been destroyed), so go into the properties for the DestroyableObjective_SM object, and set the Events-&gt;Event property to some appropriate name, let's say "DoorDestroyed". Now we'll use a <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a> to perform a few different actions for us when that event gets triggered. <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an Actor</a>&gt;&gt;Keypoint&gt;&gt;AIScript&gt;&gt;ScriptedSequence&gt;&gt;ScriptedTrigger to the map near the door (so it's easy to find), bring up its properties, and <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Inline_Object_eb79.html" title="Legacy:Add An Inline Object">add an inline object</a> or three to the AIScript-&gt;Actions property to define what this ScriptedTrigger should do. We'll want something along the following lines:</p>
+<dl>
+<dt>Action_WAITFOREVENT</dt>
+</dl>
+<dl>
+<dd>
+<ul>
+<li>ExternalEvent = DoorDestroyed</li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Action_TRIGGEREVENT</dt>
+</dl>
+<dl>
+<dd>
+<ul>
+<li>Event = DoorExplosion</li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>ACTION_PlayExplosionSound</dt>
+</dl>
+<dl>
+<dd>
+<ul>
+<li>SoundEmitterActorTag = BaseDoor</li>
+<li>SoundVolumeScale = 2.0</li>
+<li>SoundRadiusScale = 1.0</li>
+<li>SoundPitchScale = 1.0</li>
+</ul>
+</dd>
+</dl>
+<p>This will trigger the explosion event, and play the explosion sound. Note that the SoundEmitterActorTag in the ACTION_PlayExplosionSound action is the same as the tag we gave to the door objective earlier. This means that the explosion will sound like it's coming from that object. Now, for the actual explosion, we'll do two things: We'll need to set up an <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> to show the visual explosion, and we'll also create a <a href="../../../../articles/v/i/e/Legacy%7EViewShaker_3856.html" title="Legacy:ViewShaker">ViewShaker</a> actor to shake the camera a bit, to give it a bit of "oomph". But wait a minute, there's a problem here..</p>
+<p>We could just create the Emitter and the ViewShaker, and set their tags to "DoorExplosion", so they get triggered by the ScriptedTrigger. In fact, this would work fine, in single-player mode. Unfortunately, this doesn't work in network play. It turns out that in client-server mode, ScriptedTriggers only run on the server. Things like Emitters and ViewShakers, on the other hand, only run on the clients, so we need some way for the ScriptedTrigger on the server to trigger an event on the clients to show the explosion. The answer to this is a <a href="../../../../articles/n/e/t/Legacy%7ENetworkTrigger_ffc3.html" title="Legacy:NetworkTrigger">NetworkTrigger</a>.</p>
+<p>NetworkTriggers are very easy to use. Simply <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an Actor</a>&gt;&gt;NetworkTrigger to the map (doesn't matter where, but let's keep it close to the ScriptedTrigger), and set its Events-&gt;Tag to "DoorExplosion" (the event that happens on the server). Then, set its Events-&gt;Event to "DoorExplosionClient" (an event we want to happen on the client side). Now whenever the server triggers a DoorExplosion event, the NetworkTrigger will trigger a DoorExplosionClient event on the client side of things.</p>
+<p>Now <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an Actor</a>&gt;&gt;Emitter and place it just a little bit in front of the door. Open up its properties, and set its Events-&gt;Tag to "DoorExplosionClient". Now, go to Emitter-&gt;Emitters and <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Inline_Object_eb79.html" title="Legacy:Add An Inline Object">add an inline object</a> of a new <a href="../../../../articles/s/p/r/Legacy%7ESpriteEmitter_57fc.html" title="Legacy:SpriteEmitter">SpriteEmitter</a>. In the new SpriteEmitter, you'll want to set the following properties:</p>
+<ul>
+<li>Color-&gt;Opacity = 0.4</li>
+<li>Fading-&gt;FadeOut = True</li>
+<li>Fading-&gt;FadeOutStartTime = 0.5</li>
+<li>Local-&gt;Disabled = True</li>
+<li>Local-&gt;RespawnDeadParticles = False</li>
+<li>Location-&gt;StartLocationShape = PTLS_Sphere</li>
+<li>Location-&gt;SphereRadiusRange = (Min=-300, Max=300)</li>
+<li>Size-&gt;UseSizeScale = True</li>
+<li>Size-&gt;UseRegularSizeScale = False</li>
+<li>Size-&gt;SizeScale[0] = (RlativeSize=10, RelativeTime=1)</li>
+<li>Spawning-&gt;InitialParticlesPerSecond = 10</li>
+<li>Texture-&gt;Texture = Texture'VMParticleTextures.TankFiringP.CloudParticleOrangeBMPtex'</li>
+<li>Texture-&gt;TextureUSubdivisions = 4</li>
+<li>Texture-&gt;TextureVSubdivisions = 4</li>
+<li>Texture-&gt;UseRandomSubdivision = True</li>
+<li>Time-&gt;LifetimeRange = (Min=1, Max=1)</li>
+</ul>
+<p>This will create a visual blast when the door is destroyed. Obviously, we could get a lot more sophisticated than this, including making a few smaller explosions around the area, varying the colors, making smoke, and throwing door bits around with a MeshEmitter if we wanted to, but this isn't a tutorial on Emitters, so we'll leave that as an exercise for another time.</p>
+<p>Now we need to <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an Actor</a>&gt;&gt;Triggers&gt;&gt;ViewShaker. Place it next to the emitter, open its properties, and set its Events-&gt;Tag property to "DoorExplosionClient". We could also customize what sort of shaking to produce by modifying the other properties under the ViewShaker section of the properties window, but for now the defaults will work fine.</p>
+<p>We now have a door that goes "Boom!" like any respectable door should when it gets blown up.</p>
+<hr />
+<p><b>Proceed to the next section: <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_PlayerStarts_And_The_PlayerSpawnManager_95b8.html" title="Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager">Legacy:Assault Mapping Tutorial/PlayerStarts And The PlayerSpawnManager</a></b></p>
+<hr />
+<p>This tutorial was originally written and contributed to the Wiki community by <a href="../../../../articles/f/o/o/Legacy%7EFoogod_0d6e.html" title="Legacy:Foogod">Foogod</a>. Questions and comments are welcome! Please either leave them on my personal page or at the bottom of the relevant tutorial page. If you see something which is wrong or unclear and you think needs some correction, please feel free to edit the text directly (that's what the Wiki is for!), but please try to keep the tutorial flow intact (no thread discussions in the middle of the tutorial text, please).</p>
+<p>Note: To reduce clutter, comments on the tutorial pages will be periodically moved to the <a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Discussion_978b.html" title="Legacy:Assault Mapping Tutorial/Discussion">Legacy:Assault Mapping Tutorial/Discussion</a> page. Look there for older comments and thread discussions.</p>
+<p><a name="Comments:" id="Comments:"></a></p>
+<h2><span class="mw-headline">Comments:</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 120/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/s/s/Legacy%7EAssault_Mapping_Tutorial_Creating_A_Destroyable_Objective_27d7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/s/s/Legacy_talk%7EAssault_Mapping_Tutorial_Creating_A_Destroyable_Objective_14b5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Assault_Mapping_Tutorial/Creating_A_Destroyable_Objective">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:35, 14 January 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

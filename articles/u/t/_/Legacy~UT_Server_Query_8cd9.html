@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UT Server Query - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UT Server Query</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Query_commands"><span class="tocnumber">2</span> <span class="toctext">Query commands</span></a>
+<ul>
+<li class="toclevel-2"><a href="#.5Cbasic.5C"><span class="tocnumber">2.1</span> <span class="toctext">\basic\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cinfo.5C"><span class="tocnumber">2.2</span> <span class="toctext">\info\</span></a></li>
+<li class="toclevel-2"><a href="#.5Crules.5C"><span class="tocnumber">2.3</span> <span class="toctext">\rules\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cplayers.5C"><span class="tocnumber">2.4</span> <span class="toctext">\players\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cstatus.5C"><span class="tocnumber">2.5</span> <span class="toctext">\status\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cecho.5C"><span class="tocnumber">2.6</span> <span class="toctext">\echo\</span></a></li>
+<li class="toclevel-2"><a href="#.5Clevel_property.5C"><span class="tocnumber">2.7</span> <span class="toctext">\level_property\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cgame_property.5C"><span class="tocnumber">2.8</span> <span class="toctext">\game_property\</span></a></li>
+<li class="toclevel-2"><a href="#.5Cplayer_property.5C"><span class="tocnumber">2.9</span> <span class="toctext">\player_property\</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Tricks"><span class="tocnumber">3</span> <span class="toctext">Tricks</span></a></li>
+<li class="toclevel-1"><a href="#Related_documents"><span class="tocnumber">4</span> <span class="toctext">Related documents</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> makes use of the so called GameSpy Query Protocol to return status information to be used by the in-game browser or 3rd party server browsers.</p>
+<p>The server query system uses. just like the game protocol. <a href="http://en.wikipedia.org/wiki/UDP" class="extiw" title="wikipedia:UDP">Wikipedia:UDP</a>. This is an unreliable protocol, meaning packets might get lost during transmission.</p>
+<p>UT listens on the port gameport+1 (7778 by default) for GameSpy Query commands.</p>
+<p>Below is a list of commands that are accepted by UT. The field seperator is the backslash. The returns always consists out of a set of <code>\name\value</code> elements.</p>
+<p>Requests often end with <code>\queryid\[number.number]\final\</code>, if you encounter the <code>\final\</code> the last piece of the request has been send. But don't rely on the <code>\final\</code>. It may not be received at all.</p>
+<p><b>Note:</b> I've broken down the replies for readability. The actual replies do not have newlines in them.</p>
+<p><a name="Query_commands" id="Query_commands"></a></p>
+<h2><span class="mw-headline">Query commands</span></h2>
+<p><a name=".5Cbasic.5C"></a></p>
+<h3><span class="mw-headline">\basic\</span></h3>
+<p>This returns basic server information, mainly for recognition.</p>
+<pre>
+\gamename\[game name]
+\gamever\[Level.EngineVersion]
+\minnetver\[Level.MinNetVersion]
+\location\[Level.Game.GameReplicationInfo.Region]
+</pre>
+<p>The game name is always <code>ut</code> for UT</p>
+<p>The regional location is one of the following:</p>
+<ol>
+<li>No Region Specified (any Region)</li>
+<li>Southeast US</li>
+<li>Western US</li>
+<li>Midwest US</li>
+<li>Northwest US, West Canada</li>
+<li>Northeast US, East Canada</li>
+<li>United Kingdom</li>
+<li>Continental Europe</li>
+<li>Central Asia, Middle East</li>
+<li>Southeast Asia, Pacific</li>
+<li>Africa</li>
+<li>Australia / NZ / Pacific</li>
+<li>Central, South America</li>
+</ol>
+<p>Usual the server admin has not set their location, so it's usualy 0</p>
+<p><a name=".5Cinfo.5C"></a></p>
+<h3><span class="mw-headline">\info\</span></h3>
+<p>Information about the current game running on the server</p>
+<pre>
+\hostname\[Level.Game.GameReplicationInfo.ServerName]
+\hostport\[game port]
+\maptitle\[Level.title]
+\mapname\[file name without extention]
+\gametype\[Level.Game.Class]
+\numplayers\[Level.Game.NumPlayers]
+\maxplayers\[Level.Game.MaxPlayers]
+\gamemode\openplaying
+\gamever\[Level.EngineVersion]
+\minnetver\[Level.MinNetVersion]
+\worldlog\[world logging enabled and working]
+\wantworldlog\[world logging enabled]
+...
+</pre>
+<p>Game mode is always <code>openplaying</code></p>
+<p>More replies can be added here by various game types, this should not contain game type settings. Check the <code>GetInfo();</code> function in the game type for additions</p>
+<p><a name=".5Crules.5C"></a></p>
+<h3><span class="mw-headline">\rules\</span></h3>
+<p>Setting for the current game, the rules</p>
+<pre>
+\mutators\[comma seperated list]
+\listenserver\[is a listen server/non dedicated server]
+\password\[true or false]
+...
+\AdminName\[Level.Game.GameReplicationInfo.AdminName]
+\AdminEMail\[Level.Game.GameReplicationInfo.AdminEmail]
+</pre>
+<p>The return sets of rules depends on the running game type.</p>
+<p>Check the <code>GetRules();</code> function in the game type for additions.</p>
+<p>A CTFGame would return the following additional values:</p>
+<pre>
+\timelimit\[Timelimit]
+\goalteamscore\[GoalTeamScore]
+\minplayers\[MinPlayers]
+\changelevels\[bChangeLevels]
+\maxteams\[MaxTeams]
+\balanceteams\[bBalanceTeams]
+\playerbalanceteams\[bPlayersBalanceTeams]
+\friendlyfire\[percentage]
+\gamestype\[Turbo or Hardcore or Classic]
+\botskill\[class'ChallengeBotInfo'.default.Skills[Difficulty]]
+</pre>
+<p><a name=".5Cplayers.5C"></a></p>
+<h3><span class="mw-headline">\players\</span></h3>
+<p>Returns information about each player on the server. The # in the names below is the player number</p>
+<pre>
+\player_#\[PlayerReplicationInfo.PlayerName]
+\frags_#\[PlayerReplicationInfo.Score]
+\ping_#\[player ping]
+\team_#\[PlayerReplicationInfo.Team]
+\mesh_#\[Player mesh]
+\skin_#\[Player skin]
+\face_#\[Player face]
+\ngsecret_#\[bot or true or false]
+</pre>
+<p>ngsecret defines if the player has a ngStats password set</p>
+<p><a name=".5Cstatus.5C"></a></p>
+<h3><span class="mw-headline">\status\</span></h3>
+<p>This is a shorthand for <code>\basic\\info\\rules\\players\</code></p>
+<p><a name=".5Cecho.5C"></a></p>
+<h3><span class="mw-headline">\echo\</span></h3>
+<p>This command requires a argument, the argument will be returned.</p>
+<p>For example when you send:</p>
+<p><code>\echo\this is a test</code></p>
+<p>the following will be returned:</p>
+<p><code>\echo_replay\this is a test</code></p>
+<p><b>Note:</b> the name of the reply can be diffirent, it could be <code>\echo\</code>, <code>\echo_reply\</code>, <code>\ignored\</code> or something else.</p>
+<p><a name=".5Clevel_property.5C"></a></p>
+<h3><span class="mw-headline">\level_property\</span></h3>
+<p>This will return the value of the argument passed to it.</p>
+<p>For example:</p>
+<p><code>\level_property\Title</code></p>
+<p>will return</p>
+<p><code>\Title\[Level.Title]</code></p>
+<p><a name=".5Cgame_property.5C"></a></p>
+<h3><span class="mw-headline">\game_property\</span></h3>
+<p>This works just like \level_property\ except it will return values of Level.Game</p>
+<p><a name=".5Cplayer_property.5C"></a></p>
+<h3><span class="mw-headline">\player_property\</span></h3>
+<p>This will return a the value of a PlayerPawn variable, for each PlayerPawn on the server.</p>
+<p><a name="Tricks" id="Tricks"></a></p>
+<h2><span class="mw-headline">Tricks</span></h2>
+<p>You can combine commands in a single query:</p>
+<p><code>\basic\\info\\rules\</code></p>
+<p>But watch out, when the last command is invalid you might not get a single result. A nice trick to get around this problem is to always append <code>\echo\something</code> at the end.</p>
+<p>This allows you to use 3rd party commands that might have been added by a mod.</p>
+<p><a name="Related_documents" id="Related_documents"></a></p>
+<h2><span class="mw-headline">Related documents</span></h2>
+<ul>
+<li><a href="../../../../articles/s/e/r/Legacy%7EServer_Query_In_Perl_48c9.html" title="Legacy:Server Query In Perl">Server Query In Perl</a></li>
+<li><a href="../../../../articles/u/d/p/Legacy%7EUdpServerQuery_d37f.html" title="Legacy:UdpServerQuery">UdpServerQuery</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 65/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/t/_/Legacy%7EUT_Server_Query_8cd9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/t/_/Legacy_talk%7EUT_Server_Query_e20a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UT_Server_Query">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:02, 12 May 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

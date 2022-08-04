@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Crashing UnrealEd - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Crashing UnrealEd</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Common UnrealEd Crashes: Easily Avoidable Tragedies</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#General"><span class="tocnumber">1</span> <span class="toctext">General</span></a></li>
+<li class="toclevel-1"><a href="#Brushes_and_vertices"><span class="tocnumber">2</span> <span class="toctext">Brushes and vertices</span></a></li>
+<li class="toclevel-1"><a href="#2D_Shape_Editor"><span class="tocnumber">3</span> <span class="toctext">2D Shape Editor</span></a></li>
+<li class="toclevel-1"><a href="#Textures"><span class="tocnumber">4</span> <span class="toctext">Textures</span></a></li>
+<li class="toclevel-1"><a href="#Sounds"><span class="tocnumber">5</span> <span class="toctext">Sounds</span></a></li>
+<li class="toclevel-1"><a href="#Terrain"><span class="tocnumber">6</span> <span class="toctext">Terrain</span></a></li>
+<li class="toclevel-1"><a href="#BSP_Rebuild_Options"><span class="tocnumber">7</span> <span class="toctext">BSP Rebuild Options</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">8</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">9</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="General" id="General"></a></p>
+<h2><span class="mw-headline">General</span></h2>
+<ul>
+<li>Don't put lights into the solid space because it will cause crashes.</li>
+<li>At least on Win2K Pro, right-clicking on the desktop and changing Appearance -&gt; Schemes will crash the editor.</li>
+<li>Don't try to run UEd 2 and UEd 3 at the same time, most likely all hell breaks loose. (Or one of them just crashes.&#160;;))</li>
+<li>When setting the Light Color (Button in UEd 2) don't click on any of the viewports. If you do, the Editor will crash.</li>
+<li>Don't try to do "Convert -&gt; Static Mesh" on a static mesh.&#160;;)</li>
+<li>Doing Edit -&gt; undo too many times in a row usually results in a crash</li>
+<li>Don't right click on a viewport and select View-&gt; show fluid surfaces if there is no fluid surfaces in your level.</li>
+<li>When in <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Mode_587e.html" title="Legacy:Terrain Mode">Terrain Mode</a> don't select a HUGE area with the vertex editing tool and try to move it. Because you are trying to move so many vertices at the same time UnrealEd will most likely crash or freeze up.</li>
+<li>Creating a Warp Zone to itself will cause a big crash!</li>
+</ul>
+<p><a name="Brushes_and_vertices" id="Brushes_and_vertices"></a></p>
+<h2><span class="mw-headline">Brushes and vertices</span></h2>
+<ul>
+<li>When you are vertex editing be careful and don't cross the edges of polygons and don't overlap two or more vertices. If you overlap the vertices you won't be able to separate them afterwards and if the overlapping reduces the facecount of the object then UEd will instantly crash after you release the mouse button moving the vertex.
+<ul>
+<li>Save a lot when you are using the BSP based terrain brush.</li>
+<li>Keep a close eye on what you move and where</li>
+<li>If you are using the Vertex mode the sensitivity of the movement depends on the grid setting you use. Certain grid settings will need a steady hand and lots of concentration.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Don't try to select a surface's underlying brush with SHIFT+Left-Click if the brush has been deleted (see <a href="../../../../articles/m/o/u/Legacy%7EMouse_Control_7dbd.html" title="Legacy:Mouse Control">Mouse Control</a> for more on this function).</li>
+</ul>
+<ul>
+<li>Don't duplicate a brush that's smaller than the current grid size, or equal and off-grid.</li>
+</ul>
+<ul>
+<li>If you must put a tetrahedron (sphere) brush into your map, don't set the extrapolation value above 3 or 4. This results in a hugely complex brush shape that not only tears the <a href="../../../../articles/b/s/p/Legacy%7EBSP_220f.html" title="Legacy:BSP">BSP</a> to shreds but also is likely to cause a crash when you try to add or subtract it.</li>
+</ul>
+<p><a name="2D_Shape_Editor"></a></p>
+<h2><span class="mw-headline">2D Shape Editor</span></h2>
+<ul>
+<li>Don't cross edges in the <a href="../../../../articles/2/d/_/Legacy%7E2D_Shape_Editor_c905.html" title="Legacy:2D Shape Editor">2D Shape Editor</a>. When you try to extrude the shape UEd will crash.</li>
+<li>UnrealEd 2 can be crashed by importing a texture file into the 2D Shape Editor incorrectly (and, this happens unexpectedly). When you open the 2D Shape Editor and attempt to import a door texture with the intent of transferring the exact dimension to a 3D Brush, you can crash UnrealEd by doing <a href="../../../../articles/2/d/_/Legacy%7E2D_Shape_Editor_Menu_6965.html" title="Legacy:2D Shape Editor Menu">2D Shape Editor Menu</a> -&gt; File -&gt; Image -&gt; Get From Current Texture. The behavior of the 2D Shape Editor is inconsistent, sometimes the above mentioned technique works, sometimes it doesn't. (This suggestion from Machismo) The solution is that the 2D Shape Editor can only open <i>.bmp</i> textures. So, when you have the desired texture selected in the Texture Browser, right click the texture and select, <i>Export to .pcx</i>. In the Save Dialog window, select, <i>Save as Type &gt; All File Types</i>, and save the file as a (unique name) <i>.bmp</i> file. Then, from within the 2D Shape Editor, select, <a href="../../../../articles/2/d/_/Legacy%7E2D_Shape_Editor_Menu_6965.html" title="Legacy:2D Shape Editor Menu">2D Shape Editor Menu</a> -&gt; File -&gt; Image -&gt; Get From Disk and, import.</li>
+</ul>
+<dl>
+<dd><b>Tarquin:</b> I've never had this problem, some people say it's frequent. Could it be OS-related? I've just seen a post on TO about this occuring after a switch to win2k.</dd>
+<dd><b>Daemonica:</b> I don't think it's Win2K, a few of us use it here with no problems, it's a useful and often used tool.</dd>
+<dd><b>Legal:</b> I don't get it with UED2 but with 3. It must be teh G0bl1n&#160;:p</dd>
+</dl>
+<p><a name="Textures" id="Textures"></a></p>
+<h2><span class="mw-headline">Textures</span></h2>
+<ul>
+<li>If you delete a texture that is in use UEd will crash. Fix: use the <a href="../../../../articles/t/e/x/Legacy%7ETexture_Replacement_Tool_c5d7.html" title="Legacy:Texture Replacement Tool">Texture Replacement Tool</a> before deleting a texture. (Even if you don't see the texture, it might be used on an invisible surface of a brush.)</li>
+</ul>
+<ul>
+<li>There are several ways to crash UED if you are not careful when deleting or renaming textures, they are:
+<ol>
+<li>Deleting a texture that is in use - if you delete a texture that is in use, UED will crash if you try to save or look at the texture in the 3D view (this is really tough, you're moving around and all of a sudden it hangs). The correct way to do this is to first make sure that the texture is not in use <i>Anywhere</i> in the map (including surfaces you can't see!), and then delete the texture. If you have used the texture a lot and are not sure where all it is, then you can use the texture replacing tool, or test if you have gotten rid of the texture entirely by performing a <a href="../../../../articles/t/e/x/Legacy%7ETexture_Cull_8d5e.html" title="Legacy:Texture Cull">texture cull</a>, which will also remove the texture for you.</li>
+<li>Delete a texture and then rename another texture to be the deleted texture's name - I'm not quite sure of the specifics, but if you want to do this delete the old texture, save, and re-open the map, then rename the other file. Better yet if you are simply replacing a texture import the new one right over the old one.</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li>Importing a file of .bmp or .pcx type that is NOT in indexed 8-bit color format will crash the editor with a General Protection Fault. (I'm not sure you can actually save a .bmp in RGB color mode or anything else besides indexed but I know for a fact that Photoshop is quite willing to save a .pcx in RGB color mode).</li>
+</ul>
+<ul>
+<li>In UnrealED 3, many time importing a texture with the same name, overwriting a previous texture, and then using the same type of DXTC compression to compress the texture gives a crash. Possible workarounds would be compressing the texture before importing.</li>
+</ul>
+<ul>
+<li>This won't crash UED, but it'll make your map completely unplayable, saving the MyLevel package as a texture package, or SM package, etc. So far i have found no remedy for this.</li>
+</ul>
+<ul>
+<li>Creating a new Raw material derived from itself. (eg. Creating a TexPanner which Pans itself).<br />
+When creating a new raw material the Texture browser will automatically select this new material. This is a common trap for people who:<br />
+select the derivative material from the Texture Browser -&gt; Create the new material -&gt; Click the <i>Use</i> button to use the selected derivative material. The correct procedure is as follows:<br />
+Create the new material -&gt; select the derivative material from the Texture Browser -&gt; Click the <i>Use</i> button to use the selected derivative material.</li>
+</ul>
+<p><a name="Sounds" id="Sounds"></a></p>
+<h2><span class="mw-headline">Sounds</span></h2>
+<ul>
+<li>Adding a modified <i>AmbientSound</i> to your level, when the file size becomes too big for the Unreal Engine (Can this be accurately quantified?) will cause both Unreal Tournament and the Unreal Editor to crash. Typically, this is a file mixed with <a href="../../../../articles/m/o/d/Legacy%7EModPlug_Tracker_a9fa.html" title="Legacy:ModPlug Tracker">ModPlug Tracker</a> and converted to <i>.wav</i> format. (I will add a better explanation later)</li>
+</ul>
+<ul>
+<li>Adding a custom sound to your level without importing it properly ( and, I don't know the correct technique for this) will cause a <i>General Protection Fault</i>. The level design will then be unplayable, even if you delete the Ambient Sound. The recommended techniques in various tutorials, does not work as advertised. (I will research this and find the TRUTH.)</li>
+</ul>
+<p><a name="Terrain" id="Terrain"></a></p>
+<h2><span class="mw-headline">Terrain</span></h2>
+<ul>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerrain_Texture_Layer_7544.html" title="Legacy:Terrain Texture Layer">Terrain texture layers</a> do not like being rectangular.</li>
+<li>Do not use the terrain smoothing tool near the edges of terrain.</li>
+</ul>
+<p><a name="BSP_Rebuild_Options" id="BSP_Rebuild_Options"></a></p>
+<h2><span class="mw-headline">BSP Rebuild Options</span></h2>
+<ul>
+<li>Which settings in the <a href="../../../../articles/b/u/i/Legacy%7EBuild_af4b.html" title="Legacy:Build">Build</a> window can safely be changed?
+<ul>
+<li>Anything in the Optimization section. Avoid at all cost the BSP Rebuild Options section. People have completely killed UnrealEd by changing these. (This seems to be what everyone quotes, but you can quite safely change the sliders without destroying the editor. They are also set back to the default settings when you next load UED, so you can just reload the editor if anything goes wrong)</li>
+<li>Changing the first slider alters the amount of BSP cuts that are made. I don't know the exact effects of this, only that setting it to the highest level gives a ridiculous amount of BSP cuts and setting it to "Minimise Cuts" does exactly that. Mess with it a bit if there's a BSP error that you absoloutly can't get rid of, or lower this slider if your node count is far too high.</li>
+<li>The second slider adjusts how zone portals are handled when rebuilding bsp. Very rarely, a zone portal won't zone off an area, even if it completly seals it. Setting this slider closer to the "Portals cut all" option should fix this problem. Setting the slider to "Ignore Portals" will increase the chance that the ed won't zone an area off (don't know what the point of that is)</li>
+</ul>
+</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Bug_List_4f2d.html" title="Legacy:UnrealEd Bug List">UnrealEd Bug List</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Mapping_FAQ_8525.html" title="Legacy:Unreal Mapping FAQ">Unreal Mapping FAQ</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Mapping_FAQ_%28UT%29_5d86.html" title="Legacy:Unreal Mapping FAQ (UT)">Unreal Mapping FAQ (UT)</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p>Whenever I set all the rendering options in advanced properties to true and then select show all actors, the editor runs fine until i move the camera through a wall and outside of the level, it then jams and when i close it (with Ctrl, Alt + delete) i get an error in different parts of the level. –<i>ProjectX</i></p>
+<p><b>Daid303:</b> Creating an <a href="../../../../articles/i/n/l/Legacy%7EInline_Object_1aa7.html" title="Legacy:Inline Object">inline object</a> in the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">Default properties</a> of any actor in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Browser_2eb9.html" class="mw-redirect" title="Legacy:Actor Browser">Actor browser</a> also gives a GPF.</p>
+<p><b>Wormbo:</b> Don't try to create an <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> that emits particles with high acceleration values and lifespan. UnrealEd will decide to eat up more and more memory (more than usual) and doesn't respond anymore.</p>
+<p><b>Winxprules:</b> I hope you can help me here... When I go to build my map, UnrealEd crashes when it comes to Illumination Occluding. I'm guessing that illumination has something to do with the lighting, but I just wanted to check. If you could help, I'd appreciate it very much. Thanks.</p>
+<p><b>Winxprules:</b> Never mind... I managed to fix my problem by deleting every last light from the level. It took a while but it was well worth it&#160;;)</p>
+<p><b>Tarquin:</b> Save yourself time if you ever have to do this again: see <a href="../../../../articles/a/c/t/Legacy%7EActor_Context_Menu_5838.html" title="Legacy:Actor Context Menu">Actor Context Menu</a> -&gt; Select all &lt;class&gt;.</p>
+<p><b>Winxprules:</b> Thanks for the tip, Tarquin&#160;:)</p>
+<p><b>DataCable:</b> This may be game-specific, but the UEd 1 bundled with DS9:TF will crash if you have no object(s) selected and simply move the cursor over the title bar of an already-opened properties window. Took a while to realize that this was causing otherwise seemingly random crashes.</p>
+<p><b>Leggy:</b> Is it me, or does putting many lights on the grid cause the editor to crash to the desktop during Illumination occuluding sometimes? I had a map that just would't build, and I selected all the lights and moved them by less than a grid unit in each direction, and now it works perfectly.</p>
+<p><b>Bob_The_Beheader:</b> Hmm...It's kind of hard to tell why UEd crashes when it happens while it's starting up. It's just given me this error while the splash screen is showing:</p>
+<blockquote class="legacyquote">
+<p>Build UT2004_Build_[2005-02-15_17.02]</p>
+</blockquote>
+<blockquote class="legacyquote">
+<p>OS: Windows XP 5.1 (Build: 2600) CPU: GenuineIntel Unknown processor @ 3196 MHz with 510MB RAM Video: NVIDIA GeForce FX Go5200 (4690)</p>
+</blockquote>
+<blockquote class="legacyquote">
+<p>Assertion failed: WhiteCircle [File:.\UnTerrainTools.cpp] [Line: 788]</p>
+</blockquote>
+<blockquote class="legacyquote">
+<p>History: FTerrainTools::Init</p>
+</blockquote>
+<p>I've recently started learning to code UnrealScript, and so I've rebuilt packages and stuff, maybe that has someting to do with why it crashes?</p>
+<p><b>MythOpus:</b> Well Bob, in UnrealScript recompiling the original packages that come with your game is a general no no, unless you A. have a license and B. are making a totally new game. What most people do is build upon the default packages by extending actors within the default packages. An example would be having a Sphere as an actor in a default package and you want to create a basketball. You would 'extend' the Sphere actor from the default package and make the new Basketball class in your own custom package (I.E. MyBasketball.u).</p>
+<p>I hope this helps... Also... about the error itself, I think it has to do with the importing of the source code that you had recompiled... or the absense of that native source code all together (The C Headers)</p>
+<p><b>Bob_The_Beheader:</b> Thanks. I do know about object oriented programmming, but the default packages are rebuilt when you run UCC, right? That's all I meant. People must think I am going around promoting screwing with the defualt packages, what with this and the page I made, <a href="../../../../articles/a/c/t/Legacy%7EActors_Snap_By_Default_4b78.html" title="Legacy:Actors Snap By Default">Actors_Snap_By_Default</a>. I really am not. I do know that it's bad.</p>
+<p><b>MythOpus:</b> Heh... actually UCC doesn't actually rebuild any package unless the .u for that package has been deleted. Therefore, normally UCC only checks to see if the packages are still there. If they are, it goes to the next package in the list until it finds an EditPackage string that has no .u package. Then it looks for the source (the folder that holds the .uc files) of that package and uses that to compile a new package.</p>
+<p><b>StarWeaver:</b> Got a new one (I think, anyway): Changing a <a href="../../../../articles/p/r/o/Legacy%7EProjector_5913.html" title="Legacy:Projector">Projector</a> (In my case it's always been position or rotation, both by dragging and by changing the numeric properties) and then using Undo causes a GPF. (My vague guess from the call chain would be the propertly list getting corrupted on read or write to the undo history . . . which is odd, because I'd think it would use the same operations as a cut or copy or duplicate . . . )</p>
+<p><b>SuperApe:</b> Or how about adding a property definition <i>above</i> the list of other definitions, while an object of that class already exists, with those properties configured, in the current map space. Hit compile and GPF. Solution: remove the object or simply clear out the property settings.</p>
+<p><b>Hellkeeper:</b> "Don't try to run UEd 2 and UEd 3 at the same time, most likely all hell breaks loose. (Or one of them just crashes. )". Hum, I frequently run Ued 1.0, 2.0 and 3.0 at the same time, copy/pasting brush from one to another without problem (except tremendous amount of HOM everywhere). They do not crash until I do stupid things (converting a pawn to static mesh, this mesh to brush, and copying it to Unrealed 1.0).</p>
+<p><b>Kirk:</b> I encountered the illumination occluding related crash as well, after making a set of very large and narrow brushes. Perhaps the lightmap for the BSP generated for the brush (in this particular case) was too large/disproportionate or something. In any case, splitting the brushes in two got rid of the crash. Perhaps useful to some.</p>
+<p><b>JeffMOD:</b>I keep getting the following messsgaes before Ued even loads fully: General protection fault!</p>
+<p>History: WBrowserStaticMesh::UpdateMenu &lt;- WBrowserStaticMesh::OnSize &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- WBrowserStaticMesh::OnCreate &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- PerformCreateWindowEx &lt;- WBrowser::OpenWindow &lt;- WBrowserStaticMesh::OpenWindow &lt;- WM_BROWSER_UNDOCK &lt;- WEditorFrame::OnCommand &lt;- WWindow::WndProc &lt;- WWindow::StaticProc, and, General protection fault!</p>
+<p>History: WBrowserStaticMesh::UpdateMenu &lt;- WBrowserStaticMesh::OnSize &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- WBrowserStaticMesh::OnCreate &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- PerformCreateWindowEx &lt;- WBrowser::OpenWindow &lt;- WBrowserStaticMesh::OpenWindow &lt;- WM_BROWSER_UNDOCK &lt;- WEditorFrame::OnCommand &lt;- WWindow::WndProc &lt;- WWindow::StaticProc &lt;- FALVoiceModule::NoteDestroy &lt;- UALAudioSubsystem::NoteDetroy &lt;- ULevel::DestroyActor &lt;- (Camera myLevel.Camera0) &lt;- UPlayer::Destroy &lt;- UViewport::Destroy &lt;- (WindowsViewport Package.WindowsClient0.TerrainHeightmap) &lt;- UWindowsViewport::Destroy &lt;- UObject::ConditionalDestroy &lt;- (WindowsViewport Package.WindowsClient0.TerrainHeightmap) &lt;- UWindowsClient::Tick &lt;- UEditorEngine::Tick &lt;- UpdateWorld &lt;- MainLoop. can anyone provide a fix, or will I hhave to stay online until i can get Source SDK?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 40/1000000
+Post-expand include size: 508/2097152 bytes
+Template argument size: 277/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Legacy Troubleshooting</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/r/a/Legacy%7ECrashing_UnrealEd_4220.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/r/a/Legacy_talk%7ECrashing_UnrealEd_7cf6.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Crashing_UnrealEd">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:14, 15 March 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

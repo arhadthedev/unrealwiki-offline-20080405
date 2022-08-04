@@ -1,0 +1,632 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UnrealScript Vector Maths - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UnrealScript Vector Maths</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is a page of "how to I do foo" sort of things, for values of "foo" involving points, <a href="../../../../articles/v/e/c/Legacy%7EVector_fa11.html" title="Legacy:Vector">vectors</a>, <a href="../../../../articles/r/o/t/Legacy%7ERotator_9443.html" title="Legacy:Rotator">rotators</a>, <a href="../../../../articles/q/u/a/Legacy%7EQuaternion_eb92.html" title="Legacy:Quaternion">quaternions</a>, etc. Add question, post pseudocode / <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> code.</p>
+<p>And as we sometimes say... "it's not rocket science!". Except in this case, it is&#160;;).</p>
+<p>In the following:</p>
+<ul>
+<li><b>A</b> and <b>B</b> are points in space. These could be Actors.</li>
+<li><b>a</b> and <b>b</b> are vectors for the positions of these points respectively (e.g. <code>A.Location</code>)</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Some_basic_work_with_locations"><span class="tocnumber">1</span> <span class="toctext">Some basic work with locations</span></a>
+<ul>
+<li class="toclevel-2"><a href="#A_vector_that_points_from_A_to_B"><span class="tocnumber">1.1</span> <span class="toctext">A vector that points from A to B</span></a></li>
+<li class="toclevel-2"><a href="#A_unit_vector_pointing_from_A_to_B"><span class="tocnumber">1.2</span> <span class="toctext">A unit vector pointing from A to B</span></a></li>
+<li class="toclevel-2"><a href="#The_distance_between_A_and_B"><span class="tocnumber">1.3</span> <span class="toctext">The distance between A and B</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Orientations"><span class="tocnumber">2</span> <span class="toctext">Orientations</span></a>
+<ul>
+<li class="toclevel-2"><a href="#A_unit_vector_pointing_in_the_direction_a_player_is_looking"><span class="tocnumber">2.1</span> <span class="toctext">A unit vector pointing in the direction a player is looking</span></a></li>
+<li class="toclevel-2"><a href="#Rotate_Actor_A_to_face_point_B"><span class="tocnumber">2.2</span> <span class="toctext">Rotate Actor A to face point B</span></a></li>
+<li class="toclevel-2"><a href="#...find_where_B_is_in_relation_to_A"><span class="tocnumber">2.3</span> <span class="toctext">...find where B is in relation to A</span></a></li>
+<li class="toclevel-2"><a href="#...find_where_Actor_A_is_in_relation_to_Pawn_B.2C_taking_into_account_B.27s_ViewRotation"><span class="tocnumber">2.4</span> <span class="toctext">...find where Actor A is in relation to Pawn B, taking into account B's ViewRotation</span></a></li>
+<li class="toclevel-2"><a href="#...find_a_point_that.27s_at_a_certain_distance_from_a_starting_point_in_a_given_direction"><span class="tocnumber">2.5</span> <span class="toctext">...find a point that's at a certain distance from a starting point in a given direction</span></a></li>
+<li class="toclevel-2"><a href="#...find_the_.28smallest.29_angle_between_A_and_B"><span class="tocnumber">2.6</span> <span class="toctext">...find the (smallest) angle between A and B</span></a></li>
+<li class="toclevel-2"><a href="#...point_to_my_left_or_right.3F"><span class="tocnumber">2.7</span> <span class="toctext">...point to my left or right?</span></a></li>
+<li class="toclevel-2"><a href="#...find_out_vector_B_that_points_x_degrees_to_the_left_or_right_of_vector_A"><span class="tocnumber">2.8</span> <span class="toctext">...find out vector B that points x degrees to the left or right of vector A</span></a></li>
+<li class="toclevel-2"><a href="#Rotate_a_rotator_by_another_rotator"><span class="tocnumber">2.9</span> <span class="toctext">Rotate a rotator by another rotator</span></a></li>
+<li class="toclevel-2"><a href="#...damp_a_velocity_vector_toward_a_surface"><span class="tocnumber">2.10</span> <span class="toctext">...damp a velocity vector toward a surface</span></a></li>
+<li class="toclevel-2"><a href="#...find_point_Q_where_a_normal_from_point_P_to_a_line_from_A_to_B_meets_the_line"><span class="tocnumber">2.11</span> <span class="toctext">...find point Q where a normal from point P to a line from A to B meets the line</span></a></li>
+<li class="toclevel-2"><a href="#...only_affect_certain_components_of_a_vector"><span class="tocnumber">2.12</span> <span class="toctext">...only affect certain components of a vector</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#What_does_this_do.3F"><span class="tocnumber">3</span> <span class="toctext">What does this do?</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Some_basic_work_with_locations" id="Some_basic_work_with_locations"></a></p>
+<h2><span class="mw-headline">Some basic work with locations</span></h2>
+<p>In these diagrams, vectors that represent:</p>
+<ul>
+<li>positions are shown in blue</li>
+<li>orientations are shown in green</li>
+</ul>
+<p>The vector you're after is usually in black.</p>
+<p><a name="A_vector_that_points_from_A_to_B" id="A_vector_that_points_from_A_to_B"></a></p>
+<h3><span class="mw-headline">A vector that points from <b>A</b> to <b>B</b></span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">vector</span> = b - a;
+</pre></div>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_vectors-AtoB.png_fc14.html" class="image" title="Legacy vectors-AtoB.png"><img alt="" src="../../../../images/Legacy_vectors-AtoB.png" width="242" height="242" border="0" /></a></span></div>
+</div>
+<p>The simple way to visualize this is to imagine you want to travel from point A to point B, using the vectors you already have. You travel along a backwards, so -a and then along b. This gives -a + b, which is equal to b - a.</p>
+<p><a name="A_unit_vector_pointing_from_A_to_B" id="A_unit_vector_pointing_from_A_to_B"></a></p>
+<h3><span class="mw-headline">A unit vector pointing from <b>A</b> to <b>B</b></span></h3>
+<p>Take the expression from above and normalize it:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">vector</span> = Normal<span class="br0">(</span>b - a<span class="br0">)</span>;
+</pre></div>
+<p><a name="The_distance_between_A_and_B" id="The_distance_between_A_and_B"></a></p>
+<h3><span class="mw-headline">The distance between <b>A</b> and <b>B</b></span></h3>
+<p>Simply find the length of the vector:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+distance = VSize<span class="br0">(</span>a - b<span class="br0">)</span>;
+distance = VSize<span class="br0">(</span>b - a<span class="br0">)</span>;
+</pre></div>
+<p>The order doesn't matter here, since the length of a vector is always positive.</p>
+<p><b>Devi:</b></p>
+<p>Note that the VSize function is relatively slow since it involves a square root (it uses pythagoras theorem: L^2 = X^2 + Y^2 + Z^2). If you just want to compare the distance between two points to another length (i.e. you want to say "Is the distance between A and B less than 100 units?") then you can speed up the operation by using VSizeSq, which returns the squared length of a vector (it does the same as VSize but leaves out the final square root operation) and by squaring the distance you're comparing to as well. So "Is the length less than 100?" becomes "Is the squared length less than 100 squared?" for example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> DistanceLessThanOneHundred<span class="br0">(</span><span class="kw4">vector</span> a, <span class="kw4">vector</span> b<span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw1">if</span> <span class="br0">(</span>VSizeSq<span class="br0">(</span>a-b<span class="br0">)</span> &lt; <span class="nu0">10000</span><span class="br0">)</span>
+   <span class="br0">{</span>
+      <span class="kw1">return</span> <span class="kw9">true</span>;
+   <span class="br0">}</span>
+   <span class="kw1">else</span>
+   <span class="br0">{</span>
+      <span class="kw1">return</span> <span class="kw9">false</span>;
+   <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>or even</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> IsDistanceLessThan<span class="br0">(</span><span class="kw4">vector</span> a, <span class="kw4">vector</span> b, <span class="kw4">float</span> distance<span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw1">return</span> <span class="br0">(</span>VSizeSq<span class="br0">(</span>a-b<span class="br0">)</span> &lt; distance**<span class="nu0">2</span> <span class="br0">)</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Wormbo:</b> This just calls for a little optimization warning. Your "VSizeSq" function does not exist in UT2004 and would have to be written in UnrealScript, like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">float</span> VSizeSq<span class="br0">(</span><span class="kw4">vector</span> A<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> Square<span class="br0">(</span>A.<span class="me1">X</span><span class="br0">)</span> + Square<span class="br0">(</span>A.<span class="me1">Y</span><span class="br0">)</span> + Square<span class="br0">(</span>A.<span class="me1">Z</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The problem with this is: it's an UnrealScript function. That means, it's already slower than the corresponding native implementation. When using this function, there's one UnrealScript function call (the function itself) as well as 5 native function calls (three times the Square function and twice the operator +). I dare to say that this eats up the benefits of not performing the square root operation on the result.</p>
+<p><b>Devi:</b> I'm working with the Unreal 2.X engine, maybe VSizeSq only exists in that version, apologies for any confusion...</p>
+<p>Anyhows, if you want to make your own version of VSizeSQ then the fastest way to do it in UScript is to do the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">float</span> VSizeSq<span class="br0">(</span><span class="kw4">Vector</span> a<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> a <span class="kw3">dot</span> a;
+<span class="br0">}</span>
+</pre></div>
+<p>Which is only one native operator call, hurrah&#160;:D As you say with functions being slow to call, you may want to just directly insert "myVector dot myVector" into your code rather than putting it into a seperate function...</p>
+<p>(Wormbo, hope you don't mind but I corrected your code sample and comments so that your version of VSizeSq worked with only one vector as it should, rather than working with two)</p>
+<p><b>Wormbo:</b> Oh right, thanks.&#160;:) BTW: I've just tested the execution speed of <tt>x dot x</tt> versus <tt>VSize(x)</tt>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">int</span> Main<span class="br0">(</span><span class="kw4">string</span> Args<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">vector</span> v;
+  <span class="kw5">local</span> <span class="kw4">float</span> f;
+  <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+  <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; <span class="nu0">3</span>; j++<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Test "</span> $ j<span class="br0">)</span>;
+    i = <span class="kw4">int</span><span class="br0">(</span>Args<span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="kw1">while</span> <span class="br0">(</span>i-- &gt; <span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+      v = <span class="nu0">1000</span> * VRand<span class="br0">(</span><span class="br0">)</span>;
+      f = VSize<span class="br0">(</span>v<span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">true</span><span class="br0">)</span>;
+ 
+    i = <span class="kw4">int</span><span class="br0">(</span>Args<span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="kw1">while</span> <span class="br0">(</span>i-- &gt; <span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+      v = <span class="nu0">1000</span> * VRand<span class="br0">(</span><span class="br0">)</span>;
+      f = v <span class="kw3">Dot</span> v;
+    <span class="br0">}</span>
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">true</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> <span class="nu0">0</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Output:</p>
+<table>
+<tr>
+<td>
+<pre>
+D:\UT2004\System&gt;ucc test.test 100000
+Executing Class test.TestCommandlet
+Test 0
+Time=55.081175 ms
+Time=61.303065 ms
+Test 1
+Time=54.837094 ms
+Time=60.095937 ms
+Test 2
+Time=54.314674 ms
+Time=60.696120 ms
+
+D:\UT2004\System&gt;ucc test.test 10000
+Executing Class test.TestCommandlet
+Test 0
+Time=5.410266 ms
+Time=5.997695 ms
+Test 1
+Time=5.466540 ms
+Time=7.278457 ms
+Test 2
+Time=5.332435 ms
+Time=6.241699 ms
+
+D:\UT2004\System&gt;ucc test.test 1000
+Executing Class test.TestCommandlet
+Test 0
+Time=0.573987 ms
+Time=0.569542 ms
+Test 1
+Time=0.529024 ms
+Time=0.590087 ms
+Test 2
+Time=0.557979 ms
+Time=0.596532 ms
+
+D:\UT2004\System&gt;ucc test.test 100
+Executing Class test.TestCommandlet
+Test 0
+Time=0.068894 ms
+Time=0.062653 ms
+Test 1
+Time=0.051611 ms
+Time=0.060420 ms
+Test 2
+Time=0.053945 ms
+Time=0.061406 ms
+
+D:\UT2004\System&gt;ucc test.test 10
+Executing Class test.TestCommandlet
+Test 0
+Time=0.020546 ms
+Time=0.006913 ms
+Test 1
+Time=0.014280 ms
+Time=0.006459 ms
+Test 2
+Time=0.005833 ms
+Time=0.005924 ms
+
+D:\UT2004\System&gt;ucc test.test 1
+Executing Class test.TestCommandlet
+Test 0
+Time=0.015603 ms
+Time=0.001598 ms
+Test 1
+Time=0.001807 ms
+Time=0.001216 ms
+Test 2
+Time=0.001130 ms
+Time=0.001585 ms
+
+D:\UT2004\System&gt;
+</pre></td>
+</tr>
+</table>
+<p>Interestingly, loop execution seems to become faster after the first iteration.</p>
+<p><b>Devi:</b> lol, my old boss would be proud of you, he always said you should *always* do timings on things if you're having arguments about optimisations&#160;:)</p>
+<p>Anyhows, I've only been using UScript for a week or so (I'm a C++ programmer by training) and I can give no explanation at all for the results you get from that test. The fact that when you did the operation once you found that VSize was about 10 times slower than Dot is what I would have expected, but the fact that the more you do it, the faster VSize gets compared to Dot (even overtaking it in speed) implies something very odd must be happening under the hood of the UC virtual machine...</p>
+<p><b>Switch:</b> The fastest square dist method I found was bit slower than VSize. BTW, some category for pages on profiling would be welcome, putting this in comments adds a lot of noise to the document.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Profile<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> a,b;
+        <span class="kw5">local</span> <span class="kw4">vector</span> va,vb;
+ 
+        va = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1234.5678</span>,<span class="nu0">-9012.3456</span>,<span class="nu0">7890.1234</span><span class="br0">)</span>; 
+        vb = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">-5678.9012</span>,<span class="nu0">3456.7890</span>,<span class="nu0">-1234.5678</span><span class="br0">)</span>;
+ 
+        <span class="kw1">for</span><span class="br0">(</span>a=<span class="nu0">0</span>; a&lt;<span class="nu0">20</span>; ++a<span class="br0">)</span> <span class="br0">{</span> <span class="kw7">stopwatch</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+                <span class="co1">//for(b=0; b&lt;10000; ++b) {                 </span>
+                <span class="co1">//if( ((va-vb)dot(va-vb)) &lt; 1000000 ){}</span>
+                <span class="co1">//if( VSize(va-vb) &lt; 1000 ){}                      </span>
+                <span class="co1">//}                                                                           </span>
+        <span class="kw7">stopwatch</span><span class="br0">(</span><span class="kw9">true</span><span class="br0">)</span>; <span class="br0">}</span>    
+<span class="br0">}</span>
+</pre></div>
+<pre>
+Build: 3355 commandlet
+Commandline: start /REALTIME /B ucc sandbox.sandbox
+
+LOOP 20x1, ((va-vb)dot(va-vb)) &lt; 1000000
+Time=0.008693 ms
+Time=0.001483 ms
+Time=0.001213 ms ...
+
+LOOP 20x1, VSize(va-vb) &lt; 1000
+Time=0.008144 ms
+Time=0.001159 ms
+Time=0.001023 ms ...
+
+LOOP 20x10000, ((va-vb)dot(va-vb)) &lt; 1000000
+Time=7.056599 ms
+Time=6.996057 ms
+Time=6.992126 ms ...
+
+LOOP 20x10000, VSize(va-vb) &lt; 1000
+Time=4.834834 ms
+Time=4.831398 ms
+Time=4.831604 ms ...
+</pre>
+<p><b>Foxpaw:</b> Loops get faster with a greater number of iterations because of CPU caching and an increased probability of TLB hits. For this reason I always "precache" things when I profile them, IE running the test twice and keeping the second result. (Unless I need "real world numbers" and it's time consuming enough to be measured on a single iteration.) Ideally you could test with a clean cache every time, but manually flushing the cache and TLB can't really be done from within an operating system such as Windows or Linux, (let alone from within UScript) so I run my tests fully cached.</p>
+<p><a name="Orientations" id="Orientations"></a></p>
+<h2><span class="mw-headline">Orientations</span></h2>
+<p><a name="A_unit_vector_pointing_in_the_direction_a_player_is_looking" id="A_unit_vector_pointing_in_the_direction_a_player_is_looking"></a></p>
+<h3><span class="mw-headline">A unit vector pointing in the direction a player is looking</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">vector</span> = <span class="kw4">vector</span><span class="br0">(</span>myPlayerController.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p><a name="Rotate_Actor_A_to_face_point_B" id="Rotate_Actor_A_to_face_point_B"></a></p>
+<h3><span class="mw-headline">Rotate Actor <b>A</b> to face point <b>B</b></span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+a = A.<span class="me1">location</span>;
+b = B.<span class="me1">location</span>
+A.<span class="me1">SetRotation</span><span class="br0">(</span><span class="kw4">rotator</span><span class="br0">(</span>b - a<span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_vectors-AorienttoB.png_4d40.html" class="image" title="Legacy vectors-AorienttoB.png"><img alt="" src="../../../../images/Legacy_vectors-AorienttoB.png" width="242" height="242" border="0" /></a></span></div>
+</div>
+<hr />
+<p>Things from below here need clarifying....</p>
+<p><a name="...find_where_B_is_in_relation_to_A"></a></p>
+<h3><span class="mw-headline">...find where <b>B</b> is in relation to <b>A</b></span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<a href="/Actor"><span class="kw10">actor</span></a> A, B;
+<span class="kw4">vector</span> aFacing,aToB;
+ 
+<span class="co1">// What direction is A facing in?</span>
+aFacing=Normal<span class="br0">(</span><span class="kw4">Vector</span><span class="br0">(</span>A.<span class="me1">Rotation</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="co1">// Get the vector from A to B</span>
+aToB=B.<span class="me1">Location</span>-A.<span class="me1">Location</span>;
+ 
+orientation = aFacing <span class="kw3">dot</span> aToB;
+  <span class="co1">// &gt; 0.0  B is in front of A</span>
+  <span class="co1">// = 0.0  B is exactly to the right/left of A </span>
+  <span class="co1">// &lt; 0.0  B is behind A</span>
+</pre></div>
+<p>The code above functions using the mathematic law that states that if you dot product a normalised vector (which I'll call N) with another vector (which I'll V), the result will be the length of V along direction N. We work out a normal vector that points in the same direction as A is facing, then for V we calculate the vector that leads from A to B. Now, if the result is positive then we know that V must be travelling at least a little in the same direction as N (therefore B is in front of A). If the result is 0 then V isn't travelling along N at all (i.e. it must be at right angles to it). Finally if the result is negative then we know that V must be travelling at least a little in the opposite direction of N (meaning B is behind A).</p>
+<p><a name="...find_where_Actor_A_is_in_relation_to_Pawn_B.2C_taking_into_account_B.27s_ViewRotation"></a></p>
+<h3><span class="mw-headline">...find where Actor A is in relation to Pawn B, taking into account B's ViewRotation</span></h3>
+<p><i>(make sure Pawn B has a Controller)</i></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+orientation = <span class="kw4">vector</span><span class="br0">(</span>B.<span class="me1">Controller</span>.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span> <span class="kw3">dot</span> Normal<span class="br0">(</span>A.<span class="me1">Location</span> - B.<span class="me1">Location</span><span class="br0">)</span>;
+  <span class="co1">// &gt; 0.0  A points forwards in relation to B (up to 90° apart)</span>
+  <span class="co1">// = 0.0  A is perpendicular to B (exactly 90° between A and B)</span>
+  <span class="co1">// &lt; 0.0  A points backwards in relation to B (more than 90° apart)</span>
+</pre></div>
+<p><b>Question:</b> How do I know if its to the Left or Right?</p>
+<p><b>Devi:</b> This code works exactly the same way as the code in the previous section. Now, if you think about it, the question: Is it to the left or right? Can be solved in the same way as the question: Is it in front of me or behind me? You just need to use a vector that points left/right instead of one that points forwards:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">vector</span> lateral;
+ 
+<span class="co1">// Get facing vector</span>
+lateral=<span class="kw4">vector</span><span class="br0">(</span>B.<span class="me1">Controller</span>.<span class="me1">GetViewRotation</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="co1">// Rotate 90 degrees in XZ, I'm going to assume (probably wrongly) that this lateral vector will point to the left of the facing, but it COULD be facing to the right</span>
+<span class="co1">// in which case the answers below are the wrong way round...</span>
+lateral=lateral <span class="kw3">cross</span> <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>;
+ 
+orientation = lateral <span class="kw3">dot</span> Normal<span class="br0">(</span>A.<span class="me1">Location</span> - B.<span class="me1">Location</span><span class="br0">)</span>;
+  <span class="co1">// &gt; 0.0  A sits to the left of B</span>
+  <span class="co1">// = 0.0  A is in front of/behind B (exactly 90° between A and B)</span>
+  <span class="co1">// &lt; 0.0  A sits to the right of B</span>
+</pre></div>
+<p><a name="...find_a_point_that.27s_at_a_certain_distance_from_a_starting_point_in_a_given_direction"></a></p>
+<h3><span class="mw-headline">...find a point that's at a certain distance from a starting point in a given direction</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+LocationTarget = LocationStart + <span class="kw4">vector</span><span class="br0">(</span>Rotation<span class="br0">)</span> * Distance;
+</pre></div>
+<p><a name="...find_the_.28smallest.29_angle_between_A_and_B"></a></p>
+<h3><span class="mw-headline">...find the (smallest) angle between <b>A</b> and <b>B</b></span></h3>
+<p><b>Note:</b> Acos is a built-in function in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>. It is not present in <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>, see <a href="../../../../articles/u/s/e/Legacy%7EUseful_Maths_Functions_2388.html" title="Legacy:Useful Maths Functions">Useful Maths Functions</a>.<br />
+This assumes A and B are normalized (are unit vectors). If either of them is not normalized you need to wrap them in a Normal().<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+angle_radians = <span class="kw7">Acos</span><span class="br0">(</span>A <span class="kw3">dot</span> B<span class="br0">)</span>;
+angle_degrees = <span class="kw7">Acos</span><span class="br0">(</span>A <span class="kw3">dot</span> B<span class="br0">)</span> * <span class="nu0">180</span>/pi;
+</pre></div>
+<p><b>DemonThing:</b> Just wanted to point out that the vector <b>A</b> dot <b>B</b> is defined as</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+A <span class="kw3">dot</span> B = VSize<span class="br0">(</span>A<span class="br0">)</span> * VSize<span class="br0">(</span>B<span class="br0">)</span> * <span class="kw7">cos</span><span class="br0">(</span>angle<span class="br0">)</span>
+<span class="co1">//or</span>
+A <span class="kw3">dot</span> B = <span class="kw4">vect</span><span class="br0">(</span>A.<span class="me1">x</span> * B.<span class="me1">x</span>, A.<span class="me1">y</span> * B.<span class="me1">y</span>, A.<span class="me1">z</span> * B.<span class="me1">z</span><span class="br0">)</span>
+</pre></div>
+<p>if I remember correctly. Don't try this code out – it won't work!!!&#160;:D</p>
+<p><b>Devi:</b> Umm, the result of <b>A</b> dot <b>B</b> is a float, not a vector. It's defined as:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+A <span class="kw3">dot</span> B = <span class="br0">(</span>A.<span class="me1">x*B</span>.<span class="me1">x</span><span class="br0">)</span> + <span class="br0">(</span>A.<span class="me1">y*B</span>.<span class="me1">y</span><span class="br0">)</span> + <span class="br0">(</span>A.<span class="me1">z*B</span>.<span class="me1">z</span><span class="br0">)</span>
+</pre></div>
+<p>See <a href="http://en.wikipedia.org/wiki/Dot_product" class="extiw" title="wikipedia:Dot_product">Wikipedia:Dot product</a>.</p>
+<p><a name="...point_to_my_left_or_right.3F"></a></p>
+<h3><span class="mw-headline">...point to my left or right?</span></h3>
+<p>A vector that points at 90 degrees to the way you're looking can be given by the following. Note that it is horizontal; in the XY plane. (So for a rolling aeroplane, this <i>won't</i> point along the wing which will be slanted)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+resultingVector = Normal<span class="br0">(</span><span class="kw4">vector</span> <span class="kw3">cross</span> <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p><a name="...find_out_vector_B_that_points_x_degrees_to_the_left_or_right_of_vector_A"></a></p>
+<h3><span class="mw-headline">...find out vector B that points x degrees to the left or right of vector A</span></h3>
+<p><b>Foxpaw:</b> I believe there are multiple vectors that could satisfy this. Can you be more specific?</p>
+<p><b>Tarquin:</b> It depends on what you want – 'left' and 'right' doesn't mean much in 3D, it has to be on a plane. We can assume the horizontal though, as above.</p>
+<p><b>smattbac:</b> Like in the example above this one, but instead of 90 degrees, any angle (or less than 90).</p>
+<p><b>Tarquin:</b> Get a normal of the direction you're pointing in. Call it <b>i</b>. Get the 90 degrees to the left one. Call it <b>j</b>. Do some sine and cosine mojo with them.</p>
+<p><b>Foxpaw:</b> I think it would be something along the lines of:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Normal<span class="br0">(</span><span class="br0">(</span>Normal<span class="br0">(</span><span class="kw4">vector</span><span class="br0">)</span> * <span class="br0">(</span><span class="nu0">1</span> - <span class="br0">(</span>AngleInDegrees / <span class="nu0">90</span><span class="br0">)</span> <span class="br0">)</span> <span class="br0">)</span> + <span class="br0">(</span>Normal<span class="br0">(</span><span class="kw4">vector</span> <span class="kw3">cross</span> <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span> * <span class="br0">(</span>AngleInDegrees / <span class="nu0">90</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p>I'm not sure if that would work or not. It seems to work for 0 degrees, 90 degrees, and 45 degrees, but I don't know if it will work for other ones or not.</p>
+<p><b>Tarquin:</b> eek. What you need is this: i*cos(alpha) + j*sin(alpha). Alpha is angle in radians, obviously</p>
+<p><a name="Rotate_a_rotator_by_another_rotator" id="Rotate_a_rotator_by_another_rotator"></a></p>
+<h3><span class="mw-headline">Rotate a rotator by another rotator</span></h3>
+<p><b>Dirk Fist:</b> Ok, I have a demo (UT) map that shows arbitrary rotation in object coordinates, Its 10k</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">rotator</span> rTurn<span class="br0">(</span><span class="kw4">rotator</span> rHeading,<span class="kw4">rotator</span> rTurnAngle<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// Generate a turn in object coordinates </span>
+    <span class="co1">//     this should handle any gymbal lock issues</span>
+ 
+    <span class="kw5">local</span> <span class="kw4">vector</span> vForward,vRight,vUpward;
+    <span class="kw5">local</span> <span class="kw4">vector</span> vForward2,vRight2,vUpward2;
+    <span class="kw5">local</span> <span class="kw4">rotator</span> T;
+    <span class="kw5">local</span> <span class="kw4">vector</span>  V;
+ 
+    GetAxes<span class="br0">(</span>rotation,vForward,vRight,vUpward<span class="br0">)</span>;
+    <span class="co1">//  rotate in plane that contains vForward&amp;vRight</span>
+    T.<span class="me1">Yaw</span>=rTurnAngle.<span class="me1">Yaw</span>; V=<span class="kw4">vector</span><span class="br0">(</span>T<span class="br0">)</span>;
+    vForward2=V.<span class="me1">X*vForward</span> + V.<span class="me1">Y*vRight</span>;
+    vRight2=V.<span class="me1">X*vRight</span> - V.<span class="me1">Y*vForward</span>;
+    vUpward2=vUpward;
+ 
+    <span class="co1">// rotate in plane that contains vForward&amp;vUpward</span>
+    T.<span class="me1">Yaw</span>=rTurnAngle.<span class="me1">Pitch</span>; V=<span class="kw4">vector</span><span class="br0">(</span>T<span class="br0">)</span>;
+    vForward=V.<span class="me1">X*vForward2</span> + V.<span class="me1">Y*vUpward2</span>;
+    vRight=vRight2;
+    vUpward=V.<span class="me1">X*vUpward2</span> - V.<span class="me1">Y*vForward2</span>;
+ 
+    <span class="co1">// rotate in plane that contains vUpward&amp;vRight</span>
+    T.<span class="me1">Yaw</span>=rTurnAngle.<span class="me1">Roll</span>; V=<span class="kw4">vector</span><span class="br0">(</span>T<span class="br0">)</span>;
+    vForward2=vForward;
+    vRight2=V.<span class="me1">X*vRight</span> + V.<span class="me1">Y*vUpward</span>;
+    vUpward2=V.<span class="me1">X*vUpward</span> - V.<span class="me1">Y*vRight</span>;
+ 
+    T=OrthoRotation<span class="br0">(</span>vForward2,vRight2,vUpward2<span class="br0">)</span>;
+ 
+   <span class="kw1">return</span><span class="br0">(</span>T<span class="br0">)</span>;    
+<span class="br0">}</span>
+</pre></div>
+<p><a name="...damp_a_velocity_vector_toward_a_surface"></a></p>
+<h3><span class="mw-headline">...damp a velocity vector toward a surface</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Velocity += SurfaceNormal * <span class="br0">(</span>Normal<span class="br0">(</span>Velocity<span class="br0">)</span> <span class="kw3">dot</span> SurfaceNormal<span class="br0">)</span> * DampFactor;
+</pre></div>
+<p>Useful DampFactor is &gt;=-1, where -1 will make Velocity parallel to the surface, 0 will do nothing, and positive values will give a "pop up" effect by making the Velocity vector point further from the plane of the surface.</p>
+<p><a name="...find_point_Q_where_a_normal_from_point_P_to_a_line_from_A_to_B_meets_the_line"></a></p>
+<h3><span class="mw-headline">...find point Q where a normal from point P to a line from A to B meets the line</span></h3>
+<p>Given a line AB and a point P, we want to find a point Q on that line such that PQ and AB are perpendicular.</p>
+<p>[[Image:Legacy_normal_to_a_line_01.png|]]</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Q = A + Normal<span class="br0">(</span> B - A <span class="br0">)</span> * <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span> B - A <span class="br0">)</span> <span class="kw3">dot</span> <span class="br0">(</span> P - A <span class="br0">)</span><span class="br0">)</span> / VSize<span class="br0">(</span> A - B <span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p>This is perfect for that railgun with shockwave damage you always wanted:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">for</span> <span class="br0">(</span>P = <span class="kw8">Level</span>.<span class="me1">PawnList</span>; P != <span class="kw9">None</span>; P = P.<span class="me1">NextPawn</span><span class="br0">)</span>
+<span class="br0">{</span>
+    Q = StartTrace + Normal<span class="br0">(</span> HitLocation - StartTrace <span class="br0">)</span> * <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span> HitLocation - StartTrace <span class="br0">)</span>
+    <span class="kw3">dot</span> <span class="br0">(</span> P.<span class="me1">Location</span> - StartTrace <span class="br0">)</span><span class="br0">)</span> / VSize<span class="br0">(</span> StartTrace - HitLocation <span class="br0">)</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>VSize<span class="br0">(</span> P.<span class="me1">Location</span> - Q <span class="br0">)</span> &lt; ShockwaveRadius<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="co1">// Pawn is within ShockwaveRadius, do your mojo!</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Note: Point Q is not restricted to the length of line AB, so remember to check that the victims are in front of StartTrace and behind HitLocation for that railgun (unless you want it to go through the whole level in either direction, ofcourse...)</p>
+<p><b>DemonThing:</b> Q is relative to the origin, assuming A, B, and P are as well. Observe:</p>
+<p>See my definition of dot product above (the first one). You will see that (B - A) dot (P - A) is equal to VSize(B - A) * VSize(P - A) * cos(angle). Divide that by VSize(A - B) (which is equal to VSize(B - A)) and you get VSize(P - A) * cos(angle). If you know a bit of trigonometry, you will see that this is equal to VSize(Q - A). When you multiply that by Normal(B - A) (which is equal to Normal(Q - A), since A, B, and Q are collinear), you get Q - A. We add A to that and we get Q, which is a location vector.</p>
+<p><a name="...only_affect_certain_components_of_a_vector"></a></p>
+<h3><span class="mw-headline">...only affect certain components of a vector</span></h3>
+<p>In UnrealScript there's a component-by-component vector multiplication. You can use it to either only use two components of a vector for an operation and/or ignore certain components of the result.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// do something with A but don't change the Z component of it</span>
+<span class="kw4">vector</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span> * DoSomethingWith<span class="br0">(</span>A<span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span> * A;
+ 
+<span class="co1">// do something with the X and Z components of A</span>
+<span class="kw4">vector</span> = DoSomethingWith<span class="br0">(</span><span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span> * A<span class="br0">)</span>;
+ 
+<span class="co1">// do something with the Y and Z components of a vector and use its original X component</span>
+<span class="kw4">vector</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">1</span><span class="br0">)</span> * DoSomethingWith<span class="br0">(</span><span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">1</span><span class="br0">)</span> * A<span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span> * A;
+</pre></div>
+<p><a name="What_does_this_do.3F" id="What_does_this_do.3F"></a></p>
+<h2><span class="mw-headline">What does this do?</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+resultingVector = Normal<span class="br0">(</span><span class="kw4">vector</span> <span class="kw3">cross</span> <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+</pre></div>
+<p>The cross product of two vectors is perpendicular to both. Which means that (vector cross vect(0, 0, 1)) is a vector pependicular to the given vector AND the z-axis. Something perp to z is horizontal – it's confined to the XY plane. So it's a horizontal vector that is also perp to the given vector. It's then normalized. I can't remember <i>which</i> way the cross product points in Unreal. So it's either a unit vector that points to your right or left.</p>
+<p><b>Devi</b> As an aside, if you want to rotate a 3D vector by 90 degrees on the XZ plane you can also do this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">float</span> t;
+<span class="kw5">local</span> <span class="kw4">vector</span> v;
+ 
+t=v.<span class="me1">x</span>;
+v.<span class="me1">x</span>=v.<span class="me1">y</span>;
+v.<span class="me1">y</span>=-t;
+</pre></div>
+<p>The output vector is identical in length to the ingoing one (i.e. If it was normal when it went in, it'll be normal when it came out) In C this would be far faster that the example beforehand, though whether it's faster in UScript is another matter...</p>
+<p><b>AlphaOne:</b> What about this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">vector</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">1</span><span class="br0">)</span> &gt;&gt; Rotation;
+</pre></div>
+<p>I believe that Rotation is also a vector (not a rotator). Is it?</p>
+<p><b>Tarquin:</b> Be pretty cruddy coding if it were. &gt;&gt; is a rotator / vector operator.</p>
+<p><b>Dade:</b> How would i go about modifying only the "XY" coordinates of a vector? I.E. Changes the vector's</p>
+<p>location, but not its height. Or is this even possible? (haven't studied vectors yet)</p>
+<p><b>VonStrohmen:</b> I'm not quite sure what you're asking, but if you mean can you change the X and Y components of a vector without modifying its Z, then sure.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">Vector</span> A,B;
+B = <span class="kw4">vect</span><span class="br0">(</span>A.<span class="me1">X</span> <span class="nu0">+50</span>, A.<span class="me1">Y</span> + <span class="nu0">100</span>, A.<span class="me1">Z</span><span class="br0">)</span>;
+</pre></div>
+<p><b>Dade:</b> Ah Ha! Thank you. That was exactly what i needed.</p>
+<p><b>Wormbo:</b> Note that vect(x,y,z) and rot(p,y,r) are more like "a string" or 'aName', in other words a constant. Also note that you can "multiply" vectors in UnrealScript, i.e. vect(1,2,3) * vect(2,3,4) = vect(2,6,12). This is neither dot product nor cross product, it just multiplies the corresponding parts of the vector.</p>
+<p><b>Mortal Monkey:</b> Hello good people! I just added the "...find vector Q" part, feel free to improve it.</p>
+<p><b>Foxpaw:</b> What do &lt;&lt; and &gt;&gt; do with regards to vectors? One of them appears to do a coordinate rotation of the vector given that the rotator points along the X Axis of the target coordinate system, but what does the other one do?</p>
+<p><b>inio:</b> I thought they rotated a vector by a rotator, and the reverse a of a rotator ((theVec &lt;&lt; theRot) &gt;&gt; theRot == theVec)</p>
+<p><b>Foxpaw:</b> That may be. I know that one of them does the coordinate rotation, which is basically what you said. It is possible that the other just does it by the reverse of that rotator.</p>
+<p><b>Sir_Brizz:</b> Is it too much to ask that someone PLEASE put some pictures up showing precisely how these all work? Imaginary directions and all are way too confusing to leave to the brain.</p>
+<p><b>Tarquin:</b> Care to nominate some that need a picture particularly badly?</p>
+<p><b>Sir_Brizz:</b> Well, I think there should at least be one explaining several at a time. I'm trying to figure out exactly how "...find where <b>A</b> is in relation to <b>B</b>?" works exactly.</p>
+<p><b>Devi:</b> I just rewrote that section so it actually (at least to me&#160;;) ) makes sense, by, you know, explaining what A and B actually are&#160;:) Hope that helps... (Sorry, I'm a bit pants at making diagrams)</p>
+<p><b>Devi:</b> heheh, just realised that both mine and the other guys example was finding where B was in relation to A, rather than vice-versa&#160;:) Just renamed the subject title...</p>
+<p><b>Unrealed:</b> Cool, it helped me a lot =). It was simple and I didnt know how: SetRotation(rotator(NextEnemy.Location-Location));</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/v/e/c/Legacy%7EVector_fa11.html" title="Legacy:Vector">Vector</a></li>
+<li><a href="../../../../articles/b/u/i/Legacy%7EBuilt-In_Struct_1f60.html" title="Legacy:Built-In Struct">Built-In Struct</a></li>
+<li><a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a></li>
+<li><a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a></li>
+<li><a href="../../../../articles/u/s/e/Legacy%7EUseful_Maths_Functions_2388.html" title="Legacy:Useful Maths Functions">Useful Maths Functions</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 123/1000000
+Post-expand include size: 50/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_How_Do_I_27ff.html" title="Category:Legacy How Do I">Legacy How Do I</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Vector_Maths_8a03.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnrealScript_Vector_Maths_8239.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UnrealScript_Vector_Maths">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:05, 18 March 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

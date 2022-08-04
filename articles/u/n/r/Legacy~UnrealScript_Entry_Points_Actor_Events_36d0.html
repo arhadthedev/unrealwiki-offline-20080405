@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UnrealScript Entry Points/Actor Events - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UnrealScript Entry Points/Actor Events</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Entry_Points_bae7.html" title="Legacy:UnrealScript Entry Points">Legacy:UnrealScript Entry Points</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><b>Tarquin:</b> all the info below has been moved to <a href="../../../../articles/a/c/t/Legacy%7EActor_Methods_da97.html" title="Legacy:Actor/Methods">Actor/Methods</a>. Please do not add more to this page.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Entry_Points:_Engine.Actor"><span class="tocnumber">1</span> <span class="toctext">Entry Points: Engine.Actor</span></a>
+<ul>
+<li class="toclevel-2"><a href="#event_AnimEnd.28.29"><span class="tocnumber">1.1</span> <span class="toctext">event AnimEnd()</span></a></li>
+<li class="toclevel-2"><a href="#event_KImpact.28.29"><span class="tocnumber">1.2</span> <span class="toctext">event KImpact()</span></a></li>
+<li class="toclevel-2"><a href="#event_KVelDropBelow.28.29"><span class="tocnumber">1.3</span> <span class="toctext">event KVelDropBelow()</span></a></li>
+<li class="toclevel-2"><a href="#event_KSkelConvulse.28.29"><span class="tocnumber">1.4</span> <span class="toctext">event KSkelConvulse()</span></a></li>
+<li class="toclevel-2"><a href="#event_KApplyForce"><span class="tocnumber">1.5</span> <span class="toctext">event KApplyForce</span></a></li>
+<li class="toclevel-2"><a href="#event_bool_KUpdateState"><span class="tocnumber">1.6</span> <span class="toctext">event bool KUpdateState</span></a></li>
+<li class="toclevel-2"><a href="#event_Destroyed.28.29"><span class="tocnumber">1.7</span> <span class="toctext">event Destroyed()</span></a></li>
+<li class="toclevel-2"><a href="#event_GainedChild.28.29"><span class="tocnumber">1.8</span> <span class="toctext">event GainedChild()</span></a></li>
+<li class="toclevel-2"><a href="#event_LostChild.28.29"><span class="tocnumber">1.9</span> <span class="toctext">event LostChild()</span></a></li>
+<li class="toclevel-2"><a href="#event_Tick.28.29"><span class="tocnumber">1.10</span> <span class="toctext">event Tick()</span></a></li>
+<li class="toclevel-2"><a href="#event_PostNetReceive.28.29"><span class="tocnumber">1.11</span> <span class="toctext">event PostNetReceive()</span></a></li>
+<li class="toclevel-2"><a href="#event_Trigger.28.29"><span class="tocnumber">1.12</span> <span class="toctext">event Trigger()</span></a></li>
+<li class="toclevel-2"><a href="#event_UnTrigger.28.29"><span class="tocnumber">1.13</span> <span class="toctext">event UnTrigger()</span></a></li>
+<li class="toclevel-2"><a href="#event_BeginEvent.28.29"><span class="tocnumber">1.14</span> <span class="toctext">event BeginEvent()</span></a></li>
+<li class="toclevel-2"><a href="#event_EndEvent.28.29"><span class="tocnumber">1.15</span> <span class="toctext">event EndEvent()</span></a></li>
+<li class="toclevel-2"><a href="#event_Timer.28.29"><span class="tocnumber">1.16</span> <span class="toctext">event Timer()</span></a></li>
+<li class="toclevel-2"><a href="#event_HitWall.28.29"><span class="tocnumber">1.17</span> <span class="toctext">event HitWall()</span></a></li>
+<li class="toclevel-2"><a href="#event_Falling.28.29"><span class="tocnumber">1.18</span> <span class="toctext">event Falling()</span></a></li>
+<li class="toclevel-2"><a href="#event_Landed.28.29"><span class="tocnumber">1.19</span> <span class="toctext">event Landed()</span></a></li>
+<li class="toclevel-2"><a href="#event_ZoneChange.28.29"><span class="tocnumber">1.20</span> <span class="toctext">event ZoneChange()</span></a></li>
+<li class="toclevel-2"><a href="#event_PhysicsVolumeChange.28.29"><span class="tocnumber">1.21</span> <span class="toctext">event PhysicsVolumeChange()</span></a></li>
+<li class="toclevel-2"><a href="#event_Touch.28.29"><span class="tocnumber">1.22</span> <span class="toctext">event Touch()</span></a></li>
+<li class="toclevel-2"><a href="#event_PostTouch.28.29"><span class="tocnumber">1.23</span> <span class="toctext">event PostTouch()</span></a></li>
+<li class="toclevel-2"><a href="#event_UnTouch.28.29"><span class="tocnumber">1.24</span> <span class="toctext">event UnTouch()</span></a></li>
+<li class="toclevel-2"><a href="#event_Bump.28.29"><span class="tocnumber">1.25</span> <span class="toctext">event Bump()</span></a></li>
+<li class="toclevel-2"><a href="#event_BaseChange.28.29"><span class="tocnumber">1.26</span> <span class="toctext">event BaseChange()</span></a></li>
+<li class="toclevel-2"><a href="#event_Attach.28.29"><span class="tocnumber">1.27</span> <span class="toctext">event Attach()</span></a></li>
+<li class="toclevel-2"><a href="#event_Detach.28.29"><span class="tocnumber">1.28</span> <span class="toctext">event Detach()</span></a></li>
+<li class="toclevel-2"><a href="#event_SpecialHandling.28.29"><span class="tocnumber">1.29</span> <span class="toctext">event SpecialHandling()</span></a></li>
+<li class="toclevel-2"><a href="#event_EncroachingOn.28.29"><span class="tocnumber">1.30</span> <span class="toctext">event EncroachingOn()</span></a></li>
+<li class="toclevel-2"><a href="#event_EncroachedBy.28.29"><span class="tocnumber">1.31</span> <span class="toctext">event EncroachedBy()</span></a></li>
+<li class="toclevel-2"><a href="#event_FinishedInterpolation.28.29"><span class="tocnumber">1.32</span> <span class="toctext">event FinishedInterpolation()</span></a></li>
+<li class="toclevel-2"><a href="#event_EndedRotation.28.29"><span class="tocnumber">1.33</span> <span class="toctext">event EndedRotation()</span></a></li>
+<li class="toclevel-2"><a href="#event_UsedBy.28.29"><span class="tocnumber">1.34</span> <span class="toctext">event UsedBy()</span></a></li>
+<li class="toclevel-2"><a href="#simulated_event_FellOutOfWorld.28.29"><span class="tocnumber">1.35</span> <span class="toctext">simulated event FellOutOfWorld()</span></a></li>
+<li class="toclevel-2"><a href="#event_KilledBy.28.29"><span class="tocnumber">1.36</span> <span class="toctext">event KilledBy()</span></a></li>
+<li class="toclevel-2"><a href="#event_TakeDamage.28.29"><span class="tocnumber">1.37</span> <span class="toctext">event TakeDamage()</span></a></li>
+<li class="toclevel-2"><a href="#event_TornOff.28.29"><span class="tocnumber">1.38</span> <span class="toctext">event TornOff()</span></a></li>
+<li class="toclevel-2"><a href="#native_simulated_event_DemoPlaySound_.28.29"><span class="tocnumber">1.39</span> <span class="toctext">native simulated event DemoPlaySound ()</span></a></li>
+<li class="toclevel-2"><a href="#event_bool_PreTeleport.28.29"><span class="tocnumber">1.40</span> <span class="toctext">event bool PreTeleport()</span></a></li>
+<li class="toclevel-2"><a href="#event_PostTeleport.28.29"><span class="tocnumber">1.41</span> <span class="toctext">event PostTeleport()</span></a></li>
+<li class="toclevel-2"><a href="#event_BeginPlay.28.29"><span class="tocnumber">1.42</span> <span class="toctext">event BeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#event_RenderTexture.28.29"><span class="tocnumber">1.43</span> <span class="toctext">event RenderTexture()</span></a></li>
+<li class="toclevel-2"><a href="#event_PreBeginPlay.28.29"><span class="tocnumber">1.44</span> <span class="toctext">event PreBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#event_BroadcastLocalizedMessage.28.29"><span class="tocnumber">1.45</span> <span class="toctext">event BroadcastLocalizedMessage()</span></a></li>
+<li class="toclevel-2"><a href="#event_PostBeginPlay.28.29"><span class="tocnumber">1.46</span> <span class="toctext">event PostBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#simulated_event_SetInitialState.28.29"><span class="tocnumber">1.47</span> <span class="toctext">simulated event SetInitialState()</span></a></li>
+<li class="toclevel-2"><a href="#event_PostNetBeginPlay.28.29"><span class="tocnumber">1.48</span> <span class="toctext">event PostNetBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#event_TravelPreAccept.28.29"><span class="tocnumber">1.49</span> <span class="toctext">event TravelPreAccept()</span></a></li>
+<li class="toclevel-2"><a href="#event_TravelPostAccept.28.29"><span class="tocnumber">1.50</span> <span class="toctext">event TravelPostAccept()</span></a></li>
+<li class="toclevel-2"><a href="#event_TriggerEvent.28.29"><span class="tocnumber">1.51</span> <span class="toctext">event TriggerEvent()</span></a></li>
+<li class="toclevel-2"><a href="#function_UntriggerEvent.28.29"><span class="tocnumber">1.52</span> <span class="toctext">function UntriggerEvent()</span></a></li>
+<li class="toclevel-2"><a href="#function_RenderOverlays.28.29"><span class="tocnumber">1.53</span> <span class="toctext">function RenderOverlays()</span></a></li>
+<li class="toclevel-2"><a href="#function_BecomeViewTarget.28.29"><span class="tocnumber">1.54</span> <span class="toctext">function BecomeViewTarget()</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Back_to_Parent"><span class="tocnumber">2</span> <span class="toctext">Back to Parent</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">3</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Comments.3F"><span class="tocnumber">4</span> <span class="toctext">Comments?</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Entry_Points:_Engine.Actor" id="Entry_Points:_Engine.Actor"></a></p>
+<h2><span class="mw-headline">Entry Points: Engine.<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a></span></h2>
+<p>Here are the known entry points defined for the base Actor class. They may or may not be handled by default in that class, within the engine (C++), or in a derived class.</p>
+<p><a name="event_AnimEnd.28.29" id="event_AnimEnd.28.29"></a></p>
+<h3><span class="mw-headline">event AnimEnd()</span></h3>
+<p>Notification that the current animation has ended. Allows an object to wait for animation completion before proceeding with other activities.</p>
+<p><a name="event_KImpact.28.29" id="event_KImpact.28.29"></a></p>
+<h3><span class="mw-headline">event KImpact()</span></h3>
+<p>// event called when Karmic actor hits with impact velocity over KImpactThreshold)</p>
+<p><a name="event_KVelDropBelow.28.29" id="event_KVelDropBelow.28.29"></a></p>
+<h3><span class="mw-headline">event KVelDropBelow()</span></h3>
+<p>// event called when karma actor's velocity drops below KVelDropBelowThreshold)</p>
+<p><a name="event_KSkelConvulse.28.29" id="event_KSkelConvulse.28.29"></a></p>
+<h3><span class="mw-headline">event KSkelConvulse()</span></h3>
+<p>// event called when a ragdoll convulses (see KarmaParamsSkel)</p>
+<p><a name="event_KApplyForce" id="event_KApplyForce"></a></p>
+<h3><span class="mw-headline">event KApplyForce</span></h3>
+<p>// event called just before sim to allow user to</p>
+<p>(hehe, that one was incomplete...)</p>
+<p><a name="event_bool_KUpdateState" id="event_bool_KUpdateState"></a></p>
+<h3><span class="mw-headline">event bool KUpdateState</span></h3>
+<p>// This is called from inside C++ physKarma at the appropriate time to update state of Karma rigid body.</p>
+<p>// If you return true, newState will be set into the rigid body. Return false and it will do nothing.</p>
+<p><a name="event_Destroyed.28.29" id="event_Destroyed.28.29"></a></p>
+<h3><span class="mw-headline">event Destroyed()</span></h3>
+<p><a name="event_GainedChild.28.29" id="event_GainedChild.28.29"></a></p>
+<h3><span class="mw-headline">event GainedChild()</span></h3>
+<p><a name="event_LostChild.28.29" id="event_LostChild.28.29"></a></p>
+<h3><span class="mw-headline">event LostChild()</span></h3>
+<p><a name="event_Tick.28.29" id="event_Tick.28.29"></a></p>
+<h3><span class="mw-headline">event Tick()</span></h3>
+<p><a name="event_PostNetReceive.28.29" id="event_PostNetReceive.28.29"></a></p>
+<h3><span class="mw-headline">event PostNetReceive()</span></h3>
+<p><a name="event_Trigger.28.29" id="event_Trigger.28.29"></a></p>
+<h3><span class="mw-headline">event Trigger()</span></h3>
+<p><a name="event_UnTrigger.28.29" id="event_UnTrigger.28.29"></a></p>
+<h3><span class="mw-headline">event UnTrigger()</span></h3>
+<p><a name="event_BeginEvent.28.29" id="event_BeginEvent.28.29"></a></p>
+<h3><span class="mw-headline">event BeginEvent()</span></h3>
+<p><a name="event_EndEvent.28.29" id="event_EndEvent.28.29"></a></p>
+<h3><span class="mw-headline">event EndEvent()</span></h3>
+<p><a name="event_Timer.28.29" id="event_Timer.28.29"></a></p>
+<h3><span class="mw-headline">event Timer()</span></h3>
+<p><a name="event_HitWall.28.29" id="event_HitWall.28.29"></a></p>
+<h3><span class="mw-headline">event HitWall()</span></h3>
+<p><a name="event_Falling.28.29" id="event_Falling.28.29"></a></p>
+<h3><span class="mw-headline">event Falling()</span></h3>
+<p><a name="event_Landed.28.29" id="event_Landed.28.29"></a></p>
+<h3><span class="mw-headline">event Landed()</span></h3>
+<p><a name="event_ZoneChange.28.29" id="event_ZoneChange.28.29"></a></p>
+<h3><span class="mw-headline">event ZoneChange()</span></h3>
+<p>ZoneChange() is called upon login, on both the client and server. For a Player Pawn, it is apparently only called on the client, after that, and if you want to know about it on the server, you need to have a simulated <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">event</a> ZoneChange() in your Player Pawn. Then, both the client and server will be notified, when the Player Pawn changes Zones.</p>
+<p><a name="event_PhysicsVolumeChange.28.29" id="event_PhysicsVolumeChange.28.29"></a></p>
+<h3><span class="mw-headline">event PhysicsVolumeChange()</span></h3>
+<p><a name="event_Touch.28.29" id="event_Touch.28.29"></a></p>
+<h3><span class="mw-headline">event Touch()</span></h3>
+<p><a name="event_PostTouch.28.29" id="event_PostTouch.28.29"></a></p>
+<h3><span class="mw-headline">event PostTouch()</span></h3>
+<p>// called for PendingTouch actor after physics completes</p>
+<p><a name="event_UnTouch.28.29" id="event_UnTouch.28.29"></a></p>
+<h3><span class="mw-headline">event UnTouch()</span></h3>
+<p><a name="event_Bump.28.29" id="event_Bump.28.29"></a></p>
+<h3><span class="mw-headline">event Bump()</span></h3>
+<p><a name="event_BaseChange.28.29" id="event_BaseChange.28.29"></a></p>
+<h3><span class="mw-headline">event BaseChange()</span></h3>
+<p><a name="event_Attach.28.29" id="event_Attach.28.29"></a></p>
+<h3><span class="mw-headline">event Attach()</span></h3>
+<p><a name="event_Detach.28.29" id="event_Detach.28.29"></a></p>
+<h3><span class="mw-headline">event Detach()</span></h3>
+<p><a name="event_SpecialHandling.28.29" id="event_SpecialHandling.28.29"></a></p>
+<h3><span class="mw-headline">event SpecialHandling()</span></h3>
+<p><a name="event_EncroachingOn.28.29" id="event_EncroachingOn.28.29"></a></p>
+<h3><span class="mw-headline">event EncroachingOn()</span></h3>
+<p><a name="event_EncroachedBy.28.29" id="event_EncroachedBy.28.29"></a></p>
+<h3><span class="mw-headline">event EncroachedBy()</span></h3>
+<p><a name="event_FinishedInterpolation.28.29" id="event_FinishedInterpolation.28.29"></a></p>
+<h3><span class="mw-headline">event FinishedInterpolation()</span></h3>
+<p><a name="event_EndedRotation.28.29" id="event_EndedRotation.28.29"></a></p>
+<h3><span class="mw-headline">event EndedRotation()</span></h3>
+<p><a name="event_UsedBy.28.29" id="event_UsedBy.28.29"></a></p>
+<h3><span class="mw-headline">event UsedBy()</span></h3>
+<p><a name="simulated_event_FellOutOfWorld.28.29" id="simulated_event_FellOutOfWorld.28.29"></a></p>
+<h3><span class="mw-headline">simulated event FellOutOfWorld()</span></h3>
+<p><a name="event_KilledBy.28.29" id="event_KilledBy.28.29"></a></p>
+<h3><span class="mw-headline">event KilledBy()</span></h3>
+<p><a name="event_TakeDamage.28.29" id="event_TakeDamage.28.29"></a></p>
+<h3><span class="mw-headline">event TakeDamage()</span></h3>
+<p><a name="event_TornOff.28.29" id="event_TornOff.28.29"></a></p>
+<h3><span class="mw-headline">event TornOff()</span></h3>
+<p>// Networking - called on client when actor is torn off (bTearOff==true)</p>
+<p><a name="native_simulated_event_DemoPlaySound_.28.29" id="native_simulated_event_DemoPlaySound_.28.29"></a></p>
+<h3><span class="mw-headline">native simulated event DemoPlaySound ()</span></h3>
+<p><a name="event_bool_PreTeleport.28.29" id="event_bool_PreTeleport.28.29"></a></p>
+<h3><span class="mw-headline">event bool PreTeleport()</span></h3>
+<p><a name="event_PostTeleport.28.29" id="event_PostTeleport.28.29"></a></p>
+<h3><span class="mw-headline">event PostTeleport()</span></h3>
+<p><a name="event_BeginPlay.28.29" id="event_BeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">event BeginPlay()</span></h3>
+<p>// Level State</p>
+<p><a name="event_RenderTexture.28.29" id="event_RenderTexture.28.29"></a></p>
+<h3><span class="mw-headline">event RenderTexture()</span></h3>
+<p><a name="event_PreBeginPlay.28.29" id="event_PreBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">event PreBeginPlay()</span></h3>
+<p>// Called immediately before gameplay begins.</p>
+<p><a name="event_BroadcastLocalizedMessage.28.29" id="event_BroadcastLocalizedMessage.28.29"></a></p>
+<h3><span class="mw-headline">event BroadcastLocalizedMessage()</span></h3>
+<p>// Broadcast a localized message to all players.</p>
+<p>// Most message deal with 0 to 2 related PRIs.</p>
+<p>// The LocalMessage class defines how the PRI's and optional actor are used.</p>
+<p><a name="event_PostBeginPlay.28.29" id="event_PostBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">event PostBeginPlay()</span></h3>
+<p>// Called immediately after gameplay begins.</p>
+<p><a name="simulated_event_SetInitialState.28.29" id="simulated_event_SetInitialState.28.29"></a></p>
+<h3><span class="mw-headline">simulated event SetInitialState()</span></h3>
+<p>// Called after PostBeginPlay.</p>
+<p><a name="event_PostNetBeginPlay.28.29" id="event_PostNetBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">event PostNetBeginPlay()</span></h3>
+<p>// called after PostBeginPlay. On a net client, PostNetBeginPlay() is</p>
+<p>// spawned after replicated variables have been initialized to their replicated values</p>
+<p><a name="event_TravelPreAccept.28.29" id="event_TravelPreAccept.28.29"></a></p>
+<h3><span class="mw-headline">event TravelPreAccept()</span></h3>
+<p>// Called when carried onto a new level, before AcceptInventory.</p>
+<p><a name="event_TravelPostAccept.28.29" id="event_TravelPostAccept.28.29"></a></p>
+<h3><span class="mw-headline">event TravelPostAccept()</span></h3>
+<p>// Called when carried into a new level, after AcceptInventory.</p>
+<p><a name="event_TriggerEvent.28.29" id="event_TriggerEvent.28.29"></a></p>
+<h3><span class="mw-headline">event TriggerEvent()</span></h3>
+<p>// Trigger an event</p>
+<p><a name="function_UntriggerEvent.28.29" id="function_UntriggerEvent.28.29"></a></p>
+<h3><span class="mw-headline">function UntriggerEvent()</span></h3>
+<p>// Untrigger an event</p>
+<p>(is this an event? if not, why?)</p>
+<p><a name="function_RenderOverlays.28.29" id="function_RenderOverlays.28.29"></a></p>
+<h3><span class="mw-headline">function RenderOverlays()</span></h3>
+<p>//called by player's hud to request drawing of actor specific overlays onto canvas</p>
+<p><a name="function_BecomeViewTarget.28.29" id="function_BecomeViewTarget.28.29"></a></p>
+<h3><span class="mw-headline">function BecomeViewTarget()</span></h3>
+<p>// Called by PlayerController when this actor becomes its ViewTarget.</p>
+<p><a name="Back_to_Parent" id="Back_to_Parent"></a></p>
+<h2><span class="mw-headline">Back to Parent</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Entry_Points_bae7.html" title="Legacy:UnrealScript Entry Points">UnrealScript Entry Points</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Xian:</b></p>
+<blockquote class="legacyquote">
+<p>ZoneChange() is called upon login, on both the client and server. For a Player Pawn, it is apparently only called on the client, after that, and if you want to know about it on the server, you need to have a simulated? event ZoneChange() in your Player Pawn. Then, both the client and server will be notified, when the Player Pawn changes Zones.</p>
+</blockquote>
+<p>Eric what did you mean&#160;? I thought it is called on every change in the zone, not necessarily on login. I mean waterzones, lavazones etc. get updated all the time (especially in PainTimer()). I think it is better if we move it into a discussion first before setting it as info.</p>
+<p><b>EricBlade:</b> The trick is, at least where I'm at, a Pawn's ZoneChange() is not called on the server, unless it is simulated via the client call. The only thing in my entire base code that defined ZoneChange() is in Actor:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">event</span> ZoneChange<span class="br0">(</span>ZoneInfo NewZone<span class="br0">)</span>;
+</pre></div>
+<p><b>Xian:</b> I assume that is because the RemoteRole is Autonomous instead of Simulated. So the 'server-side' is dictated as being client-side (since the controller is autonomous), setting it to a <i>simulated function</i> will make the engine differentiate it better, I assume. Perhaps I didn't explain it best but I hope you got my point&#160;:)</p>
+<p>But what did you mean with that "called upon login" thing&#160;?</p>
+<p><b>EricBlade:</b>Even if it's not simulated, ZoneChange is run on the server once, when the player pawn is created, with the NewZone being the Zone that the pawn is created in. (this may also happen when respawning, my gametype doesn't do respawning currently, so I didn't get a chance to check with that)</p>
+<p><b>Xian:</b> Think you misinterpreted how the Engine reacts. It is called on EVERY zone change... meaning everytime the pawn changes zones (enters/exits/switches), so when a pawn is created it first checks what zone it interacts with. It will happen on respawn only if the death zone is different from the spawn zone (that seems logical). It's obvious that a simulated function gets run on both server and client, but as I said, my guess is that a non simulated one gets called only on the client cos of its RemoteRole.</p>
+<p><b>Tarquin:</b> Um... this page says it shouldn't be worked on any more.</p>
+<p><a name="Comments.3F" id="Comments.3F"></a></p>
+<h2><span class="mw-headline">Comments?</span></h2>
+<p><b>Wormbo:</b> This page should have been named <a href="../../../../articles/a/c/t/Legacy%7EActor_Methods_da97.html" title="Legacy:Actor/Methods">Actor/Methods</a>. Also the package prefix is not neccessary since there's only one <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> class.</p>
+<p><b>Lazarus:</b> Actually no, but I understand the confusion. This is for events only (methods that are called asynchronously by the engine). See my note in UScript Entry Points. I know there's going to be overlap, just not sure the best way to handle it. I'll certainly reorganize it if people have a good suggestion. Understood on the pacakge prefix, I just did it for reference.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 68/1000000
+Post-expand include size: 392/2097152 bytes
+Template argument size: 347/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Entry_Points_Actor_Events_36d0.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnrealScript_Entry_Points_Actor_Events_d876.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UnrealScript_Entry_Points/Actor_Events">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:58, 19 April 2006 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

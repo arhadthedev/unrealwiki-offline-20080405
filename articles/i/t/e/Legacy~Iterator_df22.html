@@ -1,0 +1,705 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Iterator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Iterator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#The_Actor_List"><span class="tocnumber">1</span> <span class="toctext">The Actor List</span></a></li>
+<li class="toclevel-1"><a href="#Syntax"><span class="tocnumber">2</span> <span class="toctext">Syntax</span></a></li>
+<li class="toclevel-1"><a href="#Definitions"><span class="tocnumber">3</span> <span class="toctext">Definitions</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Object"><span class="tocnumber">3.1</span> <span class="toctext">Object</span></a></li>
+<li class="toclevel-2"><a href="#Actor"><span class="tocnumber">3.2</span> <span class="toctext">Actor</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#.3D_ZoneInfo"><span class="tocnumber">4</span> <span class="toctext">= ZoneInfo</span></a>
+<ul>
+<li class="toclevel-2"><a href="#GameInfo"><span class="tocnumber">4.1</span> <span class="toctext">GameInfo</span></a></li>
+<li class="toclevel-2"><a href="#Performance_Analysis"><span class="tocnumber">4.2</span> <span class="toctext">Performance Analysis</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Usage"><span class="tocnumber">5</span> <span class="toctext">Usage</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Using_Iterators_From_Objects"><span class="tocnumber">5.1</span> <span class="toctext">Using Iterators From Objects</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">7</span> <span class="toctext">Comments</span></a></li>
+<li class="toclevel-1"><a href="#Iterator_Timing_Comments"><span class="tocnumber">8</span> <span class="toctext">Iterator Timing Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="The_Actor_List" id="The_Actor_List"></a></p>
+<h2><span class="mw-headline">The Actor List</span></h2>
+<p>All actors in Unreal are connected though a gigantic list (well it is actually a dynamic array, but to make life easier think of it as a list) that exists only in the native C++ code. Without this list, actors would be just plain old objects. The base of this "list" is actually the native level object (the <code>XLevel</code> property of all actors). This list exists on both client and server. When a client "receives" an actor, it is added and when its connection is closed (except with <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">bNetTemporary</a>), it is removed.</p>
+<p>Spawning an actor automatically adds it at the end of the list. Note that <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> (accessed via the <code>Level</code> property of any actor) is always the first actor. Destroying an actor automatically removes it from the list.</p>
+<p>UnrealScript's <code>ForEach</code> command makes it easy to deal with large groups of actors, for example all of the actors in a level, or all of the actors within a certain distance of another actor. <code>ForEach</code> works in conjunction with a special kind of function called <i>iterator function</i> whose purpose is to iterate through a list of actors. Most of these iterator functions use the native actor list, so sometimes it's faster to use <code>For</code> to iterate through much smaller <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked lists</a> like the pawn list or one of the mutator lists.</p>
+<p><a name="Syntax" id="Syntax"></a></p>
+<h2><span class="mw-headline">Syntax</span></h2>
+<p>All iterator function use a similar syntax:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> aClassName aVariable;
+ 
+<span class="kw1">foreach</span> IteratorFunction<span class="br0">(</span><span class="kw5">class</span><span class="st0">'aClassName'</span>, aVariable, other parameters<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// execute something here</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The variable used as the second parameter must declared to hold an instance of the class used as the first parameter. The class must be <code>class'Actor'</code> or a subclass for all iterators except AllObjects and AllDataObjects which can use <code>class'Object'</code> or any other <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> subclass.</p>
+<p>Iterators can also be called for other objects:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> aClassName aVariable;
+ 
+<span class="kw1">foreach</span> anotherObject.<span class="me1">IteratorFunction</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'aClassName'</span>, aVariable, other parameters<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// execute something here</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This syntax doesn't make sense for all iterator functions, though. It is useful when using an iterator function which returns objects based on the object it was called for (e.g. ZoneActors or ChildActors) or when you want to use an iterator that isn't available in your class. (e.g. DynamicActors from an <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a>)</p>
+<p>Note that the game will crash with the error "Unknown code token 58" when the <code>anotherObject</code> variable is <code>None</code>. Also the actor iterators should only be called in a game environment. They will cause problems (e.g. a crash with "Unknown code token 31") when executed e.g. from <a href="../../../../articles/b/r/u/Legacy%7EBrushBuilder_1a86.html" title="Legacy:BrushBuilder">BrushBuilder</a> code in the editor.</p>
+<p><a name="Definitions" id="Definitions"></a></p>
+<h2><span class="mw-headline">Definitions</span></h2>
+<p>To make the iterator function descriptions easier to read, the following simplifications are used:</p>
+<dl>
+<dt>A class is a subclass of the <i>BaseClass</i>&#160;</dt>
+<dd>This means the class could be <i>BaseClass</i> itself or a direct or indirect subclass of <i>BaseClass</i>. Basically this relation corresponds to the result of the <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">global function</a> <code>ClassIsChildOf(aClass, BaseClass)</code>.</dd>
+<dt>Actor A is owned by actor B&#160;</dt>
+<dd>This includes direct (<code>A.Owner == B</code>) and indirect ownership, i.e. also <code>A.Owner.Owner == B</code> or <code>A.Owner.Owner.Owner == B</code> etc.</dd>
+<dt>An actor is (not) <i>bHidden</i>&#160;</dt>
+<dd>short for: "An actor's <i>bHidden</i> property is (not) set to <code>True</code>"</dd>
+</dl>
+<p>Even though the descriptions here (and the actual declarations in Object, Actor and other classes defining iterator functions) talk about class&lt;Object/Actor&gt; as the first parameter type and Object/Actor as the second parameter type, you can and should use subclass types. The actual type of the second parameter can be narrowed down at compile-time by specifying a class literal as the first parameter:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> class&lt;Info&gt; InfoClass;
+<span class="kw5">local</span> Info I;
+<span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+ 
+<span class="kw1">foreach</span> DynamicActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Info'</span>, I<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// compiles fine</span>
+  <span class="co1">// loops through all Info actors</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">foreach</span> DynamicActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'ReplicationInfo'</span>, I<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// compile-time error (type mismatch in second parameter)</span>
+  <span class="co1">// even though Info actors would fit into the RI variable,</span>
+  <span class="co1">// the compiler requires a perfect type match</span>
+<span class="br0">}</span>
+ 
+InfoClass = <span class="kw5">class</span><span class="st0">'ReplicationInfo'</span>;
+ 
+<span class="kw1">foreach</span> DynamicActors<span class="br0">(</span>InfoClass, I<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// compile-time error (type mismatch in second parameter)</span>
+  <span class="co1">// InfoClass could be None, in which case the iterator would fall back</span>
+  <span class="co1">// to class'Actor', which would not fit into a variable of type Info.</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">foreach</span> DynamicActors<span class="br0">(</span>InfoClass, A<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// compiles fine</span>
+  <span class="co1">// loops through all ReplicationInfo actors, but A needs to be typecasted</span>
+  <span class="co1">// if you want to access any Info or ReplicationInfo properties or functions</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The descriptions here are for <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>. They may not be accurate for other games. For example, <i>AllDataObjects</i> is specific to UT2004. <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> doesn't have <i>AllObjects</i> or <i>CollidingActors</i>. It does have <i>VisibleCollidingActors</i>, though. The <i>AllObjects</i> iterator is available in <a href="../../../../articles/d/e/u/Legacy%7EDeus_Ex_7ae2.html" title="Legacy:Deus Ex">Deus Ex</a>, even though it's an UnrealEngine 1 game like UT.</p>
+<p><a name="Object" id="Object"></a></p>
+<h3><span class="mw-headline">Object</span></h3>
+<dl>
+<dt>AllObjects (class&lt;<a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>&gt; BaseClass, out <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> Object)&#160;</dt>
+<dd>Iterates through all objects existing in the game and returns those whose class is a subclass of the <i>BaseClass</i>.<br />
+<b>Warning:</b> By all means stay away from this iterator if you want to work with actors!</dd>
+</dl>
+<p><a name="Actor" id="Actor"></a></p>
+<h3><span class="mw-headline">Actor</span></h3>
+<dl>
+<dt>AllActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, optional name MatchTag)&#160;</dt>
+<dd>Iterates through all actors in the level and returns those whose class is a subclass of the <i>BaseClass</i>. If a <i>MatchTag</i> was specified, an actor is only returned if its <i>Tag</i> matches the specified value.<br />
+<b>Note:</b> For some base classes like <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a>, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a>, <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> or <a href="../../../../articles/v/e/h/Legacy%7EVehicle_6bd9.html" title="Legacy:Vehicle">Vehicle</a> there are <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked lists</a> (e.g. <code>Level.NavigationPointList</code> or <code>Level.Game.VehicleList</code>) which may be faster to iterate using a <i>for</i> loop than going through the entire actor list with <i>ForEach AllActors</i>.</dd>
+</dl>
+<dl>
+<dt>DynamicActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, optional name MatchTag)&#160;</dt>
+<dd>Iterates through all actors in the level and returns those whose class is a subclass of the <i>BaseClass</i>. If a <i>MatchTag</i> was specified, an actor is only returned if its <i>Tag</i> matches the specified value.<br />
+Internally the actor list is sorted so it starts with the static actors, followed by the non-static actors. The engine remembers the index of the first non-static actor, so this iterator can start right at that index and actually does not have to check the value of the <i>bStatic</i> property.</dd>
+</dl>
+<dl>
+<dt>ChildActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor)&#160;</dt>
+<dd>Iterates through all actors in the level and returns those whose class is a subclass of the <i>BaseClass</i> and that are owned by the actor the iterator function is called on.</dd>
+</dl>
+<dl>
+<dt>BasedActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor)&#160;</dt>
+<dd>Iterates over the actor's <i>Attached</i> array (i.e. all actors "standing on" this actor) and returns those actors whose class is a subclass of the <i>BaseClass</i>.</dd>
+</dl>
+<dl>
+<dt>TouchingActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out actor Actor)&#160;</dt>
+<dd>Iterates over the actor's <i>Touching</i> array (i.e. all actors "interpenetrating" this actor) and returns those actors whose class is a subclass of the <i>BaseClass</i>.</dd>
+</dl>
+<dl>
+<dt>TraceActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, out vector HitLoc, out vector HitNorm, vector End, optional vector Start, optional vector Extent)&#160;</dt>
+<dd>Performs a trace from the start location to the end location, using the specified extent. Then iterates over the resulting list of actors hit by the trace and returns those whose class is a subclass of the <i>BaseClass</i>.<br />
+<i>HitLocation</i> and <i>HitNormal</i> are set to the corresponding values for each of the actors returned. If no <i>Start</i> location is specified, this actor's location is used instead. If no <i>Extent</i> is specified, the zero vector is used.</dd>
+</dl>
+<dl>
+<dt>RadiusActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, float Radius, optional vector Loc)&#160;</dt>
+<dd>Iterates through all actors in the level and returns those whose class is a subclass of the <i>BaseClass</i> and whose distance to the specified location is less than <i>Radius</i> + that actor's <i>CollisionRadius</i>.<br />
+If no location is specified, this actor's <i>Location</i> is used instead.<br />
+<b>Note:</b> The target actor's CollisionRadius is used regardless of its collision properties.</dd>
+</dl>
+<dl>
+<dt>VisibleActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, optional float Radius, optional vector Loc)&#160;</dt>
+<dd>Iterates through all actors in the level and performs a FastTrace from the specified location to the those actors that are not <i>bHidden</i>, whose class is a subclass of the <i>BaseClass</i> and whose distance to the specified location is less than <i>Radius</i>. If that trace does not report any collision with world geometry, the actor is returned.<br />
+If no location is specified, this actor's <i>Location</i> is used instead. The <i>Radius</i> defaults to 0.0 and thus should always be specified, unless only actors in that exact location should be returned.</dd>
+</dl>
+<dl>
+<dt>VisibleCollidingActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, float Radius, optional vector Loc, optional bool bIgnoreHidden)&#160;</dt>
+<dd>Fetches a list of actors within the specified <i>Radius</i> around the specified location from the collision hash. Then iterates over the resulting list of actors and performs a FastTrace from the specified location to the those actors whose class is a subclass of the <i>BaseClass</i> and (if told to <i>bIgnoreHidden</i>) that are not <i>bHidden</i>. If that trace does not report any collision with world geometry, the actor is returned.<br />
+If no location is specified, this actor's <i>Location</i> is used instead.</dd>
+</dl>
+<dl>
+<dt>CollidingActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor, float Radius, optional vector Loc)&#160;</dt>
+<dd>Fetches a list of actors within the specified <i>Radius</i> around the specified location from the collision hash. Then iterates over the resulting list of actors and returns those actors whose class is a subclass of the <i>BaseClass</i>.<br />
+If no location is specified, this actor's <i>Location</i> is used instead.</dd>
+</dl>
+<p><a name=".3D_ZoneInfo"></a></p>
+<h2><span class="mw-headline">= ZoneInfo</span></h2>
+<dl>
+<dt>ZoneActors (class&lt;<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>&gt; BaseClass, out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> Actor)&#160;</dt>
+<dd>Iterates through all actors in the level and returns those whose class is a subclass of the <i>BaseClass</i> and that are in the zone represented by the <a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a> the iterator function was called on.</dd>
+</dl>
+<p><a name="GameInfo" id="GameInfo"></a></p>
+<h3><span class="mw-headline">GameInfo</span></h3>
+<dl>
+<dt>AllDataObjects (class objClass, out <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> obj, string packageName)&#160;</dt>
+<dd>Iterates through all objects existing in the game and returns those that are contained in the specified package and whose class is a subclass of the <i>BaseClass</i>.<br />
+<b>Note:</b> This iterator will not return any objects if the specified data package is not loaded.</dd>
+</dl>
+<p><a name="Performance_Analysis" id="Performance_Analysis"></a></p>
+<h3><span class="mw-headline">Performance Analysis</span></h3>
+<p><i>See <a href="../../../../articles/c/o/d/Legacy%7ECode_Optimization_a3bf.html" title="Legacy:Code Optimization">Code Optimization</a> for more specific information.</i></p>
+<p>Iterator functions can be divided into several performance classes:</p>
+<dl>
+<dt>object list iterators&#160;</dt>
+</dl>
+<ul>
+<li>AllDataObjects</li>
+<li>AllObjects</li>
+</ul>
+<p>These iterator functions walk over the entire object list and should be avoided if somehow possible.</p>
+<p><br /></p>
+<dl>
+<dt>actor list iterators&#160;</dt>
+</dl>
+<ul>
+<li>AllActors</li>
+<li>ChildActors</li>
+<li>DynamicActors</li>
+<li>RadiusActors</li>
+<li>VisibleActors</li>
+<li>ZoneActors</li>
+</ul>
+<p>These iterator functions walk over the level's actor list and are considerably faster than the previous performance class.</p>
+<p><i>DynamicActors</i> skips the part of the list that contains only static actors, so it's faster than <i>AllActors</i>. Whether it also outperforms the other iterator functions in this list depends on the situation. The others perform their checks in native code, which you'd have to implement thoise checks in UnrealScript if you wanted to use DynamicActors.</p>
+<p><i>VisibleActors</i> should be used with care as it performes a <i>FastTrace</i> for every actor matching the other criterias. If you can rule out more actors with other checks, try using <i>RadiusActors</i> (or <i>DynamicActors</i> + radius check) + your additional checks + <i>FastTrace</i> instead.</p>
+<p><br /></p>
+<dl>
+<dt>collision hash iterators&#160;</dt>
+</dl>
+<ul>
+<li>CollidingActors</li>
+<li>VisibleCollidingActors</li>
+</ul>
+<p>These iterator functions fetch a list of actors from the collision hash instead of walking the actor list. This makes these iterators faster than their counterparts <i>RadiusActors</i> and <i>VisibleActors</i>, as long as the radius stays small. The actual meaning for "small" may vary, but starting at around 2000UU you should think about switching to an actor list iterator.<br />
+Even below that radius, <i>VisibleCollidingActors</i> should be used with care as it performes a FastTrace for every actor matching the other criterias. If you can rule out more actors with other checks, try using <i>CollidingActors</i> + your additional checks + <i>FastTrace</i> instead.</p>
+<p><br /></p>
+<dl>
+<dt>special purpose iterators&#160;</dt>
+</dl>
+<ul>
+<li>BasedActors</li>
+<li>TouchingActors</li>
+<li>TraceActors</li>
+</ul>
+<p>These iterator functions are very fast, since they walk over specific lists of actors. <i>BasedActors</i> and <i>TouchingActors</i> iterate over the <i>Attached</i> and <i>Touching</i> arrays respectively. <i>TraceActors</i> uses the result of a "multi-hit trace" as its actor list, i.e. it first does the tracing, then starts returning actors.</p>
+<p><br />
+These performance categories are based on UT2004. There's no guarantee that they also apply to other UnrealEngine games. Especially <i>BasedActors</i> might have been implemented as actor list iterator in first generation engine games, since there's no <i>Attached</i> array.</p>
+<p><a name="Usage" id="Usage"></a></p>
+<h2><span class="mw-headline">Usage</span></h2>
+<p>Iterating actors is one of the most important concepts to understand in UnrealScripting. There are many times when this will be the only way for you to gain valid reference to other classes for use in your function, and as such, it is essential that you gain a very familiar understanding of the methods used in iterating.</p>
+<p>AllActors is normally used with two parameters - the class, and a variable. The variable parameter may be a global, local, or argument variable, and there are situations when it is good to use each one. To use AllActors, first define a variable of the class you want to iterate. Next, designate the variable that will host the reference to this class object. Inside the brackets, specify what you want to happen each time an object of the specified class is found. The iterator variable is always equal to the last object that was found matching that class, so if you want to get a valid reference to each object in the game of a particular type, you would need to somehow assign that object to yet another variable inside the iterator, before it continues on to the next object of that class.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyMut <span class="kw5">extends</span> Info;
+ 
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> OnlyThisPawn;
+ 
+    <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pawn'</span>, OnlyThisPawn<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">break</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This above code reads something like "Look for all actors in the game that are of the class 'Pawn'. When a Pawn is found is found, assign THAT Pawn to the variable OnlyThisPawn, then perform the statements within the next set of brackets. Once finished with those statements, look for the next actor of the class 'Pawn' and assign THAT pawn to the OnlyPawnVariable, overwriting the last value of the OnlyThisPawn variable." But, there is only one statement there! The break statement causes the foreach iterator to stop it's cycling through the Actors on the level. (It will stop looking for other Actors to assign to OnlyThisPawn). This is an extremely useful way to get a valid reference to an instance of a particular class when there isn't aren't any other ways of attaching to this class. In the example above, the iterator assigns the first actor of class'pawn' that it finds to the OnlyThisPawn variable, breaks out of the "ForEach" statement, and script execution continues through the rest of the function. You may now use the OnlyThisPawn variable without receiving the "Access None" error in the logfile, as long as there are valid Pawns in the level when you perform this iterator.</p>
+<p>Typically, however, a ForEach statement should be used to perform a particular action on multiple instances of a class, to be most efficient. Avoid using extensive iterators in rapidly executing code (such as Tick), and instead try to place in situations where they are only executed once or at least rarely (PostBeginPlay, BeginState are good places). You should also avoid using iterators for assigning object variables, instead trying less resource-expensive methods of gaining valid references. For some ideas of how to do this, see <a href="../../../../articles/t/r/a/Legacy%7ETraversing_Classes_23ad.html" title="Legacy:Traversing Classes">Traversing Classes</a></p>
+<p><b>Wormbo:</b> Iterating through all Pawns is a bad example. Avoid using <code>ForEach AllActors(class'Pawn', P)</code> on the server.<br />
+<code>For (P = Level.PawnList; P&#160;!= None; P = P.NextPawn)</code> does the same and is much more efficient. Always look for a <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked list</a> that contains the actors you want to access before using <code>ForEach AllActors(...)</code>.</p>
+<p><a name="Using_Iterators_From_Objects" id="Using_Iterators_From_Objects"></a></p>
+<h3><span class="mw-headline">Using Iterators From Objects</span></h3>
+<p>Ever have an Object and want to use an iterator but realized much to your frustration that they are all defined down in Actor? Well boys and girls, this is actually very easily worked around as demonstrated by the following example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyObj <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+ 
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> MyActorRef;
+ 
+<span class="kw5">function</span> SomeNiftyFunc<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> AnActor;
+ 
+    <span class="kw1">foreach</span> MyActorRef.<span class="me1">AllActors</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Actor'</span>, AnActor <span class="br0">)</span>
+        <span class="kw1">break</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Since iterators are just normal functions you can treat them as such and call them from any other Object that has a reference to them. Just be sure that your Actor reference is valid before you attempt to call an iterator on it, otherwise all sorts of "bad things" can happen.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> SomeNiftyFunc<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> AnActor;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> MyActorRef == <span class="kw9">NONE</span> || MyActorRef.<span class="me1">bDeleteMe</span> <span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    <span class="kw1">foreach</span> MyActorRef.<span class="me1">RadiusActors</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Actor'</span>, AnActor, <span class="nu0">500</span> <span class="br0">)</span>
+        <span class="kw1">break</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li>Tim Sweeney's reference: <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Advanced_Language_Features_c000.html" title="Legacy:UnrealScript Language Reference/Advanced Language Features">UnrealScript Language Reference/Advanced Language Features</a></li>
+<li><a href="../../../../articles/f/l/o/Legacy%7EFlow_Syntax_a7ce.html" title="Legacy:Flow Syntax">Flow Syntax</a></li>
+<li><a href="../../../../articles/c/o/d/Legacy%7ECode_Optimization_a3bf.html" title="Legacy:Code Optimization">Code Optimization</a> – If your framerate drops considerably when using iterators.</li>
+<li><a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Linked List/Existing Lists In Unreal Tournament</a> also has some info on execution speed of the various iterator functions</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Foxpaw:</b> Destroying actors in Iterators seems to cause some strangeness. The following code caused mysterioud GPFs for the longest time for me:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">foreach</span> AllObjects<span class="br0">(</span> <span class="kw5">class</span><span class="st0">'VehicularThing'</span>, Old <span class="br0">)</span>
+    Old.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>It wouldn't crash as soon as I executed it, but would go for about 8 cycles or so before crashing. I believe this may cause some kind of a memory leak or something, possibly due to the internal workings of the iterators. I stopped the GPFs by doing the following, and it hasn't caused a crash since:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">foreach</span> AllObjects<span class="br0">(</span> <span class="kw5">class</span><span class="st0">'VehicularThing'</span>, Old <span class="br0">)</span>
+    MarkedMen<span class="br0">[</span>MarkedMen.<span class="kw6">Length</span><span class="br0">]</span> = Old;
+ 
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MarkedMen.<span class="kw6">Length</span>;i++<span class="br0">)</span>
+    MarkedMen<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p><b>Daid303:</b> The killall cheat never crashed for me... but it uses DynamicActors, why are you using AllObjects? (I can't think of any slower function)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">exec</span> <span class="kw5">function</span> KillAll<span class="br0">(</span>class&lt;actor&gt; aClass<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>aClass, <span class="kw5">class</span><span class="st0">'AIController'</span><span class="br0">)</span> <span class="br0">)</span>
+ 
+        <span class="br0">{</span>
+ 
+                <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">KillBots</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">NumBots</span><span class="br0">)</span>;
+ 
+                <span class="kw1">return</span>;
+ 
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>aClass, <span class="kw5">class</span><span class="st0">'Pawn'</span><span class="br0">)</span> <span class="br0">)</span>
+ 
+        <span class="br0">{</span>
+ 
+                KillAllPawns<span class="br0">(</span>class&lt;Pawn&gt;<span class="br0">(</span>aClass<span class="br0">)</span><span class="br0">)</span>;
+ 
+                <span class="kw1">return</span>;
+ 
+        <span class="br0">}</span>
+ 
+        <span class="kw1">ForEach</span> DynamicActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Actor'</span>, A<span class="br0">)</span>
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>A.<span class="kw5">class</span>, aClass<span class="br0">)</span> <span class="br0">)</span>
+ 
+                        A.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><b>Foxpaw:</b> It may only apply to AllObjects, since that one operates on non-actors as well, and the notion of an object having been destroyed in a previous iteration doesn't really apply for garbage collection, which is what it was designed for. I'm using AllObjects because it's being called from a non-actor class, and only actors can use the AllActors, DynamicActors, etc. iterators. As far as I can tell only AllObjects is valid for use in classes not derived from actor.</p>
+<p><b>Wormbo:</b> Avoid AllObjects when AllActors or DynamicActors gives you the same results. Also when UsingAllObjects, make sure the actor you try to Destroy() isn't already destroyed (i.e. bDeleteMe should not yet be True).</p>
+<p><b>Foxpaw:</b> Well, objects not derived from Actor can't use any iterators except AllObjects, so my options are limited. Plus, since it's in the GUI, I don't really have to worry much about framerate.</p>
+<p><b>Dma:</b> Actually, you can use any iterator even in a static function in a non-actor class by doing something like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> Test<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+   <span class="kw5">local</span> PlayerController PC;
+   <span class="kw1">foreach</span> <span class="kw5">class</span><span class="st0">'Object'</span>.<span class="me1">AllObjects</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'PlayerController'</span>, PC<span class="br0">)</span> <span class="br0">{</span>
+      <span class="kw1">foreach</span> PC.<span class="me1">AllActors</span><span class="br0">(</span>...<span class="br0">)</span> <span class="br0">{</span>
+         <span class="co1">// ...</span>
+      <span class="br0">}</span>
+      <span class="kw1">return</span>;
+   <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>EricBlade:</b> Am I correct in my findings, that say you have a couple of actors in the world, A and B, and if you do a RadiusActors, or for that matter, any other Radius based iterator from A.location, if B.location is not within that radius, even if B collides within that radius, you will not find B in that iterator? Example: Created a test map with a pane of glass, that was absolutely monstrously oversized from it's original dimensions, using DrawScale to make it somewhere around 20X it's original size. I could hit it anywhere on it's plane with a hitscan weapon, and the glass would shatter. However, hitting it with a projectile with a very small DamageRadius, no matter the amount of damage, would not cause the glass to shatter, unless it hit very near the middle. (the shattering is done in TakeDamage() .. and logging from the Projectile showed that the VisibleCollidingActors() iterator used in Actor::HurtRadius() was not actually hitting the glass, unless it was originating from very near it's center location point. I solved this problem by simply making projectiles do damage to what they collide with, before they do radius damage, but it seems like a pretty serious flaw for using a radius iterator for any purpose.</p>
+<p><b>SuperApe:</b> My suspicion is that RadiusActors is not collision based but works off of the object's center. You're huge pane of glass probably has the center in the middle, while you may have shot farther away. The note in the code mentions that RadiusActors is slow, like AllActors. This leads me to believe that it's simply a check of AllActors for those who's Location is within the Radius of the actor in question. IOW, something like</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span> VSize<span class="br0">(</span> Location - <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Location</span> <span class="br0">)</span> =&lt; Radius <span class="br0">)</span>
+</pre></div>
+<p>.</p>
+<p><b>EricBlade:</b> Exactly. Now, since that's fairly useless in a world where things take up more than one point of space, what can be done to properly get all actors that have a collision within the radius? Do a CollidingActors, with a ludicrous max radius, and then do a trace from all found actors to the source, to see if they collide within the actual radius we want to affect? Actually, that brings up the problem of what to do if you have a room full of garbage-can sized objects too.. obviously an explosion would affect all of them, within it's blast range, but using Visible check from A to B didn't find most of them.</p>
+<p><b>SuperApe:</b> Just a guess, but couldn't you use another object just to detect damage in that area, like a volume?</p>
+<p><b>EricBlade:</b> eh, when you can fix projectile explosions the right way, why use a hacky way?&#160;:D Next question .. what are requirements to get a hit on TouchingActors()&#160;? I've tried it with a couple different things, and have had results that were not at all useful. First, with a projectile, I set it's collisionradius to the damageradius, and then tried to use TouchingActors() to handle the blowing up, but got nothing operated on. Did the same with a Fire, and got nothing&#160;:(</p>
+<p><b>SuperApe:</b> (briefly) Do it however you want. I just suggest that mappers can use the stock tools and methods available to get the job done. I'm pretty sure there's more than one breaking glass tut on this site alone. And IIRC, they do use different actors to detect the collision.</p>
+<p><b>Wormbo:</b> The best way to handle a really small explosion radius is to look for actors in a much larger radius such that any actor possibly touching the real radius is included. Then you only have to do a very simple distance check from the center of the explosion to the actor's collision cylinder. I came up with the following code for a remake of the Descent 2 Gauss Cannon: (this is an <a href="../../../../articles/i/n/s/Legacy%7EInstantFire_f898.html" title="Legacy:InstantFire">InstantFire</a> subclass)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> ExtendedHurtRadius<span class="br0">(</span><span class="kw4">vector</span> HitLocation, <span class="kw4">vector</span> AimDir, <a href="/Actor"><span class="kw10">Actor</span></a> HitActor<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Victims;
+  <span class="kw5">local</span> <span class="kw4">float</span> damageScale, dist, damageAmount;
+  <span class="kw5">local</span> <span class="kw4">vector</span> dir;
+ 
+  DamageAmount = <span class="kw7">RandRange</span><span class="br0">(</span>DamageMin, DamageMax<span class="br0">)</span> * DamageAtten;
+  <span class="kw1">foreach</span> Weapon.<span class="me1">VisibleCollidingActors</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'Actor'</span>, Victims, DamageRadius + <span class="nu0">200</span>, HitLocation<span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// don't let blast damage affect fluid - VisibleCollisingActors doesn't really work for them - jag</span>
+    <span class="kw1">if</span> <span class="br0">(</span>Victims != <span class="kw8">self</span> &amp;&amp; Victims.<span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> &amp;&amp; !Victims.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'FluidSurfaceInfo'</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+      dist = DistToCylinder<span class="br0">(</span>Victims.<span class="me1">Location</span> - HitLocation, Victims.<span class="me1">CollisionHeight</span>, Victims.<span class="me1">CollisionRadius</span><span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span> dist &gt; DamageRadius <span class="br0">)</span>
+        <span class="kw1">continue</span>;
+      dir = Normal<span class="br0">(</span>Victims.<span class="me1">Location</span> - HitLocation<span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>Victims == HitActor<span class="br0">)</span>
+        dir = Normal<span class="br0">(</span>dir + AimDir<span class="br0">)</span>;
+      damageScale = <span class="nu0">1</span> - <span class="kw7">FMax</span><span class="br0">(</span><span class="nu0">0</span>, dist / DamageRadius<span class="br0">)</span>;
+      Victims.<span class="me1">TakeDamage</span><span class="br0">(</span>damageScale * DamageAmount, Instigator, Victims.<span class="me1">Location</span> - <span class="nu0">0.5</span> * <span class="br0">(</span>Victims.<span class="me1">CollisionHeight</span> + Victims.<span class="me1">CollisionRadius</span><span class="br0">)</span> * dir, damageScale * Momentum * dir, <a href="/DamageType"><span class="kw10">DamageType</span></a><span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>Vehicle<span class="br0">(</span>Victims<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; Vehicle<span class="br0">(</span>Victims<span class="br0">)</span>.<span class="me1">Health</span> &gt; <span class="nu0">0</span><span class="br0">)</span>
+        Vehicle<span class="br0">(</span>Victims<span class="br0">)</span>.<span class="me1">DriverRadiusDamage</span><span class="br0">(</span>DamageAmount, DamageRadius, Instigator.<span class="me1">Controller</span>, <a href="/DamageType"><span class="kw10">DamageType</span></a>, Momentum, HitLocation<span class="br0">)</span>;
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/**
+Calculates a point's distance to a cylinder.
+*/</span>
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">float</span> DistToCylinder<span class="br0">(</span><span class="kw4">vector</span> CenterDist, <span class="kw4">float</span> HalfHeight, <span class="kw4">float</span> Radius<span class="br0">)</span>
+<span class="br0">{</span>
+  CenterDist.<span class="me1">X</span> = VSize<span class="br0">(</span><span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span> * CenterDist<span class="br0">)</span> - Radius;
+  <span class="kw1">if</span> <span class="br0">(</span>CenterDist.<span class="me1">X</span> &lt; <span class="nu0">0</span><span class="br0">)</span>
+    CenterDist.<span class="me1">X</span> = <span class="nu0">0</span>;
+ 
+  CenterDist.<span class="me1">Y</span> = <span class="nu0">0</span>;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>CenterDist.<span class="me1">Z</span> &lt; <span class="nu0">0</span><span class="br0">)</span>
+    CenterDist.<span class="me1">Z</span> *= <span class="nu0">-1</span>;
+ 
+  CenterDist.<span class="me1">Z</span> -= HalfHeight;
+  <span class="kw1">if</span> <span class="br0">(</span>CenterDist.<span class="me1">Z</span> &lt; <span class="nu0">0</span><span class="br0">)</span>
+    CenterDist.<span class="me1">Z</span> = <span class="nu0">0</span>;
+ 
+  <span class="kw1">return</span> VSize<span class="br0">(</span>CenterDist<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Iterator_Timing_Comments" id="Iterator_Timing_Comments"></a></p>
+<h2><span class="mw-headline">Iterator Timing Comments</span></h2>
+<p><b>Xian:</b> I wanted to start a small discussion about the timing on these... as I was trying some experimental stuff on UE1 I tried timing it in UE2. This is the code and log (stripped of the boring stuff) from the map Flux2 with around 9-10 bots:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PostBeginPlay <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    Test1<span class="br0">(</span><span class="br0">)</span>;
+ 
+    Test2<span class="br0">(</span><span class="br0">)</span>;
+ 
+    Test3<span class="br0">(</span><span class="br0">)</span>;
+ 
+    Test4<span class="br0">(</span><span class="br0">)</span>;
+ 
+    Test5<span class="br0">(</span><span class="br0">)</span>;
+ 
+    Test6<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test1 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Actors;
+ 
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, Actors, <span class="nu0">50000</span>, Location, <span class="kw9">False</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        Test<span class="br0">(</span>Actors<span class="br0">)</span>;
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 1"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 1"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test2 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Actors;
+ 
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, Actors, <span class="nu0">50000</span>, Location, <span class="kw9">True</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        Test<span class="br0">(</span>Actors<span class="br0">)</span>;
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 2"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 2"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test3 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Actors;
+ 
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> CollidingActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, Actors, <span class="nu0">50000</span>, Location<span class="br0">)</span>
+    <span class="br0">{</span>
+        Test<span class="br0">(</span>Actors<span class="br0">)</span>;
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 3"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 3"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test4 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> <a href="/Actor"><span class="kw10">Actor</span></a>;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Actors<span class="br0">[</span><span class="nu0">512</span><span class="br0">]</span>;
+    <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+    -- i;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> AllActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, <a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bHidden</span> &amp;&amp; !<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bStatic</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideActors</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideWorld</span>
+        &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionHeight</span> &gt; <span class="nu0">2</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionRadius</span> &gt; <span class="nu0">2</span><span class="br0">)</span>
+        &amp;&amp; <span class="br0">(</span><span class="kw7">Abs</span><span class="br0">(</span>VSize<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Location</span> - Location<span class="br0">)</span><span class="br0">)</span> &lt;= <span class="nu0">50000</span><span class="br0">)</span> &amp;&amp; FastTrace<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Location</span>,PlayerPawn.<span class="me1">Location</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            Actors<span class="br0">[</span>++ i<span class="br0">]</span> = <a href="/Actor"><span class="kw10">Actor</span></a>;
+            <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Save 4"</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Log 4"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    ++ i;
+    <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; i; ++ j<span class="br0">)</span>
+    <span class="br0">{</span>
+        Test<span class="br0">(</span>Actors<span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span>;
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 4"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 4"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test5 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> <a href="/Actor"><span class="kw10">Actor</span></a>;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Actors<span class="br0">[</span><span class="nu0">512</span><span class="br0">]</span>;
+    <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+    -- i;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, <a href="/Actor"><span class="kw10">Actor</span></a>, <span class="nu0">50000</span>, Location, <span class="kw9">True</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bStatic</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideActors</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideWorld</span>
+        &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionHeight</span> &gt; <span class="nu0">2</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionRadius</span> &gt; <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            Actors<span class="br0">[</span>++ i<span class="br0">]</span> = <a href="/Actor"><span class="kw10">Actor</span></a>;
+            <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Save 5"</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Log 5"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    ++ i;
+    <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; i; ++ j<span class="br0">)</span>
+    <span class="br0">{</span>
+        Test<span class="br0">(</span>Actors<span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span>;
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 5"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 5"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test6 <span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+ 
+    <span class="kw1">foreach</span> VisibleCollidingActors <span class="br0">(</span><span class="kw5">Class</span> <span class="st0">'Actor'</span>, <a href="/Actor"><span class="kw10">Actor</span></a>, <span class="nu0">50000</span>, Location, <span class="kw9">True</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bStatic</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideActors</span> &amp;&amp; <a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">bCollideWorld</span>
+        &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionHeight</span> &gt; <span class="nu0">2</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">CollisionRadius</span> &gt; <span class="nu0">2</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            Test<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>;
+            <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Execute 6"</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Log 6"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"FINISHED !!!!!!!!!!!! TEST 6"</span><span class="br0">)</span>;
+    <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Test <span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> <a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Test()"</span> @ <a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>It was spawned near my Controller's location so the Location pointer should be equivalent to mine. Please ignore the ugly code... My code is usually cleaner, but this was just a test so bleh... This is the log (with the irrelevant info removed):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ScriptLog: <span class="nu0">22.892699</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">1</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">22.902054</span> ms
+ 
+ScriptLog: <span class="nu0">11.660470</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">2</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">11.670268</span> ms
+ 
+ScriptLog: <span class="nu0">8.632781</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">3</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">8.639348</span> ms
+ 
+ScriptLog: <span class="nu0">7.206910</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">4</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">7.212730</span> ms
+ 
+ScriptLog: <span class="nu0">11.221647</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">5</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">11.227758</span> ms
+ 
+ScriptLog: <span class="nu0">11.784850</span>: FINISHED !!!!!!!!!!!! TEST <span class="nu0">6</span>
+<span class="kw7">Log</span>: Time=<span class="nu0">11.796611</span> ms
+</pre></div>
+<p>To my suprise, AllActors was the fastest... the only one that came close was CollidingActors. I tried it with 9000 as Radius as well... The result was that CollidingActors and AllActors were fairly in the same range (with AllActors being faster). While I do know the power of code optimization (as you can see I REALLY filtered things out&#160;:) ), I am still surprised that the whole actor hash was faster than the colliding actor hash. I will be honest, this was at the beginning of the match, but still... I was always under the impression that VCL and CL are faster than the rest. Any comments/thoughts&#160;?</p>
+<p><b>Wormbo:</b> Check out the descriptions above:<br />
+VCA – "Usually this is much faster than <code>AllActors</code> because it uses the collision hash instead of the much larger native actor list, but with a very high radius VisibleActors might be more efficient."<br />
+CA – "This is slightly faster than RadiusActors with radii at least up to 2000UU and much faster than VisibleActors or VisibleCollidingActors due to the visibility check those iterators have to perform for each actor."</p>
+<p>Generally the collision hash should only be used if you want to find actors with collision enabled and located within a small area. The Visible*Actors iterators always perform a FastTrace before transfering control back to the UnrealScript code inside the loop, so they must be considered a lot slower than a compareable CollidingActors or RadiusActors loop with additional filter mechanisms. And last but not least it depends on the class of actors your loop iterates over. The class always is the first thing checked, so it makes a huge difference if you iterate over class'Actor' or e.g. class'Projectile': The latter will ignore all those static mesh actors, pickups, players and so on, dramatically changing the number of actors that have to go through the full check.</p>
+<p>And another thing: Try reordering the tests. When benchmarking my own code I often found that the first iteration of the first test took longer than later tests.</p>
+<p><b>Xian:</b> I did check the descs, however considering that all of them checked the same things, the small number of bots/projectiles a.s.o. was relatively small, I was still quite surprised on the result, considering AllActors has (basically) no checks since the others have radius, traces, hidden etc. I will try reordering them and perhaps, play for longer with a SetTimer() on the traces...</p>
+<p><b>Wormbo:</b> I rewrote the iterator descriptions for UT2004 and added a performance clasification. Someone should remove obsolete discussions from this page.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 111/1000000
+Post-expand include size: 8/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/i/t/e/Legacy_talk%7EIterator_876a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Iterator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:51, 9 June 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

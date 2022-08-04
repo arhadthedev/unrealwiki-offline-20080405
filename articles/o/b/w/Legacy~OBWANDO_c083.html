@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:OBWANDO - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:OBWANDO</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Well heres my small stamp on the unreal world... Basically I'm going to document as I learn different areas and try to move them to places where they can be used, or for others to be able to find a 'shortcut' to certain things. My main focus is pretty much writing ut2003 mods, not mutators, but maybe muts later on.</p>
+<p>If I write something screwy, just comment it in. I'm sure theres always a better way.</p>
+<p>First thing is to start here: <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_For_UT2K3_c3b2.html" title="Legacy:Mod Authoring For UT2K3">Mod_Authoring_For_UT2K3</a> So I put it into my /ut2003 folder (ex: /ut2003/RollerBall2169)</p>
+<p>Next you need to create the game class you plan on deriving from. In my case I used xBombingRun...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> RollerBallGame <span class="kw5">extends</span> xBombingRun;
+</pre></div>
+<p>and saved it into /ut2003/RBall/RollerBallGame.uc</p>
+<p>The important thing is that the class name must match the filename.</p>
+<p>You can specify a new <a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a>, <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a>, game name, and other things in here, but we'll go into that later.</p>
+<p>Next thing you need to do is create an .int file, and add the reference to the packages loaded.</p>
+<p>The <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT_File</a> (.int) will specify a lot of things about your mod. You will place this file into your /ut2003/system folder</p>
+<p>In this case I called it RollerBall2169.int and heres the contents. I read the .int page, but got confused a bit with the pipes, so there is an example of what it looks like with the pipes (A|B|C|D|E).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>PUBLIC<span class="br0">]</span>
+<a href="/Object"><span class="kw10">Object</span></a>=<span class="br0">(</span><span class="kw5">Class</span>=<span class="kw5">Class</span>,MetaClass=Engine.<span class="me1">GameInfo</span>,<span class="kw4">Name</span>=RollerBall2169.<span class="me1">RollerBallGame</span>,Description=<span class="st0">"RB|RollerBall 2169|xinterface.Tab_IABombingRun|RollerBall2169.MapListRollerBall|true"</span><span class="br0">)</span>
+</pre></div>
+<p>Notice I'm using a custom <a href="../../../../articles/m/a/p/Legacy%7EMapList_efa4.html" title="Legacy:MapList">MapList</a> and Map prefix. The prefix serves as to filter out maps in your list. If I used BR I would get all bombing run maps.</p>
+<p>Next thing is to put your mod's file into the ut2003.ini file at the end of [Editor.EditorEngine]. In this case the entry was: EditPackages=RollerBall2169</p>
+<p>now you have a basic framework to start from.</p>
+<p>My mod is pretty simple by theory here. I want to remove all shooting weapons, use gliding skates, add some speed, do some ragdoll stuff, add some bludgeoning weapons, powerups, and of course a new ball and goals. Another item is that I want to make sure people stay on the course (people play on a track) and dont try to go backwards or stay off of the track.</p>
+<p>I'll break down how I achieved some of the effects and what classes I modified and how I got them to work. You can extend any class you want, but dont expect it to be called or ever receive an event unless you get it plugged into your game correctly. Learn to use the <a href="../../../../articles/d/e/b/Legacy%7EDebugging_Techniques_10ec.html" title="Legacy:Debugging Techniques">Debugging_Techniques</a>, they will make your life much easier.</p>
+<p>I use the DisplayDebug for my routines so I can show that I am getting calls to each class correctly. Broadcast to yourself events, you can get instant response with triggering or performing actions.</p>
+<p>Drawing on the <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> is easy, and if you want to simply put something on the next line in the DisplayDebug use:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> DisplayDebug<span class="br0">(</span>Canvas Canvas, <span class="kw6">out</span> <span class="kw4">float</span> YL, <span class="kw6">out</span> <span class="kw4">float</span> YPos<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw6">super</span>.<span class="me1">DisplayDebug</span><span class="br0">(</span>Canvas, YL, YPos<span class="br0">)</span>;
+  Canvas.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>; <span class="co1">// Change colors for routines</span>
+  Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"Player's name is "</span>$PlayerOwner.<span class="me1">PlayerReplicationInfo</span>.<span class="me1">PlayerName</span>,<span class="kw9">false</span><span class="br0">)</span>; <span class="co1">// show: Player's name is Player</span>
+  YPos += YL; <span class="co1">// move to the next line</span>
+  Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">4</span>,YPos<span class="br0">)</span>; <span class="co1">// and set the next position for the next drawtext.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Im going to move ahead here and put things as I go along, As I move the items out into the open I will link them from here.</p>
+<hr />
+<p>Now we're going to talk about controlling your (x)player and playercontrol. You can find the tree here at the <a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_bff8.html" title="Legacy:Actor Class Hierarchy">Actor_Class_Hierarchy</a>.</p>
+<p>The hiearchy we are looking at is: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>-&gt;<a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a>-&gt;[[PlayerController]-&gt;<a href="../../../../articles/u/n/r/Legacy%7EUnrealPlayer_1818.html" title="Legacy:UnrealPlayer">UnrealPlayer</a>-&gt;<a href="../../../../articles/x/p/l/Legacy%7EXPlayer_7578.html" title="Legacy:XPlayer">xPlayer</a>.</p>
+<p>The <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a> is the instruction that is given a possessed <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a>. Think of the PlayerController as the mind and soul and the pawn as the physical body. You possess the pawn and control it to do whatever you want. Also, if the computer is playing, it uses the AIController and takes over the pawn in the same fashion as I just explained. (Think Matrix here)</p>
+<p>The idea here was to allow the person to 'glide' along the surface which means no fast stopping, and accelerated motion. To do this you need to modify the PlayerController's PlayerTick. Why? because you want to have it check for controller changes and accelerate instead of applying motion immediately at each player time interval. This means we need to modify how the PlayController changes the acceleration and how the pawn will apply this acceleration. We're going to subclass the xPlayer class here since it has all of the same class info inhereted from its parent classes (more importantly to us the PlayerController class). Why didnt we just go for the PlayerController class? Simply because we only want to make a slight change and dont want to change how UnrealPlayer and xPlayer interact with the PlayerController. If we take over a function then we have to make sure all child classes are taken care of as well or you may get into big trouble.</p>
+<p>To first get the engine to even send our new class some events we need to specify the PlayerController class and also specify our Pawn class (which has our PlayerMove function) that we are going to be using. If you remember we created a RollerBallGame which extended xBombingRun. It had our gamename and HUDType to show a custom HUD. Well we need to add a new line in there, so here it is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// RollerBallGame.uc</span>
+ 
+<span class="kw5">class</span> RollerBallGame <span class="kw5">extends</span> xBombingRun;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ GameName=<span class="st0">"RollerBall 2169"</span>
+ HUDType=<span class="st0">"RollerBall2169.RollerBallHUD"</span>
+ PlayerControllerClassName=<span class="st0">"RollerBall2169.RBxPlayer"</span> <span class="co1">// This is our new custom PlayerController class.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>I'm sure you're saying... Wait a second, didn't you say that we werent going to modify the PlayerController class???</p>
+<p>Thats correct, we haven't... We gave it a class that is derived from the PlayerController class and has all of the inhereted functions and variables of the PlayerController class, but only the functions we wanted to modify were changed. The class we are using here is the xPlayer class. Look it up in the hiearchy again, you will understand.</p>
+<p>So heres is the patch you put in the front of the event:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// RBxPlayer.uc file</span>
+ 
+<span class="kw5">class</span> RBxPlayer <span class="kw5">extends</span> xPlayer;
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> PlayerTick<span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> CurrentKey, DiffKey; <span class="co1">// the first 5 lines here are from the PlayerTick in the PlayerController.uc file.</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> c, i;                <span class="co1">// We still need the logic in PlayerController to apply, </span>
+    <span class="kw5">local</span> <span class="kw4">bool</span> bFullBuffer,bMatch; <span class="co1">// so we copy the whole event in here and modify to suit our taste.</span>
+ 
+    <span class="kw6">Super</span>.<span class="me1">PlayerTick</span><span class="br0">(</span>DeltaTime<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>aForward &gt; <span class="nu0">0</span><span class="br0">)</span>    AccelSpeed += AccelSpeedRate;
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>aForward &lt; <span class="nu0">0</span><span class="br0">)</span>  AccelSpeed -= AccelSpeedRate;               
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>aForward == <span class="nu0">0</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>AccelSpeed != <span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>AccelSpeed &gt;<span class="nu0">0</span> <span class="br0">)</span> <span class="br0">{</span>
+                        AccelSpeed -= AccelSpeedDecay;
+                <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+                        AccelSpeed += AccelSpeedDecay;
+                <span class="br0">}</span>
+ 
+                <span class="kw1">if</span> <span class="br0">(</span>AccelSpeedDecay &gt; <span class="kw7">abs</span><span class="br0">(</span>AccelSpeed<span class="br0">)</span><span class="br0">)</span>  AccelSpeed = <span class="nu0">0</span>; <span class="co1">// if we're inside of the decay zero it out</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw7">abs</span><span class="br0">(</span>AccelSpeed<span class="br0">)</span> &gt; <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">AccelRate</span> <span class="br0">)</span> <span class="br0">{</span> <span class="co1">// make sure they arent going faster than the possible acceleration speed.</span>
+                <span class="kw1">if</span> <span class="br0">(</span>AccelSpeed&lt;<span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+                        AccelSpeed = -<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">AccelRate</span>;
+                <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+                        AccelSpeed = <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">AccelRate</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="co1">// ... And the rest of the event goes under here.</span>
+ 
+<span class="co1">// and at the tail of the file you need this added so that it will use our custom Pawn for other attributes we'll address later on.</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        AccelSpeedRate=<span class="nu0">50.00</span>  <span class="co1">// this is just for acceleration so that every playertick that happens it will accelerate by this interval.</span>
+        PawnClass=<span class="kw5">Class</span><span class="st0">'RollerBall2169.RBxPawn'</span> <span class="co1">// This is the pawn we want to control not the default xPawn. Ill explain later.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>In case you are curious, the maximum acceleration rate of a pawn and other important stuff can be found in Pawn.uc:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Movement.</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   GroundSpeed;    <span class="co1">// The maximum ground speed.</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   WaterSpeed;     <span class="co1">// The maximum swimming speed.</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   AirSpeed;         <span class="co1">// The maximum flying speed.</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   LadderSpeed;      <span class="co1">// Ladder climbing speed</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   AccelRate;                <span class="co1">// max acceleration rate</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   JumpZ;            <span class="co1">// vertical acceleration w/ jump</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   AirControl;               <span class="co1">// amount of AirControl available to the pawn</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   WalkingPct;               <span class="co1">// pct. of running speed that walking speed is</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   CrouchedPct;      <span class="co1">// pct. of running speed that crouched walking speed is</span>
+<span class="kw5">var</span> <span class="kw4">float</span>   MaxFallSpeed;     <span class="co1">// max speed pawn can land without taking damage (also limits what paths AI can use)</span>
+<span class="kw5">var</span> <span class="kw4">vector</span>  ConstantAcceleration;     <span class="co1">// acceleration added to pawn when falling</span>
+</pre></div>
+<p>Once we do that modification there we need to change the PlayerMove as well. The PlayerMove is part of the Pawn.uc class. But there are multiple <a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">States</a> a player could be in. The player could be 'PlayerWalking', 'PlayerSwimming', etc... Each state controls how the player will move. If you are flying, you arent doing the same motions as if you were walking or swimming. Well, we're interested on how we walk, or in this case glide. Since we never plan on having our guy walk, we will simply modify the PlayerMove inside of the PlayerWalking state.</p>
+<hr />
+<p>Tonight's dilemma was about bot control. I ride on skates, they walk. When I get hit, I fall down, crumple, whatever my karma body feels like (until i do the vectors for the correct hits (this weekend&#160;:)). They dont. SO how do i fix this?</p>
+<p>To change a bot you first need to extend the xBot. Problem is where is it called from? I tried changing the default class to my custom bot class (RBxBot) and no gold. Still went to xGame.xBot. So that means that I need to dig deeper...</p>
+<p>Lets think about this. Almost everything we play derives from the deathmatch class. (insert class heiarchy here) So, we need to figure out what actually cranks a bot up!</p>
+<p>After digging around, I found this little nugget inside of the deathmatch.uc file:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/* Spawn and initialize a bot
+*/</span>
+<span class="kw5">function</span> Bot SpawnBot<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> botName<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Bot NewBot;
+    <span class="kw5">local</span> RosterEntry Chosen;
+        <span class="kw5">local</span> UnrealTeamInfo BotTeam;
+ 
+        BotTeam = GetBotTeam<span class="br0">(</span><span class="br0">)</span>;
+    Chosen = BotTeam.<span class="me1">ChooseBotClass</span><span class="br0">(</span>botName<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Chosen.<span class="me1">PawnClass</span> == <span class="kw9">None</span><span class="br0">)</span>
+        Chosen.<span class="me1">Init</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">//amb</span>
+    <span class="co1">// log("Chose pawn class "$Chosen.PawnClass);</span>
+    NewBot = Bot<span class="br0">(</span>Spawn<span class="br0">(</span>Chosen.<span class="me1">PawnClass</span>.<span class="kw1">default</span>.<span class="me1">ControllerClass</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> NewBot != <span class="kw9">None</span> <span class="br0">)</span>
+        InitializeBot<span class="br0">(</span>NewBot,BotTeam,Chosen<span class="br0">)</span>;
+    <span class="kw1">return</span> NewBot;
+<span class="br0">}</span>
+</pre></div>
+<p>Very interesting... so I went to my RollerBallGame.uc file (where I specified my gametype class) and tossed it in there with some minor changes.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Bot SpawnBot<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> botName<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> Bot NewBot;
+    <span class="kw5">local</span> RosterEntry Chosen;
+    <span class="kw5">local</span> UnrealTeamInfo BotTeam;
+ 
+    BotTeam = GetBotTeam<span class="br0">(</span><span class="br0">)</span>;
+    Chosen = BotTeam.<span class="me1">ChooseBotClass</span><span class="br0">(</span>botName<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Chosen.<span class="me1">PawnClass</span> == <span class="kw9">None</span><span class="br0">)</span>
+        Chosen.<span class="me1">Init</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">//amb</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Chose pawn class "</span>$Chosen.<span class="me1">PawnClass</span><span class="br0">)</span>; <span class="co1">// just to make sure I uncommented this out</span>
+    NewBot = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'RBxBot'</span><span class="br0">)</span>; <span class="co1">// explicitly specify my bot class</span>
+<span class="co1">//     NewBot = Bot(Spawn(Chosen.PawnClass.default.ControllerClass));</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> NewBot != <span class="kw9">None</span> <span class="br0">)</span>
+        InitializeBot<span class="br0">(</span>NewBot,BotTeam,Chosen<span class="br0">)</span>;
+    <span class="kw1">return</span> NewBot;
+<span class="br0">}</span>
+</pre></div>
+<p>Compile, showdebug, viewplayer (botname), Voila!!! Controller is RBxBot! So far so good, but they arent falling down yet!...</p>
+<p>So in the RBxBot.uc file I put in:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> SetPawnClass<span class="br0">(</span><span class="kw4">string</span> inClass, <span class="kw4">string</span> inCharacter<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> class&lt;RBxPawn&gt; pClass;
+ 
+    PawnClass = <span class="kw5">class</span><span class="st0">'RBxPawn'</span>;
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Chose pawn class "</span>$PawnClass<span class="br0">)</span>; <span class="co1">// again checking to make sure it works well...</span>
+ 
+    PawnSetupRecord = <span class="kw5">class</span><span class="st0">'xUtil'</span>.<span class="kw6">static</span>.<span class="me1">FindPlayerRecord</span><span class="br0">(</span>inCharacter<span class="br0">)</span>;
+    PlayerReplicationInfo.<span class="me1">SetCharacterName</span><span class="br0">(</span>inCharacter<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>There are some other advantages, since you can set bot parameters in your gameclass file. If theres an easier way, I'm all for it, but until then, I'll continue to study the bot files and start filling in the bot page as I go along...</p>
+<hr />
+<p>The next item up was the Karma Ragdoll physics. I wanted to have people actually fall over when they get hit and the percentage was to be dictated by the amount of force the weapon being used would 'stun' the player. Instead of going over it here, just jump to the <a href="../../../../articles/k/a/r/Legacy%7EKarma_Ragdoll_3760.html" title="Legacy:Karma Ragdoll">Karma Ragdoll</a> page and read it. I added my working code to the bottom and tried to clear up any assumptions. I give all of the kudos to the guys who wrote that page (and the other it links from), they were essential to the learning curve.</p>
+<hr />
+<p>Now its time for replication, and so far... Its a pain in the ...</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h4><span class="mw-headline">Comments</span></h4>
+<p><b>Mychaeel:</b> Welcome. &#160;:-) But please don't put stuff of general interest on your personal page – nobody will ever find it there. Just look around a bit, find a nice place for a link to your content, add it and then create a new page to add your content from there. (If others feel that the new page should have a different name or be linked from elsewhere, no harm done – that can be changed easily.)</p>
+<p><b>OBWANDO:</b> No problem, Would a developers journal be more appropriate? Or a "Mod from nuts to bolts"? In the end I want to allow new people to look at the mod I've created from start to finish and try to give them a template for as many classes as possible with the assistance of other pages that have the definition of many of the classes. Kind of like a practical use for the instructional pages.</p>
+<p><b>Foxpaw:</b> Have you considered just using PHYS_Hovering for the skates simulation? It may not make much of a difference, but I think it behaves essentially as you have described you want your skates to act, and since it runs natively it would probrably execute faster.</p>
+<p><b>LegalAssassin:</b> Hey, Ob, are you dead? Haven't seen you around lately...&#160;:(</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 30/1000000
+Post-expand include size: 7/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Personal_Page_0f2d.html" title="Category:Legacy Personal Page">Legacy Personal Page</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/o/b/w/Legacy%7EOBWANDO_c083.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/b/w/Legacy_talk%7EOBWANDO_77b3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:OBWANDO">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:07, 2 January 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

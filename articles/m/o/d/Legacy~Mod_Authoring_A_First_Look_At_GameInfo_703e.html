@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Authoring/A First Look At GameInfo - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Authoring/A First Look At GameInfo</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_4bbb.html" title="Legacy:Mod Authoring">Legacy:Mod Authoring</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>Open the Engine package file <code>GameInfo.uc</code>. This is the definition of the basic game logic. At the top of the file you'll see a long list of variable declarations. Many of these variables have comments that describe their purpose. Below the variable declarations come the functions (or methods) that do the work.</p>
+<dl>
+<dt>Timer&#160;</dt>
+<dd>The first thing to look at is the Timer function. In <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a> its pretty short, but in <a href="../../../../articles/d/e/a/Legacy%7EDeathMatchPlus_e967.html" title="Legacy:DeathMatchPlus">DeathMatchPlus</a> its very long. Timer is a special UnrealScript event. If you call the function <code>SetTimer(int Time, bool bLoop)</code> you can set up a repeating timer on your <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">actor</a>. The Time parameter describes when the Timer function should be called. The bLoop parameter describes whether or not Timer should be called in a loop after the first call. <b>All TournamentGameInfo classes use a Timer loop of one second.</b> This means that the Timer function is called every second. You can use Timer for events that have to happen at certain times. By declaring watch variables that count up seconds, you can perform events at any time up to a second's resolution. DeathMatchPlus uses this to check and see if the TimeLimit has been hit in a game.</dd>
+</dl>
+<dl>
+<dt>Tick&#160;</dt>
+<dd>Another important time function to get to know is Tick. Tick isn't used in GameInfo, but any Actor can use it. The declaration for Tick is: <code>Tick(float DeltaTime)</code>. Tick is called on <b>every</b> Actor in the game each frame. DeltaTime contains the amount of time that has passed since the last Tick. Using Tick, you can perform behavior that has to be done at less-than-a-second resolution. You must be careful not to perform CPU heavy behavior in Tick, because it is called so often.</dd>
+</dl>
+<dl>
+<dt>Login&#160;</dt>
+<dd>Scroll down in GameInfo until you find the Login function. This function is called by the engine whenever a player logs in to the game. GameInfo's version of login does important setup stuff like assigning the player a name, a skin, a mesh and so forth. It also spawns the intial teleport effect and finds a spawn point to stick the player at. A little ways below Login is Logout. It is called whenever a player leaves the game. You can use logout to clean up after a player exits.</dd>
+</dl>
+<dl>
+<dt>AddDefaultInventory&#160;</dt>
+<dd>Another interesting function in GameInfo is AddDefaultInventory. This function assigns a player his initial weapon and equipment. In UnrealTournment's DeathMatchPlus, the player is given an <a href="../../../../articles/i/m/p/Legacy%7EImpactHammer_93f1.html" title="Legacy:ImpactHammer">ImpactHammer</a> and an <a href="../../../../articles/e/n/f/Legacy%7EEnforcer_8357.html" title="Legacy:Enforcer">Enforcer</a>. LastManStanding has a great example of doing cool things with AddDefaultInventory. It gives the player every weapon in the game (except for the Redeemer) as well as some armor and a lot of ammo. You can use AddDefaultInventory to add custom inventory to players that join your mod (for example, you might want to give them a grenade and some money).</dd>
+</dl>
+<dl>
+<dt>FindPlayerStart&#160;</dt>
+<dd>The FindPlayerStart method searches the actors in a level for <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoints</a> suitable for spawning. The <a href="../../../../articles/p/l/a/Legacy%7EPlayerStart_0952.html" title="Legacy:PlayerStart">PlayerStart</a> actor that a map designer adds to their map is one such location. In <a href="../../../../articles/t/e/a/Legacy%7ETeamGamePlus_415b.html" title="Legacy:TeamGamePlus">TeamGamePlus</a>, FindPlayerStart spawns players and bots depending on their Team. It checks the Team of each playerstart and the Team of the pawn to be spawned. You can use FindPlayerStart to write custom spawn code (for example, you might want to spawn Terrorists in one location and Snipers in another).</dd>
+</dl>
+<dl>
+<dt>RestartPlayer&#160;</dt>
+<dd>The RestartPlayer method is called whenever a player respawns. The basic GameInfo version calls FindPlayerStart to find a starting spot, moves the player to that spot and spawns a teleport effect. It also restores the players health, sets the player's collision, and gives the player his default inventory.</dd>
+</dl>
+<dl>
+<dt>Killed&#160;</dt>
+<dd>The Killed method is very useful. It is called whenever a player kills another player. It looks at the cirumstances of the death (whether a player suicided or killed successfully) and the type of damage and prints a message. It also logs the event to the ngStats log. Finally, it calls ScoreKill.</dd>
+</dl>
+<dl>
+<dt>ScoreKill&#160;</dt>
+<dd>ScoreKill awards points for a kill. DeathMatchPlus assigns a frag for a successful kill and subtracts one for a suicide. TeamGamePlus also adds a point to the TeamInfo of the Killer's team, or subtracts one in the case of a suicide.</dd>
+</dl>
+<dl>
+<dt>DiscardInventory&#160;</dt>
+<dd>DiscardInventory is called whenever a player dies or is removed from the game. DiscardInventory goes through a pawn's inventory, tossing out weapons and destroying others as appropriate. You might override this function if you wanted to toss out a backpack or a trap.</dd>
+</dl>
+<dl>
+<dt>EndGame&#160;</dt>
+<dd>Finally, the EndGame function is called with a reason whenever the game ends. You might want to perform special logging or clean up here.</dd>
+</dl>
+<p>So thats a quick look at the more important GameInfo functions. The advanced GameInfo classes like DeathMatchPlus add important new behavior for controlling bots and single player games, as well as refining the GameInfo methods into specific rules.</p>
+<hr />
+<p>Prev Page: <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_Introduction_To_GameTypes_409a.html" title="Legacy:Mod Authoring/Introduction To GameTypes">Legacy:Mod Authoring/Introduction To GameTypes</a> – <b>Section 10 of 12</b> – Next Page: <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_Adding_A_HUD_3647.html" title="Legacy:Mod Authoring/Adding A HUD">Legacy:Mod Authoring/Adding A HUD</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 38/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_A_First_Look_At_GameInfo_703e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Authoring_A_First_Look_At_GameInfo_fb52.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Authoring/A_First_Look_At_GameInfo">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:26, 8 August 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

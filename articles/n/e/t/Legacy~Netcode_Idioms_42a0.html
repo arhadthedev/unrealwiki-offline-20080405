@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Netcode Idioms - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Netcode Idioms</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is a cookbook of ways to get round some of the 'gotchas' in <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">replication</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Targetting_types_of_machine"><span class="tocnumber">1</span> <span class="toctext">Targetting types of machine</span></a></li>
+<li class="toclevel-1"><a href="#Finding_the_Local_PlayerPawn_or_PlayerController"><span class="tocnumber">2</span> <span class="toctext">Finding the Local PlayerPawn or PlayerController</span></a>
+<ul>
+<li class="toclevel-2"><a href="#UnrealEngine1"><span class="tocnumber">2.1</span> <span class="toctext">UnrealEngine1</span></a></li>
+<li class="toclevel-2"><a href="#UnrealEngine2"><span class="tocnumber">2.2</span> <span class="toctext">UnrealEngine2</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#HUD_Mutators"><span class="tocnumber">3</span> <span class="toctext">HUD Mutators</span></a></li>
+<li class="toclevel-1"><a href="#Replicating_Config_Variables"><span class="tocnumber">4</span> <span class="toctext">Replicating Config Variables</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Targetting_types_of_machine" id="Targetting_types_of_machine"></a></p>
+<h2><span class="mw-headline">Targetting types of machine</span></h2>
+<p>There are basically 5 types of machine:</p>
+<ul>
+<li><code>(Level.NetMode == NM_ListenServer)</code> – listen servers (with a local player)</li>
+<li><code>(Level.NetMode == NM_DedicatedServer)</code> – dedicated servers (no local player)</li>
+<li><code>(Level.NetMode == NM_Client)</code> – clients</li>
+<li><code>(Level.NetMode == NM_Client &amp;&amp; bNetOwner)</code> – owner clients (special case of client where the local player is the Owner of the actor in question)</li>
+<li><code>(Level.NetMode == NM_Standalone)</code> – standalone games</li>
+</ul>
+<p>You sometimes need things to happen only on certain types of machine. Here's how:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// This could be offline, a listen server or a client, but we know</span>
+  <span class="co1">// we have a local player on this machine, someone who can see or hear things.</span>
+<span class="br0">}</span>
+<span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// This is the authorative copy of this actor, it was spawned on this machine.</span>
+  <span class="co1">// It is not a guarantee that we are on the server or in single player!</span>
+<span class="br0">}</span>
+<span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> &lt; ROLE_Authortity<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// This is a non-authorative copy of this actor that was replicated</span>
+  <span class="co1">// from the server. In other words, we must be on a client.</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// please add more!</span>
+</pre></div>
+<p>See also: <a href="../../../../articles/n/e/t/Legacy%7ENetMode_2d06.html" title="Legacy:NetMode">NetMode</a>, <a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a>.</p>
+<p><a name="Finding_the_Local_PlayerPawn_or_PlayerController" id="Finding_the_Local_PlayerPawn_or_PlayerController"></a></p>
+<h2><span class="mw-headline">Finding the Local PlayerPawn or PlayerController</span></h2>
+<p><a name="UnrealEngine1" id="UnrealEngine1"></a></p>
+<h3><span class="mw-headline">UnrealEngine1</span></h3>
+<p>The usual idiom for finding the local player's <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> (UT) on a network client or a listen server is (after declaring a class-level <tt>var PlayerPawn PlayerLocal</tt>):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>PlayerLocal == <span class="kw9">None</span><span class="br0">)</span>
+  <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'PlayerPawn'</span>, PlayerLocal<span class="br0">)</span>
+    <span class="kw1">if</span> <span class="br0">(</span>Viewport<span class="br0">(</span>PlayerLocal.<span class="me1">Player</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+      <span class="kw1">break</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span>PlayerLocal != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span> ... <span class="br0">}</span>  <span class="co1">// do something with it</span>
+</pre></div>
+<p>If you have a <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> object handy (in engine events like RenderOverlays, for instance), there's even a more straightforward way to get hold of the local player:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PlayerLocal = Canvas.<span class="me1">Viewport</span>.<a href="/Actor"><span class="kw10">Actor</span></a>;
+</pre></div>
+<p><a name="UnrealEngine2" id="UnrealEngine2"></a></p>
+<h3><span class="mw-headline">UnrealEngine2</span></h3>
+<p><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> and <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> have a function to get the local PlayerController which actually uses the PlayerController/DynamicActors combo (and stores the local controller for later use too):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PlayerLocal = <span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>Again, if you have a <a href="../../../../articles/c/a/n/Legacy%7ECanvas_89bb.html" title="Legacy:Canvas">Canvas</a> object handy you should use the more straight forward version like in UT:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+PlayerLocal = Canvas.<span class="me1">Viewport</span>.<a href="/Actor"><span class="kw10">Actor</span></a>;
+</pre></div>
+<p>Note that the local <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> or <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a> is always relevant (for obvious reasons) and thus always exists on its respective client.</p>
+<p><a name="HUD_Mutators" id="HUD_Mutators"></a></p>
+<h2><span class="mw-headline">HUD Mutators</span></h2>
+<p>See <a href="../../../../articles/u/s/e/Legacy%7EUseful_Mutator_Functions_19f0.html" title="Legacy:Useful Mutator Functions">Useful Mutator Functions</a> or <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Linked List/Existing Lists in Unreal Tournament</a> (use the Quick Navigation menu to browse to "HUD Mutators"). You'll find a description there how to set up a HUD mutator that actually works in network games.</p>
+<p><a name="Replicating_Config_Variables" id="Replicating_Config_Variables"></a></p>
+<h2><span class="mw-headline">Replicating Config Variables</span></h2>
+<p>Clients load the value of <tt>config</tt> or <tt>globalconfig</tt> variables from their own .ini files. Since these values are treated as defaults they are not replicated until they are changed through code. Clients will see their own customized configuration instead of the server's.</p>
+<p>To force replication of these variables use a second (non-config) variable:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">string</span> MySettings;
+<span class="kw5">var</span> <span class="kw4">string</span> ServerSettings;
+ 
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+    <span class="co1">// replicate the ServerSettings variable to all (relevant) clients</span>
+    <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+        ServerSettings;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+<span class="co1">// non-simulated PreBeginPlay() is only executed on the server - You can take away the 'if' expression below then.</span>
+<span class="co1">// simulated PreBeginPlay() is executed on both the server and the client. - You must include the 'if' expression below then.</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+        ServerSettings = MySettings;
+    <span class="kw6">Super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Matariel:</b> Correct me if Im wrong but... doesn't Role == Role_Authority simply mean that this is the authoritative copy of the actor? What if this actor was spawned on a client? I don't think a Role == Role_Authority check qualifies the machine as a server, but simply as the owner.</p>
+<p><b>Wormbo:</b> That's correct, but usually you only do any Role checks if you intend to replicate your actor.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 43/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/n/e/t/Legacy%7ENetcode_Idioms_42a0.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/n/e/t/Legacy_talk%7ENetcode_Idioms_7201.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Netcode_Idioms">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:14, 5 May 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

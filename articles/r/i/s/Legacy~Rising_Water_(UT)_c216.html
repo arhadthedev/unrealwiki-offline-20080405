@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Rising Water (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Rising Water (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Trigger rising and falling water that fills a hole in the ground water. Boxes will float in the water, players and pawns can swim and drown in the water.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Prerequisite:"><span class="tocnumber">1</span> <span class="toctext">Prerequisite:</span></a></li>
+<li class="toclevel-1"><a href="#Summary"><span class="tocnumber">2</span> <span class="toctext">Summary</span></a></li>
+<li class="toclevel-1"><a href="#The_Tutorial"><span class="tocnumber">3</span> <span class="toctext">The Tutorial</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_TriggerWaterZone"><span class="tocnumber">3.1</span> <span class="toctext">The TriggerWaterZone</span></a></li>
+<li class="toclevel-2"><a href="#The_rest"><span class="tocnumber">3.2</span> <span class="toctext">The rest</span></a></li>
+<li class="toclevel-2"><a href="#Important_notes"><span class="tocnumber">3.3</span> <span class="toctext">Important notes</span></a></li>
+<li class="toclevel-2"><a href="#Credit"><span class="tocnumber">3.4</span> <span class="toctext">Credit</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">4</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Prerequisite:" id="Prerequisite:"></a></p>
+<h3><span class="mw-headline">Prerequisite:</span></h3>
+<ul>
+<li>Understanding Liquid Basics</li>
+<li>Understanding basics of liquid <a href="../../../../articles/z/o/n/Legacy%7EZone_e5b7.html" title="Legacy:Zone">zones</a></li>
+<li>Download the <a href="http://www.levels4you.com/cdc/ut/tutorials/" class="external text" title="http://www.levels4you.com/cdc/ut/tutorials/" rel="nofollow">"Rising water Tutorial"</a></li>
+</ul>
+<p><a name="Summary" id="Summary"></a></p>
+<h2><span class="mw-headline">Summary</span></h2>
+<ol>
+<li>Divide the part of your level you want to be flooded/drained into several Zones using Zone Portals and place a TriggerWaterZone in each part.
+<ul>
+<li>Set bWaterZone to False if you want the TriggerWaterZone to be dry at the beginning</li>
+<li>Set bWaterZone to True if you want that part to be filled with water at the start.</li>
+</ul>
+</li>
+</ol>
+<ol>
+<li>Make a water <a href="../../../../articles/s/h/e/Legacy%7ESheet_cbf6.html" title="Legacy:Sheet">sheet</a> with the texture Unlit and Transparent and turn it into a <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">Mover</a> either with Polygons -&gt; To Brush or with Intersecting a larger building brush). See <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Mover_eb2c.html" title="Legacy:Create A Mover">Create A Mover</a> for more.</li>
+</ol>
+<ol>
+<li>Set up a Dispatcher, which will activate the water Mover and all the TriggerWaterZones (one by one).</li>
+</ol>
+<ol>
+<li>Set up a trigger (button) that activates the Dispatcher.</li>
+</ol>
+<ol>
+<li>Add sounds.</li>
+</ol>
+<p><a name="The_Tutorial" id="The_Tutorial"></a></p>
+<h2><span class="mw-headline">The Tutorial</span></h2>
+<ul>
+<li>One Button (Tag is irrelevant, Event = Dispatcher)</li>
+<li>One <a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html" title="Legacy:Dispatcher">Dispatcher</a> (Tag = Dispatcher, there are several Events)</li>
+<li>One Watersheet converted into a <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">Mover</a> (Tag = Water, Event = None)</li>
+<li>Several TriggerWaterZone infos (Tags = Level1 to Level 5, Events = None)</li>
+</ul>
+<p>When you open the example map in UnrealED 2.0, you can see the Button (the purple box), the Watersheet (the purple sheet), the Dispatcher, several ZoneInfo's, a Light and the all mighty Playerstart. You can also see that the Button and the Dispatcher are connected with a red line.</p>
+<p>When you select the Zone/Portal view in your 3D View, you can see that the hole in the ground is divided into 6 Zones. In the lowest zone there is a normal WaterZone, the other 5 Zones are TriggerWaterZones.</p>
+<p>So, what really happens when we push the button?</p>
+<p>Obviously, the Dispatcher is activated (remember the red line that indicates that the Button and the Dispatcher are connected?), so open up the Properties of the Dispatcher. Under Dispatcher there are the OutDelays and the OutEvents.</p>
+<p>In the OutEvents are all the events that happen when the Dispatcher is triggered, in the OutDelays are the time-delays (in seconds) that occur before an event is triggered.</p>
+<p>So, looking at the first Event (that's the event next right of [0]) we see "Water". "Water" is the Tag of the Watersheet. Looking at the first delay, we see that the delay is 0 seconds (meaning that the Watersheet will move (rise) immediately after the Dispatcher is triggered).</p>
+<p>The other events are Level1 to Level5, with each a delay of 1 second.</p>
+<p>Level1 to Level5 are the Tags of the TriggerWaterZones.</p>
+<p>So if the Dispatcher is activated, the Watersheet will move, and the TriggerWaterZones will be activated, one by one.</p>
+<p>Since the Button can only be activated ONCE, there is no turning back; the water will stay.</p>
+<p><br /></p>
+<p><a name="The_TriggerWaterZone" id="The_TriggerWaterZone"></a></p>
+<h4><span class="mw-headline">The TriggerWaterZone</span></h4>
+<p><i>"Wait a second, we don't have any TriggerWaterZone Info's in UnrealED!"</i></p>
+<p>You are right, you don't have them right now – but you will soon. So get ready for some scripting!!! See <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create A Subclass</a> for quick instructions on how to put the followign script into your map.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//===========================================================================</span>
+<span class="co1">// TriggerWaterZone.</span>
+<span class="co1">// This class allows you to change a zone from a Regular Zone to a Water Zone</span>
+<span class="co1">// using the normal trigger method.</span>
+<span class="co1">// Created by Scott 'Slasher IV' Kircher</span>
+<span class="co1">//============================================================================</span>
+ 
+<span class="kw5">class</span> TriggerWaterZone <span class="kw5">expands</span> WaterZone;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw1">if</span><span class="br0">(</span>!bWaterZone<span class="br0">)</span>
+ <span class="br0">{</span>
+  ViewFlash=<span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+  ViewFog=<span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+ <span class="br0">}</span>
+<span class="br0">}</span>
+<span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+ <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+ <span class="kw5">local</span> Decoration D;
+ <span class="kw5">local</span> TriggerWaterZone oldself;
+ oldself=<span class="kw8">self</span>;
+ <span class="kw1">if</span><span class="br0">(</span>bWaterZone<span class="br0">)</span>
+ <span class="br0">{</span>
+  bWaterZone=<span class="kw9">false</span>;
+  ViewFlash=<span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+  ViewFog=<span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+  <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Actor'</span>, A<span class="br0">)</span>
+   <span class="kw1">if</span><span class="br0">(</span>A.<span class="me1">Region</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    ActorEntered<span class="br0">(</span>A<span class="br0">)</span>;
+    A.<span class="me1">ZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>A.<span class="me1">Buoyancy</span>&gt;<span class="nu0">0.0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+     A.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+    <span class="br0">}</span>
+   <span class="br0">}</span>
+  <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pawn'</span>, P<span class="br0">)</span>
+  <span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>P.<span class="me1">HeadRegion</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    P.<span class="me1">HeadZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    P.<span class="me1">PainTime</span>=<span class="nu0">-1.0</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>P.<span class="me1">FootRegion</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    P.<span class="me1">FootZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+  <span class="br0">}</span>
+ <span class="br0">}</span>
+ <span class="kw1">else</span>
+ <span class="br0">{</span> 
+  bWaterZone=<span class="kw9">true</span>;
+  ViewFlash=<span class="kw1">Default</span>.<span class="me1">ViewFlash</span>;
+  ViewFog=<span class="kw1">Default</span>.<span class="me1">ViewFog</span>;
+  <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Actor'</span>, A<span class="br0">)</span>
+   <span class="kw1">if</span><span class="br0">(</span>A.<span class="me1">Region</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    ActorEntered<span class="br0">(</span>A<span class="br0">)</span>;
+    A.<span class="me1">ZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>A.<span class="me1">Buoyancy</span>&gt;<span class="nu0">0.0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+     A.<span class="me1">Velocity</span>.<span class="me1">Z</span>+=<span class="nu0">1</span>;
+     A.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+    <span class="br0">}</span>
+   <span class="br0">}</span>
+  <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Decoration'</span>, D<span class="br0">)</span>
+   <span class="kw1">if</span><span class="br0">(</span>D.<span class="me1">Region</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    D.<span class="me1">bBobbing</span>=<span class="kw9">False</span>;
+    D.<span class="me1">Bump</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+  <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pawn'</span>, P<span class="br0">)</span>
+  <span class="br0">{</span>
+   <span class="kw1">if</span><span class="br0">(</span>P.<span class="me1">HeadRegion</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    P.<span class="me1">HeadZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+    P.<span class="me1">PainTime</span>=P.<span class="me1">UnderWaterTime</span>;
+    P.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Swimming<span class="br0">)</span>;
+   <span class="br0">}</span>
+   <span class="kw1">if</span><span class="br0">(</span>P.<span class="me1">FootRegion</span>.<span class="me1">Zone</span>==oldself<span class="br0">)</span>
+   <span class="br0">{</span>
+    P.<span class="me1">FootZoneChange</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+   <span class="br0">}</span>   
+  <span class="br0">}</span>
+ <span class="br0">}</span>  
+ 
+<span class="br0">}</span>
+</pre></div>
+<ul>
+<li>see Legacy:Rising Water (UT)/Comments</li>
+</ul>
+<p>If you have read the comments of Scott, you may have noticed how the TriggerWaterZone works.</p>
+<p>The TriggerWaterZone can be triggered from a normal Zone into a WaterZone and back. When the Dispatcher triggers the Levelx events it activates the TriggerWaterZones, turning those zone into a WaterZone.</p>
+<p><a name="The_rest" id="The_rest"></a></p>
+<h4><span class="mw-headline">The rest</span></h4>
+<p>I have divided the part where the water will rise in 5 parts (using Zone Portals) and put one TriggerWaterZone in each part.</p>
+<p>I gave the TriggerWaterZones different Tags (Level1 to Level5) AND under ZoneInfo in the Properties of the TriggerWaterZone I turned the bWaterZone to False, because I wanted the level to start 'dry'.</p>
+<p>(If you want to have a part of your level that is flooded at first and can be drained with a button, leave the bWaterZone to True)</p>
+<p>(If you want to make a level where you can drain/flood the same part over and over again, take a close look the triggers in the example map from Wolf.)</p>
+<p>I placed a Dispatcher, which activates the Mover (the Watersheet) and the TriggerZones (one by one).</p>
+<p>I made a Button, which activates the Dispatcher.</p>
+<p>(The Button can only be triggered once, so that the Dispatcher can not be activated again.)</p>
+<p>You can add sounds to the rising water (just like if it was an elevator or door) to make it more realistic.</p>
+<p><a name="Important_notes" id="Important_notes"></a></p>
+<h4><span class="mw-headline">Important notes</span></h4>
+<p>Your Mover may NOT be at the exact same level as the zones. Always make sure that your Mover is 1 unit ABOVE or 1 unit BELOW the zones (Your Keyframes of course, the Mover will move harmlessly through the zones). If you don't do this, your mover will disappear.</p>
+<p><a name="Credit" id="Credit"></a></p>
+<h3><span class="mw-headline">Credit</span></h3>
+<ul>
+<li>Wolf for his WZTriggerExample map</li>
+<li>Scott 'Slasher IV' Kircher for his script</li>
+<li>Icelord for assembling this WIKI page</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>ArcaneSpeech:</b> There is another kludge useful for creating rising/falling water: Make the area a mover, and move it down into (or up out of) the water zone. I think this was done for the rising water on AS-(Destroy the Computers).</p>
+<p><b>Tarquin:</b> Is there a UT2003 version of this page? Will there be?</p>
+<p><b>Buu:</b> AS-OceanFloor's rising water isn't actually water. I opened the map in the editor, and somewhere in the map there was a miniature base with just a sheet that's moving, without a waterzone. So the endgame screen isn't the same base as the assault base, and the water isn't water.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Category:Legacy Mapping</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Category:Legacy Custom Class (UT)</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – needs some formatting</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 21/1000000
+Post-expand include size: 91/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/i/s/Legacy%7ERising_Water_%28UT%29_c216.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/i/s/Legacy_talk%7ERising_Water_%28UT%29_e932.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Rising_Water_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:36, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Simulated Function - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Simulated Function</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Roughly speaking, a <b>simulated function</b> is a function in an <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>-derived class that <i>can</i> be called on a client in a network game.</p>
+<p>Conversely, non-simulated functions in an Actor-derived class cannot be executed on a client in a network game, except in some special cases where the client owning that actor is the authority on that actor.</p>
+<p>Simulated functions are declared with the <a href="../../../../articles/f/u/n/Legacy%7EFunction_b915.html" class="mw-redirect" title="Legacy:Function">function</a> modifier keyword <i>simulated</i>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">bool</span> MyFunction<span class="br0">(</span><span class="kw4">bool</span> FirstParam<span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="co1">// function code</span>
+<span class="br0">}</span>
+</pre></div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Strict_Definition"><span class="tocnumber">1</span> <span class="toctext">Strict Definition</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Some_Clarifications"><span class="tocnumber">1.1</span> <span class="toctext">Some Clarifications</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Executing_Simulated_Functions"><span class="tocnumber">2</span> <span class="toctext">Executing Simulated Functions</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Simulated_Engine_Events"><span class="tocnumber">2.1</span> <span class="toctext">Simulated Engine Events</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#.3D_Replication_Myth:_.22Simulated_Functions_Can_Only_Be_Called_From_Other_Simulated_Functions.22"><span class="tocnumber">3</span> <span class="toctext">= Replication Myth: "Simulated Functions Can Only Be Called From Other Simulated Functions"</span></a></li>
+<li class="toclevel-1"><a href="#PlayOwnedSound.28.29_and_PlayOwnedSound.28.29_Replication_Magic"><span class="tocnumber">4</span> <span class="toctext">PlayOwnedSound() and PlayOwnedSound() Replication Magic</span></a></li>
+<li class="toclevel-1"><a href="#Overriding_Simulated_Functions"><span class="tocnumber">5</span> <span class="toctext">Overriding Simulated Functions</span></a></li>
+<li class="toclevel-1"><a href="#Simulated_States"><span class="tocnumber">6</span> <span class="toctext">Simulated States</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">7</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">8</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Strict_Definition" id="Strict_Definition"></a></p>
+<h2><span class="mw-headline">Strict Definition</span></h2>
+<p>Functions that are called in the context of an actor will not be executed if the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s local <a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a> (not RemoteRole!) is less than or equal to <code>ROLE_SimulatedProxy</code> <b>unless</b> the function is declared as <i>simulated</i> or as <i>native</i>.</p>
+<p><a name="Some_Clarifications" id="Some_Clarifications"></a></p>
+<h3><span class="mw-headline">Some Clarifications</span></h3>
+<ul>
+<li>An Actor's clientside Role takes the value of the serverside RemoteRole and the clientside RemoteRole takes the serverside value of Role. This definition talks about the local <i>Role</i> value.</li>
+<li>"Less than or equal to <code>ROLE_SimulatedProxy</code>" actually means <code>ROLE_SimulatedProxy</code> or <code>ROLE_DumbProxy</code>. <code>ROLE_None</code> would also be "less than" <code>ROLE_SimulatedProxy</code>, but this value prevents actors from being replicated, so it should never appear as the value of the actor's local Role.</li>
+<li>Functions in object classes not derived from Actor are not affected by network roles and thus will always execute.</li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">Static functions</a> are executed in the context of a class (as opposed to the context of an actor or other object), which means they are not affected by network roles and thus will always execute.</li>
+<li>It doesn't matter where the function call originated. The definition described above is always applied if the function is supposed to be executed in the context of an actor.</li>
+</ul>
+<p><a name="Executing_Simulated_Functions" id="Executing_Simulated_Functions"></a></p>
+<h2><span class="mw-headline">Executing Simulated Functions</span></h2>
+<p>Being <i>able</i> to execute a function doesn't mean it <i>will</i> be executed. Function calls always stay on the same machine unless there's a valid replication statement for the function. In that case the function will only be executed on the machine the function call was replicated to.</p>
+<p>This means that you basically have two ways of executing a simulated function client-side:</p>
+<ol>
+<li>Call it from another client-side function. PostBeginPlay, Tick or HitWall are good candidates for this. Beware of simulated Timer functions, they will only be executed if SetTimer was actually executed on that machine, i.e. if you set the timer on the server, then Timer will only be called on the server, even if it is declared simulated. <b>Server and client have independent timers.</b></li>
+<li>Replicate the function call from the server to the client. Note that replicated functions can only be replicated to a single machine, either from the client of the player owning this actor to the server or from the server to the client of the player owning this actor. Replicated functions will be executed <b>only</b> on the replication destination.</li>
+</ol>
+<p><a name="Simulated_Engine_Events" id="Simulated_Engine_Events"></a></p>
+<h3><span class="mw-headline">Simulated Engine Events</span></h3>
+<p>Events like Tick, <a href="../../../../articles/c/h/a/Legacy%7EChain_Of_Events_At_Level_Startup_e598.html" title="Legacy:Chain Of Events At Level Startup">(Pre/Post/PostNet)BeginPlay</a>, Destroyed, Timer, Begin/EndState and others are always called on the server and the clients by the engine, but like other functions they will only be executed if they are declared as <i>simulated</i>.</p>
+<p><b>There is no synchronization between events on the server and the clients!</b> For example the number of Tick() calls on a client can greatly differ from the number of calls on the server. As mentioned above already, server and client have independent timers and the same goes for states.</p>
+<p><a name=".3D_Replication_Myth:_.22Simulated_Functions_Can_Only_Be_Called_From_Other_Simulated_Functions.22"></a></p>
+<h2><span class="mw-headline">= Replication Myth: "Simulated Functions Can Only Be Called From Other Simulated Functions"</span></h2>
+<p>This statement is an over-simplification and not true at all. Simulated functions can actually be called from whichever function you like, the only condition is that they actually <i>do</i> get called.</p>
+<p>Think of function calls as messages consisting of:</p>
+<ol>
+<li>a function specification,</li>
+<li>an object to call the function on and</li>
+<li>parameter values.</li>
+</ol>
+<p>You can send as many of these messages around as you like, but the engine will ignore them if certain conditions are not met, this includes the constraint that the function needs to be <i>simulated</i> or <i>native</i> when the function is called on non-authorative client instances of an actor.</p>
+<p>So in order to call a simulated function all you need is an object (actually an actor) containing the function. The engine really doesn't care where the function call originated. For example the GUI is implemented using classes not derived from Actor, so the functions in these classes don't need to be simulated, yet there's no problem calling simulated functions from them.</p>
+<p><a name="PlayOwnedSound.28.29_and_PlayOwnedSound.28.29_Replication_Magic" id="PlayOwnedSound.28.29_and_PlayOwnedSound.28.29_Replication_Magic"></a></p>
+<h2><span class="mw-headline">PlayOwnedSound() and PlayOwnedSound() Replication Magic</span></h2>
+<p>Most functions do not care how they have been called. A noteable exception are the native <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>.PlaySound() and Actor.PlayOwnedSound() functions, which alter their behavior on the server based on whether they have been called from a simulated function.</p>
+<dl>
+<dt>PlaySound()&#160;</dt>
+<dd>This function plays the sound locally if it was called on a client <i>or from a simulated function</i>. If called from a non-simulated function on the server, it will broadcast the sound to all clients.</dd>
+<dt>PlayOwnedSound()&#160;</dt>
+<dd>This function plays the sound locally if it was called on a client. If called on the server, the sound will be broadcasted to all clients with one exception: If the sound player is a <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> (or is owned by a Pawn) and that Pawn is not controlled locally, then the client owning this Pawn will not receive the sound.</dd>
+</dl>
+<p><a name="Overriding_Simulated_Functions" id="Overriding_Simulated_Functions"></a></p>
+<h2><span class="mw-headline">Overriding Simulated Functions</span></h2>
+<p>The <code>simulated</code> keyword is <i>not</i> inherited when you override a (non)simulated function in a state or subclass. If the overridden function is not simulated and your new function is, you will not be able to execute Super.YourFunction() on clients, simply because that is a completely different function which may not be executed on simulated proxies.</p>
+<p>If you override a simulated function and don't declare the new function as simulated as well, your new function can not be executed on simulated proxies. This also means you have no chance to call Super.YourFunction(), so be careful with this. A good way around this is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> OverriddenFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// put your new code here, it will only run on the server</span>
+  <span class="br0">}</span>
+  <span class="kw6">Super</span>.<span class="me1">OverriddenFunction</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// execute the super version on server and clients</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Simulated_States" id="Simulated_States"></a></p>
+<h2><span class="mw-headline">Simulated States</span></h2>
+<p><a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">States</a> can be declared <i>simulated</i> as well, but you will rarely need it as it only applies to the state code outside any function.</p>
+<p>Clientside instances of actors can always switch to states, whether these are declared simulated or not. Functions in these states will override global (non-state) functions with the same name as usual. The same rules apply as with functions overridden in subclasses – neither the state's nor the overridden function's <i>simulated</i> flag is inherited. In other words:</p>
+<ul>
+<li>You can have non-simulated function in simulated states and they will behave like non-simulated functions.</li>
+<li>You can have simulated functions in non-simulated states and they will behave like simulated functions.</li>
+</ul>
+<p><b>Switching states is not synchronized between server and clients!</b> Like with timers and other engine events, states are changed independently.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>
+<ul>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a></li>
+<li><a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a> and RemoteRole</li>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplicated_Function_d4c6.html" title="Legacy:Replicated Function">Replicated Function</a></li>
+<li><a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a></li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">State</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Foxpaw:</b> I have a few questions about simulated functions:</p>
+<ul>
+<li>If you declare an "entry point" as simulated, will it get called on all clients? For instance, say I declare Tick as simulated.. does every client tick on it's own based on it's own framerate, or does the server have to replicate the tick function?</li>
+</ul>
+<ul>
+<li>If entry points are simulated automatically without being replicated, what will happen if I set up a replication statement for that function? Will it be run twice, or does the engine recognize the function in the replication statement and thus run it only once? If so, is it the replicated or local version that gets run?</li>
+</ul>
+<ul>
+<li>Variables are replicated only if they have been changed.. if a variable is changed in a simulated function is it still considered changed or does the engine assume that the client changed it itself and thus it will still be in sync?</li>
+</ul>
+<ul>
+<li>As I understand it, simulated functions can only call other simulated functions unless they are the authority version. If a simulated function (non-authority version) calls a non-simulated function, does the client simply ignore the call and proceed, or does it replicate the function to the server, wait for a response, then continue the function once the server has returned something?</li>
+</ul>
+<ul>
+<li>If a superclass has a non-simulated function, and I override it and declare it as simulated, is it simulated or non-simulated? Or does the stuff I wrote in the override function simulate but not the Super.Function call? Or does the simulated call override the previous non-simulated call and force the simulated behaviour all the way up the class tree? What if a simulated function is overridden but the overridden version doesn't use the simulated keyword. (it is declared as non-simulated) Will the Super.Function still simulate instead of the overridden function?</li>
+</ul>
+<p><b>Mr Evil:</b> I have a few answers about simulated functions:</p>
+<ul>
+<li>They are automatically simulated. They are called on the client automatically, not replicated, as a quick experiment will show the bandwidth usage does not change if you simulate Tick.</li>
+<li>You can't set up a replication statement for them, since you can't replicate anything from a superclass, but have to have the replication statement in the class in which the function/variable is declared.</li>
+<li>The engine knows nothing about what variables are being changed on the client in simulated functions, thus it goes ahead and replicates changed variables regardless of their client-side values.</li>
+<li>Calls to non-simulated functions are simply ignored in this case.</li>
+<li>You can simulate functions that are not simulated in a superclass if you wish, but calls to super.blah() will not be simulated (I think).</li>
+</ul>
+<p><b>Kamek:</b> I can say for sure that if the super version of a class has a function defined with the simulated keyword and you leave this keyword off of the overridden version of the subclass, NOTHING gets simulated. I had this problem the other day in <a href="../../../../articles/p/o/s/Legacy%7EPostal_2_bab9.html" title="Legacy:Postal 2">Postal 2</a> when I was inserting extra code into PostBeginPlay of a subclass of <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a>. One of the superclasses of my new controller (which in itself was a subclass of <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a>) had defined PostBeginPlay as a simulated event, which initialized ragdoll skeletons. I left the "simulated" out of my new subclass and lo and behold, ragdolls stopped working in netplay. Putting the simulated keyword back in the function call made ragdolls work again. To make a long story short, overriding a function declared as a simulated function without the simulated keyword causes the ENTIRE function (and all of its Super.Blah() calls) to be non-simulated.</p>
+<p><b>Lilguy:</b> Ok, just to clarify:</p>
+<ul>
+<li>functions are never "automatically simulated". There are certain events such as tick that are enabled on the client when they've been enabled on the server, but if you write a simulated function and call it on the server, it's not going to automatically be called on the client.</li>
+<li>you MUST set up a replication statement for simulated functions if you ever want them to be called on a client. You can't replicate functions/vars things differently than a super class, but that's not to prevent you from declaring the function as simulated and calling it from your own function, or writing your own replicated simulated function from scratch.</li>
+<li>non-simulated functions are never called on a client machine, unless they have RemoteRole = ROLE_AUTHORITY. If you call a non simulated function from a simulated function, it will return null if it's supposed to return an actor, will return false if it returns a bool, and I think will return 0 if it was a number.</li>
+</ul>
+<p><b>EntropicLqd:</b> Lilguy - Am I correct in thinking that for an Actor to have RemoteRole=ROLE_AUTHORITY on a client machine that Actor <b>must</b> have been spawned on that machine.</p>
+<p><b>Foxpaw:</b> Generally speaking, this will be the case. However, Unrealscript can set the Role and RemoteRole to whatever it wants - they are not declared as const variables. So technically, it doesn't <i>have</i> to have been spawned on that machine - but almost invariably will be.</p>
+<p><b>Lilguy:</b> Yeah, I think you can do it either way...If you want the client to have ROLE_AUTHORITY and spawn it on the server, then you need to set RemoteRole = ROLE_AUTHORITY (*I think*) because it swaps the roles when it replicates the actor. I'm looking at the HUD, however, which is clientside only, and they have RemoteRole = ROLE_NONE, which suggests to me that it is spawned on the client, RemoteRole = Role_None tells it that it doesn't belong on the server. And now that I think about it, setting Role = Role_none on the server and remoteRole = ROLE_AUTHORITY, it wouldn't even get replicated to the client initially...I think there is a different method for telling clients that they'll be the authority, but I can't remember what it is. I'll look into it...</p>
+<p><b>EntropicLqd:</b> Surely the meaning of RemoteRole is dependant upon where the Actor is spawned. So Actors spawned on the server with a RemoteRole = ROLE_None never get transmitted to the client machines. Conversely Actors spawned on a client with a RemoteRole = ROLE_None will never get spawned on the server. I would guess that the best way to spawn an Actor on the server that has authority on the client machine would be to add some code within either the Actor's PostNetReceive() event (if replicated variables were needed) or PostBeginPlay() event to set the Role and RemoteRole appropriately. I've got to admit it seems way easier (and maybe safer) to spawn the Actor on the machine where you want it to have authority.</p>
+<p><b>Matariel:</b> I think the best way would be to set the actor's bTearOff = true followed by one of these within the same tick</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span><span class="kw8">NetMode</span> == <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> 
+<span class="br0">{</span>
+ Destroy<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Wormbo:</b> The keyword <i>simulated</i> is only evaluated on the local machine, so the value of RemoteRole is irrelevant, you're slightly over-complicating the problem here. Everything you need to know about the <i>Role</i> variable in connection with the <i>simulated</i> keyword are described at the top of this page and on the page about <a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a> and RemoteRole:</p>
+<blockquote class="legacyquote">
+<p>Simulated functions are allowed to be executed on any machine while non-simulated functions require ROLE_AutonomousProxy or higher.<br />
+The server's RemoteRole becomes the client's Role.</p>
+</blockquote>
+<p>That's all – no "they can only be called from..." or "they can only call" stuff. They can be called from anywhere (as long as that calling function or state code is actually executed) and they can call anything. Note the difference between calling and executing functions again: whether the called function is actually executed after it has been called from code depends on whether it's simulated, replicated or whatever.<br />
+Same thing with function replication: You basically have to see it as a totally different and mostly unrelated concept. You have two machines and send function call <i>requests</i> (along with the function parameters) between them if certain conditions are met. Again, that's all. You will only get more difficulties with these already confusing topics if you start connecting them before you understand them individually.&#160;;)<br />
+Replication is for communication between a server and its clients. The <i>simulated</i> keyword only tells, whether functions <i>may be executed</i> at all on a client. (also on a server or stand-alone game, but there Role==ROLE_Authority makes all functions pass the check)<br />
+Of course, these concepts have to be understood both in order to be able to write working netcode, but at least in theory you should separate them.</p>
+<p><b>Lilguy:</b> Yes, but suppose we have a non-simulated function which returns a bool. We call it on the clientside from some other function, and try to do something based on the value of what's returned from that function. True, we can "call" it, but since it's not executing, unreal script will return false, even though the function may have returned true if it were "executed." So I really don't think it's fair to say you can seperate the two, they're really closely tied together with respect to what codepath is actually executing.</p>
+<p><b>Foxpaw:</b> I suppose the simplest way to sum it up is:</p>
+<p>A non-simulated function executes it's normal function body only on a Role of ROLE_AutonomousProxy or better if owned by the local player, or if it has ROLE_Authority regardless of owner. Otherwise it just executes a blank function.</p>
+<p>A simulated function executes it's normal function body only on a Role of ROLE_SimulatedProxy or better. Otherwise it just executes a blank function.</p>
+<p>The only difference is the Role required to get it to actually execute the code in the function, as opposed to skipping said code.</p>
+<p>For the record, my personal preference is to make every function simulated, and just put my own Role, RemoteRole, and Level.NetMode checks in.</p>
+<p><b>Wormbo:</b> Lilguy, I said you have to <i>understand</i> them separately because technically they are independant concepts. Of course you usually need to apply them both and yes, in order to properly handle replicated functions you need to know about simulated functions. For a tutorial, however, it would also be possible to explain variable replication and simulated functions before ever mentioning function replication. For learning this stuff it's not really neccessary to talk about how to replicate functions before the reader learned why some functions need the <i>simulated</i> keyword and others don't.</p>
+<p><b>Lilguy:</b> The only reason I mentioned all of this was to correct some blatently untrue statements (in the discussion, not the document) that might confuse someone who was new to all this stuff. I don't know if I agree that simulated functions and role are independent concepts though. for instance, the statement "non simulated functions cannot be called on the client" is only true part of the time, and to understant that you NEED to understand what the role and remoterole are. I really don't see how any two concepts could be more closely tied together...</p>
+<p>That said, I think this is an excellent document just the way it is; The passing mention of role at the beginning should be sufficient to make newcomers understand that they need to look at the role stuff eventually. Could you clarify this sentence though:</p>
+<p><i>"Conversely, functions that aren't simulated can not be called on clients in a network game, but there are non-simulated functions which can be called from the client owning that actor"</i></p>
+<p>What's the difference between "functions that aren't simulated" and "non-simulated functions"&#160;? If they are the same, then it seems the sentence contradicts itself. May I suggest the following instead?</p>
+<p><i>Conversely, non-simulated functions cannot be executed on a client in a network game, except in some special cases where the client owning that actor is the authority on that actor</i></p>
+<p>That way it doesn't say "you can't do this, but, sometimes you can..."</p>
+<p>Maybe I'm just reading it wrong, so take this all with a grain of salt of course...</p>
+<p><b>Tarquin:</b> Changed as suggested. But you can change stuff in documents yourself&#160;:)</p>
+<p><b>Lilguy:</b> My god Tarquin, do you ever sleep?&#160;:) thanks, I would have done it, but I didn't want to step on any toes here...</p>
+<p><b>Tarquin:</b> I live in the UK. It's breakfast time here&#160;:) One thing you could clear up is the "definition" heading. I've cleaned up the intro &amp; added an example.</p>
+<p><b>Wormbo:</b> Who said simulation and role were independant? I only said simulated functions and replicated functions were two different things. Also simulated functions check the local <i>Role</i>, not the local <i>RemoteRole</i>.</p>
+<p><b>Lilguy:</b> Ok, one last post, then I'm going to leave this topic alone... Sorry for the mis-understanding about what we were talking about Wormbo, it seems once again I've managed to totally mangle the subject&#160;:(<br />
+Yeah, simulated functions check the local role, but if this actor was spawned at the other end of the pipeline first and replicated, then the local role is equal to how the remoteRole was defined in script, so that's why I mentioned it...</p>
+<p><b>karminax:</b> The simulated function tick(float dt) or weapontick of a weapon hold by the player on the listening server isn't executed on clients, even if their players see this player and his weapon. (I've checked that with log messages). Why is that? Weapons are simulated proxys, so sim.tick should be executed everywhere.</p>
+<p><b>Wormbo:</b> The weapon is only replicated to the owning client. What you see is actually the weapon's <a href="../../../../articles/i/n/v/Legacy%7EInventoryAttachment_de7a.html" title="Legacy:InventoryAttachment">InventoryAttachment</a>.</p>
+<p><b>Matariel:</b> I suggest that we remove this discussion, it has outlived its usefulness and it only confuses newcomers with outdated information. We should remove it as soon as we get sufficient agreement on this course of action. If anyone is against the removal of this discussion, please speak up.</p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a></p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – This needs merged into the grand topic of <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a>. See <a href="../../../../articles/r/e/p/Legacy%7EReplication_Discussing_10e8.html" title="Legacy:Replication/Discussing">Replication/Discussing</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 51/1000000
+Post-expand include size: 306/2097152 bytes
+Template argument size: 189/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/i/m/Legacy%7ESimulated_Function_71f0.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/i/m/Legacy_talk%7ESimulated_Function_b556.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Simulated_Function">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:09, 5 May 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Pivot - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Pivot</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The "pivot" of any <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">actor</a> is essentially its "center" - though it may not coincide with the geographical center of the graphics rendered for that actor. Usually static meshes and brushes are more or less centered around their pivot, but this is not necessarily the case. The pivot, when visible, (in the editor) is displayed as a small red cross.</p>
+<p>The Movement -&gt; Location property of an actor refers to the location of its pivot. The PrePivot property of an actor is the vector offset of the pivot from its location stored in its mesh, or the center of its sprite – sort of. It is actually the opposite, the vector offset of the mesh/sprite from the pivot. This can be useful if a mesh or sprite snaps to the grid but the part of the mesh/sprite that snaps to the grid is not the part you wanted snapped. Brushes also have a pivot, but the pivot can be moved within the editor, making the PrePivot property less of an issue for Brushes.</p>
+<p>The pivot is considered the center point of the actor, and as such is also the point that is rotated around when the actor is rotated.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Setting_the_pivot"><span class="tocnumber">1</span> <span class="toctext">Setting the pivot</span></a></li>
+<li class="toclevel-1"><a href="#Pivot_Tips"><span class="tocnumber">2</span> <span class="toctext">Pivot Tips</span></a></li>
+<li class="toclevel-1"><a href="#Pivot_Points_and_Movers"><span class="tocnumber">3</span> <span class="toctext">Pivot Points and Movers</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Setting_the_pivot" id="Setting_the_pivot"></a></p>
+<h2><span class="mw-headline">Setting the pivot</span></h2>
+<p>There are several ways to set the pivot point:</p>
+<ul>
+<li>Right-clicking a vertex of a selected brush will put the pivot point of that brush to that vertex.</li>
+<li><a href="../../../../articles/b/r/u/Legacy%7EBrush_Context_Menu_e135.html" title="Legacy:Brush Context Menu">Brush Context Menu</a> -&gt; Pivot -&gt; Place pivot snapped here. This will snap the pivot point to the grid where you click on a 2D viewport.</li>
+<li><a href="../../../../articles/b/r/u/Legacy%7EBrush_Context_Menu_e135.html" title="Legacy:Brush Context Menu">Brush Context Menu</a> -&gt; Pivot -&gt; Place pivot here. This will place the pivot point exactly where you click on a 2D viewport without considering the grid.</li>
+</ul>
+<p>Right clicking a vertex will set it correctly. If you need the pivot point inside the brush and not exactly on a vertex, you can bring up the brush's properties and alter the Display-&gt;PrePivot numbers directly. The PrePivot determines the brush's offset from the pivot point.</p>
+<p><a name="Pivot_Tips" id="Pivot_Tips"></a></p>
+<h2><span class="mw-headline">Pivot Tips</span></h2>
+<ul>
+<li>If a brush swings off into the distance when rotating, then it's probably because the pivot has somehow been placed far away.</li>
+<li>When rotating a group of brushes together, check that the pivot hasn't ended up off the grid. You can also save time by placing it before rotating.</li>
+<li>If when you try to move the red brush (using shift) and it moves the pivot instead, try to change the red brush properties -&gt; Advanced -&gt; lock location to false.</li>
+</ul>
+<p><a name="Pivot_Points_and_Movers" id="Pivot_Points_and_Movers"></a></p>
+<h2><span class="mw-headline">Pivot Points and Movers</span></h2>
+<p>It's also the point about which a <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">mover</a> will rotate if there is a difference in orientation between successive keys. In UnrealEngine1 all keys of a mover must have the same pivot point. <i>We don't know if this still holds true for newer engine versions.</i></p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Display_9b4b.html" title="Legacy:Actor/Display">Actor/Display</a> – PrePivot.</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 5/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/i/v/Legacy%7EPivot_b071.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/i/v/Legacy_talk%7EPivot_5d53.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Pivot">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:12, 28 February 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

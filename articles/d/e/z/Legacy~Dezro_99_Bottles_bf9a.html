@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Dezro/99 Bottles - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Dezro/99 Bottles</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/d/e/z/Legacy%7EDezro_6cca.html" title="Legacy:Dezro">Legacy:Dezro</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Sing_99_Bottles_of_Beer" id="Sing_99_Bottles_of_Beer"></a></p>
+<h2><span class="mw-headline">Sing 99 Bottles of Beer</span></h2>
+<p>And this is the last place I'm putting this thing. I swear.</p>
+<p>Inspired by <a href="http://99-bottles-of-beer.ls-la.net/" class="external free" title="http://99-bottles-of-beer.ls-la.net/" rel="nofollow">http://99-bottles-of-beer.ls-la.net/</a></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// 99 Bottles of Beer, in UnrealScript. Sings to every player</span>
+<span class="co1">// simultaneously. Written for UT2003, but would work on other Unreal</span>
+<span class="co1">// Engine games with little to no modification.</span>
+<span class="co1">// Probably works on a network. I haven't checked.</span>
+ 
+<span class="co1">// Written by "Dezro" Dave Smith: dezro@mac.com</span>
+ 
+<span class="kw5">class</span> MutBottlesBeer <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> StartingBottles;
+<span class="kw5">var</span> <span class="kw4">int</span> CurrentBottle;
+<span class="kw5">var</span> <span class="kw4">int</span> SongLine;
+<span class="kw5">var</span> <span class="kw4">bool</span> Begun;
+<span class="kw5">var</span> <span class="kw4">bool</span> StopSong;
+ 
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">ModifyPlayer</span><span class="br0">(</span>Other<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>!Begun<span class="br0">)</span>
+        <span class="br0">{</span>
+                CurrentBottle = StartingBottles;
+                SetTimer<span class="br0">(</span><span class="nu0">1.5</span>, <span class="kw9">true</span><span class="br0">)</span>;
+                Begun = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Controller C;
+        <span class="kw5">local</span> <span class="kw4">bool</span> PassAround;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>StopSong<span class="br0">)</span>
+        <span class="br0">{</span>
+                SetTimer<span class="br0">(</span><span class="nu0">0.001</span>, <span class="kw9">false</span><span class="br0">)</span>;
+                <span class="kw1">return</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">ControllerList</span>; C != <span class="kw9">None</span>; C = C.<span class="me1">NextController</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">Switch</span> <span class="br0">(</span>SongLine<span class="br0">)</span>
+                <span class="br0">{</span>
+                <span class="kw1">Case</span> <span class="nu0">0</span>:
+                        <span class="kw1">if</span> <span class="br0">(</span>CurrentBottle == <span class="nu0">1</span><span class="br0">)</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"One bottle of beer on the wall,"</span><span class="br0">)</span>;
+                        <span class="kw1">else</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span>CurrentBottle $ <span class="st0">" bottles of beer on the wall,"</span><span class="br0">)</span>;
+                        <span class="kw1">Break</span>;
+                <span class="kw1">Case</span> <span class="nu0">1</span>:
+                        <span class="kw1">if</span> <span class="br0">(</span>CurrentBottle == <span class="nu0">1</span><span class="br0">)</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"One bottle of beer."</span><span class="br0">)</span>;
+                        <span class="kw1">else</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span>CurrentBottle $ <span class="st0">" bottles of beer."</span><span class="br0">)</span>;
+                        <span class="kw1">Break</span>;
+                <span class="kw1">Case</span> <span class="nu0">2</span>:
+                        <span class="kw1">if</span> <span class="br0">(</span>CurrentBottle == <span class="nu0">1</span><span class="br0">)</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Take it down, pass it around,"</span><span class="br0">)</span>;
+                        <span class="kw1">else</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"Take one down, pass it around,"</span><span class="br0">)</span>;
+                        PassAround = <span class="kw9">true</span>;
+                        <span class="kw1">Break</span>;
+                <span class="kw1">Default</span>:
+                        <span class="kw1">if</span> <span class="br0">(</span>CurrentBottle == <span class="nu0">1</span><span class="br0">)</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"One bottle of beer on the wall."</span><span class="br0">)</span>;
+                        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>CurrentBottle &lt; <span class="nu0">1</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"No more bottles of beer on the wall!"</span><span class="br0">)</span>;
+                                StopSong = <span class="kw9">true</span>;
+                        <span class="br0">}</span>
+                        <span class="kw1">else</span>
+                                C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span>CurrentBottle $ <span class="st0">" bottles of beer on the wall."</span><span class="br0">)</span>;
+                        <span class="kw1">Break</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span>PassAround<span class="br0">)</span>
+        <span class="br0">{</span>
+                CurrentBottle--;
+                PassAround = <span class="kw9">false</span>;
+        <span class="br0">}</span>
+        SongLine++;
+        <span class="kw1">if</span> <span class="br0">(</span>SongLine &gt; <span class="nu0">3</span><span class="br0">)</span>
+                SongLine = <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span> <span class="br0">{</span>
+        FriendlyName=<span class="st0">"99 Bottles"</span>
+        Description=<span class="st0">"Sings to you during the battle."</span>
+        StartingBottles = <span class="nu0">99</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Wormbo:</b> Nice. Actually you could optimize and localize it with <a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessages</a>, since the song also exists in other languages.&#160;:)</p>
+<p><b>Tarquin:</b> Submit it to <a href="http://99-bottles-of-beer.ls-la.net/" class="external free" title="http://99-bottles-of-beer.ls-la.net/" rel="nofollow">http://99-bottles-of-beer.ls-la.net/</a>&#160;! Can you have arrays of strings? Might be neater than using the "switch" statement.</p>
+<p><b>Dezro:</b> I've already submitted it. I didn't use <a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessages</a>, since I wanted to keep it down to one file. I didn't use string arrays, because I didn't think of it. I should have... I could have added some customization if I went that route, too, which would make up for the lack of localization a bit. Ah, well.</p>
+<p><b>Ike Bart:</b> I tried to compile it in UnrealEd 2 and I got an error on line 29. It said: <i><b>Error in MutBottlesBeer, Line 29: Unrecognized type 'Controller.'</b></i> Since I'm an absolute newbie at Unreal script for Unreal Tournament, I'd like to know what to do to make it compatible with Unreal Tournament.</p>
+<p><b>Dezro:</b> That's the "little modification" I was talking about. UT1 doesn't use the pawn/controller setup, so you'd have to change some things. Make the following changes to the code:</p>
+<table>
+<tr>
+<td><i>Wherever you find this</i></td>
+<td><i>Replace it with this</i></td>
+</tr>
+<tr>
+<td>local Controller C;</td>
+<td>local Pawn P;</td>
+</tr>
+<tr>
+<td>for (C = Level.ControllerList; C&#160;!= None; C = C.NextController)</td>
+<td>for (P = Level.PawnList; P&#160;!= None; P = P.NextPawn)</td>
+</tr>
+<tr>
+<td>C.Pawn.ClientMessage</td>
+<td>P.ClientMessage</td>
+</tr>
+</table>
+<p><b>Ike Bart:</b> After making those changes, I get an error message at line 84. It said: <i><b>Error in MutBottlesBeer, Line 84: Unexpected 'defaultproperties'</b></i></p>
+<p><b>Dezro:</b> That's a different problem. You're not supposed to use UnrealEd when coding. If you stll want to, remove the "var int StartingBottles;" line, replace every other instance of "StartingBottles" with 99, and delete the "defaultproperties" block. It'll compile after that, probably.</p>
+<p><b>Ike Bart:</b> Thanks for the suggestion, Dezro. I got UnrealEd to compile the script after following your suggestions. Now I have to test it out in Unreal Tournament. I hope I made the .ini file for it correctly.</p>
+<p><b>Ike Bart:</b> I tested it out in Unreal Tournament and it works. It took around nine minutes to finish off all 99 bottles of beer.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/e/z/Legacy%7EDezro_99_Bottles_bf9a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/e/z/Legacy_talk%7EDezro_99_Bottles_1330.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Dezro/99_Bottles">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:49, 10 January 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

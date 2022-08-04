@@ -1,0 +1,766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:PlayerController - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:PlayerController</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> &gt;&gt; PlayerController (Package: Engine)</div>
+<p>The player controller class determines what the player sees and how Bot players behave, tying in Bot AI functions to control the player Pawn. This class determines what the player sees when in first person view and in third person view and how the "camera" behaves. It handles things like view shaking and the display of fog. There are also handling functions in there for force-feedback events and support for more console commands than you can shake a stick at.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Player_Info"><span class="tocnumber">1.1</span> <span class="toctext">Player Info</span></a></li>
+<li class="toclevel-2"><a href="#Player_Input_Control"><span class="tocnumber">1.2</span> <span class="toctext">Player Input Control</span></a></li>
+<li class="toclevel-2"><a href="#Player_Control_Flags"><span class="tocnumber">1.3</span> <span class="toctext">Player Control Flags</span></a></li>
+<li class="toclevel-2"><a href="#ForceFeedback"><span class="tocnumber">1.4</span> <span class="toctext">ForceFeedback</span></a></li>
+<li class="toclevel-2"><a href="#VoiceChat"><span class="tocnumber">1.5</span> <span class="toctext">VoiceChat</span></a></li>
+<li class="toclevel-2"><a href="#Input_Bytes"><span class="tocnumber">1.6</span> <span class="toctext">Input Bytes</span></a></li>
+<li class="toclevel-2"><a href="#Input_Floats"><span class="tocnumber">1.7</span> <span class="toctext">Input Floats</span></a></li>
+<li class="toclevel-2"><a href="#Vehicle_Move_Replication"><span class="tocnumber">1.8</span> <span class="toctext">Vehicle Move Replication</span></a></li>
+<li class="toclevel-2"><a href="#Vehicle_Check_Radius"><span class="tocnumber">1.9</span> <span class="toctext">Vehicle Check Radius</span></a></li>
+<li class="toclevel-2"><a href="#Camera"><span class="tocnumber">1.10</span> <span class="toctext">Camera</span></a></li>
+<li class="toclevel-2"><a href="#Audio"><span class="tocnumber">1.11</span> <span class="toctext">Audio</span></a></li>
+<li class="toclevel-2"><a href="#Fixed_Visibility"><span class="tocnumber">1.12</span> <span class="toctext">Fixed Visibility</span></a></li>
+<li class="toclevel-2"><a href="#Screen_Flashes"><span class="tocnumber">1.13</span> <span class="toctext">Screen Flashes</span></a></li>
+<li class="toclevel-2"><a href="#Distance_Fog_Fading"><span class="tocnumber">1.14</span> <span class="toctext">Distance Fog Fading</span></a></li>
+<li class="toclevel-2"><a href="#Remote_Pawn_ViewTargets"><span class="tocnumber">1.15</span> <span class="toctext">Remote Pawn ViewTargets</span></a></li>
+<li class="toclevel-2"><a href="#Music"><span class="tocnumber">1.16</span> <span class="toctext">Music</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Move_Buffering"><span class="tocnumber">1.16.1</span> <span class="toctext">Move Buffering</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Progess_Indicator"><span class="tocnumber">1.17</span> <span class="toctext">Progess Indicator</span></a></li>
+<li class="toclevel-2"><a href="#Localized_Strings"><span class="tocnumber">1.18</span> <span class="toctext">Localized Strings</span></a></li>
+<li class="toclevel-2"><a href="#ReplicationInfo"><span class="tocnumber">1.19</span> <span class="toctext">ReplicationInfo</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Stats_Logging"><span class="tocnumber">1.19.1</span> <span class="toctext">Stats Logging</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#View_Shaking"><span class="tocnumber">1.20</span> <span class="toctext">View Shaking</span></a></li>
+<li class="toclevel-2"><a href="#Components_.28_Inner_Classes_.29"><span class="tocnumber">1.21</span> <span class="toctext">Components ( Inner Classes )</span></a></li>
+<li class="toclevel-2"><a href="#Camera_Control_for_Debugging.2FTweaking"><span class="tocnumber">1.22</span> <span class="toctext">Camera Control for Debugging/Tweaking</span></a>
+<ul>
+<li class="toclevel-3"><a href="#BehindView_Camera_Adjustments"><span class="tocnumber">1.22.1</span> <span class="toctext">BehindView Camera Adjustments</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#TeamBeacon"><span class="tocnumber">1.23</span> <span class="toctext">TeamBeacon</span></a></li>
+<li class="toclevel-2"><a href="#Demo_recording_view_rotation"><span class="tocnumber">1.24</span> <span class="toctext">Demo recording view rotation</span></a></li>
+<li class="toclevel-2"><a href="#Menu"><span class="tocnumber">1.25</span> <span class="toctext">Menu</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Structs"><span class="tocnumber">2</span> <span class="toctext">Structs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Voice_Chat"><span class="tocnumber">2.1</span> <span class="toctext">Voice Chat</span></a></li>
+<li class="toclevel-2"><a href="#Player_Names"><span class="tocnumber">2.2</span> <span class="toctext">Player Names</span></a></li>
+<li class="toclevel-2"><a href="#ClientAdjustPosition"><span class="tocnumber">2.3</span> <span class="toctext">ClientAdjustPosition</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Native_Functions"><span class="tocnumber">3</span> <span class="toctext">Native Functions</span></a></li>
+<li class="toclevel-1"><a href="#Native_Events"><span class="tocnumber">4</span> <span class="toctext">Native Events</span></a></li>
+<li class="toclevel-1"><a href="#Events"><span class="tocnumber">5</span> <span class="toctext">Events</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Class_Tree"><span class="tocnumber">7</span> <span class="toctext">Class Tree</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">8</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p><a name="Player_Info" id="Player_Info"></a></p>
+<h3><span class="mw-headline">Player Info</span></h3>
+<dl>
+<dt><a href="../../../../articles/p/l/a/Legacy%7EPlayer_ff26.html" title="Legacy:Player">player</a> Player (const)&#160;</dt>
+</dl>
+<p><a name="Player_Input_Control" id="Player_Input_Control"></a></p>
+<h3><span class="mw-headline">Player Input Control</span></h3>
+<dl>
+<dt>bool bLookUpStairs (globalconfig)&#160;</dt>
+<dd>look up/down stairs (player)</dd>
+<dt>bool bSnapToLevel (globalconfig)&#160;</dt>
+<dd>Snap to level eyeheight when not mouselooking</dd>
+<dt>bool bAlwaysMouseLook (globalconfig)&#160;</dt>
+<dt>bool bKeyboardLook (globalconfig)&#160;</dt>
+<dd>no snapping when true</dd>
+<dt>bool bCenterView&#160;</dt>
+</dl>
+<p><a name="Player_Control_Flags" id="Player_Control_Flags"></a></p>
+<h3><span class="mw-headline">Player Control Flags</span></h3>
+<dl>
+<dt>bool bBehindView&#160;</dt>
+<dd>Outside-the-player view.</dd>
+<dt>bool bFrozen&#160;</dt>
+<dd>set when game ends or player dies to temporarily prevent player from restarting (until cleared by timer)</dd>
+<dt>bool bPressedJump&#160;</dt>
+<dt>bool bDoubleJump&#160;</dt>
+<dt>bool bUpdatePosition&#160;</dt>
+<dt>bool bIsTyping&#160;</dt>
+<dt>bool bFixedCamera&#160;</dt>
+<dd>used to fix camera in position (to view animations)</dd>
+<dt>bool bJumpStatus&#160;</dt>
+<dd>used in net games</dd>
+<dt>bool bUpdating&#160;</dt>
+<dt>bool bNeverSwitchOnPickup (globalconfig)&#160;</dt>
+<dd>If true, don't automatically switch to picked up weapon</dd>
+<dt>bool bHideSpectatorBeacons&#160;</dt>
+<dt>bool bZooming&#160;</dt>
+<dt>bool bHideVehicleNoEntryIndicator&#160;</dt>
+<dt>bool bAlwaysLevel (globalconfig)&#160;</dt>
+<dt>bool bSetTurnRot&#160;</dt>
+<dt>bool bCheatFlying&#160;</dt>
+<dd>instantly stop in flying mode</dd>
+<dt>bool bFreeCamera&#160;</dt>
+<dd>free camera when in behindview mode (for checking out player models and animations)</dd>
+<dt>bool bZeroRoll&#160;</dt>
+<dt>bool bCameraPositionLocked&#160;</dt>
+<dt>bool bViewBot&#160;</dt>
+<dt>bool UseFixedVisibility&#160;</dt>
+<dt>bool bFreeCam&#160;</dt>
+<dd>In FreeCam mode to adjust the cam rotator</dd>
+<dt>bool bFreeCamZoom&#160;</dt>
+<dd>In zoom mode</dd>
+<dt>bool bFreeCamSwivel&#160;</dt>
+<dd>In swivel mode</dd>
+<dt>bool bBlockCloseCamera&#160;</dt>
+<dt>bool bValidBehindCamera&#160;</dt>
+<dt>bool bForcePrecache&#160;</dt>
+<dt>bool bClientDemo&#160;</dt>
+<dt>bool bAllActorsRelevant (const)&#160;</dt>
+<dd>used by UTTV. DO NOT SET THIS TRUE - it has a huge impact on network performance&#160;:</dd>
+<dt>bool bShortConnectTimeOut&#160;</dt>
+<dd>when true, reduces connect timeout to 15 seconds</dd>
+<dt>bool bPendingDestroy&#160;</dt>
+<dd>when true, playercontroller is being destroyed</dd>
+<dt>bool bEnableAmbientShake&#160;</dt>
+<dt>bool bNoVoiceMessages (globalconfig)&#160;</dt>
+<dt>bool bNoTextToSpeechVoiceMessages (globalconfig)&#160;</dt>
+<dt>bool bNoVoiceTaunts (globalconfig)&#160;</dt>
+<dt>bool bNoAutoTaunts (globalconfig)&#160;</dt>
+<dt>bool bAutoTaunt (globalconfig)&#160;</dt>
+<dt>bool bNoMatureLanguage (globalconfig)&#160;</dt>
+<dt>bool bDynamicNetSpeed (globalconfig)&#160;</dt>
+<dt>bool bSmallWeapons (globalconfig)&#160;</dt>
+<dt>bool bWeaponViewShake&#160;</dt>
+<dt>bool bLandingShake (globalconfig)&#160;</dt>
+<dt>bool bAimingHelp (globalconfig)&#160;</dt>
+<dt>bool bEnableStatsTracking (globalconfig)&#160;</dt>
+<dt>bool bOnlySpeakTeamText (globalconfig)&#160;</dt>
+<dt>bool bWasSpeedHack&#160;</dt>
+<dt>bool bIsSpaceFighter&#160;</dt>
+<dd>Hack for spacefighter joystick controls</dd>
+<dt>bool bWasSaturated (const)&#160;</dt>
+<dd>Used by servers to identify saturated client connections</dd>
+<dt>float FOVBias&#160;</dt>
+<dt>float DesiredFOV (globalconfig)&#160;</dt>
+<dt>float DefaultFOV (globalconfig)&#160;</dt>
+<dt>float ZoomLevel&#160;</dt>
+<dt>float DesiredZoomLevel&#160;</dt>
+<dt>EDoubleClickDir DoubleClickDir&#160;</dt>
+<dd>Direction of movement key double click (for special moves)</dd>
+<dt>byte AnnouncerLevel (globalconfig)&#160;</dt>
+<dd>0=none, 1=no possession announcements, 2=all</dd>
+<dt>byte AnnouncerVolume (globalconfig)&#160;</dt>
+<dd>1 to 4</dd>
+<dt>float TextToSpeechVoiceVolume (globalconfig)&#160;</dt>
+<dt>float MaxResponseTime&#160;</dt>
+<dd>How long server will wait for client move update before setting position</dd>
+<dt>float WaitDelay&#160;</dt>
+<dd>Delay time until can restart</dd>
+<dt><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> AcknowledgedPawn&#160;</dt>
+<dd>Used in net games so client can acknowledge it possessed a pawn</dd>
+<dt>HUD myHUD&#160;</dt>
+<dd>heads up display info</dd>
+<dt>float LastPlaySound&#160;</dt>
+<dt>float LastPlaySpeech&#160;</dt>
+<dt><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> TurnTarget&#160;</dt>
+<dt>int EnemyTurnSpeed (config)&#160;</dt>
+<dt>int GroundPitch&#160;</dt>
+<dt>rotator TurnRot180&#160;</dt>
+<dt>vector OldFloor&#160;</dt>
+<dd>Used by PlayerSpider mode - floor for which old rotation was based.</dd>
+<dt>array&lt;PlayerNameInfo&gt; PlayerNameArray (private, const)&#160;</dt>
+<dt><a href="../../../../articles/s/e/c/Legacy%7ESecurity_023f.html" title="Legacy:Security">Security</a> PlayerSecurity&#160;</dt>
+<dd>Used for Cheat Protection</dd>
+<dt>float LoginDelay&#160;</dt>
+<dt>float NextLoginTime&#160;</dt>
+<dt>float ForcePrecacheTime&#160;</dt>
+<dt>float LastPingUpdate&#160;</dt>
+<dt>float ExactPing&#160;</dt>
+<dt>float OldPing&#160;</dt>
+<dt>float SpectateSpeed&#160;</dt>
+<dt>float DynamicPingThreshold (globalconfig)&#160;</dt>
+<dt>float NextSpeedChange&#160;</dt>
+<dt>float VoiceChangeLimit&#160;</dt>
+<dt>int ClientCap&#160;</dt>
+<dt>AnnouncerQueueManager AnnouncerQueueManager&#160;</dt>
+<dd>Handling Announcer Queueing</dd>
+<dt>AnnouncerVoice StatusAnnouncer&#160;</dt>
+<dt>AnnouncerVoice RewardAnnouncer&#160;</dt>
+<dt>float LastActiveTime&#160;</dt>
+<dd>used to kick idlers</dd>
+<dt>Actor CalcViewActor&#160;</dt>
+<dd>optimize PlayerCalcView</dd>
+<dt>vector CalcViewActorLocation&#160;</dt>
+<dt>vector CalcViewLocation&#160;</dt>
+<dt>rotator CalcViewRotation&#160;</dt>
+<dt>float LastPlayerCalcView&#160;</dt>
+<dt>float LastBroadcastTime&#160;</dt>
+<dt>string LastBroadcastString[4]&#160;</dt>
+<dt>float LastSpeedHackLog&#160;</dt>
+<dt>string PlayerOwnerName&#160;</dt>
+<dd>for savegames</dd>
+<dt>ClientAdjustment PendingAdjustment&#160;</dt>
+</dl>
+<p><a name="ForceFeedback" id="ForceFeedback"></a></p>
+<h3><span class="mw-headline">ForceFeedback</span></h3>
+<dl>
+<dt>bool bEnablePickupForceFeedback (globalconfig)&#160;</dt>
+<dt>bool bEnableWeaponForceFeedback (globalconfig)&#160;</dt>
+<dt>bool bEnableDamageForceFeedback (globalconfig)&#160;</dt>
+<dt>bool bEnableGUIForceFeedback (globalconfig)&#160;</dt>
+<dt>bForceFeedbackSupported&#160;</dt>
+<dd>true if a device is detected</dd>
+</dl>
+<p><a name="VoiceChat" id="VoiceChat"></a></p>
+<h3><span class="mw-headline">VoiceChat</span></h3>
+<dl>
+<dt>bool bVoiceChatEnabled&#160;</dt>
+<dd>Whether voice chat is enabled on this client</dd>
+<dt>bool bEnableInitialChatRoom (globalconfig)&#160;</dt>
+<dd>Enables speaking on DefaultActiveChannel upon joining server</dd>
+<dt>bool bViewingMatineeCinematic&#160;</dt>
+<dt>bool bCustomListener&#160;</dt>
+<dt>bool bAcuteHearing&#160;</dt>
+<dd>Makes playercontroller hear much better (used to magnify hit sounds caused by player)</dd>
+<dt>bool bMenuBeforeRespawn&#160;</dt>
+<dd>Forces the midgame menu to pop up before player can click to respawn</dd>
+<dt>bool bSkippedLastUpdate&#160;</dt>
+<dt>bool bLastPressedJump&#160;</dt>
+<dt>byte AutoJoinMask (globalconfig)&#160;</dt>
+<dd>Contains a bit-mask of which channels to auto-join ( 1 - Public, 2 - Local, 4 - Team )</dd>
+<dt>class&lt;ChatRoomMessage&gt; ChatRoomMessageClass&#160;</dt>
+<dt>array&lt;StoredChatPassword&gt; StoredChatPasswords (globalconfig)&#160;</dt>
+<dt>VoiceChatRoom ActiveRoom&#160;</dt>
+<dd>The chatroom we're currently speaking to</dd>
+<dt>string LastActiveChannel (globalconfig)&#160;</dt>
+<dd>Stores the currently active channel when switching maps</dd>
+<dt>string VoiceChatCodec (globalconfig)&#160;</dt>
+<dd>Which voice chat codec to request in internet games (will only be used if it exists on server)</dd>
+<dt>string VoiceChatLANCodec (globalconfig)&#160;</dt>
+<dd>Which voice chat codec to request in LAN games</dd>
+<dt>string ChatPassword (globalconfig)&#160;</dt>
+<dd>Password for our personal chat room</dd>
+<dt>string DefaultActiveChannel (globalconfig)&#160;</dt>
+<dd>Channel we initially want to make active</dd>
+</dl>
+<p><a name="Input_Bytes" id="Input_Bytes"></a></p>
+<h3><span class="mw-headline">Input Bytes</span></h3>
+<dl>
+<dt>byte bStrafe (input)&#160;</dt>
+<dt>byte bSnapLevel (input)&#160;</dt>
+<dt>byte bLook (input)&#160;</dt>
+<dt>byte bFreeLook (input)&#160;</dt>
+<dt>byte bTurn180 (input)&#160;</dt>
+<dt>byte bTurnToNearest (input)&#160;</dt>
+<dt>byte bXAxis (input)&#160;</dt>
+<dt>byte bYAxis (input)&#160;</dt>
+</dl>
+<p><a name="Input_Floats" id="Input_Floats"></a></p>
+<h3><span class="mw-headline">Input Floats</span></h3>
+<dl>
+<dt>float aBaseX (input)&#160;</dt>
+<dt>float aBaseY (input)&#160;</dt>
+<dt>float aBaseZ (input)&#160;</dt>
+<dt>float aMouseX (input)&#160;</dt>
+<dt>float aMouseY (input)&#160;</dt>
+<dt>float aForward (input)&#160;</dt>
+<dt>float aTurn (input)&#160;</dt>
+<dt>float aStrafe (input)&#160;</dt>
+<dt>float aUp (input)&#160;</dt>
+<dt>float aLookUp (input)&#160;</dt>
+</dl>
+<p><a name="Vehicle_Move_Replication" id="Vehicle_Move_Replication"></a></p>
+<h3><span class="mw-headline">Vehicle Move Replication</span></h3>
+<dl>
+<dt>float aLastForward&#160;</dt>
+<dt>float aLastStrafe&#160;</dt>
+<dt>float aLastUp&#160;</dt>
+<dt>float NumServerDrives&#160;</dt>
+<dt>float NumSkips&#160;</dt>
+</dl>
+<p><a name="Vehicle_Check_Radius" id="Vehicle_Check_Radius"></a></p>
+<h3><span class="mw-headline">Vehicle Check Radius</span></h3>
+<dl>
+<dt>float VehicleCheckRadius&#160;</dt>
+<dd>Radius that is checked for nearby vehicles when pressing use</dd>
+<dt>bool bSuccessfulUse&#160;</dt>
+<dd>Gives PC a hint that UsedBy was successful</dd>
+</dl>
+<p><a name="Camera" id="Camera"></a></p>
+<h3><span class="mw-headline">Camera</span></h3>
+<dl>
+<dt>int ShowFlags&#160;</dt>
+<dt>int Misc1&#160;</dt>
+<dt>int Misc2&#160;</dt>
+<dt>int RendMap&#160;</dt>
+<dt>float OrthoZoom&#160;</dt>
+<dd>Orthogonal/map view zoom factor.</dd>
+<dt><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> ViewTarget (const)&#160;</dt>
+<dt><a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> RealViewTarget (const)&#160;</dt>
+<dt><strong class="selflink">PlayerController</strong> DemoViewer&#160;</dt>
+<dt>float CameraDist&#160;</dt>
+<dd>Multiplier for behindview camera dist</dd>
+<dt>range CameraDistRange&#160;</dt>
+<dt>vector OldCameraLoc&#160;</dt>
+<dd>Used in behindview calculations</dd>
+<dt>rotator OldCameraRot&#160;</dt>
+<dt>array&lt;<a href="../../../../articles/c/a/m/Legacy%7ECameraEffect_1f52.html" title="Legacy:CameraEffect">CameraEffect</a>&gt; CameraEffects (transient)&#160;</dt>
+<dd>A stack of camera effects.</dd>
+</dl>
+<p><a name="Audio" id="Audio"></a></p>
+<h3><span class="mw-headline">Audio</span></h3>
+<dl>
+<dt>vector ListenerLocation&#160;</dt>
+<dt>rotator ListenerRotation&#160;</dt>
+</dl>
+<p><a name="Fixed_Visibility" id="Fixed_Visibility"></a></p>
+<h3><span class="mw-headline">Fixed Visibility</span></h3>
+<dl>
+<dt>vector FixedLocation&#160;</dt>
+<dt>rotator FixedRotation&#160;</dt>
+<dt>matrix RenderWorldToCamera&#160;</dt>
+</dl>
+<p><a name="Screen_Flashes" id="Screen_Flashes"></a></p>
+<h3><span class="mw-headline">Screen Flashes</span></h3>
+<dl>
+<dt>vector FlashScale&#160;</dt>
+<dt>vector FlashFog&#160;</dt>
+<dt>float ConstantGlowScale&#160;</dt>
+<dt>vector ConstantGlowFog&#160;</dt>
+<dt>float ScreenFlashScaling (globalconfig)&#160;</dt>
+</dl>
+<p><a name="Distance_Fog_Fading" id="Distance_Fog_Fading"></a></p>
+<h3><span class="mw-headline">Distance Fog Fading</span></h3>
+<dl>
+<dt>color LastDistanceFogColor&#160;</dt>
+<dt>float LastDistanceFogStart&#160;</dt>
+<dt>float LastDistanceFogEnd&#160;</dt>
+<dt>float CurrentDistanceFogEnd&#160;</dt>
+<dt>float TimeSinceLastFogChange&#160;</dt>
+<dt>int LastZone&#160;</dt>
+</dl>
+<p><a name="Remote_Pawn_ViewTargets" id="Remote_Pawn_ViewTargets"></a></p>
+<h3><span class="mw-headline">Remote Pawn ViewTargets</span></h3>
+<dl>
+<dt>rotator TargetViewRotation&#160;</dt>
+<dt>rotator BlendedTargetViewRotation&#160;</dt>
+<dt>float TargetEyeHeight&#160;</dt>
+<dt>vector TargetWeaponViewOffset&#160;</dt>
+</dl>
+<p><a name="Music" id="Music"></a></p>
+<h3><span class="mw-headline">Music</span></h3>
+<dl>
+<dt>string Song&#160;</dt>
+<dt>EMusicTransition Transition&#160;</dt>
+</dl>
+<p><a name="Move_Buffering" id="Move_Buffering"></a></p>
+<h4><span class="mw-headline">Move Buffering</span></h4>
+<p><i>For network games, clients save their un-acknowledged moves in order to replay them when they get position updates from the server.</i></p>
+<dl>
+<dt><a href="../../../../articles/s/a/v/Legacy%7ESavedMove_2ff2.html" title="Legacy:SavedMove">SavedMove</a> SavedMoves&#160;</dt>
+<dd>buffered moves pending position updates</dd>
+<dt><a href="../../../../articles/s/a/v/Legacy%7ESavedMove_2ff2.html" title="Legacy:SavedMove">SavedMove</a> FreeMoves&#160;</dt>
+<dd>freed moves, available for buffering</dd>
+<dt><a href="../../../../articles/s/a/v/Legacy%7ESavedMove_2ff2.html" title="Legacy:SavedMove">SavedMove</a> PendingMove&#160;</dt>
+<dt>float CurrentTimeStamp</dt>
+<dt>float LastUpdateTime&#160;</dt>
+<dt>float ServerTimeStamp&#160;</dt>
+<dt>float TimeMargin&#160;</dt>
+<dt>float ClientUpdateTime&#160;</dt>
+<dt>float MaxTimeMargin&#160;</dt>
+<dt>float TimeMarginSlack (globalconfig)&#160;</dt>
+<dd>OBSOLETE</dd>
+<dt><a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a> OldClientWeapon&#160;</dt>
+<dt>int WeaponUpdate&#160;</dt>
+</dl>
+<p><a name="Progess_Indicator" id="Progess_Indicator"></a></p>
+<h3><span class="mw-headline">Progess Indicator</span></h3>
+<p><i>Used by the engine to provide status messages (HUD is responsible for displaying these).</i></p>
+<dl>
+<dt>string ProgressMessage[4]&#160;</dt>
+<dt>color ProgressColor[4]&#160;</dt>
+<dt>float ProgressTimeOut&#160;</dt>
+</dl>
+<p><a name="Localized_Strings" id="Localized_Strings"></a></p>
+<h3><span class="mw-headline">Localized Strings</span></h3>
+<dl>
+<dt>string QuickSaveString (localized)&#160;</dt>
+<dt>string NoPauseMessage (localized)&#160;</dt>
+<dt>string ViewingFrom (localized)&#160;</dt>
+<dt>string OwnCamera (localized)&#160;</dt>
+</dl>
+<p><a name="ReplicationInfo" id="ReplicationInfo"></a></p>
+<h3><span class="mw-headline">ReplicationInfo</span></h3>
+<dl>
+<dt><a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a> GameReplicationInfo&#160;</dt>
+<dt>VoiceChatReplicationInfo VoiceReplicationInfo&#160;</dt>
+<dt>VotingReplicationInfoBase VoteReplicationInfo&#160;</dt>
+</dl>
+<p><a name="Stats_Logging" id="Stats_Logging"></a></p>
+<h4><span class="mw-headline">Stats Logging</span></h4>
+<dl>
+<dt>string StatsUsername (globalconfig)&#160;</dt>
+<dt>string StatsPassword (globalconfig)&#160;</dt>
+<dt>class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessage</a>&gt; LocalMessageClass&#160;</dt>
+</dl>
+<p><a name="View_Shaking" id="View_Shaking"></a></p>
+<h3><span class="mw-headline">View Shaking</span></h3>
+<p><i>Affects roll, and offsets camera position.</i></p>
+<dl>
+<dt>vector ShakeOffsetRate&#160;</dt>
+<dt>vector ShakeOffset&#160;</dt>
+<dd>current magnitude to offset camera from shake</dd>
+<dt>vector ShakeOffsetTime&#160;</dt>
+<dt>vector ShakeOffsetMax&#160;</dt>
+<dt>vector ShakeRotRate&#160;</dt>
+<dt>vector ShakeRotMax&#160;</dt>
+<dt>rotator ShakeRot&#160;</dt>
+<dt>vector ShakeRotTime&#160;</dt>
+<dt>float AmbientShakeFalloffStartTime&#160;</dt>
+<dt>float AmbientShakeFalloffTime&#160;</dt>
+<dd>Time taken for shaking to stop after AmbientShakeFalloffStartTime has passed.</dd>
+<dt>vector AmbientShakeOffsetMag&#160;</dt>
+<dt>float AmbientShakeOffsetFreq&#160;</dt>
+<dt>rotator AmbientShakeRotMag&#160;</dt>
+<dt>float AmbientShakeRotFreq&#160;</dt>
+</dl>
+<p><a name="Components_.28_Inner_Classes_.29" id="Components_.28_Inner_Classes_.29"></a></p>
+<h3><span class="mw-headline">Components ( Inner Classes )</span></h3>
+<dl>
+<dt><a href="../../../../articles/c/h/e/Legacy%7ECheatManager_cac1.html" title="Legacy:CheatManager">CheatManager</a> CheatManager (private, transient)&#160;</dt>
+<dd>Object within playercontroller that manages "cheat" commands</dd>
+<dt>class&lt;<a href="../../../../articles/c/h/e/Legacy%7ECheatManager_cac1.html" title="Legacy:CheatManager">CheatManager</a>&gt; CheatClass&#160;</dt>
+<dd>Class of my CheatManager</dd>
+<dt><a href="../../../../articles/p/l/a/Legacy%7EPlayerInput_5e56.html" title="Legacy:PlayerInput">PlayerInput</a> PlayerInput (private, transient)&#160;</dt>
+<dd>Object within playercontroller that manages player input.</dd>
+<dt>class&lt;<a href="../../../../articles/p/l/a/Legacy%7EPlayerInput_5e56.html" title="Legacy:PlayerInput">PlayerInput</a>&gt; InputClass (config)&#160;</dt>
+<dd>Class of my PlayerInput</dd>
+<dt><a href="../../../../articles/a/d/m/Legacy%7EAdminBase_f255.html" title="Legacy:AdminBase">AdminBase</a> AdminManager (private, transient)&#160;</dt>
+<dt>MaplistManagerBase MapHandler (transient)&#160;</dt>
+<dd>Used by AdminBase</dd>
+<dt>string PlayerChatType&#160;</dt>
+<dt>PlayerChatManager ChatManager&#160;</dt>
+<dd>Manages all chat, speech, and voice messages sent to player</dd>
+<dt>vector FailedPathStart (const)&#160;</dt>
+</dl>
+<p><a name="Camera_Control_for_Debugging.2FTweaking" id="Camera_Control_for_Debugging.2FTweaking"></a></p>
+<h3><span class="mw-headline">Camera Control for Debugging/Tweaking</span></h3>
+<p><a name="BehindView_Camera_Adjustments" id="BehindView_Camera_Adjustments"></a></p>
+<h4><span class="mw-headline">BehindView Camera Adjustments</span></h4>
+<dl>
+<dt>rotator CameraDeltaRotation&#160;</dt>
+<dd>The rotator delta adjustment</dd>
+<dt>float CameraDeltaRad&#160;</dt>
+<dd>The zoom delta adjustment</dd>
+<dt>rotator CameraSwivel&#160;</dt>
+<dd>The swivel adjustment</dd>
+</dl>
+<p><a name="TeamBeacon" id="TeamBeacon"></a></p>
+<h3><span class="mw-headline">TeamBeacon</span></h3>
+<dl>
+<dt>float TeamBeaconMaxDist&#160;</dt>
+<dt>float TeamBeaconPlayerInfoMaxDist&#160;</dt>
+<dt>Texture TeamBeaconTexture&#160;</dt>
+<dt>Texture LinkBeaconTexture&#160;</dt>
+<dt>Texture SpeakingBeaconTexture&#160;</dt>
+<dt>Color TeamBeaconTeamColors[2]&#160;</dt>
+<dt>Color TeamBeaconCustomColor&#160;</dt>
+</dl>
+<p><a name="Demo_recording_view_rotation" id="Demo_recording_view_rotation"></a></p>
+<h3><span class="mw-headline">Demo recording view rotation</span></h3>
+<dl>
+<dt>int DemoViewPitch&#160;</dt>
+<dt>int DemoViewYaw&#160;</dt>
+</dl>
+<p><a name="Menu" id="Menu"></a></p>
+<h3><span class="mw-headline">Menu</span></h3>
+<dl>
+<dt>string MidGameMenuClass (config)&#160;</dt>
+<dd>Menu that is shown when Escape is pressed</dd>
+<dt>string DemoMenuClass (config)&#160;</dt>
+<dd>Menu used for demos</dd>
+<dt>string AdminMenuClass (config)&#160;</dt>
+<dd>Menu that is shown when adminmenu command is used</dd>
+<dt>string ChatPasswordMenuClass (config)&#160;</dt>
+<dd>Menu that appears when attempting to join a chatroom that has a password</dd>
+</dl>
+<p><a name="Structs" id="Structs"></a></p>
+<h2><span class="mw-headline">Structs</span></h2>
+<p><a name="Voice_Chat" id="Voice_Chat"></a></p>
+<h3><span class="mw-headline">Voice Chat</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+;struct StoredChatPassword
+ 
+<span class="br0">{</span>
+ 
+        <span class="kw5">var</span> <span class="kw4">string</span> ChatRoomName;
+ 
+        <span class="kw5">var</span> <span class="kw4">string</span> ChatRoomPassword;
+ 
+<span class="br0">}</span>;
+</pre></div>
+<p><a name="Player_Names" id="Player_Names"></a></p>
+<h3><span class="mw-headline">Player Names</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+;struct PlayerNameInfo
+ 
+<span class="br0">{</span>
+    <span class="kw5">var</span> <span class="kw4">string</span> mInfo;
+    <span class="kw5">var</span> <span class="kw4">color</span>  mColor;
+    <span class="kw5">var</span> <span class="kw4">float</span>  mXPos;
+    <span class="kw5">var</span> <span class="kw4">float</span>  mYPos;
+ 
+<span class="br0">}</span>;
+</pre></div>
+<p><a name="ClientAdjustPosition" id="ClientAdjustPosition"></a></p>
+<h3><span class="mw-headline">ClientAdjustPosition</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+;struct ClientAdjustment
+ 
+<span class="br0">{</span>
+    <span class="kw5">var</span> <span class="kw4">float</span> TimeStamp;
+    <span class="kw5">var</span> <span class="kw4">name</span> newState;
+    <span class="kw5">var</span> EPhysics newPhysics;
+    <span class="kw5">var</span> <span class="kw4">vector</span> NewLoc;
+    <span class="kw5">var</span> <span class="kw4">vector</span> NewVel;
+    <span class="kw5">var</span> <a href="/Actor"><span class="kw10">actor</span></a> NewBase;
+    <span class="kw5">var</span> <span class="kw4">vector</span> NewFloor;
+ 
+<span class="br0">}</span>;
+</pre></div>
+<p><a name="Native_Functions" id="Native_Functions"></a></p>
+<h2><span class="mw-headline">Native Functions</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> SetNetSpeed<span class="br0">(</span><span class="kw4">int</span> NewSpeed<span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetPlayerIDHash<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetPlayerNetworkAddress<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetServerNetworkAddress<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw5">function</span> <span class="kw4">string</span> ConsoleCommand<span class="br0">(</span> <span class="kw4">string</span> Command, <span class="kw6">optional</span> <span class="kw4">bool</span> bWriteToLog <span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> LevelInfo GetEntryLevel<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">544</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> ResetKeyboard<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw6">private</span> <span class="kw5">function</span> ResetInput<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> SetViewTarget<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> NewViewTarget<span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetURLProtocol<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetDefaultURL<span class="br0">(</span><span class="kw4">string</span> Option<span class="br0">)</span>;
+ 
+<span class="co1">// Execute a console command in the context of this player, then forward to Actor.ConsoleCommand.</span>
+ 
+<span class="kw6">native</span> <span class="kw5">function</span> CopyToClipboard<span class="br0">(</span> <span class="kw4">string</span> Text <span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw5">function</span> <span class="kw4">string</span> PasteFromClipboard<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> CheckSpeedHack<span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>;
+ 
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">524</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> FindStairRotation<span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>;
+</pre></div>
+<p><a name="Native_Events" id="Native_Events"></a></p>
+<h2><span class="mw-headline">Native Events</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span> <span class="kw5">event</span> ClientTravel<span class="br0">(</span> <span class="kw4">string</span> URL, ETravelType TravelType, <span class="kw4">bool</span> bItems <span class="br0">)</span>;
+ 
+<span class="co1">// Validation.</span>
+ 
+<span class="kw6">private</span> <span class="kw6">native</span> <span class="kw5">event</span> ClientValidate<span class="br0">(</span><span class="kw4">string</span> C<span class="br0">)</span>;
+ 
+<span class="kw6">private</span> <span class="kw6">native</span> <span class="kw5">event</span> ServerValidationResponse<span class="br0">(</span><span class="kw4">string</span> R<span class="br0">)</span>;
+ 
+<span class="kw6">native</span> <span class="kw5">event</span> ClientHearSound <span class="br0">(</span>
+    <a href="/Actor"><span class="kw10">actor</span></a> <a href="/Actor"><span class="kw10">Actor</span></a>,
+    <span class="kw4">int</span> Id,
+    <a href="/sound"><span class="kw10">sound</span></a> S,
+    <span class="kw4">vector</span> SoundLocation,
+    <span class="kw4">vector</span> Parameters,
+    <span class="kw4">bool</span> Attenuate
+ 
+<span class="br0">)</span>;
+</pre></div>
+<p><a name="Events" id="Events"></a></p>
+<h2><span class="mw-headline">Events</span></h2>
+<dl>
+<dt>ClientSetViewTarget ( Actor A )&#160;</dt>
+<dt>InitInputSystem()&#160;</dt>
+<dt>ReceiveLocalizedMessage( class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessage</a>&gt; Message, optional int Switch, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_1, optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> RelatedPRI_2, optional Object OptionalObject ) (simulated)&#160;</dt>
+<dt>ClientMessage( coerce string S, optional name Type )&#160;</dt>
+<dt>TeamMessage( <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> PRI, coerce string S, name Type )&#160;</dt>
+<dt>PreClientTravel()&#160;</dt>
+<dt>ProgressCommand( string Cmd, string Msg1, string Msg2 )&#160;</dt>
+<dt>SetProgressMessage( int Index, string S, color C ) (exec)&#160;</dt>
+<dt>SetProgressTime( float T ) (exec)&#160;</dt>
+<dt>TravelPostAccept()&#160;</dt>
+<dt>PlayerTick( float DeltaTime )&#160;</dt>
+<dt>AddCameraEffect( <a href="../../../../articles/c/a/m/Legacy%7ECameraEffect_1f52.html" title="Legacy:CameraEffect">CameraEffect</a> NewEffect, optional bool RemoveExisting )&#160;</dt>
+<dt>RemoveCameraEffect( <a href="../../../../articles/c/a/m/Legacy%7ECameraEffect_1f52.html" title="Legacy:CameraEffect">CameraEffect</a> ExEffect )&#160;</dt>
+<dt>PlayerCalcView( out <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">actor</a> ViewActor, out vector CameraLocation, out rotator CameraRotation )&#160;</dt>
+<dt>ClientOpenMenu( string Menu, optional bool bDisconnect, optional string Msg1, optional string Msg2 )&#160;</dt>
+<dt>ClientReplaceMenu( string Menu, optional bool bDisconnect, optional string Msg1, optional string Msg2 )&#160;</dt>
+<dt>ClientCloseMenu( optional bool bCloseAll, optional bool bCancel )&#160;</dt>
+<dt>StartClientDemoRec() (simulated)&#160;</dt>
+<dd>Called on the client during client-side demo recording.</dd>
+</dl>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/c/o/n/Legacy%7EController_Overview_ec80.html" title="Legacy:Controller Overview">Controller Overview</a> – An overview of controllers.</li>
+<li><a href="../../../../articles/c/u/s/Legacy%7ECustomising_The_Player_View_8e27.html" title="Legacy:Customising The Player View">Customising the Player View</a> – How to put the the player view where you want it.</li>
+<li>Customising the Player Input – How to get the control behaviour you want.</li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_An_Interaction_From_A_PlayerController_738e.html" title="Legacy:Creating An Interaction From A PlayerController">Creating An Interaction From A PlayerController</a> – Player input and output (HUD display, keyboard input, etc.)</li>
+</ul>
+<p><a name="Class_Tree" id="Class_Tree"></a></p>
+<h2><span class="mw-headline">Class Tree</span></h2>
+<pre>
+<a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> – Parent class.
+  +- <a href="../../../../articles/a/i/c/Legacy%7EAIController_8307.html" title="Legacy:AIController">AIController</a> – Artificially intelligent agents.
+  +- PlayerController – This class.
+       +- <a href="../../../../articles/u/n/r/Legacy%7EUnrealPlayer_1818.html" title="Legacy:UnrealPlayer">UnrealPlayer</a> – subclass.
+</pre>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>EntropicLqd:</b> Anyone have any preference on what gets covered in PlayerController? I'll do the third person view and first person view functions. Might spend some time figuring out which events a player controller actually does recieve before the Pawn event. The other thing I've started doing is prefixing the class name with the package it's contained within. I know I find it useful, does anyone else? if not I'll drop it.</p>
+<p><b>Chazums</b> Other than as much as possible / relevant, not really&#160;:D . Putting in the package name is useful i think, makes it easier to see where the stuff being looked at is.</p>
+<p><b>EntropicLqd:</b> Hmm, I'll do what I can but I don't want to make the page too long. Thanks to Wormbo for fixing my markup ealier&#160;:).</p>
+<p><b>EntropicLqd:</b> I wish Tim Sweeny would take a look at this and add a bit of in depth knowledge. So much of it feels like speculation and almost educated guesswork that it makes me uncomfortable. However, the cool thing about it is that this stuff occurs right at the engine level rather than the UT2K3 game level.</p>
+<p><b>Trystan:</b> "Page too long"? Can you give too much knowledge? &#160;:D Perhaps begin with as much knowledge as you can shove in here (because I'm looking forward to it as much as Chazums) and then one of us could refactor it for you? It'd be a good test of our understanding of what you're trying to convey, that's for certain. This is mostly a minor note to let you know that there's another person looking forward to this information.&#160;:) (I expect you to work all of Thanksgiving on this!&#160;:D)</p>
+<p><b>EntropicLqd:</b> It's a good job I'm working on something so dull that it makes my brain want to crawl out of my head and escape screaming then. Thanksgiving? They don't have that where I come from. Too much knowledge is a very dangerous thing. It's wisdom you can never have enough of.</p>
+<p><b>Trystan:</b> Damn global stuff. Sorry, I'm one of those asinine Americans who think that everyone is like them. Chaz is slowly but surely beating that out of me by refusing to be anything American like. I'll learn sooner or later.&#160;:)</p>
+<p><b>Chazums</b> Silly Trystan&#160;:D . nice work EntropicLqd you've certainly busy. In referance to the code at the end, could it be that it's used for when a bot replaces a client? My other thought is that its creating a duplicate so that the right stuff is displayed on the spectators screen.</p>
+<p><b>EntropicLqd:</b> If we were a bot taking over a player pawn we'd be in the AIController class. Still, nice theory.</p>
+<p><b>EntropicLqd:</b> Chazums &amp; Trystan - is there anything on this page (or the <a href="../../../../articles/c/u/s/Legacy%7ECustomising_The_Player_View_8e27.html" title="Legacy:Customising The Player View">Customising the Player View</a> page) that doesn't make sense or needs further elaboration? I've kind of lost track a bit here.</p>
+<p><b>Pingz:</b> Shouldn't there be a class outline on this page like for all the other classes? You can then move all this content to a page like 'Explaining the PlayerController' or something.</p>
+<p><b>PsychoSk8r:</b> I'm looking to make a new gametype for UT2004 based on direct control of a katana for combat. Naturally, that would be dependant on precise network replication. Would this be possible? I couldn't quite tell from this, and I have often seen where the game will only do rough interpretations of a players action, so I'm not quite sure if it would work.</p>
+<p><b>GRAFIK:</b> You can ask on the <a href="../../../../articles/h/e/l/Legacy%7EHelp_Desk_e07f.html" title="Legacy:Help Desk">Help Desk</a>.</p>
+<p><b>SuperApe:</b> Yes, there should be a class page here. Controller Overview issues belong at <a href="../../../../articles/c/o/n/Legacy%7EController_Overview_ec80.html" title="Legacy:Controller Overview">Controller Overview</a>. This page needs Property, Function, Event and State definitions.</p>
+<p><b>OlympusMons:</b> Added properties and structs, might want to check it for typo's&#160;:P, straight from the source. Removed Class tree already have one in the super.class so I figured its not needed.</p>
+<p><b>SuperApe:</b> Thanks.&#160;:) I tidied up a bit. Of the part of the overview that remains here, should it be moved under the class info?</p>
+<p><b>OlympusMons:</b> Maybe we should add a <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_Overview_9a9f.html" title="Legacy:PlayerController Overview">PlayerController Overview</a> it can be similar to the <a href="../../../../articles/c/o/n/Legacy%7EController_Overview_ec80.html" title="Legacy:Controller Overview">Controller Overview</a>. This should give us some space to fix this page and bring it up to speed. Ok so I moved the stuff hope you guys dont mind.</p>
+<p><b>SuperApe:</b> The second class path box isn't necessary as they have the same path in UT2003 and UT2004. These event declarations really needed the arguements included. If we add some decs and leave out the args, someone will think it's complete. I'm just afraid no one will think to check it and fix it. I think it took me just about as much time as if I had started from scratch.&#160;;) I couldn't find ServerChangeVoiceChatter() or ServerGetVoiceChatters() in UT200x.</p>
+<p><b>OlympusMons:</b> added part of a class tree for easier navigation and fixed a few typos&#160;:)</p>
+<p><b>Xian:</b> Can someone please tell me the difference between GetPlayerNetworkAddress() and GetServerNetworkAddress() please? UT had only the latter, and it was server-side... Also, what are GetURLProtocol(), CheckSpeedHack(), ClientValidate() and ServerValidationResponse() for?</p>
+<p>I couldn't find any detailed info on them at all&#160;:(</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Category:Legacy Class (UT2003)</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Category:Legacy Class (UT2004)</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – Move overview info to <a href="../../../../articles/c/o/n/Legacy%7EController_Overview_ec80.html" title="Legacy:Controller Overview">Controller Overview</a> or <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> and add standard class header and properties/methods descriptions. Update class hierarchy, but for only PlayerController subclasses.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 64/1000000
+Post-expand include size: 257/2097152 bytes
+Template argument size: 153/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/l/a/Legacy_talk%7EPlayerController_ab94.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:PlayerController">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:53, 10 June 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

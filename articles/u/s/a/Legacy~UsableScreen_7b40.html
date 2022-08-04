@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UsableScreen - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UsableScreen</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#What.27s_this.3F"><span class="tocnumber">1</span> <span class="toctext">What's this?</span></a></li>
+<li class="toclevel-1"><a href="#Where_it_is_used"><span class="tocnumber">2</span> <span class="toctext">Where it is used</span></a></li>
+<li class="toclevel-1"><a href="#Using_Usable_Screen_in_UT_maps"><span class="tocnumber">3</span> <span class="toctext">Using Usable Screen in UT maps</span></a>
+<ul>
+<li class="toclevel-2"><a href="#1._Setting_up_UnrealEd"><span class="tocnumber">3.1</span> <span class="toctext">1. Setting up UnrealEd</span></a></li>
+<li class="toclevel-2"><a href="#2._Creating_ScriptedTexture_for_screen"><span class="tocnumber">3.2</span> <span class="toctext">2. Creating ScriptedTexture for screen</span></a></li>
+<li class="toclevel-2"><a href="#3._Adding_UsableScreen"><span class="tocnumber">3.3</span> <span class="toctext">3. Adding UsableScreen</span></a></li>
+<li class="toclevel-2"><a href="#4._Adding_slices"><span class="tocnumber">3.4</span> <span class="toctext">4. Adding slices</span></a>
+<ul>
+<li class="toclevel-3"><a href="#4.1_UTextSlice"><span class="tocnumber">3.4.1</span> <span class="toctext">4.1 UTextSlice</span></a></li>
+<li class="toclevel-3"><a href="#4.2_UPlayerNameSlice"><span class="tocnumber">3.4.2</span> <span class="toctext">4.2 UPlayerNameSlice</span></a></li>
+<li class="toclevel-3"><a href="#4.3_UTextureSlice"><span class="tocnumber">3.4.3</span> <span class="toctext">4.3 UTextureSlice</span></a></li>
+<li class="toclevel-3"><a href="#4.4_UChangeableTextureSlice"><span class="tocnumber">3.4.4</span> <span class="toctext">4.4 UChangeableTextureSlice</span></a></li>
+<li class="toclevel-3"><a href="#4.5_USlicesContainer"><span class="tocnumber">3.4.5</span> <span class="toctext">4.5 USlicesContainer</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#5._UsableScreenController"><span class="tocnumber">3.5</span> <span class="toctext">5. UsableScreenController</span></a></li>
+<li class="toclevel-2"><a href="#6._UScreenSliceChanger"><span class="tocnumber">3.6</span> <span class="toctext">6. UScreenSliceChanger</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="What.27s_this.3F" id="What.27s_this.3F"></a></p>
+<h2><span class="mw-headline">What's this?</span></h2>
+<p>This is Unreal actor that makes an usable screen displayed on any texture.</p>
+<p>The basic principles of usable screen.</p>
+<ol>
+<li>It becames controllable by touching UsableScreenController actor.</li>
+<li>It has areas (called slices) that will cause different events on fire and alt-fire. Slices may have different properties and behaviour.</li>
+<li>I started to make UsableScreen for UT99, so it's UT2004 version is not finished yet (no replication and it's missing some features).</li>
+</ol>
+<p>You can find screenshots and downloads with demo maps at <a href="http://keaukraine.narod.ru/other/us.html" class="external free" title="http://keaukraine.narod.ru/other/us.html" rel="nofollow">http://keaukraine.narod.ru/other/us.html</a></p>
+<p><a name="Where_it_is_used" id="Where_it_is_used"></a></p>
+<h2><span class="mw-headline">Where it is used</span></h2>
+<p>It is used in Diamond's singleplayer map SP-Plateau.</p>
+<p>Also it will be used in such mods for Unreal Tournament as Lost Secrets of Na Pali and The Chosen One.</p>
+<p><a name="Using_Usable_Screen_in_UT_maps" id="Using_Usable_Screen_in_UT_maps"></a></p>
+<h2><span class="mw-headline">Using Usable Screen in UT maps</span></h2>
+<p><a name="1._Setting_up_UnrealEd"></a></p>
+<h3><span class="mw-headline">1. Setting up UnrealEd</span></h3>
+<p>Currently UsableScreen was developed and tested with Unreal Tournament version 436, so make sure you've pathced your game to this or later version.</p>
+<p>You will need to add some packages to EditPackages. Add this lines into [Editor.EditorEngine] section of your UnrealTournament.ini&#160;:</p>
+<pre>
+EditPackages=UsableScreen
+</pre>
+<p>Now you will have UsableScreen's package loaded at startup of UnrealEd.</p>
+<p><a name="2._Creating_ScriptedTexture_for_screen"></a></p>
+<h3><span class="mw-headline">2. Creating ScriptedTexture for screen</span></h3>
+<p>It is important to create corresponding scripted texture for each UsableScreen. After creating scripted texture you can apply it to some surface or even set it as skin for mesh.</p>
+<p>You can notice that 256x256 textures doesn't have enough space to fit all you need. You can create ScriptedTextures with any dimensions with this UnrealEd command:</p>
+<pre>
+TEXTURE NEW NAME="texturename" CLASS="engine.scriptedtexture" GROUP="somegroup" PACKAGE="somepackage" USIZE=size VSIZE=size
+</pre>
+<p><a name="3._Adding_UsableScreen"></a></p>
+<h3><span class="mw-headline">3. Adding UsableScreen</span></h3>
+<p>Now you should add UsableScreen actor to your map. It can be found in Actor Class Browser:</p>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; <a href="../../../../articles/c/l/i/Legacy%7EClientScriptedTexture_07a9.html" title="Legacy:ClientScriptedTexture">ClientScriptedTexture</a> &gt;&gt; <strong class="selflink">UsableScreen</strong></div>
+<p>Set it's ScriptedTexture property (ClientScriptedTexture section in properties window) to scripted texture corresponding this screen.</p>
+<p><a name="4._Adding_slices"></a></p>
+<h3><span class="mw-headline">4. Adding slices</span></h3>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/k/e/y/Legacy%7EKeypoint_41ee.html" title="Legacy:Keypoint">Keypoint</a> &gt;&gt; USlice</div>
+<p>Slice is an interactive rectangle area on UsableScreen's texture. You can choose between different types of slices.</p>
+<p>Common properties for all slices:</p>
+<p><b>X</b>: X coordinate of slice.</p>
+<p><b>Y</b>: Y coordinate of slice.</p>
+<p><b>SizeX</b>, <b>SizeY</b>: Height and width of slice.</p>
+<p><b>bVisible</b>: Toggles visibility of slice.</p>
+<p><b>bDrawFrame</b>: Indicates whether should frame be present on slice or not.</p>
+<p><b>FrameTexture</b>: Picks the color of frame.</p>
+<p><b>FireEvent</b>: Event caused by clicking fire button on slice.</p>
+<p><b>AltFireEvent</b>: Event caused by clicking alt-fire button on slice.</p>
+<p><b>ClickSound</b>: Sound played on fire/alt-fire.</p>
+<p>After adding slice to map you must add it to the Slices array in corresponding UsableScreen actor.</p>
+<p>USlice does nothing when added, you should use it's subclasses to have something displayed on screen.</p>
+<p>By default USlice calls only Trigger() event caused by clicking fire or alt-fire button. But it is possible to make it call UnTrigger() event by setting it's initial state to Controlling. Note that you can't fire different events with fire and alt-fire buttons in this state and you should set only one of FireEvent or AltFireEvent properties. UChangeableTextureSlice will work properly in this state and will change it's texture to default only after fire/alt-fire button was released.</p>
+<p><a name="4.1_UTextSlice"></a></p>
+<h4><span class="mw-headline">4.1 UTextSlice</span></h4>
+<p>Slice to display text.</p>
+<p><b>DisplayedText</b>: Text that will be displayed in this slice.</p>
+<p><b>FontName</b>: Name of font which will be used to display text.</p>
+<p><b>bAutoSize</b>: Indicates whether should splice be strethed to fit text or not.</p>
+<p><b>bTextWrap</b>: Indicates whether should text be wrapped or not.</p>
+<p><b>WrapDelimiter</b>: If bTextWrap is set to True, text will be wrapped by lack of splice/screen width and by special wrap delimiter symbol. The default delimiter is "|".</p>
+<p><a name="4.2_UPlayerNameSlice"></a></p>
+<h4><span class="mw-headline">4.2 UPlayerNameSlice</span></h4>
+<p>The sublass of UTextSlice that displays the name of player using this screen.</p>
+<p><a name="4.3_UTextureSlice"></a></p>
+<h4><span class="mw-headline">4.3 UTextureSlice</span></h4>
+<p>Slice to display graphical information. Notice that palettes of UsableScreen's base texture and displayed texture should be the same for normal colors.</p>
+<p><b>DisplayedTexture</b>: Texture to be displayed.</p>
+<p><b>bMaskedTexture</b>: Should it be masked or not.</p>
+<p><a name="4.4_UChangeableTextureSlice"></a></p>
+<h4><span class="mw-headline">4.4 UChangeableTextureSlice</span></h4>
+<p>These derived from UTextureSlice slices serves to create a set of buttons, only one of which is displayed pressed while all of rest remains unpressed.</p>
+<p><b>SecondTexture</b>: Second texture that should represent button in pressed state.</p>
+<p><b>AffectedSlices</b>: Array of UChangeableTextureSlices which works in conjuction with this slice.</p>
+<p><a name="4.5_USlicesContainer"></a></p>
+<h4><span class="mw-headline">4.5 USlicesContainer</span></h4>
+<p>I created this slice to place more than 32 slices at one screen and to group slices with common goals.</p>
+<p><b>Slices</b>: You can place up to 16 slices here.</p>
+<p><b>Parent</b>: Set UsableScreen on which it should be displayed. Notice that it should be added into UsableScreen's Slices list too.</p>
+<p><b>Notice</b>: Don't put one USlicesContainer into other USlicesContainer to prevent uncorrect work in network games.</p>
+<p>Coordinates of slices in USlicesContainer aren't relative to USlicesContainer's coordinates – they should be set as for any other slices.</p>
+<p><a name="5._UsableScreenController"></a></p>
+<h3><span class="mw-headline">5. UsableScreenController</span></h3>
+<p>To take control over UsableScreen you must add UsableScreenController.</p>
+<p>Properties:</p>
+<p><b>ControlledScreen</b>: UsableScreen which should be controlled by this UsableScreenController.</p>
+<p><b>TextureCenterX</b>, <b>TextureCenterY</b>: Coordinates of texture's center.</p>
+<p><b>MouseTexture</b>: Texture of mouse cursor.</p>
+<p><b>MouseSizeU</b>, <b>MouseSizeV</b>: The size of mouse cursor.</p>
+<p><a name="6._UScreenSliceChanger"></a></p>
+<h3><span class="mw-headline">6. UScreenSliceChanger</span></h3>
+<p>This actors creates dependencies between slices to create tab-controls. It has two lists of slices – content slices and control slices.</p>
+<p>Properties:</p>
+<p><b>ControlSlices</b>: Slices that makes controls to switch content slices</p>
+<p><b>ContentSlices</b>: Slices that contains corresponding data.</p>
+<p>You should set FireEvent or AltFireEvent of ControlSlices to the Tag property of UScreenSliceChanger.</p>
+<p>In UsableScreen version 1.1 UScreenSliceChanger has 2 states:</p>
+<ol>
+<li><b>TabSheets</b> state (default). It works like TabSheets in Windows. When it gets triggered it checks is actor which caused event a slice from ControlSlices array. If it is then it shows corresponding slice from ContentSlices. It always makes visible only one slice from ContentSlices.</li>
+<li><b>FreeSwitch</b> state. In this state it is possible to turn visible multiple slices. To implement this you should add several slices into ContentSlices array and set all corresponding slices in ControlSlices to the slice which will control these slices.</li>
+</ol>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 28/1000000
+Post-expand include size: 352/2097152 bytes
+Template argument size: 228/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/a/Legacy%7EUsableScreen_7b40.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/a/Legacy_talk%7EUsableScreen_e8a4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UsableScreen">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:40, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

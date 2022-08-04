@@ -1,0 +1,649 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:EONS Vulture - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:EONS Vulture</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//===========================================================</span>
+<span class="co1">// EONS Vulture</span>
+<span class="co1">// EONS Vulture by Wail of Suicide</span>
+<span class="co1">//===========================================================</span>
+ 
+<span class="kw5">class</span> EONSVulture <span class="kw5">extends</span> ONSAttackCraft;
+ 
+<span class="kw5">var</span> <span class="kw4">rotator</span> FanYaw,TailYaw;
+<span class="kw5">var</span> <span class="kw4">float</span>   FanYawRate;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostNetBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">Super</span>.<span class="me1">PostNetBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>WeaponPawns<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>!=<span class="kw9">None</span><span class="br0">)</span>
+            WeaponPawns<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Gun</span>.<span class="me1">SetOwner</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>Weapons.<span class="kw6">Length</span> == <span class="nu0">2</span> &amp;&amp; ONSLinkableWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        ONSLinkableWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">ChildWeapon</span> = Weapons<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>EONSVultureWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+            EONSVultureWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">bSkipFire</span> = <span class="kw9">True</span>;
+ 
+            <span class="kw1">if</span> <span class="br0">(</span>EONSVultureWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+                EONSVultureWeapon<span class="br0">(</span>Weapons<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span>.<span class="me1">bFiresRight</span> = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+ 
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">//</span>
+<span class="kw5">function</span> TakeDamage<span class="br0">(</span><span class="kw4">int</span> Damage, <a href="/Pawn"><span class="kw10">Pawn</span></a> instigatedBy, <span class="kw4">Vector</span> Hitlocation, <span class="kw4">Vector</span> Momentum, class&lt;DamageType&gt; <a href="/DamageType"><span class="kw10">DamageType</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span><a href="/DamageType"><span class="kw10">DamageType</span></a>, <span class="kw5">class</span><span class="st0">'DamTypeShockTankShockBall'</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>
+       Damage *= <span class="nu0">2.00</span>;
+ 
+    Momentum *= <span class="nu0">0.75</span>; <span class="co1">//</span>
+    <span class="kw6">Super</span>.<span class="me1">TakeDamage</span><span class="br0">(</span>Damage, instigatedBy, Hitlocation, Momentum, <a href="/DamageType"><span class="kw10">damageType</span></a><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//Ammo Stuff??? Or handle in gun</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     VehiclePositionString=<span class="st0">"in an EONS Vulture"</span>
+     VehicleNameString=<span class="st0">"EONS Vulture"</span>
+ 
+     Mesh=Mesh<span class="st0">'ONSBPAnimations.DualAttackCraftMesh'</span>
+     RedSkin=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'ONSBPTextures.CicadaTan'</span>
+     BlueSkin=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'ONSBPTextures.CicadaGreen'</span>
+ 
+     HealthMax=<span class="nu0">900.000000</span>
+     Health=<span class="nu0">900</span>
+ 
+     EntryPosition=<span class="br0">(</span>X=<span class="nu0">0</span>,Y=<span class="nu0">0</span>,Z=<span class="nu0">-20</span><span class="br0">)</span>
+     EntryRadius=<span class="nu0">300</span>
+     CollisionRadius=<span class="nu0">+240.0</span>
+ 
+     ExitPositions<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">0</span>,Y=<span class="nu0">-400</span>,Z=<span class="nu0">100</span><span class="br0">)</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">0</span>,Y=<span class="nu0">400</span>,Z=<span class="nu0">100</span><span class="br0">)</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">-600</span>,Y=<span class="nu0">0</span>,Z=<span class="nu0">100</span><span class="br0">)</span>
+ 
+     VehicleMass=<span class="nu0">3.000000</span>
+ 
+     TPCamWorldOffset=<span class="br0">(</span>Z=<span class="nu0">350</span><span class="br0">)</span>
+     TPCamDistance=<span class="nu0">1000.000000</span>
+     FanYawRate=<span class="nu0">98000</span>
+ 
+     IdleSound=<a href="/sound"><span class="kw10">sound</span></a><span class="st0">'CicadaSnds.CicadaIdle'</span>
+     StartUpSound=<a href="/sound"><span class="kw10">sound</span></a><span class="st0">'CicadaSnds.CicadaStartUp'</span>
+     ShutDownSound=<a href="/sound"><span class="kw10">sound</span></a><span class="st0">'CicadaSnds.CicadaShutDown'</span>
+ 
+     TrailEffectPositions<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">250</span>,Y=<span class="nu0">-20</span>,Z=<span class="nu0">10</span><span class="br0">)</span>;
+     TrailEffectPositions<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">250</span>,Y=<span class="nu0">20</span>,Z=<span class="nu0">10</span><span class="br0">)</span>;
+     <span class="co1">//TrailEffectClass=Class'ONS-MinusTankMeUp-)o(-Evo-V7.HammerExhaust'</span>
+ 
+     StreamerEffectOffset<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">-157.943192</span>,Y=<span class="nu0">-230.908951</span>,Z=<span class="nu0">89.714783</span><span class="br0">)</span>
+     StreamerEffectOffset<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">-157.943192</span>,Y=<span class="nu0">230.908951</span>,Z=<span class="nu0">89.714783</span><span class="br0">)</span>
+     StreamerEffectOffset<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">175.045227</span>,Y=<span class="nu0">-265.933014</span>,Z=<span class="nu0">-74.389023</span><span class="br0">)</span>
+     StreamerEffectOffset<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">175.045227</span>,Y=<span class="nu0">265.933014</span>,Z=<span class="nu0">-74.389023</span><span class="br0">)</span>
+ 
+     HeadlightCoronaOffset<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">289.538422</span>,Y=<span class="nu0">4.749050</span>,Z=<span class="nu0">-74.851456</span><span class="br0">)</span>
+     HeadlightCoronaOffset<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">210.839508</span>,Y=<span class="nu0">-159.415634</span>,Z=<span class="nu0">-74.851456</span><span class="br0">)</span>
+     HeadlightCoronaOffset<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>X=<span class="nu0">210.839508</span>,Y=<span class="nu0">159.415634</span>,Z=<span class="nu0">-74.851456</span><span class="br0">)</span>
+ 
+     DriverWeapons<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>WeaponClass=<span class="kw5">Class</span><span class="st0">'EONS-Cicada_BETA1.EONSVultureWeapon'</span>,WeaponBone=RightRLAttach<span class="br0">)</span>
+     DriverWeapons<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>WeaponClass=<span class="kw5">Class</span><span class="st0">'EONS-Cicada_BETA1.EONSVultureWeapon'</span>,WeaponBone=LeftRLAttach<span class="br0">)</span>
+     <span class="co1">//DriverWeapons(1)=(WeaponClass=Class'ONS-MinusTankMeUp-)o(-Evo-V7.HammerMinigunMaster',WeaponBone="leftminigun")</span>
+     <span class="co1">//DriverWeapons(2)=(WeaponClass=Class'ONS-MinusTankMeUp-)o(-Evo-V7.HammerMinigun',WeaponBone="rightminigun")</span>
+ 
+     Begin <a href="/Object"><span class="kw10">Object</span></a> <span class="kw5">Class</span>=KarmaParamsRBFull <span class="kw4">Name</span>=KParams0
+         KInertiaTensor<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="nu0">1.000000</span>
+         KInertiaTensor<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="nu0">3.000000</span>
+         KInertiaTensor<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="nu0">3.500000</span>
+         KCOMOffset=<span class="br0">(</span>X=<span class="nu0">-0.250000</span><span class="br0">)</span>
+         KLinearDamping=<span class="nu0">0.000000</span>
+         KAngularDamping=<span class="nu0">0.000000</span>
+         KStartEnabled=<span class="kw9">True</span>
+         bKNonSphericalInertia=<span class="kw9">True</span>
+         KActorGravScale=<span class="nu0">0.000000</span>
+         bHighDetailOnly=<span class="kw9">False</span>
+         bClientOnly=<span class="kw9">False</span>
+         bKDoubleTickRate=<span class="kw9">True</span>
+         bKStayUpright=<span class="kw9">True</span>
+         bKAllowRotate=<span class="kw9">True</span>
+         bDestroyOnWorldPenetrate=<span class="kw9">True</span>
+         bDoSafetime=<span class="kw9">True</span>
+         KFriction=<span class="nu0">0.500000</span>
+         KImpactThreshold=<span class="nu0">300.000000</span>
+         <span class="kw4">Name</span>=<span class="st0">"KParams0"</span>
+     End <a href="/Object"><span class="kw10">Object</span></a>
+ 
+     bSelected=<span class="kw9">True</span>
+ 
+     DestroyedVehicleMesh=StaticMesh<span class="st0">'ONSBP_DestroyedVehicles.Cicada.DestroyedCicada'</span>
+     DestructionEffectClass=<span class="kw5">class</span><span class="st0">'Onslaught.ONSVehicleExplosionEffect'</span>
+     DestructionLinearMomentum=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">250000</span>,<span class="kw7">Max</span>=<span class="nu0">400000</span><span class="br0">)</span>
+     DestructionAngularMomentum=<span class="br0">(</span><span class="kw7">Min</span>=<span class="nu0">100</span>,<span class="kw7">Max</span>=<span class="nu0">150</span><span class="br0">)</span>
+     DisintegrationHealth=<span class="nu0">-100</span>
+     DisintegrationEffectClass=<span class="kw5">class</span><span class="st0">'OnslaughtBP.ONSDualACDeathExp'</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//===========================================================</span>
+<span class="co1">// EONS Vulture</span>
+<span class="co1">// EONS Vulture by Wail of Suicide</span>
+<span class="co1">//===========================================================</span>
+ 
+<span class="kw5">class</span> EONSVultureWeapon <span class="kw5">extends</span> ONSLinkableWeapon;
+ 
+<span class="co1">//Minigun turret</span>
+<span class="kw5">var</span> class&lt;Emitter&gt;      mTracerClass;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">editinline</span> Emitter mTracer;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>             mTracerInterval;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>             mTracerPullback;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>             mTracerMinDistance;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>             mTracerSpeed;
+<span class="kw5">var</span> <span class="kw4">float</span>               mLastTracerTime;
+ 
+<span class="co1">//Dual AC</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bSkipFire;         <span class="co1">// If true, it ignore this shot and pass it to it's linked weapon</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bFiresRight;       <span class="co1">// If true, this weapon will eject shells to the right instead of the left</span>
+ 
+<span class="co1">//New</span>
+<span class="kw5">var</span> <span class="kw4">int</span>  ShellsLoaded;              <span class="co1">// Vultures can only load 2 shells at a time.</span>
+<span class="kw5">var</span> <span class="kw4">float</span> ShellReloadTime;          <span class="co1">// Once a shell has been shot, it takes this long to reload (Fire Interval only controls how long to fire the two loaded shells)</span>
+<span class="kw5">var</span> <span class="kw4">float</span> ShellReloadCounter;       <span class="co1">// Tracks progress of reloading</span>
+ 
+<span class="kw2">#EXEC</span> OBJ LOAD FILE=InterfaceContent.<span class="me1">utx</span>
+<span class="kw2">#EXEC</span> OBJ LOAD FILE=UT2004Weapons.<span class="me1">utx</span>
+ 
+<span class="co1">////</span>
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> StaticPrecache<span class="br0">(</span>LevelInfo L<span class="br0">)</span>
+<span class="br0">{</span>
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'VMparticleTextures.TankFiringP.CloudParticleOrangeBMPtex'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.TracerShot'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'WeaponSkins.RocketShellTex'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'XEffects.RocketFlare'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'XEffects.SmokeAlphab_t'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.TankTrail'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.SmokePanels2'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'ONSInterface-TX.tankBarrelAligned'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'VMParticleTextures.TankFiringP.TankDustKick1'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'EmitterTextures.MultiFrame.rockchunks02'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'EpicParticles.Smoke.SparkCloud_01aw'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'BenTex01.Textures.SmokePuff01'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Explosions.Fire.Part_explode2'</span><span class="br0">)</span>;
+    L.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.HardSpot'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdatePrecacheMaterials<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'VMparticleTextures.TankFiringP.CloudParticleOrangeBMPtex'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.TracerShot'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'WeaponSkins.RocketShellTex'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'XEffects.RocketFlare'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'XEffects.SmokeAlphab_t'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.TankTrail'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.SmokePanels2'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'ONSInterface-TX.tankBarrelAligned'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'VMParticleTextures.TankFiringP.TankDustKick1'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'EmitterTextures.MultiFrame.rockchunks02'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'EpicParticles.Smoke.SparkCloud_01aw'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'BenTex01.Textures.SmokePuff01'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Explosions.Fire.Part_explode2'</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'AW-2004Particles.Weapons.HardSpot'</span><span class="br0">)</span>;
+ 
+    <span class="kw6">Super</span>.<span class="me1">UpdatePrecacheMaterials</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdatePrecacheStaticMeshes<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheStaticMesh</span><span class="br0">(</span>StaticMesh<span class="st0">'WeaponStaticMesh.RocketProj'</span><span class="br0">)</span>;
+    <span class="kw6">Super</span>.<span class="me1">UpdatePrecacheStaticMeshes</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">////</span>
+ 
+ 
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+        <span class="kw6">reliable</span> <span class="kw1">if</span><span class="br0">(</span>bNetDirty &amp;&amp; <span class="kw8">Role</span>==<span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+                ShellsLoaded;
+<span class="br0">}</span>
+ 
+<span class="co1">//Tracer</span>
+<span class="kw5">function</span> <span class="kw4">byte</span> BestMode<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">return</span> <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//Tracer</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> Destroyed<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>mTracer != <span class="kw9">None</span><span class="br0">)</span>
+        mTracer.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw6">Super</span>.<span class="me1">Destroyed</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//Tracer</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateTracer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">vector</span> SpawnDir, SpawnVel;
+    <span class="kw5">local</span> <span class="kw4">float</span> hitDist;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> == <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>mTracer == <span class="kw9">None</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        mTracer = Spawn<span class="br0">(</span>mTracerClass<span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">bDropDetail</span> || <span class="kw8">Level</span>.<span class="me1">DetailMode</span> == DM_Low<span class="br0">)</span>
+        mTracerInterval = <span class="nu0">2</span> * <span class="kw1">Default</span>.<span class="me1">mTracerInterval</span>;
+    <span class="kw1">else</span>
+        mTracerInterval = <span class="kw1">Default</span>.<span class="me1">mTracerInterval</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>mTracer != <span class="kw9">None</span> &amp;&amp; <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> &gt; mLastTracerTime + mTracerInterval<span class="br0">)</span>
+    <span class="br0">{</span>
+            mTracer.<span class="me1">SetLocation</span><span class="br0">(</span>WeaponFireLocation<span class="br0">)</span>;
+ 
+        hitDist = VSize<span class="br0">(</span>LastHitLocation - WeaponFireLocation<span class="br0">)</span> - mTracerPullback;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>Instigator != <span class="kw9">None</span> &amp;&amp; Instigator.<span class="me1">IsLocallyControlled</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>
+            SpawnDir = <span class="kw4">vector</span><span class="br0">(</span>WeaponFireRotation<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            SpawnDir = Normal<span class="br0">(</span>LastHitLocation - WeaponFireLocation<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>hitDist &gt; mTracerMinDistance<span class="br0">)</span>
+        <span class="br0">{</span>
+            SpawnVel = SpawnDir * mTracerSpeed;
+ 
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">X</span>.<span class="kw7">Min</span> = SpawnVel.<span class="me1">X</span>;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">X</span>.<span class="kw7">Max</span> = SpawnVel.<span class="me1">X</span>;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">Y</span>.<span class="kw7">Min</span> = SpawnVel.<span class="me1">Y</span>;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">Y</span>.<span class="kw7">Max</span> = SpawnVel.<span class="me1">Y</span>;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">Z</span>.<span class="kw7">Min</span> = SpawnVel.<span class="me1">Z</span>;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">StartVelocityRange</span>.<span class="me1">Z</span>.<span class="kw7">Max</span> = SpawnVel.<span class="me1">Z</span>;
+ 
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">LifetimeRange</span>.<span class="kw7">Min</span> = hitDist / mTracerSpeed;
+            mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">LifetimeRange</span>.<span class="kw7">Max</span> = mTracer.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">LifetimeRange</span>.<span class="kw7">Min</span>;
+ 
+            mTracer.<span class="me1">SpawnParticle</span><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        mLastTracerTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">//Tracer</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> FlashMuzzleFlash<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">Super</span>.<span class="me1">FlashMuzzleFlash</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        DualFireOffset *= <span class="nu0">-1</span>;
+ 
+    UpdateTracer<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// ONS Weapon - Machine Gun alternating Fire</span>
+<span class="kw5">event</span> <span class="kw4">bool</span> AttemptFire<span class="br0">(</span>Controller C, <span class="kw4">bool</span> bAltFire<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Role</span> != <span class="kw9">ROLE_Authority</span> || bForceCenterAim<span class="br0">)</span>
+        <span class="kw1">return</span> <span class="kw9">False</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>FireCountdown &lt;= <span class="nu0">0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        CalcWeaponFire<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>bCorrectAim<span class="br0">)</span>
+            WeaponFireRotation = AdjustAim<span class="br0">(</span>bAltFire<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>Spread &gt; <span class="nu0">0</span><span class="br0">)</span>
+            WeaponFireRotation = <span class="kw4">rotator</span><span class="br0">(</span><span class="kw4">vector</span><span class="br0">(</span>WeaponFireRotation<span class="br0">)</span> + VRand<span class="br0">(</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>*Spread<span class="br0">)</span>;
+ 
+            DualFireOffset *= <span class="nu0">-1</span>;
+ 
+        Instigator.<span class="me1">MakeNoise</span><span class="br0">(</span><span class="nu0">1.0</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>bAltFire &amp;&amp; ShellsLoaded &gt; <span class="nu0">0</span><span class="br0">)</span>            <span class="co1">//Cannot Altfire unless there are shells loaded</span>
+        <span class="br0">{</span>
+            FireCountdown = AltFireInterval;
+            ShellsLoaded--;
+            AltFire<span class="br0">(</span>C<span class="br0">)</span>;
+ 
+            <span class="co1">//</span>
+            <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"AttemptFire: bAltFire &amp;&amp; ShellsLoaded &gt; 0: "</span>$ShellsLoaded<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span>bAltFire &amp;&amp; ShellsLoaded &lt; <span class="nu0">1</span><span class="br0">)</span>        <span class="co1">//Play sound if no shells are loaded</span>
+        <span class="br0">{</span>
+            PlaySound<span class="br0">(</span><a href="/sound"><span class="kw10">sound</span></a><span class="st0">'PickupSounds.FlakAmmoPickup'</span>, SLOT_Misc<span class="br0">)</span>;
+ 
+            <span class="co1">//</span>
+            <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"AttemptFire: bAltFire &amp;&amp; ShellsLoaded &lt; 1: "</span>$ShellsLoaded<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            FireCountdown = FireInterval;
+            GatlingFire<span class="br0">(</span>C, <span class="kw9">false</span>, <span class="kw9">true</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        AimLockReleaseTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> + FireCountdown * FireIntervalAimLock;
+ 
+        <span class="kw1">return</span> <span class="kw9">True</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">return</span> <span class="kw9">False</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">//DualACWeapon - Machine Gun Alternating Fire</span>
+<span class="kw5">function</span> GatlingFire<span class="br0">(</span>Controller C, <span class="kw4">bool</span> bAltFire, <span class="kw6">optional</span> <span class="kw4">bool</span> bDontSkip<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>!bSkipFire || bDontSkip<span class="br0">)</span>
+    <span class="br0">{</span>
+        CalcWeaponFire<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>bCorrectAim<span class="br0">)</span>
+            WeaponFireRotation = AdjustAim<span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+ 
+        DualFireOffset *= <span class="nu0">-1</span>;
+ 
+        Instigator.<span class="me1">MakeNoise</span><span class="br0">(</span><span class="nu0">1.0</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>bAltFire<span class="br0">)</span>
+        <span class="br0">{</span>
+            FireCountdown = AltFireInterval;
+            AltFire<span class="br0">(</span>C<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            FireCountdown = FireInterval;
+            Fire<span class="br0">(</span>C<span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        AimLockReleaseTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> + FireCountdown * FireIntervalAimLock;
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        FireCountdown = FireInterval;
+    <span class="br0">}</span>
+ 
+    bSkipFire = !bSkipFire;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>ChildWeapon != <span class="kw9">none</span> &amp;&amp; EONSVultureWeapon<span class="br0">(</span>ChildWeapon<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+        EONSVultureWeapon<span class="br0">(</span>ChildWeapon<span class="br0">)</span>.<span class="me1">GatlingFire</span><span class="br0">(</span>C, bAltFire, bDontSkip<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="co1">//Shell Fire</span>
+<span class="kw5">state</span> InstantFireMode
+<span class="br0">{</span>
+   <span class="kw5">function</span> AltFire<span class="br0">(</span>Controller C<span class="br0">)</span>
+   <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span>ShellsLoaded &gt; <span class="nu0">0</span><span class="br0">)</span>
+      <span class="br0">{</span>
+         SpawnProjectile<span class="br0">(</span>ProjectileClass, <span class="kw9">False</span><span class="br0">)</span>;
+         <span class="co1">//SetTimer(ShellReloadTime, false);</span>
+ 
+         <span class="co1">//</span>
+         <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"InstantFireMode AltFire: ShellsLoaded = "</span>$ShellsLoaded<span class="br0">)</span>;
+      <span class="br0">}</span>
+      <span class="kw1">else</span>
+      <span class="br0">{</span>
+ 
+      <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/*
+function Projectile SpawnProjectile(class&lt;Projectile&gt; ProjClass, bool bAltFire)
+{
+   if (ShellsLoaded &lt; 1)
+   {
+      PlaySound(sound'PickupSounds.FlakAmmoPickup', SLOT_Misc);
+      return none;
+   }
+   else
+      Super.SpawnProjectile(ProjClass, bAltFire);
+}
+*/</span>
+ 
+<span class="coMULTI">/*
+simulated event Timer()
+{
+        //
+}
+*/</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+           <span class="br0">{</span>
+              <span class="co1">// Shells reload after the change in time exceeds the specified charge duration</span>
+              ShellReloadCounter+=DeltaTime;
+              <span class="kw1">if</span> <span class="br0">(</span>ShellReloadCounter &gt; ShellReloadTime<span class="br0">)</span>
+              <span class="br0">{</span>
+                 <span class="kw1">if</span> <span class="br0">(</span>ShellsLoaded &lt; <span class="nu0">2</span><span class="br0">)</span>
+                 <span class="br0">{</span>
+                    ShellsLoaded++;
+ 
+                    <span class="co1">//</span>
+                    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Tick: Shells Loaded: "</span>$ShellsLoaded<span class="br0">)</span>;
+           <span class="br0">}</span>
+           ShellReloadCounter = <span class="nu0">0</span>;
+ 
+           <span class="co1">//</span>
+           <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Tick: Shell Reload Counter: "</span>$ShellReloadCounter<span class="br0">)</span>;
+              <span class="br0">}</span>
+           <span class="br0">}</span>
+ 
+           <span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span>DeltaTime<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">//Draw loading progress as chargebar</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">float</span> ChargeBar<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>ShellsLoaded &lt; <span class="nu0">2</span><span class="br0">)</span>
+       <span class="kw1">return</span> <span class="kw7">FClamp</span><span class="br0">(</span>ShellReloadCounter/ShellReloadTime, <span class="nu0">0.0</span>, <span class="nu0">0.999</span><span class="br0">)</span>;
+    <span class="kw1">else</span>
+       <span class="kw1">return</span> <span class="nu0">0.999</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="coMULTI">/*
+//Handle display of loaded shells
+simulated function DrawWeaponInfo(Canvas Canvas)
+{
+    NewDrawWeaponInfo(Canvas, 0.705*Canvas.ClipY);
+ 
+    //
+    Log("DrawWeaponInfo");
+}
+*/</span>
+ 
+<span class="co1">//Handle display of loaded shells</span>
+<span class="co1">//simulated function NewDrawWeaponInfo(Canvas Canvas, float YPos)</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHud<span class="br0">(</span>Canvas Canvas<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i,Count;
+    <span class="kw5">local</span> <span class="kw4">float</span> ScaleFactor;
+ 
+    ScaleFactor = <span class="nu0">99</span> * Canvas.<span class="me1">ClipX</span>/<span class="nu0">3200</span>;
+    Canvas.<span class="me1">Style</span> = ERenderStyle.<span class="me1">STY_Alpha</span>;
+    Canvas.<span class="me1">DrawColor</span> = <span class="kw5">class</span><span class="st0">'HUD'</span>.<span class="kw1">Default</span>.<span class="me1">WhiteColor</span>;
+    Count = <span class="kw7">Min</span><span class="br0">(</span><span class="nu0">2</span>, ShellsLoaded<span class="br0">)</span>;
+    <span class="kw1">for</span><span class="br0">(</span> i=<span class="nu0">0</span>; i&lt;Count; i++ <span class="br0">)</span>
+    <span class="br0">{</span>
+        Canvas.<span class="me1">SetPos</span><span class="br0">(</span>Canvas.<span class="me1">ClipX</span> - <span class="br0">(</span><span class="nu0">0.5</span>*i<span class="nu0">+1</span><span class="br0">)</span> * ScaleFactor, <span class="br0">(</span><span class="nu0">0.705</span>*Canvas.<span class="me1">ClipY</span><span class="br0">)</span><span class="br0">)</span>;  <span class="co1">//YPos=0.705*Canvas.ClipY</span>
+        Canvas.<span class="me1">DrawTile</span><span class="br0">(</span> <a href="/Material"><span class="kw10">Material</span></a><span class="st0">'HudContent.Generic.HUD'</span>, ScaleFactor, ScaleFactor, <span class="nu0">174</span>, <span class="nu0">259</span>, <span class="nu0">46</span>, <span class="nu0">45</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="coMULTI">/*
+    if ( ShellsLoaded &gt; 8 )
+    {
+        Count = Min(16,AmmoAmount(1));
+        for( i=8; i&lt;Count; i++ )
+        {
+            Canvas.SetPos(Canvas.ClipX - (0.5*(i-8)+1) * ScaleFactor, YPos - ScaleFactor);
+            Canvas.DrawTile( Material'HudContent.Generic.HUD', ScaleFactor, ScaleFactor, 174, 259, 46, 45);
+        }
+    }
+    */</span>
+ 
+    <span class="co1">//</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"NewDrawWeaponInfo"</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  Mesh=Mesh<span class="st0">'ONSBPAnimations.DualAttackCraftSideGunMesh'</span>
+  YawBone=RL_Right
+  PitchBone=RL_Right
+  WeaponFireAttachmentBone=FirePoint
+ 
+  bShowChargingBar=<span class="kw9">true</span>
+  bInstantFire=<span class="kw9">true</span>
+  bAimable=<span class="kw9">True</span>
+  bInstantRotation=<span class="kw9">true</span>
+  bIsRepeatingFF=<span class="kw9">True</span>
+  <span class="co1">//bAmbientFireSound=True</span>
+  bDoOffsetTrace=<span class="kw9">true</span>
+ 
+  AmbientEffectEmitterClass=<span class="kw5">class</span><span class="st0">'Onslaught.ONSRVChainGunFireEffect'</span>
+  FireInterval=<span class="nu0">0.10</span>
+  Spread=<span class="nu0">0.10</span>
+  DamageMin=<span class="nu0">7</span>
+  DamageMax=<span class="nu0">8</span>
+  RotationsPerSecond=<span class="nu0">0.09</span>
+ 
+  mTracerInterval=<span class="nu0">0.06</span>
+  mTracerClass=<span class="kw5">class</span><span class="st0">'XEffects.NewTracer'</span>
+  mTracerPullback=<span class="nu0">100.0</span>
+  mTracerMinDistance=<span class="nu0">0.0</span>
+  mTracerSpeed=<span class="nu0">20000.0</span>
+ 
+  FireSoundClass=<a href="/sound"><span class="kw10">sound</span></a><span class="st0">'ONSVehicleSounds-S.TankMachineGun01'</span>
+  SoundVolume=<span class="nu0">255</span>
+  AmbientSoundScaling=<span class="nu0">1.3</span>
+  FireSoundVolume=<span class="nu0">70.0</span>
+  AltFireSoundVolume=<span class="nu0">70.0</span>
+ 
+  ShakeOffsetMag=<span class="br0">(</span>X=<span class="nu0">1.0</span>,Y=<span class="nu0">1.0</span>,Z=<span class="nu0">1.0</span><span class="br0">)</span>
+  ShakeOffsetRate=<span class="br0">(</span>X=<span class="nu0">1000.0</span>,Y=<span class="nu0">1000.0</span>,Z=<span class="nu0">1000.0</span><span class="br0">)</span>
+  ShakeOffsetTime=<span class="nu0">2</span>
+  ShakeRotMag=<span class="br0">(</span>X=<span class="nu0">50.0</span>,Y=<span class="nu0">50.0</span>,Z=<span class="nu0">50.0</span><span class="br0">)</span>
+  ShakeRotRate=<span class="br0">(</span>X=<span class="nu0">10000.0</span>,Y=<span class="nu0">10000.0</span>,Z=<span class="nu0">10000.0</span><span class="br0">)</span>
+  ShakeRotTime=<span class="nu0">2</span>
+ 
+  YawStartConstraint=<span class="nu0">-5000</span>
+  YawEndConstraint=<span class="nu0">5000</span>
+  PitchUpLimit=<span class="nu0">18000</span>
+  PitchDownLimit=<span class="nu0">50000</span>
+ 
+  AIInfo<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>bInstantHit=<span class="kw9">true</span>,AimError=<span class="nu0">750</span><span class="br0">)</span>
+  AIInfo<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>bInstantHit=<span class="kw9">true</span>,AimError=<span class="nu0">750</span><span class="br0">)</span>
+  CullDistance=<span class="nu0">+8000.0</span>
+ 
+  <span class="co1">//</span>
+  ProjectileClass=<span class="kw5">class</span><span class="st0">'Onslaught.ONSRocketProjectile'</span>
+  <span class="co1">//EffectEmitterClass=class'Onslaught.ONSTankFireEffect'</span>
+  AltFireInterval=<span class="nu0">2.5</span>
+ 
+  ShellsLoaded=<span class="nu0">2</span>
+  ShellReloadTime=<span class="nu0">6.000000</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/o/n/Legacy%7EEONS_Vulture_fa07.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/o/n/Legacy_talk%7EEONS_Vulture_d3e2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:EONS_Vulture">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:25, 8 February 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

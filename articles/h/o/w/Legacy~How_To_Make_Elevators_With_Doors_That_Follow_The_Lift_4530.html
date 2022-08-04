@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:How To Make Elevators With Doors That Follow The Lift - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:How To Make Elevators With Doors That Follow The Lift</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i><b>This is a work around for</b></i>&#160;?<a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>,?<a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>,<a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>,</p>
+<p>By VitalOverdose</p>
+<p><a name="The_bHardAttach_issue" id="The_bHardAttach_issue"></a></p>
+<h2><span class="mw-headline">The bHardAttach issue</span></h2>
+<p>Anyone who's made a few maps must have tried to make an elevator...</p>
+<p>for those of you that haven't.. the doors are a bit of a problem.You can make the doors follow the elevator AND move apart to open. Once you have set the 'bHardAttach' in the default properties for the doors (to make them follow the lift) the X, Y and Z of the door becomes locked to that of the lift cab. In other words you cant make them move in any direction.</p>
+<p><a name="Solution" id="Solution"></a></p>
+<h2><span class="mw-headline">Solution</span></h2>
+<dl>
+<dt>Its only the vector position of the pivot that cannot be altered..not its rotaion.</dt>
+</dl>
+<p><br /></p>
+<div class="floatright"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_FOD_Elevatorcabtop.jpeg_832e.html" class="image" title="Legacy FOD Elevatorcabtop.jpeg"><img alt="" src="../../../../images/Legacy_FOD_Elevatorcabtop.jpeg" width="464" height="194" border="0" /></a></span></div>
+<div class="floatright"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_FOD_Elevatordoor.jpeg_3690.html" class="image" title="make the elevator ROUND,make the doors CURVED."><img alt="make the elevator ROUND,make the doors CURVED." src="../../../../images/Legacy_FOD_Elevatordoor.jpeg" width="430" height="447" border="0" /></a></span></div>
+<p><br />
+The trick to this is to make your elevator from a cylinder and not the traditional 'box' shape.</p>
+<p>Think of a revolving door, its X,Y,Z position never actually moves yet the mesh is moving. It works on the same principal as this method.</p>
+<ol>
+<li>Create a cylinder shape and hollow it out.</li>
+<li>Use the builder brush to Quarter a section of the cab to create the door shape
+<ul>
+<li>Alternative: use Tarquin's cylinder builder to create a hollow cylinder</li>
+</ul>
+</li>
+<li>Position the builder brush/door shape to its closed position on the lift cab.</li>
+<li>In the top down view set the pivot to the center of the cab, then 'create new static mesh'.</li>
+<li>(package=mylevel,name=door)</li>
+<li>(You will end up with door meshes with a pivot way off from the actual mesh but don't worry).</li>
+<li>leave the builder brush in the door shape for the moment as we'll use it for setting the collision in a moment</li>
+</ol>
+<p>Now go to the static mesh browser select 'mylevel' and with any luck you should now have your door mesh.</p>
+<p>If you have troubles getting the pivot in the right place you may want to consider using a separate subtracted box (building room) elsewhere to create the mesh.</p>
+<p>Add the door mesh back to the level and position the builder brush over it then right click on the brush and pick 'use brush as collision'. You can check if the collision has been set in the static mesh browser.</p>
+<p>[[Image:Legacy_FOD_Elevatorcab1.jpeg|]]</p>
+<p>Use the remaining cylinder to create the lift cab.</p>
+<p>Put the doors (movers)into a 'closed position' on the elevator before setting the pivot in the center of the elevator.</p>
+<p>Now add the doors as movers and hard attach them to the elevator.</p>
+<p>With the door pivot in the center of the round lift give the movers 2 keyframes for the open/closed action but ONLY use rotate to set the keyframes.</p>
+<dl>
+<dt>Don't move the pivot from the center of the cab when setting the keyframes.</dt>
+</dl>
+<p>And there you have it.....working elevator doors that follow the lift.</p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Ragdoll:</b> I have pivoting-outward (not sliding) doors attached to a cube-ish mover and they close and follow fine, but when the lift reaches its destination and triggers the door to open the doors fly back to the starting station. I know why this is happening-the key0 position that i set is back at the station and the door remembers that and goes back there rather than remain attached to the lift and open out at the 2nd station-but how can I fix this? Thanks in advance.</p>
+<p><b>VitalOverdose</b> Its probably down the the pivot moving as well as rotating. If you can design the doors so they can open without the pivot moving having to move at all (just rotate) then it should all work fine. Its like a door hinge, the center of a door hinge never actually changes location on a x,y,z, plane it just changes direction.</p>
+<p><b>computergod666:</b> So what about Attach Movers? I know they use SetBase() calls to attach things to them. Why doesn't that work? (Or does it? I've never tried to make an elevator with attached doors, but I'm scripting a Vehicle for UT and I want to know how to attach things like turrets to it.)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 106/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/h/o/w/Legacy%7EHow_To_Make_Elevators_With_Doors_That_Follow_The_Lift_4530.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/h/o/w/Legacy_talk%7EHow_To_Make_Elevators_With_Doors_That_Follow_The_Lift_b840.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:How_To_Make_Elevators_With_Doors_That_Follow_The_Lift">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:00, 9 February 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Projector - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Projector</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <strong class="selflink">Projector</strong></div>
+<p>Projectors display a <a href="../../../../articles/m/a/t/Legacy%7EMaterial_8b3a.html" title="Legacy:Material">material</a> on the world, just like a slide projector in real life. Projectors can be dynamic: if a player walks in front of one in the game, she will have the projection applied as well. This behaviour is toggled with bLevelStatic. Projections travel through meshes, BSP etc. Several properties give control over what type of surfaces the projection is applied to.</p>
+<p>When selected in <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a>, they display a yellow bounding box around a cyan trapezoid (but only once a texture is set!):</p>
+<ul>
+<li>the width and breadth of this is given by Display-&gt;DrawScale</li>
+<li>the depth of this is given by MaxTraceDistance. This is how far the projection is applied.</li>
+<li>the angle of projection by FOV.</li>
+<li>the orientation of the Projector is given by Movement-&gt;Rotation, just rotate it like a brush or any other directional actor (see <a href="../../../../articles/c/a/m/Legacy%7ECamera_Movement_203c.html" title="Legacy:Camera Movement">camera movement</a>).</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Enums"><span class="tocnumber">2</span> <span class="toctext">Enums</span></a></li>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">3</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-1"><a href="#Making_your_own_textures"><span class="tocnumber">4</span> <span class="toctext">Making your own textures</span></a></li>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">5</span> <span class="toctext">Known Subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>bool bClipBSP&#160;</dt>
+<dd>When True, the projector will not repeat over BSP (better to set your texture for Clamp, then it won't repeat over any surface)</dd>
+<dt>bool bClipStaticMesh&#160;</dt>
+<dd>When True, the projector will not repeat over Static Meshes (still better to use a clamped texture)</dd>
+<dt>bool bDynamicAttach&#160;</dt>
+<dd>The manual says not to mess with this, but that it needs to be False for the ProjectTag property to work properly.</dd>
+<dt>bool bGradient&#160;</dt>
+<dd>Smooths the edges of the projection</dd>
+<dt>bool bLevelStatic&#160;</dt>
+<dd>The projection displays on everything that is present at the start of play (or when the projector is spawned, if done in code), but nothing afterwards: players won't be affected. Useful for sticking graffiti on walls, for example.</dd>
+<dt>bool bProjectActor&#160;</dt>
+<dd>When true, the projector will project on any Actor</dd>
+<dt>bool bProjectBSP&#160;</dt>
+<dd>When true, the projector will project on any BSP surface</dd>
+<dt>bool bProjectOnAlpha&#160;</dt>
+<dd>The manual says "No longer used". Apparently it was once used to determine if the projector should project on Alpha maps, such as terrains. It doesn't work well.</dd>
+<dt>bool bProjectOnBackfaces&#160;</dt>
+<dd>If true the texture will be projected on surfaces facing towards and away from the projector. If false it will only be projected on geometry that faces the projector, but will also be more or less transparent depending on the angle of the surface to the projector. If your getting weird results on your static meshes be sure that the normals are not jacked up.</dd>
+<dt>bool bProjectOnParallelBSP&#160;</dt>
+<dd>The manual says "No longer used", however it appears that if you have adjoining BSP, and this is false, you may not get the projector across both pieces. (someone should add what engine version this "no longer used" goes to)</dd>
+<dt>bool bProjectOnUnlit&#160;</dt>
+<dd>When True, the projector will be projected onto surfaces that have the Unlit property set True.</dd>
+<dt>bool bProjectParticles&#160;</dt>
+<dd>When True, the projector will project onto particles that cross it's path</dd>
+<dt>bool bProjectStaticMesh&#160;</dt>
+<dd>When True, the projector will project onto Static Meshes (the FOV must be set greater than 0 for this to work, as well)</dd>
+<dt>bool bProjectTerrain&#160;</dt>
+<dd>When True, the projector will project onto terrain. It seems that projecting onto terrain cuts the brightness of the projection way down.</dd>
+<dt>int FOV&#160;</dt>
+<dd>Sets the angle of the projection trapezoid's sides. Please note that projectors with <i>FOV = 0</i> will not project on static meshes. For laser crosshairs and similar effects use <i>FOV = 1</i> instead.</dd>
+<dt>EProjectorBlending FrameBufferBlendingOp &#160;</dt>
+<dd>The blending operation between the framebuffer and the result of the base material blend.</dd>
+<dt>EProjectorBlending MaterialBlendingOp &#160;</dt>
+<dd>The blending operation between the material being projected onto and ProjTexture.</dd>
+<dt>int MaxTraceDistance&#160;</dt>
+<dd>How far the projection is applied. Sets how far the projection trapezoid extends away from the Projector in the direction of projection.</dd>
+<dt>name ProjectTag&#160;</dt>
+<dd>If set, the projector will only project on actors with the same <i>Tag</i></dd>
+<dt><a href="../../../../articles/m/a/t/Legacy%7EMaterial_8b3a.html" title="Legacy:Material">Material</a> ProjTexture&#160;</dt>
+<dd>the material to be projected.</dd>
+</dl>
+<p><a name="Enums" id="Enums"></a></p>
+<h2><span class="mw-headline">Enums</span></h2>
+<p>enum EProjectorBlending</p>
+<p>{</p>
+<p>PB_None,</p>
+<p>PB_Modulate,</p>
+<p>PB_AlphaBlend,</p>
+<p>PB_Add</p>
+<p>};</p>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<dl>
+<dt>native function AttachProjector()&#160;</dt>
+<dd>This function allows you to attach a projector to a surface. It will trace forward a number of units equal to the MaxTraceDistance variable, in a direction based on its rotation.</dd>
+<dt>native function DetachProjector(optional bool Force)&#160;</dt>
+<dd>This functional removes the projector from a surface, which is highly useful if you need to update a projector’s properties incase they have been modified since last calling AttachProjector().</dd>
+<dt>native function AbandonProjector(optional float Lifetime)&#160;</dt>
+<dd>allows you to turn off the projector after the amount of time passed into it elapses, basically leaving the texture attached to the surface while disconnect the Projector (actor) from it (for performance).</dd>
+<dt>native function AttachActor(Actor A)&#160;</dt>
+<dd>Attach the Projector to an Actor</dd>
+<dt>native function DetachActor(Actor A)&#160;</dt>
+<dd>Remove the Projector from an Actor</dd>
+</dl>
+<p><a name="Making_your_own_textures" id="Making_your_own_textures"></a></p>
+<h2><span class="mw-headline">Making your own textures</span></h2>
+<p>It appears that projector textures for light effects should be white where you want light cast, and mid-grey (127,127,127) where you don't. You don't need to set alpha or masked when you <a href="../../../../articles/i/m/p/Legacy%7EImport_The_Texture_57ec.html" title="Legacy:Import The Texture">import the texture</a>.</p>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li><a href="../../../../articles/d/y/n/Legacy%7EDynamicProjector_f199.html" title="Legacy:DynamicProjector">DynamicProjector</a></li>
+<li><a href="../../../../articles/s/h/a/Legacy%7EShadowProjector_ff59.html" title="Legacy:ShadowProjector">ShadowProjector</a></li>
+<li><a href="../../../../articles/x/s/c/Legacy%7EXScorch_1892.html" title="Legacy:XScorch">XScorch</a></li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="http://udn.epicgames.com/Two/ProjectorTricks" class="extiw" title="udn2:ProjectorTricks">udn2:ProjectorTricks</a> - Projector Tricks (udntech)</li>
+<li><a href="http://udn.epicgames.com/Two/ProjectorsTableOfContents" class="extiw" title="udn2:ProjectorsTableOfContents">udn2:ProjectorsTableOfContents</a> - Projectors Table of Contents (udncontent)</li>
+<li><a href="../../../../articles/w/e/i/Legacy%7EWeird_Projector_Effects_ff71.html" title="Legacy:Weird Projector Effects">Weird Projector effects</a> - Extra projector tricks hitherto unused by man</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>StarWeaver:</b> Ok, I keep seeing things in lighting docs say, basically, "You shouldn't try doing this anymore because projectors make it obsolete." What I haven't seen yet is anything explaining how to use projectors for light and shadow effects to those of us who like and generally have an easy time with manipulating level geometry to make it happen, and aren't generally that great with photoshop and texture creation to begin with ...</p>
+<p><b>SuperApe:</b> Good point. I only recently got into Projectors and while I can see the technical performance reasons (and the obvious engine support reasons) why to use Projectors over DynamicLighting and some LightingEffects, there is a definate lack of info here on how to substitute the normal DynamicLighting tricks with Projector functions. That would be useful. In short though, Projectors take a texture and can project it onto BSP, mesh, etc. This can project light or shadow. Each Tick(), DynamicProjectors remove the Projection and re-project it, to make effects like the Vehicle headlights. The reasons why DynamicLighting is "shunned" is two fold: a) A lot of those LightingEffects and LightTypes are unsupported in UT200x, and b) DynamicLighting requires a process each Tick(), similar to what DynamicProjectors do, that is expensive for the CPU to handle. Still, I use dynamic lighting in certain instances that Projectors just can't seem to handle; an ambient glow, for example.</p>
+<p><b>clandestine:</b> Project on particles doesn't actually work, does it?</p>
+<p><b>Wormbo:</b> Oh it works, but it's only visible in the game.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 160/2097152 bytes
+Template argument size: 86/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/r/o/Legacy%7EProjector_5913.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/r/o/Legacy_talk%7EProjector_a507.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Projector">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:11, 7 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

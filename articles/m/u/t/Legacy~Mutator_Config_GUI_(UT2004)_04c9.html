@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mutator Config GUI (UT2004) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mutator Config GUI (UT2004)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Mutator configuration within <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> is handled very differently from that in previous games (see <a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2003%29_ca5a.html" title="Legacy:Mutator Config GUI (UT2003)">Mutator Config GUI (UT2003)</a>). Rather than have a separate config window for each mutator all <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutators</a> share the same configuration.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Basic_Requirements"><span class="tocnumber">1</span> <span class="toctext">Basic Requirements</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Mutator_GUI_Functions"><span class="tocnumber">1.1</span> <span class="toctext">Mutator GUI Functions</span></a></li>
+<li class="toclevel-2"><a href="#Mutator_GUI_Properties"><span class="tocnumber">1.2</span> <span class="toctext">Mutator GUI Properties</span></a></li>
+<li class="toclevel-2"><a href="#Example_Code"><span class="tocnumber">1.3</span> <span class="toctext">Example Code</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_PlayInfo.AddSetting.28.29_Function"><span class="tocnumber">2</span> <span class="toctext">The PlayInfo.AddSetting() Function</span></a>
+<ul>
+<li class="toclevel-2"><a href="#AddSetting.28.29_Function_Parameters"><span class="tocnumber">2.1</span> <span class="toctext">AddSetting() Function Parameters</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Advanced_Configuration_Support"><span class="tocnumber">3</span> <span class="toctext">Advanced Configuration Support</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Basic_Requirements" id="Basic_Requirements"></a></p>
+<h2><span class="mw-headline">Basic Requirements</span></h2>
+<p>These are the basic elements needed to include configurable options for a mutator.</p>
+<p><a name="Mutator_GUI_Functions" id="Mutator_GUI_Functions"></a></p>
+<h3><span class="mw-headline">Mutator GUI Functions</span></h3>
+<p>Each mutator has the option to add its configuration options as a separate <i>group</i> to an existing configuration group. This is handled by adding the following <a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">static functions</a> to the mutator you are writing.</p>
+<dl>
+<dt>static function FillPlayInfo(PlayInfo PlayInfo)&#160;</dt>
+<dd>Responsible for actually creating the GUI widgets used to configure each option.</dd>
+<dt>static event string GetDescriptionText(string PropName)&#160;</dt>
+<dd>Responsible for returning "long" descriptions of each of the options.</dd>
+<dt>static function string GetDisplayText(string PropName)&#160;</dt>
+<dd>Repsonsible for returning the displayed menu name of each of the options. This function is not strictly required but it keeps things consistent with the GameInfo configuration code.</dd>
+</dl>
+<p><a name="Mutator_GUI_Properties" id="Mutator_GUI_Properties"></a></p>
+<h3><span class="mw-headline">Mutator GUI Properties</span></h3>
+<p>In addtion to the above functions your mutator will also have the following array properties. The number of elements within the array should equal the number of configurable items your mutator has.</p>
+<p>For example, if your mutator has two configuration options the the following arrays should be declared. The size of the arrays should match the number of properties you are attempting to configure.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> HitAndScore <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> <span class="kw6">config</span> <span class="br0">(</span>MutHitAndScore<span class="br0">)</span>;
+ 
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GUIDisplayText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>; <span class="co1">// Config property label names</span>
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GUIDescText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;    <span class="co1">// Config property long descriptions</span>
+ 
+<span class="co1">// If you have any drop lists then you will want to add a localized array</span>
+<span class="co1">// variable whose element count matches the number of selections within the drop list.</span>
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GUISelectOptions<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;
+</pre></div>
+<p><a name="Example_Code" id="Example_Code"></a></p>
+<h3><span class="mw-headline">Example Code</span></h3>
+<p>The following is some example code of GUI support for a mutator that counts the hits taken and resets the player's score after a certain threshold is reached.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">int</span> HitCount;  <span class="co1">// A counter for the number of hits taken</span>
+<span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">int</span> MaxHits;   <span class="co1">// Number of hits beore you lose your score</span>
+ 
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GUIDisplayText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>; <span class="co1">// Config property label names</span>
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GUIDescText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;    <span class="co1">// Config property long descriptions</span>
+ 
+<span class="co1">// Mutator code and class definition snipped for clarity</span>
+ 
+<span class="co1">// The function used to obtain the text that will be displayed within the</span>
+<span class="co1">// config window.</span>
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">string</span> GetDisplayText<span class="br0">(</span><span class="kw4">string</span> PropName<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// The value of PropName passed to the function should match the variable name</span>
+  <span class="co1">// being configured.</span>
+  <span class="kw1">switch</span> <span class="br0">(</span>PropName<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">case</span> <span class="st0">"HitCount"</span>:  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">GUIDisplayText</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+    <span class="kw1">case</span> <span class="st0">"MaxHits"</span>:  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">GUIDisplayText</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">GetDisplayText</span><span class="br0">(</span>PropName<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// The function used to obtain the "hint" text that is displayed at the bottom</span>
+<span class="co1">// of the config window.</span>
+<span class="kw6">static</span> <span class="kw5">event</span> <span class="kw4">string</span> GetDescriptionText<span class="br0">(</span><span class="kw4">string</span> PropName<span class="br0">)</span> <span class="br0">{</span>
+  <span class="co1">// The value of PropName passed to the function should match the variable name</span>
+  <span class="co1">// being configured.</span>
+  <span class="kw1">switch</span> <span class="br0">(</span>PropName<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">case</span> <span class="st0">"HitCount"</span>:  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">GUIDescText</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+    <span class="kw1">case</span> <span class="st0">"MaxHits"</span>:  <span class="kw1">return</span> <span class="kw1">default</span>.<span class="me1">GUIDescText</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">GetDescriptionText</span><span class="br0">(</span>PropName<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// This function is called to actually add the configuration options for the</span>
+<span class="co1">// mutator to the configuration window.</span>
+<span class="kw6">static</span> <span class="kw5">function</span> FillPlayInfo<span class="br0">(</span>PlayInfo PlayInfo<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw6">Super</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;  <span class="co1">// Always begin with calling parent</span>
+ 
+  <span class="co1">// The following function calls actually cause the configuration options to be</span>
+  <span class="co1">// added to the mutator config window.  See below for a description of how to</span>
+  <span class="co1">// use the PlayInfo.AddSetting() function.</span>
+  PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">GameGroup</span>, <span class="st0">"HitCount"</span>, GetDisplayText<span class="br0">(</span><span class="st0">"HitCount"</span><span class="br0">)</span>, <span class="nu0">0</span>, <span class="nu0">2</span>, <span class="st0">"Text"</span>, <span class="st0">"3;0:32"</span>, <span class="st0">""</span>, <span class="kw9">True</span>, <span class="kw9">True</span><span class="br0">)</span>;
+ 
+  PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">GameGroup</span>, <span class="st0">"MaxHits"</span>, GetDisplayText<span class="br0">(</span><span class="st0">"MaxHits"</span><span class="br0">)</span>, <span class="nu0">0</span>, <span class="nu0">0</span>, <span class="st0">"Text"</span>, <span class="st0">"3;0:999"</span><span class="br0">)</span>;
+ 
+  <span class="co1">// Note that the second parameter, and the value passed to the GetDisplayText()</span>
+  <span class="co1">// within the calls to the AddSetting() function above matches the</span>
+  <span class="co1">// name of the attribute we want to configure as declared within the class defintion</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span> <span class="br0">{</span>
+  HitCount=<span class="nu0">8</span>
+  MaxHits=<span class="nu0">500</span>
+  GUIDisplayText<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="st0">"Hit Count"</span>
+  GUIDisplayText<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="st0">"Max Hits"</span>
+  GUIDescText<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="st0">"The number of hits each player can take"</span>
+  GUIDescText<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="st0">"The number of hits that a player can take before their score is reset"</span>
+ 
+  <span class="co1">//Group these components when other mutator components are configurable</span>
+  GroupName = <span class="st0">"HitAndScore"</span>
+  <span class="co1">//Display of mutator in mutator list</span>
+  FriendlyName = <span class="st0">"Hit And Score"</span>
+  <span class="co1">//Description of mutator appearing in GUI</span>
+  description = <span class="st0">"mutator that counts the hits taken and resets the player's score after a certain threshold is reached."</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Note:</b> If you are subclassing from an existing mutator, or from the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> class then your GetDisplayText() and GetDescriptionText() functions should include a call to the method defined within the superclass. Be aware that the inclusion of a GetDisplayText() function is considered good practice rather than being mandatory so check that the function is defined within the superclass before calling it. Note that on patch 3355, GetDisplayText will cause a compile error, so you do not need this function when compiling for that environment.</p>
+<p><a name="The_PlayInfo.AddSetting.28.29_Function" id="The_PlayInfo.AddSetting.28.29_Function"></a></p>
+<h2><span class="mw-headline">The PlayInfo.AddSetting() Function</span></h2>
+<p>The PlayInfo.AddSetting() function is defined as shown below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">704</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> AddSetting<span class="br0">(</span><span class="kw4">string</span> Group, <span class="kw4">string</span> PropertyName, <span class="kw4">string</span> Description, <span class="kw4">byte</span> SecLevel, <span class="kw4">byte</span> Weight, <span class="kw4">string</span> RenderType, <span class="kw6">optional</span> <span class="kw4">string</span> Extras, <span class="kw6">optional</span> <span class="kw4">string</span> ExtraPrivs, <span class="kw6">optional</span> <span class="kw4">bool</span> bMultiPlayerOnly, <span class="kw6">optional</span> <span class="kw4">bool</span> bAdvanced<span class="br0">)</span>;
+</pre></div>
+<p><a name="AddSetting.28.29_Function_Parameters" id="AddSetting.28.29_Function_Parameters"></a></p>
+<h3><span class="mw-headline">AddSetting() Function Parameters</span></h3>
+<p>What follows is a description of each of the parameters to the AddSetting() function.</p>
+<dl>
+<dt>Group&#160;</dt>
+<dd>This is the group the setting falls into. Within the mutator config window this setting has no effect. It is used primarily to group similar properties together within the main "game" and "game rules" windows. The values used by the default UT2004 code are defined within the /Engine/Info class and are as follows:</dd>
+<dt>* default.RulesGroup ("Rules")</dt>
+<dt>* default.ServerGroup ("Server")</dt>
+<dt>* default.BotsGroup ("Bots")</dt>
+<dt>* default.GameGroup ("Game")</dt>
+<dt>* default.ChatGroup ("Chat")</dt>
+<dt>* default.MapVoteGroup ("Map Voting")</dt>
+<dt>* default.KickVoteGroup ("Kick Voting")</dt>
+<dt>PropertyName&#160;</dt>
+<dd>This is the name of the property that this setting relates to. It must match exactly the name of the class configuration attribute that this menu setting relates to.</dd>
+<dt>Description&#160;</dt>
+<dd>This is the label that will be used when the configuration option is displayed within the GUI window.</dd>
+<dt>SecLevel&#160;</dt>
+<dd>This is the security level of the setting. Values greater than zero may require the user to be logged on (<i>Is this used more at the Web-Admin level?</i>). For a mutator it will generally be passed as 0.</dd>
+<dt>Weight&#160;</dt>
+<dd>This is simply an value used to order the configuration options within the group. For the purposes of the Mutator config screen it can be set to 0.</dd>
+<dt>RenderType&#160;</dt>
+<dd>This is the type of widget to be used to alter the value of the property being configured. The allowed values are listed below.</dd>
+<dt>* "Check" Used when a check boxes is required.</dt>
+<dt>* "Text" - Used when a standard entry field is required.</dt>
+<dt>* "Select" - Used when a drop list is needed.</dt>
+<dt>* "Custom" - Used when an advanced configuration page (new window) is needed. This value cannot be used within a mutator configuration setting.</dt>
+<dt>Extras&#160;</dt>
+<dd>This parameter is used in conjunction with the RenderType parameter to determine what is actually displayed. The format for the string is described below.</dd>
+<dt>&#160;; Check&#160;</dt>
+<dd>Ignored.</dd>
+<dt>&#160;; Text&#160;</dt>
+<dd>This parameter can be in a number of different forms</dd>
+<dt>&#160;; * "value" for the default value of the Text Edit box.</dt>
+<dt>&#160;; * "width;value" for a Text Edit box with a given width and default value.</dt>
+<dt>&#160;; * "width;lowest</dt>
+<dd>highest" for a Ranged Edit box that allows values between the lowest and highest to be entered. If the range is a float then the values should be specified with a decimal point.</dd>
+<dt>&#160;; Select&#160;</dt>
+<dd>The paramter should be a semi-colon delimited list of value and name pairs. For example "value1;name1;value2;name2;value3;name3".</dd>
+<dt>&#160;; Custom&#160;</dt>
+<dd>This configuration type cannot be used in a mutator configuration. However values are of the form: <b>"##;Package.WebHandlerClass;Package.CustomConfigPage"</b><br />
+The first part generally indicates an optional width. The second part allows to specify the class that should handle rendering this property in webadmin. The third part is the classname of a custom GUI page for this property. All three parts are optional.<br />
+Couple of notes:</dd>
+<dt>&#160;; * The semi-colons are only required if you are using the second or third part of the field. So valid values could be <b>"255"</b>, <b>"255;;GUI2K4.MOTDConfigPage"</b> or <b>";;GUI2K4.MOTDConfigPage"</b>.</dt>
+<dt>&#160;; * The second part (webadmin support) is currently not implemented, so any value you put here will be ignored.</dt>
+<dt>&#160;; * If you specify a custom config page, your property will appear in the GUI list as a button. Clicking this button opens the page you've specified. You'd normally only need to do this for more complex properties, such as structs.</dt>
+<dt>ExtraPrivs&#160;</dt>
+<dd>Used to specify any additional privileges that are required in order for an admin to modify the value of this property from e.g. webadmin. You'd only use this field if have custom privilege classes (i.e. subclasses of xPrivilegeBase), and then only in cases where you'd like the property to appear in the same group as other properties, but only for certain admins.<br />
+<br />
+Expected values would be the abbreviation for the corresponding privilege type as listed in the SubPrivs value of your custom privilege class. In order to require multiple privileges for this property, use the pipe character as a delimiter.<br />
+For example, to have a property appear on the Game page, but only if the admin also has the ability to kick players, you could specify "Game" for the Group parameter, and "Kp" for this parameter.</dd>
+<dt>bMultiPlayerOnly&#160;</dt>
+<dd>This parameter should be set to True if the configuration option only applies within a mutliplayer game.</dd>
+<dt>bAdvanced&#160;</dt>
+<dd>This parameter should be set to True if the configuration option should only be displayed when the "Advanced" options checkbox is checked.</dd>
+</dl>
+<p><a name="Advanced_Configuration_Support" id="Advanced_Configuration_Support"></a></p>
+<h2><span class="mw-headline">Advanced Configuration Support</span></h2>
+<p>If you need to pass on the PlayInfo object to other <b>Info subclasses</b> then after the call to <tt>FillPlayInfo</tt> you should call the <tt>PlayInfo.PopClass()</tt> function. An example is given below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Example take from Engine/GameInfo.uc FillPlayInfo() function</span>
+<span class="kw6">static</span> <span class="kw5">function</span> FillPlayInfo<span class="br0">(</span>PlayInfo PlayInfo<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw6">Super</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;  <span class="co1">// Always begin with calling parent</span>
+<span class="co1">// code snipped</span>
+  <span class="kw1">if</span> <span class="br0">(</span><span class="kw1">default</span>.<span class="me1">GameReplicationInfoClass</span> != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">default</span>.<span class="me1">GameReplicationInfoClass</span>.<span class="kw6">static</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;
+    PlayInfo.<span class="me1">PopClass</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="co1">// code snipped</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The call to <tt>Super.FillPlayInfo()</tt> performs an AddClass(). Not popping the class off the stack will result in a different number of classes being held within the PlayInfo's class stack on function exit than on function entry.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a></li>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Availability_%28UT2004%29_8f6a.html" title="Legacy:Mutator Availability (UT2004)">Mutator Availability (UT2004)</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>EntropicLqd:</b> Reset discussion and added real property names.</p>
+<p><b>GnaM:</b> Maybe it's just me, but this lesson seems pretty vague on how to actually use the 'extras' parameters. After reading it, I understand that that I need to use a list of names and values for "select", but I have no idea how to use those values to actiate changes within the game. Perhaps a small simple example of how to use each type of extra in the code would help. Anyway, it's also kind of hard to find this lesson from the UScript topics page. It seems to me a link right under the other mutator tutorials would be apropriate. Thanks.</p>
+<p><b>Foxpaw:</b> Just one minor point: this tutorial would likely be hard to follow, as it is not a tutorial.&#160;;) It's a reference, probrably aimed at people who already have a general idea of what to do and are looking for specifics.</p>
+<p><b>Geist:</b> Remember, you need to declare your configurable vars with the <i>config</i> keyword. Otherwise, they wont appear in the Configure Mutator dialog, and you'll get runtime warnings in the log like " Warning: Property 'HitCount' not found in class 'Class MutHitAndScore.HitAndScore' " when opening that dialog. This was very confusing at first, since HitCount is definitely there, but it just wasn't a <i>configurable property</i> (slightly misleading warning message, I guess). I've made the corrections in the script above.</p>
+<p><b>LionsHeart:</b> I have a slight confusion on what I should do...I'm not sure what I should do with the PropName string. Do I set it equal to something? If would would like to give me a hand quickly, email me at LionsHeart455@hotmail.com. Thanks!</p>
+<p><b>Geist:</b> Take a look at how <i>PropName</i> is used the functions. <i>PropName</i> is used in the switch() of both GetDisplayText() and GetDescriptionText() as a key to what strings to return. These strings are then displayed in the <i>Mutator Configuration</i> screen in the game.</p>
+<p><b>Devi:</b> I found this pretty helpful, I managed to add a config window to my mutator in about 20 minutes with it =)</p>
+<p><b>Sir_Brizz:</b> Shouldn't we add the ability to create a seperate Config Page to this page as well?</p>
+<p><b>SuperApe:</b> I added the following line to the end of the GetDescriptionText() event code above...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">GetDescriptionText</span><span class="br0">(</span>PropName<span class="br0">)</span>;
+</pre></div>
+<p>...It appears to be necessary. And am I correct in assuming that while the GetDisplayText() function can be called whatever, the GetDescriptionText() event must be explicitly named so? (Please correct me if I'm wrong on any of this.) My question is this: How can I have a checkbox property <i>enable</i> another PlayInfo setting? IOW, a main option "Allow Foo" check box is available, but a greyed out (or non-existant) sub-option "Start with Foo" check box will not be available unless the "Allow Foo" box is checked. Is something like that possible with the UT2004 GUI system?</p>
+<p><b>Wormbo:</b> GetDisplayText() is only a helper function for this class, but GetDescriptionText() is an engine event.</p>
+<p><b>SuperApe:</b> That's what I figured. Thank you. Now, about my question of enabling/disabling Mutator config option widgets: I see an example of what I'm looking for in the standard game config for bots. If you select Bot Mode: "Specify Number" (as opposed to "Use Map Defaults"), the "Number of Bots" widget is enabled. That is what I'm looking for and it's not apparent to me, in the code, how this works. Is this functionality even available to Mutator configs?</p>
+<p><b>Wormbo:</b> This information can't be stored in <a href="../../../../articles/p/l/a/Legacy%7EPlayInfo_6e9c.html" title="Legacy:PlayInfo">PlayInfo</a>, so the functionality is not available in <a href="../../../../articles/p/l/a/Legacy%7EPlayInfo_6e9c.html" title="Legacy:PlayInfo">PlayInfo</a>-generated config menus like the mutator configuration.</p>
+<p><b>SuperApe:</b> Thank you for clearing that up, Wormbo.</p>
+<p><b>Bitty:</b> Added the following to GetDisplayText()...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">GetDisplayText</span><span class="br0">(</span>PropName<span class="br0">)</span>;
+</pre></div>
+<p>It's necessary to do this to prevent some of the default settings descriptions from disappearing in the UI. Also, these functions are not limited to mutators, but can also be used in custom gametype classes. Another thing you may want to mention here is if you have a lot of configurable options, you can create separate configuration sections by doing the following in FillPlayInfo()...</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw5">function</span> FillPlayInfo<span class="br0">(</span>PlayInfo PlayInfo<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">string</span> MyGroup;
+ 
+  <span class="kw6">Super</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;
+ 
+  MyGroup=<span class="st0">"My Config Section"</span>;
+  PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span>MyGroup, <span class="st0">"bAddEffect"</span>, GetDisplayText<span class="br0">(</span><span class="st0">"bAddEffect"</span><span class="br0">)</span>, <span class="nu0">0</span>, <span class="nu0">1</span>, <span class="st0">"Check"</span><span class="br0">)</span>;
+  <span class="co1">// code snipped</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>mad:</b> Added some lines to show how to change what is displayed in the mutator list. The above code by Bitty will also pretty much do the same thing. Also, when I tried to add GetDisplayText function to my mutator, there was a compile error. I have patch 3355, so this may be the reason why I get compilation errors. I added a note about this below the main class code up top.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 43/1000000
+Post-expand include size: 27/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/u/t/Legacy%7EMutator_Config_GUI_%28UT2004%29_04c9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/u/t/Legacy_talk%7EMutator_Config_GUI_%28UT2004%29_17ac.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mutator_Config_GUI_%28UT2004%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:00, 19 February 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

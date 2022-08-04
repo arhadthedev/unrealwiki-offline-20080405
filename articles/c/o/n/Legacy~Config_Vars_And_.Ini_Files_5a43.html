@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Config Vars And .Ini Files - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Config Vars And .Ini Files</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Often it is desireable to preserve the output of a program after it has terminated. Other times, it may be desirable to be able to read external files for user settings, etcetera. Games, of course, are no different. Unfortunately, <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScripts</a> file system functions are somewhat limited. There are no file streams or other sorts of low-level file interaction, but you can usually still do what you want within the constraints of the file system functions that are availible.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Write-Only_and_Read-Write_Operations"><span class="tocnumber">1</span> <span class="toctext">Write-Only and Read-Write Operations</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Config_Variables_and_.Ini_Files"><span class="tocnumber">1.1</span> <span class="toctext">Config Variables and .Ini Files</span></a></li>
+<li class="toclevel-2"><a href="#SavePackage"><span class="tocnumber">1.2</span> <span class="toctext">SavePackage</span></a></li>
+<li class="toclevel-2"><a href="#Saved_Games"><span class="tocnumber">1.3</span> <span class="toctext">Saved Games</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Read-Only_Operations"><span class="tocnumber">2</span> <span class="toctext">Read-Only Operations</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Localized_Strings"><span class="tocnumber">2.1</span> <span class="toctext">Localized Strings</span></a></li>
+<li class="toclevel-2"><a href="#Meta_Information"><span class="tocnumber">2.2</span> <span class="toctext">Meta Information</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Write-Only_and_Read-Write_Operations" id="Write-Only_and_Read-Write_Operations"></a></p>
+<h2><span class="mw-headline">Write-Only and Read-Write Operations</span></h2>
+<p>There are several reasons why one might want to write to the hard drive from within <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>. The most common, of course, is for logging and debugging, but data is also often written to the hard drive for later recovery by some reading function. There are three known ways to write data to the hard drive: the <a href="../../../../articles/l/o/g/Legacy%7ELog_File_4fcc.html" title="Legacy:Log File">log file</a>, config variables/ini files, and the savepackage suite of functions.</p>
+<p><a name="Config_Variables_and_.Ini_Files" id="Config_Variables_and_.Ini_Files"></a></p>
+<h3><span class="mw-headline">Config Variables and .Ini Files</span></h3>
+<p>.Ini files are the closest to a two way (read/write) operation that Unrealscript can perform. .Ini files are read when the class they are associated with is first loaded. After that, they can only be written to, but the values from their reading remains in memory. .Ini files are very closely tied to config variables, and they work by changing the default properties of those variables. For instance, if you have a string that is a config variable, and you change it's value in the .Ini file, it's default value for that string will have updated when that class' package is next loaded. This is a very good method of having settings persist on something that has only one instance.</p>
+<p>Writing to an .ini file is a two-step process, but it is simple to do. First, you must set the value of the variables you wish to write to disk. Usually if you are using .ini files to create persistant settings this will likely already be done. Once that is done, simply have your class call either the <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">native final</a> <b>SaveConfig()</b> or <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">native static final</a> <b>StaticSaveConfig()</b>, defined in <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>. SaveConfig() will write the contents of all the config variables in the instance of the class you call it from to the .Ini file assigned to that class. This defaults to User.Ini, but can be changed in the class declaration. (See <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class Syntax</a>) StaticSaveConfig() is similar to SaveConfig(), but instead saves the default values of the config variables to disk.</p>
+<p>Note that every subclass will have it's own version of the config variables stored in the .Ini file. If you want all subclasses to share the same persistent value, you should declare your variable as <b>globalconfig</b> instead of <b>config</b>. See <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a>.</p>
+<p>Also bear in mind that due to the nature of config variables, they will rarely be the same on both server and client. The server also will not automatically replicate it's config variables, unless they are replicated variables, in which case they will be replicated when they change or when a relevant actor replication takes place. See <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a>.</p>
+<p>There appears to be a limit on the amount of data that can be written to the .Ini file, though it appears to be fairly great. Anything over about a kilobyte of data (such as a large struct) stored in a single variable may not be written properly.</p>
+<p>Note also that there is an interesting quirk when saving structs in this way. Members of the struct, will be stored, but members of the struct declared as transient will not be stored. However, not only will they not be stored, but they will be reset to their initialization values when you call SaveConfig() or StaticSaveConfig(). You should back this information up before saving if you do not want it to be lost during the save.</p>
+<p><a name="SavePackage" id="SavePackage"></a></p>
+<h3><span class="mw-headline">SavePackage</span></h3>
+<p>See <a href="../../../../articles/d/a/t/Legacy%7EDataObject_c973.html" title="Legacy:DataObject">DataObject</a>.</p>
+<p><a name="Saved_Games" id="Saved_Games"></a></p>
+<h3><span class="mw-headline">Saved Games</span></h3>
+<p>You can save the entire world context via the <b>savegame</b> console command. The syntax is simple:</p>
+<div class="infobox infobox-class infobox-legacy">savegame <i>&lt;number&gt;</i></div>
+<p>Where the number is the number of the saved world state. The "number" of the saved world state determines it's filename on disk, and is required to later restore the world state.</p>
+<p>The restore the world state, you "load" it just as you would load a level. Instead of indicating a level name, however, simply load the level:</p>
+<div class="infobox infobox-class infobox-legacy">{{{1}}}</div>
+<p>Saving and loading does not work in UT2003, but is an engine feature and should work in other Unreal Engine titles, including UT2004.</p>
+<p><a name="Read-Only_Operations" id="Read-Only_Operations"></a></p>
+<h2><span class="mw-headline">Read-Only Operations</span></h2>
+<p>Read-only operations may not sound as useful, but can in some ways be even more useful for certain applications. These are often referred to as INT files, though there is more to them than they are usually given credit for. There are two main ways to use <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT files</a>:</p>
+<p><a name="Localized_Strings" id="Localized_Strings"></a></p>
+<h3><span class="mw-headline">Localized Strings</span></h3>
+<p>Behaving very much like an .Ini file, any string variable may be declared as <b>localized</b> in the same was as a variable could be declared as a config variable. A localized variable will be loaded from the INT file when the package is first loaded into memory. However, localized strings are tied into the lanugage preference setting in the Unreal Engine, so the INT file is not always used. INT is the <i>international</i> version of the localized information files. There are numerous other files with different extensions, and the extension indicates which language the file is intended for. If your Unreal Engine is set up for french, the FRT file will be used instead, etc. The INT file is always used as a fallback if there is no file for your language or if the file for your language of choice does not contain a value for a localized string. See <a href="../../../../articles/l/o/c/Legacy%7ELocalization_c983.html" title="Legacy:Localization">Localization</a>.</p>
+<p><a name="Meta_Information" id="Meta_Information"></a></p>
+<h3><span class="mw-headline">Meta Information</span></h3>
+<p>You can read lots of stuff from these and parse it out to get whatever information you need. See <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT File</a>.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/d/a/t/Legacy%7EDataObject_c973.html" title="Legacy:DataObject">DataObject</a></li>
+<li><a href="../../../../articles/p/e/r/Legacy%7EPerObjectConfig_f105.html" title="Legacy:PerObjectConfig">PerObjectConfig</a></li>
+<li><a href="../../../../articles/f/i/l/Legacy%7EFile_Format_14ce.html" title="Legacy:File Format">File Format</a></li>
+</ul>
+<hr />
+<p><b>Foxpaw:</b> This page should probrably be renamed to something more generic about saving and loading data, since it's the page with all the info about various forms of persistent data.</p>
+<p><b>Sweavo:</b> I agree, and the ini file and savepackage stuff should have a page each (especially while we can't make links to internal anchors)</p>
+<p><b>Fyfe:</b> <a href="../../../../articles/d/a/t/Legacy%7EDataObject_c973.html" title="Legacy:DataObject">DataObject</a> and <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT File</a> already have their own pages. I suggest stripping out the sections of <a href="../../../../articles/d/a/t/Legacy%7EDataObject_c973.html" title="Legacy:DataObject">DataObject</a> and <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT File</a>, then move Save Games to it's own page. Each page can then link back to each other in the related topics section.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a> – Contains more info than the page title describes.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 22/1000000
+Post-expand include size: 167/2097152 bytes
+Template argument size: 22/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/o/n/Legacy%7EConfig_Vars_And_.Ini_Files_5a43.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/o/n/Legacy_talk%7EConfig_Vars_And_.Ini_Files_134c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Config_Vars_And_.Ini_Files">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:36, 26 November 2006 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MilkShape For UT2003 Static Meshes/Export And Import - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MilkShape For UT2003 Static Meshes/Export And Import</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/i/l/Legacy%7EMilkShape_For_UT2003_Static_Meshes_b848.html" title="Legacy:MilkShape For UT2003 Static Meshes">Legacy:MilkShape For UT2003 Static Meshes</a></span></div>
+	    	    	    <!-- start content -->
+	    <blockquote class="legacyquote">
+<p>NOTE: The pictures in this tutorial do not show the interface elements to relative scale.</p>
+</blockquote>
+<p><a name="Export_and_Import" id="Export_and_Import"></a></p>
+<h3><span class="mw-headline">Export and Import</span></h3>
+<p>Exporting models from MS3D for use as static meshes in UEd3 is very straightforward. UEd can import models in the LWO (Lightwave object) format, extension <i>.lwo</i>. However, the MS3D Export menu roll-out has <i>three</i> LWO options – my experience is that the one shown in FIG 13. works best when configured as shown.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3D-LWOexport.gif_5437.html" class="image" title="FIG. 13 LWO export options to use in MilkShape 3D"><img alt="FIG. 13 LWO export options to use in MilkShape 3D" src="../../../../images/Legacy_MS3D-LWOexport.gif" width="694" height="714" border="0" /></a></span></div>
+</div>
+<p>Note that <i>ALL</i> objects in a MilkShape model file are exported – separate .lwo files must be made for each object to be imported as a separate static mesh in UEd.</p>
+<p>The origin of the MS3D workspace will define the pivot point for static meshes made from MS3D models. This can be useful when building a complex assortment of objects that must fit together in UEd, but are exported as separate LWOs (e.g. the facades of a building, and its rooftop edge trim). After building the components to fit in MS3D, make separate files of each component for export, but do <i>not</i> move the objects in the component files. In UED the parts can be easily reassembled due to the common pivot point for all the component static meshes.</p>
+<p>Use the options described above to export the shuriken model to filename <i>shuriken.lwo</i>. Save the LWO export in any convenient directory.</p>
+<p>Launch UEd3, and open the Textures browser. Prior to importing the LWO file as a static mesh, there <i>MUST</i> be textures present in the Texture browser with names that match the material names assigned to the model in MS3D. Any material name that is not found will be assigned Texture'Engine.DefaultTexture' (bleah!), and smoothing info based on material names may be lost.</p>
+<p>In the Textures browser, use File&gt;Import to create a new texture; use <b>Package: MilkShapeMaterials, Group: NamedMaterials</b>, and <b>Name: hubs</b>. Add textures named <i>UpSUrf</i> and <i>DownSurf</i> to this package and save it (FIG. 14).</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3DT-14.gif_9e88.html" class="image" title="FIG. 14 Creating UEd textures named to match the MS3D material names."><img alt="FIG. 14 Creating UEd textures named to match the MS3D material names." src="../../../../images/Legacy_MS3DT-14.gif" width="530" height="400" border="0" /></a></span></div>
+</div>
+<p>Texture name spelling in UEd must exactly match those assigned in MS3D, but is not case-sensitive. The actual textures imported are irrelevant – the same texture file could be used for all three differently named textures. Only the naming is important.</p>
+<p>Switch to the Static Mesh browser. Use File&gt;Import to open the dialog, and select the <i>shuriken.lwo</i> file. Use <b>Package: WikiTute_SM, Group: MS3Dmodels, Name: shuriken</b>, click OK.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3DT-15.gif_7c8d.html" class="image" title="FIG. 15 Static mesh import dialogs"><img alt="FIG. 15 Static mesh import dialogs" src="../../../../images/Legacy_MS3DT-15.gif" width="635" height="390" border="0" /></a></span></div>
+</div>
+<p>You will get the following Message dialog – just click OK.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3DT-16.gif_a25b.html" class="image" title="FIG. 16 LWO import warning"><img alt="FIG. 16 LWO import warning" src="../../../../images/Legacy_MS3DT-16.gif" width="461" height="172" border="0" /></a></span></div>
+</div>
+<p>The warning is (afaik) because the materials used have no texture files associated with them as yet (this will be changed in Part 4 of the tutorial). The warning can be ignored – it does not affect the import.</p>
+<p>In the Static Mesh browser display, the shuriken should now be visible, and the Materials property section should list the three material names <i>hubs</i>, <i>UpSurf</i>, and <i>DownSurf</i>. Textures on the model will reflect those you chose when creating the <i>MilkShapeMaterials</i> package.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3DT-17.gif_4a67.html" class="image" title="FIG 17. The imported shuriken model with assigned UEd textures"><img alt="FIG 17. The imported shuriken model with assigned UEd textures" src="../../../../images/Legacy_MS3DT-17.gif" width="575" height="515" border="0" /></a></span></div>
+</div>
+<p>Save the <i>WikiTute_SM</i> static mesh package.</p>
+<p>In the browser, the <i>shuriken</i> static mesh is Unlit and thus doesn't show the smoothing properly – it has to be placed in a map with a lighting setup. Open (or create) a map with relatively bright and directional lighting (too dim &amp; flat a lighting scheme and the smoothing may be harder to see). Click the <b>Insert Static Mesh in Level</b> button to place <i>shuriken</i> at the current camera position, then pull back the camera in the 3D window.</p>
+<p>Inspect <i>shuriken</i> from a number of viewpoints, noting that there is a visible hard-edge boundary between the <i>hubs</i>, <i>UpSurf</i>, and <i>DownSurf</i> sections – the smoothing groups from MS3D have been preserved by assigning the three material names for export/import.</p>
+<p>The edges may be difficult to see clearly if three differently-colored textures were created in the <i>MilkShapeMaterials</i> package. In the Textures browser, select one of the textures, preferably one not too light or dark. In the Static Mesh browser, assign this single material to all three <b>Materials</b> property slots for <i>shuriken</i>. In the map, the static mesh will become monochrome, but the smoothing and edges are not changed.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_MS3DT-18.gif_46f7.html" class="image" title="FIG. 18 A monochrome shuriken shows smoothing &amp; edges clearly"><img alt="FIG. 18 A monochrome shuriken shows smoothing &amp; edges clearly" src="../../../../images/Legacy_MS3DT-18.gif" width="345" height="420" border="0" /></a></span></div>
+</div>
+<p>This is an important aspect of the model – once imported with separate material names to define smoothing, it doesn't matter what textures are actually assigned in UEd, the smoothing will be preserved. Thus, if a static mesh must have hard edges, but is planned to have only a single texture, multiple materials should be applied in MS3D to define smoothing and edges. Once imported into UEd, all Materials slots can be given the same texture.</p>
+<p>Example: for a concrete-textured cube, three materials need be assigned in MS3D, one each for the opposing pairs of faces of the cube.</p>
+<p>Next: <a href="../../../../articles/m/i/l/Legacy%7EMilkShape_For_UT2003_Static_Meshes_Applying_File_Textures_In_MS3D_9fad.html" title="Legacy:MilkShape For UT2003 Static Meshes/Applying File Textures In MS3D">Applying File Textures in MS3D</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 9/1000000
+Post-expand include size: 188/2097152 bytes
+Template argument size: 91/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Application_99db.html" title="Category:Legacy Application">Legacy Application</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/i/l/Legacy%7EMilkShape_For_UT2003_Static_Meshes_Export_And_Import_570b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/i/l/Legacy_talk%7EMilkShape_For_UT2003_Static_Meshes_Export_And_Import_d0c3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MilkShape_For_UT2003_Static_Meshes/Export_And_Import">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:14, 2 December 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

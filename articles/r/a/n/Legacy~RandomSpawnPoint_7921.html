@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:RandomSpawnPoint - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:RandomSpawnPoint</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_%28UT%29_23b9.html" title="Legacy:NavigationPoint (UT)">NavigationPoint (UT)</a> &gt;&gt; RandomSpawnPoint (custom)</div>
+<p>This spawnpoint is used in conjunction with the <a href="../../../../articles/r/a/n/Legacy%7ERandomCreatureFactory_85eb.html" title="Legacy:RandomCreatureFactory">RandomCreatureFactory</a></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// RandomSpawnpoint.</span>
+<span class="co1">// Used by RandomCreatureFactories for spawning monsters</span>
+<span class="co1">// Created by Naked Monster, updated by Timmypowergammer.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> RandomSpawnPoint <span class="kw5">extends</span> SpawnPoint;
+ 
+<span class="kw5">var</span> ThingFactory factory;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> Create<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">pawn</span></a> newcreature;
+        <span class="kw5">local</span> RandomCreatureFactory pawnFactory;
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">pawn</span></a> creature;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> temp, A;
+        <span class="kw5">local</span> <span class="kw4">rotator</span> newRot;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> factory.<span class="me1">bCovert</span> &amp;&amp; PlayerCanSeeMe<span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span> <span class="co1">//make sure no player can see this</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+        temp = Spawn<span class="br0">(</span>factory.<span class="me1">prototype</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>temp == <span class="kw9">None</span><span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+        newRot = rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+        newRot.<span class="me1">yaw</span> = rotation.<span class="me1">yaw</span>;
+        temp.<span class="me1">SetRotation</span><span class="br0">(</span>newRot<span class="br0">)</span>;
+        temp.<span class="kw5">event</span> = factory.<span class="me1">tag</span>;
+        temp.<span class="me1">tag</span> = factory.<span class="me1">itemtag</span>;
+        newcreature = <a href="/Pawn"><span class="kw10">pawn</span></a><span class="br0">(</span>temp<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> <span class="kw5">Event</span> != <span class="st0">''</span> <span class="br0">)</span>
+                <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">class</span> <span class="st0">'Actor'</span>, A, <span class="kw5">Event</span> <span class="br0">)</span>
+                        A.<span class="me1">Trigger</span><span class="br0">(</span> <span class="kw8">Self</span>, Instigator <span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> factory.<span class="me1">bFalling</span> <span class="br0">)</span>
+                temp.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>newcreature == <span class="kw9">None</span><span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">true</span>;
+ 
+        pawnFactory = RandomCreatureFactory<span class="br0">(</span>factory<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>pawnFactory == <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Error - use creature factory to spawn pawns"</span><span class="br0">)</span>;
+                <span class="kw1">return</span> <span class="kw9">true</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span>ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span>.<span class="me1">Orders</span> = pawnFactory.<span class="me1">Orders</span>;
+                ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span>.<span class="me1">OrderTag</span> = pawnFactory.<span class="me1">OrderTag</span>;
+                ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span>.<span class="me1">SetEnemy</span><span class="br0">(</span>pawnFactory.<span class="me1">enemy</span><span class="br0">)</span>;
+                ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span>.<span class="me1">Alarmtag</span> = pawnFactory.<span class="me1">AlarmTag</span>;
+                ScriptedPawn<span class="br0">(</span>newcreature<span class="br0">)</span>.<span class="me1">SetOwner</span><span class="br0">(</span>pawnFactory<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+                newcreature.<span class="me1">enemy</span> = pawnFactory.<span class="me1">enemy</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>newcreature.<span class="me1">enemy</span> != <span class="kw9">None</span><span class="br0">)</span>
+                newcreature.<span class="me1">lastseenpos</span> = newcreature.<span class="me1">enemy</span>.<span class="me1">location</span>;
+        newcreature.<span class="me1">SetMovementPhysics</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> newcreature.<span class="me1">Physics</span> == PHYS_Walking<span class="br0">)</span>
+                newcreature.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<hr />
+<p><b>Naked_Monster:</b> It's working now!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 210/2097152 bytes
+Template argument size: 138/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/a/n/Legacy%7ERandomSpawnPoint_7921.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/a/n/Legacy_talk%7ERandomSpawnPoint_169c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:RandomSpawnPoint">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:34, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

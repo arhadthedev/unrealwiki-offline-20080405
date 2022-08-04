@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mutator (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mutator (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_%28UT%29_c293.html" title="Legacy:Info (UT)">Info (UT)</a> &gt;&gt; Mutator (Package: Engine)</div>
+<p>An actor designed to modify smaller aspects of the game. For an overview of how the Mutator system, see <a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a>.</p>
+<p>See <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Linked List/Existing Lists in Unreal Tournament</a> for a thorough description of the different mutator types (including how to make a working HUD mutator).</p>
+<p>See <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> for the UT2003 version of this class.</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>Mutator NextMutator&#160;</dt>
+<dd>The next mutator in the mutators linked list.</dd>
+<dt>Mutator NextDamageMutator&#160;</dt>
+<dd>The next registered damage mutator. These mutators receive MutatorTakeDamage calls from <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)s</a>.</dd>
+<dt>Mutator NextMessageMutator&#160;</dt>
+<dd>The next registered message mutator. Message mutators receive MutatorTeamMessage, MutatorBroadcastMessage and MutatorBroadcastLocalizedMessage calls.</dd>
+<dt>Mutator NextHUDMutator&#160;</dt>
+<dd>The next registered HUD mutator. Mutators can only be registered to one <a href="../../../../articles/h/u/d/Legacy%7EHUD_%28UT%29_e73f.html" title="Legacy:HUD (UT)">HUD (UT)</a>. However HUDs work client-side, so a HUD mutator can be registered to one HUD on the first client or the server and to another HUD on another client.</dd>
+<dt>bool bHUDMutator&#160;</dt>
+<dd>If this variable is true the mutator was successfully registered as HUD mutator on this client/server.</dd>
+<dt>class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_%28UT%29_cf18.html" title="Legacy:Weapon (UT)">Weapon (UT)</a>&gt; DefaultWeapon&#160;</dt>
+<dd>A weapon class that should replace the default weapon (usually the impact hammer).</dd>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<p>Most mutator functions (except ReplaceWith, RegisterHUDMutator, CheckReplacement and MyDefaultWeapon) call the corresponding function of the next mutator in the list.</p>
+<dl>
+<dt>PostRender (<a href="../../../../articles/c/a/n/Legacy%7ECanvas_%28UT%29_f2ed.html" title="Legacy:Canvas (UT)">Canvas (UT)</a> Canvas) [simulated]&#160;</dt>
+<dd>Called by the <a href="../../../../articles/h/u/d/Legacy%7EHUD_%28UT%29_e73f.html" title="Legacy:HUD (UT)">HUD (UT)</a> when this mutator is registered as HUD mutator. Always call NextHUDMutator.PostRender(Canvas) to allow the next HUD mutator to draw on the canvas.</dd>
+<dt>ModifyPlayer (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other)&#160;</dt>
+<dd>Called by the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a>'s AddDefaultInventory function which is called by RestartPlayer and AcceptInventory.</dd>
+<dt>bool HandleRestartGame ( )&#160;</dt>
+<dd>This function is never called anywhere in script. Nowhere. It is serving no other purpose than to add a couple of bytes to the Engine.U package. Completely useless...</dd>
+<dt>bool HandleEndGame ( )&#160;</dt>
+<dd>This is called when the GameInfo wants to end the game. If the mutator returns True, the Game will not attempt to Set the end cams. If it does return true, the code should either execute its own implementation of the gameinfo.SendEndCams() function or set bOverTime to true to force the game into overtime...</dd>
+<dt>bool HandlePickupQuery (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other, <a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a> item, out byte bAllowPickup)&#160;</dt>
+<dd>This is similar to the <a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a>'s HandlePickupQuery function. Return true handle the pickup query from this function or deny pickup.</dd>
+<dt>bool PreventDeath (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killed, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killer, name damageType, vector HitLocation)&#160;</dt>
+<dd>Called by the killed pawn's Died function. If the function returns True it should set the pawn's health to a value greater than 0.</dd>
+<dt>ModifyLogin (out class&lt;<a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a>&gt; SpawnClass, out string Portal, out string Options)&#160;</dt>
+<dd>Called from the GameInfo's LogIn function. The mutator can change any options before the LogIn function processes them.</dd>
+<dt>ScoreKill (<a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Killer, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Other)&#160;</dt>
+<dd>Called by the GameInfo's ScoreKill function.</dd>
+<dt>Class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_%28UT%29_cf18.html" title="Legacy:Weapon (UT)">Weapon (UT)</a>&gt; MutatedDefaultWeapon ( )&#160;</dt>
+<dd>Returns which weapon should be used as default weapon. You shouldn't modify this function. Use the DefaultWeapon property instead.</dd>
+<dt>Class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_%28UT%29_cf18.html" title="Legacy:Weapon (UT)">Weapon (UT)</a>&gt; MyDefaultWeapon ( )&#160;</dt>
+<dd>Use by the MutatedDefaultWeapon function. Returns the DefaultWeapon property of this mutator or (if DefaultWeapon is None) the DefaultWeapon of the GameInfo.</dd>
+<dt>AddMutator (Mutator M)&#160;</dt>
+<dd>Adds another mutator to the list of mutators. If NextMutator is None it is set to M, otherwise NextMutator.AddMutator(M) is called.</dd>
+<dt>bool ReplaceWith (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Other, string aClassName)&#160;</dt>
+<dd>Intended to use in CheckReplacement. ReplaceWith replaces an actor <i>Other</i> with a new one of the class specified in aClassName.</dd>
+<dt>bool AlwaysKeep (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Other)&#160;</dt>
+<dd>Called by the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a>'s IsRelevant function. If it returns true neither the GameInfo nor any mutator will try to remove the actor. In this case no mutator receives a CheckReplacement call for this actor.</dd>
+<dt>bool IsRelevant (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Other, out byte bSuperRelevant)&#160;</dt>
+<dd>Also called by the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a>'s IsRelevant function. It calls the CheckReplacement function, so you don't need to modify IsRelevant.<br />
+If bSuperRelevant is set to 1 the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a> will not modify the actor (generally running filter tests). If IsRelevant returns false the actor will be destroyed.</dd>
+<dt>bool <a href="../../../../articles/c/h/e/Legacy%7ECheckReplacement_6a85.html" title="Legacy:CheckReplacement">CheckReplacement</a> (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Other, out byte bSuperRelevant)&#160;</dt>
+<dd>Called by IsRelevant() to determine whether the actor should be available within the game or not. If this function returns <i>true</i> for every mutator within the mutator chain then the actor will be kept within the game. If <b>any</b> of the mutators within the mutator chain return <i>false</i> then the actor will be removed. You can replace actors by using ReplaceWith() and then return false.</dd>
+<dt>Mutate (string MutateString, <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> Sender)&#160;</dt>
+<dd>With this function mutators are able to handle console commands. (e.g. "mutate tossrelic", MutateString then is "tossrelic")</dd>
+<dt>MutatorTakeDamage(out int ActualDamage, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Victim, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> InstigatedBy, out Vector HitLocation, out Vector Momentum, name DamageType)&#160;</dt>
+<dd>Called by the victim's take damage function if the mutator is a registered damage mutator. (Done via <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a>.RegisterDamageMutator(Self); from within the mutator.)<br />
+This is called after the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a> and the victim's <a href="../../../../articles/i/n/v/Legacy%7EInventory_%28UT%29_ac83.html" title="Legacy:Inventory (UT)">Inventory (UT)</a> items had the chance to reduce the damage.</dd>
+<dt>bool MutatorTeamMessage (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Sender, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Receiver, <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> PRI, coerce string S, name Type, optional bool bBeep)&#160;</dt>
+<dd>Called by the Say and TeamSay functions of PlayerPawn (= Sender). The message will be sent eventually if all message mutators return True.</dd>
+<dt>bool MutatorBroadcastMessage (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Sender, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Receiver, out coerce string Msg, optional bool bBeep, out optional name Type)&#160;</dt>
+<dd>Called by the BroadcastMessage function of the sending actor. The message mutator can change the string and the message type. Only if all message mutators return true the message will be sent to Receiver.</dd>
+<dt>bool MutatorBroadcastLocalizedMessage (<a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> Sender, <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> Receiver, out class&lt;<a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_%28UT%29_c539.html" title="Legacy:LocalMessage (UT)">LocalMessage (UT)</a>&gt; Message, out optional int Switch, out optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_%28UT%29_a7db.html" title="Legacy:PlayerReplicationInfo (UT)">PlayerReplicationInfo (UT)</a> RelatedPRI_1, out optional <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_%28UT%29_a7db.html" title="Legacy:PlayerReplicationInfo (UT)">PlayerReplicationInfo (UT)</a> RelatedPRI_2, out optional <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> OptionalObject)&#160;</dt>
+<dd>Called by the BroadcastLocalizedMessage function of the sending actor. The message mutator can change all aspects of the message. Only if all message mutators return true the message will be sent to Receiver.</dd>
+<dt>RegisterHUDMutator ( ) [simulated]&#160;</dt>
+<dd>Registers this mutator as a HUD mutator if the local <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> (the PlayerPawn with a HUD) exists. bHUDMutator is set to True after successfully registering the HUD mutator. See <a href="../../../../articles/u/s/e/Legacy%7EUseful_Mutator_Functions_19f0.html" title="Legacy:Useful Mutator Functions">Useful Mutator Functions</a> for details.</dd>
+</dl>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li><a href="../../../../articles/a/r/e/Legacy%7EArena_f152.html" title="Legacy:Arena">Arena</a></li>
+<li><a href="../../../../articles/c/h/a/Legacy%7EChainsawMelee_1b0e.html" title="Legacy:ChainsawMelee">ChainsawMelee</a></li>
+<li><a href="../../../../articles/d/m/m/Legacy%7EDMMutator_c133.html" title="Legacy:DMMutator">DMMutator</a></li>
+<li><a href="../../../../articles/f/a/t/Legacy%7EFatBoy_ea73.html" title="Legacy:FatBoy">FatBoy</a></li>
+<li><a href="../../../../articles/i/n/s/Legacy%7EInstantRockets_0cde.html" title="Legacy:InstantRockets">InstantRockets</a></li>
+<li><a href="../../../../articles/j/u/m/Legacy%7EJumpMatch_1805.html" title="Legacy:JumpMatch">JumpMatch</a></li>
+<li><a href="../../../../articles/l/o/w/Legacy%7ELowGrav_701e.html" title="Legacy:LowGrav">LowGrav</a></li>
+<li><a href="../../../../articles/n/o/p/Legacy%7ENoPowerups_ed4c.html" title="Legacy:NoPowerups">NoPowerups</a></li>
+<li><a href="../../../../articles/n/o/r/Legacy%7ENoRedeemer_5285.html" title="Legacy:NoRedeemer">NoRedeemer</a></li>
+<li><a href="../../../../articles/s/t/e/Legacy%7EStealth_d1aa.html" title="Legacy:Stealth">Stealth</a></li>
+</ul>
+<ul>
+<li><a href="../../../../articles/r/e/l/Legacy%7ERelic_e219.html" title="Legacy:Relic">Relic</a></li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHUDMutator_5e7a.html" title="Legacy:HUDMutator">HUDMutator</a> (used as base class for the relic HUD mutator) – <b>Don't use this! Prefer breaking compatibility with the relic HUD mutator instead of breaking compatibility with any other HUD mutator. See <a href="../../../../articles/r/e/l/Legacy%7ERelics_Patch_bb5a.html" title="Legacy:Relics Patch">Relics_Patch</a> for restoring compatibility without using this subclass.</b></li>
+<li><a href="../../../../articles/e/n/h/Legacy%7EEnhancedItems_d000.html" title="Legacy:EnhancedItems">EnhancedMutator</a> (<a href="../../../../articles/e/n/h/Legacy%7EEnhancedItems_d000.html" title="Legacy:EnhancedItems">EnhancedItems</a>)</li>
+</ul>
+<hr />
+<p><b>Tarquin:</b> probably a dumb question... is it possible to embed a mutator in a map so that it is included automatically when the map is played?</p>
+<p><b>Wormbo:</b> Should be possible with this code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">AddMutator</span><span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>It might not be able to replace map actors, but I wouldn't consider that being a problem in this particular case.</p>
+<p><b>Mychaeel:</b> Alright... you were faster. (Damn. &#160;;-))</p>
+<p><b>Dawn:</b> I have developed a robust, generic Embedded Mutator and written a tutorial to accompany it. Go here to check it out: <a href="../../../../articles/w/r/i/Legacy%7EWriting_And_Using_An_Embedded_Mutator_7ab9.html" title="Legacy:Writing And Using An Embedded Mutator">Writing and Using an Embedded Mutator</a>. Hope someone finds it useful!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 184/2097152 bytes
+Template argument size: 116/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Legacy Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/u/t/Legacy%7EMutator_%28UT%29_e55e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/u/t/Legacy_talk%7EMutator_%28UT%29_fbe0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mutator_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:47, 25 October 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

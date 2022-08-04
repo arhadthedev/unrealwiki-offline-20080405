@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UTPatcherProject - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UTPatcherProject</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The UTPatcher Project is an attempt at coming up with something quick and easy to act as a replacement for the umod system, as it doesn't seem to work on about 50% or machines with ut2004 installed. Surprisingly it wasn't very easy to find something that could handle making the package entry in the ut2004.ini file and i eventually went with an event driven language that used to be on the Amiga called GUI4CLI. There was specific reason for choosing this language other than it was the first one i found that might be able to do the job quickly and simply after 3hrs of hunting around on google for something suitable + its FREE!.</p>
+<p><a name="The_script_revision_III_....no_more_to_come." id="The_script_revision_III_....no_more_to_come."></a></p>
+<h3><span class="mw-headline">The script revision III ....no more to come.</span></h3>
+<p>After a few hours of poking about i found the right bits of script and put a working program together. . At the moment the person compiling the executable in has to enter the name of the package they want an entry made for in thie ut2004.ini file before compiling the program into a standard executable. Although Gui4cli looks slightly dated I'm certain it could be programmed to search the installation directory when installing a map with a .u file and use that to make the entry. This would then mean i only have to make 1 of them and everyone happy.</p>
+<p>Here's a quick rundown of the language;-</p>
+<p>GUi4Cli for uscripters</p>
+<hr />
+<p>Variables</p>
+<ul>
+<li>You don't have to declare new variables at all in this language rather like 'basic'. so anything the program dosent recognise it will think is a variable.</li>
+<li>A variable can hold a 1234 or "text".</li>
+<li>There are 3 types of variables that can be used</li>
+<li><b>Global</b> variable can be used everywhere, in all guis.</li>
+<li><b>GUI</b> can be seen from anywhere inside the GUI its written in</li>
+<li><b>local</b> a Local variable can be used only within a given event.</li>
+<li>Apart from this there is no other difference between them.</li>
+<li>variables can be passed between different guis simply by putting the name of the gui you want to send them to in front</li>
+</ul>
+<p>differentgui.yourVariable.</p>
+<ul>
+<li>variable sort of have 2 states ie. Variable or $variable.</li>
+</ul>
+<p>The first is used for assigning;- ANumber = 5</p>
+<p>The second is for reading;- AnotherNumber = $ANumber</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Variable=<span class="nu0">100</span>
+<span class="kw1">if</span> $Variable = <span class="nu0">100</span>
+Variable = <span class="nu0">0</span>
+</pre></div>
+<p><a name="Internal_variables" id="Internal_variables"></a></p>
+<h4><span class="mw-headline">Internal variables</span></h4>
+<ul>
+<li>Internal variables hold info.</li>
+<li>They cant be assigned and have $$ infront rather than just $.</li>
+</ul>
+<p><a name="Subroutines" id="Subroutines"></a></p>
+<h3><span class="mw-headline">Subroutines</span></h3>
+<p><b>Xroutine</b></p>
+<ul>
+<li>Use these the same way as functions are used in uscript.</li>
+<li>you can pass variables to them and they can return data back.</li>
+<li>the amount of data that can be returned is limited to 1 variable. But theres no reason why you cant just assign it to a new variable that can be seen anywhere in the gui.</li>
+<li>Anything you want to return just place after the 'return' which forces the subroutine to stop execution.The data is then assigned to an internal (i think global) variable called $$Return.</li>
+</ul>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Gosub #This DemoSubRoutine $Anumber
+$Anumber=$$Return
+ 
+XRoutine DemoSubRoutine Anumberpassed
+<span class="kw1">if</span> $Anumberpassed= $NewBlankVariable         <span class="co1">// a way to check if the variable is empty</span>
+   $Anumberpassed+ <span class="nu0">5</span>
+<span class="kw1">Return</span> $Anumberpassed
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+G4C Vitals ut2004.<span class="me1">ini</span> Patcher
+ 
+<span class="co1">// ===========================================================</span>
+<span class="co1">// by VitalOverdose 2006 http://www.vitaloverdose.com</span>
+<span class="co1">// To replace the UMOD as a method of installing .u files into the ut2004\system directory</span>
+<span class="co1">// and making the right alterations in the 2004.ini file.</span>
+<span class="co1">// THIS IS NOT uscript. This will NOT work in unrealed.</span>
+<span class="co1">// the programming language Gui4cli can be downloaded at Http://www.gui4cli.com</span>
+<span class="co1">// and is Free!!</span>
+<span class="co1">// ===========================================================</span>
+ 
+WINDOW <span class="nu0">117</span> <span class="nu0">78</span> <span class="nu0">329</span> <span class="nu0">226</span> <span class="st0">'Vitals ut2004.ini Patcher'</span>
+        winattr style resize
+        winattr background <span class="kw4">color</span> <span class="nu0">200</span>/<span class="nu0">200</span>/<span class="nu0">200</span>
+ 
+<span class="co1">//////////////////////////////////////////////// Opening and closing</span>
+ 
+XONLOAD
+ 
+        capheight = $<span class="br0">(</span>$$sys.<span class="me1">capheight</span> / <span class="nu0">2</span><span class="br0">)</span>          <span class="co1">// for the last button we create a font, based on the height of the window's caption.</span>
+        loadfont <span class="st0">'wingdings/$capheight'</span> wdFont
+        GuiOpen #this
+   IniPath=<span class="st0">":ut2004.ini"</span>
+ 
+<span class="co1">////////////////////////////////////////////////// Ending the program //////////////////////////////////////////</span>
+ 
+XONCLOSE
+        GuiQuit #this                                <span class="co1">// Closes the gui when finished </span>
+        freefont wdFont                              <span class="co1">// ??</span>
+ 
+<span class="co1">////////////////////////////////////////////////// Defining the buttons ///////////////////////////////////////</span>
+ 
+<span class="co1">////////////////////////////////////////////////// Unpatch Button</span>
+ 
+ 
+<span class="co1">//////////////////////////////////////////////////  button ////// About</span>
+ 
+xBorderButton ICON <span class="st0">"g4c/2"</span>                        
+attr help <span class="st0">'About'</span>                                
+ MsgBox <span class="st0">'Would you like to go to the homepage at http://www.vitaloverdose.com?'</span> YESNO/QUESTION <span class="st0">"The UT2004.ini Patcher V1.0. By Vitaloverdose 2006"</span>
+<span class="kw1">if</span> $$choice = YES
+ gosub #this Loadwebpage 
+endif
+ 
+<span class="co1">//////////////////////////////////////////////////  button ////// UN-Patch</span>
+ 
+xBorderButton ICON <span class="st0">"g4c/5"</span>                     
+attr help <span class="st0">'UN-Patch Ut2004.ini'</span>                    
+gosub #this delIniKey  <span class="st0">"CutdownPackages=Core"</span> EditPackages    
+ 
+<span class="co1">//////////////////////////////////////////////////  button ////// Patch                                               </span>
+ 
+ 
+<span class="co1">////////////////////////////////////////////////// button ////// Patch</span>
+ 
+xBorderButton ICON <span class="st0">"g4c/10"</span>                     
+attr help <span class="st0">'Patch The UT2004.ini File'</span>                    
+gosub #this AddIniKey  <span class="st0">"CutdownPackages=Core"</span> EditPackages  
+ 
+<span class="co1">////////////////////////////////////////////////////  button ////// Install</span>
+ 
+xBorderButton ICON <span class="st0">"g4c/11"</span>                           
+ attr help <span class="st0">'Locate The .U file To Install'</span>                      
+ attr font wdFont                               
+ attr <span class="kw4">color</span> <span class="st0">"255/255/0"</span>                         
+ 
+ gosub #this PickTheFile                            
+ 
+ 
+ 
+<span class="co1">////////////////////////////////////////////////////////////// listview //////////////////////////////////////////////</span>
+ 
+xListview <span class="nu0">0</span> <span class="nu0">0</span> <span class="nu0">0</span> <span class="nu0">0</span> <span class="st0">''</span> <span class="st0">''</span> <span class="kw5">var</span>                    
+ attr ID lv                                       
+ 
+<span class="co1">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</span>
+<span class="co1">////////////////////////////////////////////////// Subroutines /////////////////////////////////////////////////////////</span>
+ 
+xroutine loadwebpage
+ 
+   use browser #this MyBrowser
+        browser <span class="kw1">goto</span> <span class="st0">"www.fataloverdose.copperstream.co.uk/onlinehelp/utpatcher2.html"</span>
+ 
+<span class="co1">////////////////////////////////////////////////////////////// browser ////////////////////////////////////////////</span>
+ 
+<span class="co1">//////////////////////////////////////////////////// A quick routine to display a help file</span>
+ 
+xRoutine PickTheFile                               
+gosub #this locating 
+ 
+<span class="co1">///////////////////////////////////////////////////////////////// AddIniKey</span>
+ 
+xRoutine AddIniKey SectionName Key testempty
+ 
+ <span class="kw1">if</span> $PackageName=$checkempty  
+     gosub #this Locating                    
+     <span class="kw1">if</span> $$return = <span class="st0">"F"</span>
+         MsgBox <span class="st0">'No .u file has been selected so nothing was patched.You may may sellect again when you are ready..'</span> OK/<span class="kw7">WARN</span> <span class="st0">"Warning"</span>
+         <span class="kw1">return</span>
+     endif
+ endif
+ 
+ use lv #this lv                                
+ lv load $IniPath                              
+ gosub #this AddKey $SectionName $Key $packagename    <span class="co1">// do the changes..</span>
+ lv save $IniPath                               <span class="co1">// re-save it..</span>
+ <span class="kw1">Return</span>                                         <span class="co1">// A forced return. I probably dont need this</span>
+ 
+<span class="co1">///////////////////////////////////////////////////////////////// AddKey </span>
+ 
+xRoutine AddKey SectionName Key             <span class="co1">// This is the routine that does the actual work for this button. </span>
+ <span class="kw5">local</span> <span class="kw4">string</span>/k/v/pos                            <span class="co1">// setting up local variable V</span>
+ lvsearch $SectionName first                     <span class="co1">// find the section</span>
+ lv <span class="kw6">insert</span> <span class="st0">'$Key=$packagename'</span>                         <span class="co1">// inserts the txt</span>
+ <span class="kw1">return</span>                                          <span class="co1">// finished..</span>
+                                                 <span class="co1">// (still part of the while command so code cotinues.</span>
+ <span class="kw4">string</span> = $$lv.<span class="me1">text</span>                              <span class="co1">// split the line into key and value</span>
+ searchvar <span class="kw4">string</span> <span class="st0">"="</span> first
+ <span class="kw1">if</span> $$search.<span class="me1">pos</span> &gt; <span class="st0">''</span><span class="co1">// -- &gt;&gt; -- &gt;&gt; ---   &lt;-&lt;-&lt; // An if statement must have a matching endif.</span>
+    k = $string<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">[</span>$$search.<span class="me1">pos</span><span class="br0">]</span>     <span class="co1">//         // K = contents of 'string' in colum 0 reading 'serch.pos' charecters</span>
+    extract k clean                  <span class="co1">//         // trim spaces..</span>
+    <span class="kw1">if</span> $k = $key  <span class="co1">// &gt;&gt; --------     //   &lt;-&lt;-&lt; // 'If' must have a matching endif.?found the key, set it..</span>
+       %rec = <span class="st0">'$Key=$packagename'</span>   <span class="co1">//     //         // %rec means the 1st lv column..</span>
+        <span class="kw1">return</span>                <span class="co1">//     //         // finished..</span>
+      endif  <span class="co1">//------- &lt;&lt; ------     //   &lt;-&lt;-&lt; // An if statement must have a matching endif</span>
+    endif   <span class="co1">//-- &lt;&lt; -------- &lt;&lt;--------   &lt;-&lt;-&lt; // An if statement must have a matching endif</span>
+ 
+<span class="co1">////////////////////////////////////////////////// DelIniKey /////////////////////////////////</span>
+ 
+xRoutine delIniKey SectionName Key checkempty
+ 
+ <span class="kw1">if</span> $PackageName=$checkempty  <span class="co1">// 'packagename' is tested the locally created (empty so far) 'checkempty' variable to check for null</span>
+     gosub #this Locating                     <span class="co1">// go to and run subroutine findmodname</span>
+     <span class="kw1">if</span> $$return = <span class="st0">"F"</span>
+         MsgBox <span class="st0">'No .u file has been selected so nothing was deleted. You may select again when you are ready'</span> OK/<span class="kw7">WARN</span> <span class="st0">"Warning"</span>
+         <span class="kw1">return</span>
+     endif
+ endif
+ 
+ use lv #this lv                                <span class="co1">// load the ini file into the above listview</span>
+ lv load $IniPath                               <span class="co1">// do the changes..</span>
+ gosub #this delkey $SectionName $Key           <span class="co1">// goto subroutine . pass variables</span>
+ lv save $IniPath                               <span class="co1">// re-save it..</span>
+ 
+<span class="co1">////////////////////////////////////////////////// delkey ///////////////////////////////////</span>
+ 
+xRoutine DelKey SectionName Key                 <span class="co1">// This is the routine that does the actual work for this button.</span>
+ 
+  fullLine=<span class="st0">'$SectionName=$PackageName'</span>
+  lvsearch $fullLine first                     <span class="co1">// find the section</span>
+  lv delete current                            <span class="co1">// delete current line</span>
+ 
+<span class="co1">////////////////////////////////////////////////// Finding the filename ////////////////////////////////////////</span>
+ 
+xroutine Locating 
+ 
+ ReqFile MULTI <span class="st0">"Please locate the .U file you wish to install"</span> <span class="st0">":"</span> fileloc <span class="st0">".U MOD files/*.u"</span>       <span class="co1">// request open file in directory "root"</span>
+ <span class="kw1">if</span> $fileloc = $CheckEmpty          <span class="co1">// the unassigned check empty variable to check for null</span>
+    <span class="kw1">return</span>                          <span class="co1">// if null return</span>
+ endif
+                                    <span class="co1">// if not null the code will continue ...</span>
+ Extract fileloc NOEXT              <span class="co1">// extract with no extension    </span>
+ Extract fileloc file               <span class="co1">// extract all but the last part of the file location</span>
+ 
+ gosub #this CheckGenericThePackage $fileloc                  <span class="co1">// check for generic conflict</span>
+ <span class="kw1">if</span> $$Return=<span class="st0">"F"</span>                                              <span class="co1">// if false continue..</span>
+    gosub #this checkdetails $fileloc                         <span class="co1">// user validation</span>
+    <span class="kw1">if</span> $$Return=<span class="st0">"T"</span>                                           <span class="co1">// If happy with the details continue..</span>
+       PackageName=$fileloc         <span class="co1">// make the global variable 'pakagename' = the local 'fileloc'</span>
+    endif
+ endif
+                                                                     <span class="co1">// extract the end filename </span>
+ <span class="co1">///////////////////////////////////////////////////////////////////////////////////</span>
+ 
+Xroutine checkdetails Thedetails 
+ 
+MsgBox <span class="st0">'You Have sellected $Thedetails ,are you happy with the selection'</span> YESNO/QUESTION/DEF1
+    <span class="kw1">if</span> $$choice = YES
+                   <span class="kw1">Return</span> <span class="st0">"T"</span>
+                endif
+<span class="kw1">Return</span> <span class="st0">"F"</span> 
+ 
+<span class="co1">/////////////////////////////////////////////////////////////////// check for a generic package</span>
+xroutine CheckGenericThePackage ThePackage
+ 
+<span class="kw1">if</span> $ThePackage=<span class="st0">'Core'</span> 
+or $ThePackage=<span class="st0">'Engine'</span> 
+or $ThePackage=<span class="st0">'Fire'</span> 
+or $ThePackage=<span class="st0">'Editor'</span> 
+or $ThePackage=<span class="st0">'UnrealEd'</span>
+or $ThePackage=<span class="st0">'IpDrv'</span> 
+or $ThePackage=<span class="st0">'UWeb'</span> 
+or $ThePackage=<span class="st0">'GamePlay'</span> 
+or $ThePackage=<span class="st0">'UnrealGame'</span>
+or $ThePackage=<span class="st0">'XGame_rc'</span>
+or $ThePackage=<span class="st0">'XEffects'</span>
+or $ThePackage=<span class="st0">'XWeapons_rc'</span>
+or $ThePackage=<span class="st0">'XPickups_rc'</span>
+or $ThePackage=<span class="st0">'XPickups'</span>
+or $ThePackage=<span class="st0">'XGame'</span>
+or $ThePackage=<span class="st0">'XWeapons'</span>
+or $ThePackage=<span class="st0">'XInterface'</span>
+or $ThePackage=<span class="st0">'XAdmin'</span>
+or $ThePackage=<span class="st0">'XWebAdmin'</span>
+or $ThePackage=<span class="st0">'Vehicles'</span>
+or $ThePackage=<span class="st0">'BonusPack'</span>
+or $ThePackage=<span class="st0">'SkaarjPack_rc'</span>
+or $ThePackage=<span class="st0">'SkaarjPack'</span>
+or $ThePackage=<span class="st0">'UTClassic'</span>
+or $ThePackage=<span class="st0">'UT2k4Assault'</span>
+or $ThePackage=<span class="st0">'Onslaught'</span>
+or $ThePackage=<span class="st0">'GUI2K4'</span>
+or $ThePackage=<span class="st0">'UT2k4AssaultFull'</span>
+or $ThePackage=<span class="st0">'OnslaughtFull'</span>
+or $ThePackage=<span class="st0">'xVoting'</span>
+or $ThePackage=<span class="st0">'StreamlineFX'</span>
+or $ThePackage=<span class="st0">'UTV2004c'</span>
+or $ThePackage=<span class="st0">'UTV2004s'</span>
+or $ThePackage=<span class="st0">'OnslaughtBP'</span>
+   MsgBox <span class="st0">'This is a UT2004 system ThePackage and should NOT be modified. Are you sure you absolutley sure you wish to proceed'</span> YESNO/QUESTION/<span class="kw7">WARN</span>/DEF2 <span class="st0">"W A R N I N G !!!"</span>
+   <span class="kw1">if</span> $$choice = NO
+                <span class="kw1">Return</span> <span class="st0">'T'</span>
+   endif 
+endif
+<span class="kw1">return</span> <span class="st0">'F'</span>
+</pre></div>
+<p>Here is a download for the executable <a href="http://www.fataloverdose.copperstream.co.uk/files/utinipatcher.rar" class="external autonumber" title="http://www.fataloverdose.copperstream.co.uk/files/utinipatcher.rar" rel="nofollow">[1]</a> →</p>
+<p><b>El Muerte:</b> Uhm... umod works on all system unless the user breaks it. If the user broke it it can easily be fixed using some tools (forgot the name). You new system doesn't work on any system unless it's installed in the first place. That already makes it less suitable than umod in the first place.</p>
+<p><b>Vitaloverdose</b> ..oh well,. guess thats the end of that then no point wasting any time on something no one gonna use.</p>
+<p>-You dont need to have anything installed to run a program made with gui4cli it compiles;-</p>
+<p>"It will use a copy of Gui4Cli.exe itself as a host for the resource. It has the advantage that the resulting executable is completely self sufficient. No dlls or other files are needed. It produces however the largest files (if UPX is used, Gui4Cli.exe will pack down to about 200k, plus whatever size your data is after being compressed)."</p>
+<p><b>Wormbo:</b> What about a tool that installs ZIP files with maps/mods/whatever and integrates them into manifest.ini as if a UMOD had been installed? <i>That</i> would be useful because the mod or map would be listed in the game's own uninstaller.</p>
+<p><b>vitaloverdose</b> should be easy enough i guess. If its just a simple entry to a text file then its just a case of changing a few variables. The language is decptivley powerfull its really a cross between basic and Windows. Im suprised on the lack of resources for it.</p>
+<p><b>vitaloverdose</b> ...so its a single text entry for each mod? I havent used the manifest.ini for anything yet.</p>
+<p><b>vitaloverdose</b> if you tell what needs to be done i'll have a go at coding it.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/t/p/Legacy%7EUTPatcherProject_be62.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/t/p/Legacy_talk%7EUTPatcherProject_2595.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UTPatcherProject">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 06:31, 25 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

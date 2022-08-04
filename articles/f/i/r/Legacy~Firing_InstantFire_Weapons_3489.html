@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Firing InstantFire Weapons - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Firing InstantFire Weapons</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_cfe8.html" title="Legacy:How UT2003 Weapons Work">How UT2003 Weapons Work</a>: InstantFire Weapons.</p>
+<p>I will try to make a path through the many calls of shooting a instant hit weapon. More specifically, a Shock Beam Rifle.</p>
+<p>In UT2003 the Instant hit weapons are <a href="../../../../articles/a/s/s/Legacy%7EAssaultRifle_cca0.html" title="Legacy:AssaultRifle">AssaultRifle</a>, <a href="../../../../articles/m/i/n/Legacy%7EMinigun_4e4a.html" title="Legacy:Minigun">Minigun</a>, ShockRifle, and the <a href="../../../../articles/s/n/i/Legacy%7ESniperRifle_1eb7.html" title="Legacy:SniperRifle">SniperRifle</a>. An instant hit weapon is the one that have no projectiles and you cannot dodge its shots once they were fired.</p>
+<p>Here is the continuation of the function call chain:</p>
+<p><b><a href="../../../../articles/i/n/s/Legacy%7EInstantFire_f898.html" title="Legacy:InstantFire">InstantFire</a>.DoFireEffect()</b></p>
+<ul>
+<li>Finds out where the start of the hit trace will be;</li>
+<li>Calls DoTrace;</li>
+</ul>
+<p><b><a href="../../../../articles/i/n/s/Legacy%7EInstantFire_f898.html" title="Legacy:InstantFire">InstantFire</a>.DoTrace(StartTrace, R)</b></p>
+<ul>
+<li>This function tells where we hit;</li>
+<li>Take care of the beam reflection;</li>
+<li>Applies damage</li>
+<li>Call the creation of the visual effects;</li>
+</ul>
+<p><b><a href="../../../../articles/s/h/o/Legacy%7EShockBeamFire_6c22.html" title="Legacy:ShockBeamFire">ShockBeamFire</a>.SpawnBeamEffect(Start, Dir, HitLocation, HitNormal, ReflectNum)</b></p>
+<ul>
+<li>This one creates the visual effects in this line:</li>
+</ul>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Beam = Spawn<span class="br0">(</span>BeamEffectClass,,, Start, Dir<span class="br0">)</span>;
+</pre></div>
+<ul>
+<li>Set where is the destination of the beam with</li>
+</ul>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Beam.<span class="me1">AimAt</span><span class="br0">(</span>HitLocation, HitNormal<span class="br0">)</span>;
+</pre></div>
+<p><b><a href="../../../../articles/s/h/o/Legacy%7EShockBeamEffect_98c5.html" title="Legacy:ShockBeamEffect">ShockBeamEffect</a>.AimAt(HitLocation, HitNormal);</b></p>
+<ul>
+<li>Define where your beam is going (the mSpawnVecA vector is the hit location)</li>
+<li>Create the effects in the hit location with the SpawnEffects function.</li>
+</ul>
+<p><b><a href="../../../../articles/s/h/o/Legacy%7EShockBeamEffect_98c5.html" title="Legacy:ShockBeamEffect">ShockBeamEffect</a>.SpawnEffects()</b></p>
+<p>Here is where the effects are created. For the ShockRifle, these are the effect classes:</p>
+<p>Effects spawned in the hit location:</p>
+<p>ShockImpactFlare, ShockImpactRing, ShockImpactScorch, ShockExplosionCore</p>
+<p>And this is the beam itself:</p>
+<p>ShockBeamCoil</p>
+<p><a name="Flowchart" id="Flowchart"></a></p>
+<h2><span class="mw-headline">Flowchart</span></h2>
+<p><a href="http://webpages.charter.net/bmschkerke/Images/UT2K3/ProjectileFireFlow.jpg" class="external free" title="http://webpages.charter.net/bmschkerke/Images/UT2K3/ProjectileFireFlow.jpg" rel="nofollow">http://webpages.charter.net/bmschkerke/Images/UT2K3/ProjectileFireFlow.jpg</a></p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Tarquin:</b> The flow chart is a great idea, but now I've looked at it closely, I see that it is mostly linear – it looks more complex than it is because of the way some lines turn corners so it can all fit in the image. I think it might be an idea to try &amp; make this in text with nested lists.</p>
+<p><b>Bananna_Manuk:</b> Hi i`m totally new to unreal script but i think more flow charts like this one really help get a grip whats going on.. some times a page full of text is a little daunting to some body such as myself still trying to get to grips with the basics ... Great job really helped</p>
+<p><b>OlympusMons:</b> I agree flow charts for me are alot easier to follow. Ive actually had to try and write some out so its easier for me to learn how all the unreal script classes interact, not an easy task. I hope some of you pro's might be able to lend a hand here. I can help a little myself but I'll be learning as we go. Mind you I have done databases in access and particle flows in max 6 so I know a bit about flowcharts.</p>
+<p><b>T1:</b> I see a mistake but I'm not quite sure how to reword it.... anyway, ShockBeamCoil is NOT the shock rifle's beam. ShockBeamCoil is that ribbonlike thing that twists around the beam on higher detail levels. ShockBeamEffect is the actual beam, and it additionally spawns the hit fx and the coil. Also the title of this page should be Firing_InstantFire_Weapons(UT2003), because it doesn't apply to UT2004 and definitely not UT99.</p>
+<p><b>OlympusMons:</b> Maybe we can come up with two more flowcharts to add to this ut2k4, ut99. Ive noticed there are calls for a weapon tutorials for ut99 and Im sure ut2k4, this would probably be helpful to anyone trying to make tutorials or weapons.&#160;:P</p>
+<p><b>RegularX:</b> Thankfully there are few things as complicated as firing a weapon. Which seems odd for an FPS, but there you go.</p>
+<p><b>CanadEHn:</b> Would it be possible to spawn multiple beams in different directions, at the same time? I have made a firing class that shoots a beam in a random direction, but I cannot find out how to spawn multiple beams at once, all in random directions.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 9/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/i/r/Legacy%7EFiring_InstantFire_Weapons_3489.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/i/r/Legacy_talk%7EFiring_InstantFire_Weapons_af10.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Firing_InstantFire_Weapons">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:50, 23 January 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

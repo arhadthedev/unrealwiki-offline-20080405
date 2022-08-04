@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:CompactIndex - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:CompactIndex</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>CompactIndex is a special integer data type used very often in the Unreal Engine. It is used to reduce the size of a integer. However in the worst case scenario it takes up one extra byte (5bytes instead of 4), but this isn't often the case. CompactIndex is for example used to store the length of a string.</p>
+<p>A CompactIndex tries to use as less bytes as possible to store the integer's (32bit) value.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#The_bytes"><span class="tocnumber">1</span> <span class="toctext">The bytes</span></a>
+<ul>
+<li class="toclevel-2"><a href="#1st_Byte"><span class="tocnumber">1.1</span> <span class="toctext">1st Byte</span></a></li>
+<li class="toclevel-2"><a href="#2nd_to_4th_Byte"><span class="tocnumber">1.2</span> <span class="toctext">2nd to 4th Byte</span></a></li>
+<li class="toclevel-2"><a href="#5th_Byte"><span class="tocnumber">1.3</span> <span class="toctext">5th Byte</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Integer_to_CompactIndex"><span class="tocnumber">2</span> <span class="toctext">Integer to CompactIndex</span></a></li>
+<li class="toclevel-1"><a href="#CompactIndex_to_Integer"><span class="tocnumber">3</span> <span class="toctext">CompactIndex to Integer</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="The_bytes" id="The_bytes"></a></p>
+<h2><span class="mw-headline">The bytes</span></h2>
+<p><a name="1st_Byte"></a></p>
+<h3><span class="mw-headline">1st Byte</span></h3>
+<p>The <tt>MSB</tt> (Most Significant Bit) flags if the string is in UTF-16 encoding instead of normal ASCII. Thus the MSB only has a meaning when used for string length.</p>
+<p><tt>MSB-1</tt> defines if there's another byte following this byte that should be included with the CompactIndex.</p>
+<p>The other 6 bits are used for the value. Therefor the maximum value in the first byte is <tt>(2^6)-1 = 63</tt></p>
+<p><a name="2nd_to_4th_Byte"></a></p>
+<h3><span class="mw-headline">2nd to 4th Byte</span></h3>
+<p>The <tt>MSB</tt> defines if there's another byte following this byte that should be included with the CompactIndex.</p>
+<p>The rest is used for the value. <tt>(2^7)-1 = 127</tt></p>
+<p><a name="5th_Byte"></a></p>
+<h3><span class="mw-headline">5th Byte</span></h3>
+<p>The whole byte is used for the value. However, because the first 4 bytes already consume 27 of the 32 bits only 5 bits are used in this byte.</p>
+<p><a name="Integer_to_CompactIndex" id="Integer_to_CompactIndex"></a></p>
+<h2><span class="mw-headline">Integer to CompactIndex</span></h2>
+<p>B1 = 1st byte of the CompactIndex; B2 = 2nd byte of the CompactIndex; etc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//TODO</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw5">function</span> IntToIndex<span class="br0">(</span> <span class="kw4">int</span> Integer, <span class="kw6">out</span> <span class="kw4">byte</span> data<span class="br0">[</span><span class="nu0">255</span><span class="br0">]</span>, <span class="kw6">out</span> <span class="kw4">byte</span> ptr <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> val;
+ 
+        val = <span class="kw7">abs</span><span class="br0">(</span>Integer<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> val != Integer <span class="br0">)</span>
+                data<span class="br0">[</span>ptr<span class="br0">]</span> = 0x80; <span class="co1">// B1 sign bit</span>
+ 
+        data<span class="br0">[</span>ptr<span class="br0">]</span> += val &amp; 0x3f; <span class="co1">// B1 data, 6 bits</span>
+        val = val &gt;&gt; <span class="nu0">6</span>;
+        <span class="kw1">if</span><span class="br0">(</span> val != <span class="nu0">0</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                data<span class="br0">[</span>ptr<span class="br0">]</span> += 0x40; <span class="co1">// B1 continue bit</span>
+                data<span class="br0">[</span>++ptr<span class="br0">]</span> = val &amp; 0x7f; <span class="co1">// B2 data, 7 bits</span>
+                val = val &gt;&gt; <span class="nu0">7</span>;
+                <span class="kw1">if</span><span class="br0">(</span> val != <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        data<span class="br0">[</span>ptr<span class="br0">]</span> += 0x80; <span class="co1">// B2 continue bit</span>
+                        data<span class="br0">[</span>++ptr<span class="br0">]</span> = val &amp; 0x7f; <span class="co1">// B3 data, 7 bits</span>
+                        val = val &gt;&gt; <span class="nu0">7</span>;
+                        <span class="kw1">if</span><span class="br0">(</span> val != <span class="nu0">0</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                data<span class="br0">[</span>ptr<span class="br0">]</span> += 0x80; <span class="co1">// B3 continue bit</span>
+                                data<span class="br0">[</span>++ptr<span class="br0">]</span> = val &amp; 0x7f; <span class="co1">// B4 data, 7 bits</span>
+                                val = val &gt;&gt; <span class="nu0">7</span>;
+                                <span class="kw1">if</span><span class="br0">(</span> val != <span class="nu0">0</span> <span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        data<span class="br0">[</span>ptr<span class="br0">]</span> += 0x80; <span class="co1">// B4 continue bit</span>
+                                        data<span class="br0">[</span>++ptr<span class="br0">]</span> = val &amp; 0x1f; <span class="co1">// B5 data, 5 bits</span>
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="CompactIndex_to_Integer" id="CompactIndex_to_Integer"></a></p>
+<h2><span class="mw-headline">CompactIndex to Integer</span></h2>
+<p>B1 = 1st byte of the CompactIndex; B2 = 2nd byte of the CompactIndex; etc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Integer = B1 &amp; 0x3F;
+<span class="kw1">if</span> <span class="br0">(</span>B1 &amp; 0x40<span class="br0">)</span> <span class="co1">// got a 2nd byte</span>
+<span class="br0">{</span>
+  Integer += <span class="br0">(</span>B2 &amp; 0x3F<span class="br0">)</span> &lt;&lt; <span class="nu0">6</span>;
+  <span class="kw1">if</span> <span class="br0">(</span>B2 &amp; 0x80<span class="br0">)</span> <span class="co1">// got a 3rd byte</span>
+  <span class="br0">{</span>
+    Integer += <span class="br0">(</span>B3 &amp; 0x3F<span class="br0">)</span> &lt;&lt; <span class="nu0">13</span>;
+    <span class="kw1">if</span> <span class="br0">(</span>B3 &amp; 0x80<span class="br0">)</span> <span class="co1">// got a 4th byte</span>
+    <span class="br0">{</span>
+      Integer += <span class="br0">(</span>B4 &amp; 0x3F<span class="br0">)</span> &lt;&lt; <span class="nu0">20</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>B4 &amp; 0x80<span class="br0">)</span> <span class="co1">// got a 5th byte</span>
+      <span class="br0">{</span>
+        Integer += <span class="br0">(</span>B5 &amp; 0x3F<span class="br0">)</span> &lt;&lt; <span class="nu0">27</span>;
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> IndexToInt<span class="br0">(</span> <span class="kw4">byte</span> data<span class="br0">[</span><span class="nu0">255</span><span class="br0">]</span>, <span class="kw6">optional</span> <span class="kw4">byte</span> ptr <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">byte</span> B1,B2,B3,B4,B5;
+        <span class="kw5">local</span> <span class="kw4">int</span> Integer;
+ 
+        B1 = data<span class="br0">[</span>ptr++<span class="br0">]</span>;
+        Integer = B1 &amp; 0x3f;
+        <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>B1 &amp; 0x40<span class="br0">)</span>!=<span class="nu0">0</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                B2 = data<span class="br0">[</span>ptr++<span class="br0">]</span>;
+                Integer += <span class="br0">(</span>B2 &amp; 0x7f<span class="br0">)</span> &lt;&lt; <span class="nu0">6</span>;
+                <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>B2 &amp; 0x80<span class="br0">)</span>!=<span class="nu0">0</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        B3 = data<span class="br0">[</span>ptr++<span class="br0">]</span>;
+                        Integer += <span class="br0">(</span>B3 &amp; 0x7f<span class="br0">)</span> &lt;&lt; <span class="nu0">13</span>;
+                        <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>B3 &amp; 0x80<span class="br0">)</span>!=<span class="nu0">0</span><span class="br0">)</span>
+                        <span class="br0">{</span>
+                                B4 = data<span class="br0">[</span>ptr++<span class="br0">]</span>;
+                                Integer += <span class="br0">(</span>B4 &amp; 0x7f<span class="br0">)</span> &lt;&lt; <span class="nu0">20</span>;
+                                <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>B4 &amp; 0x80<span class="br0">)</span>!=<span class="nu0">0</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        B5 = data<span class="br0">[</span>ptr++<span class="br0">]</span>;
+                                        Integer += B5 &lt;&lt; <span class="nu0">27</span>;
+                                <span class="br0">}</span>
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>B1 &amp; 0x80<span class="br0">)</span>!=<span class="nu0">0</span><span class="br0">)</span> 
+                Integer = -Integer;
+ 
+        <span class="kw1">return</span> Integer;
+<span class="br0">}</span>
+</pre></div>
+<hr />
+<p><b>El Muerte:</b> need this description when I'm going to port by UE2 query specification to the wiki</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 29/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/o/m/Legacy%7ECompactIndex_93cf.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/o/m/Legacy_talk%7ECompactIndex_509e.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:CompactIndex">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:42, 2 September 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VitalOverdose/ONSVehicleEjectionTrigger - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VitalOverdose/ONSVehicleEjectionTrigger</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">Legacy:VitalOverdose</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/t/r/i/Legacy%7ETriggers_1cde.html" title="Legacy:Triggers">Triggers</a> &gt;&gt; ONSVehicleEjectionTrigger(Package: custom)</div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#The_Script"><span class="tocnumber">2</span> <span class="toctext">The Script</span></a></li>
+<li class="toclevel-1"><a href="#Easy_to_embed_into_a_level"><span class="tocnumber">3</span> <span class="toctext">Easy to embed into a level</span></a></li>
+<li class="toclevel-1"><a href="#Related"><span class="tocnumber">4</span> <span class="toctext">Related</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h3><span class="mw-headline">Overview</span></h3>
+<p>This custom <a href="../../../../articles/t/r/i/Legacy%7ETriggers_1cde.html" title="Legacy:Triggers">Triggers</a> actor is designed to detect any <a href="../../../../articles/o/n/s/Legacy%7EONSVehicle_101f.html" title="Legacy:ONSVehicle">ONSVehicles</a> that come within a certain distance and if a driver is present it ejects the driver.</p>
+<ul>
+<li>Optional damage can be applied to the driver&#160;: DriverDamage.</li>
+<li>Optional damage to the vehicle&#160;: VehicleDamage.</li>
+<li>Also the force of the ejection multiplied&#160;: EjectMultiplyer.</li>
+<li>There are optional extra sound FX for when the ONSVehicleEjectionTrigger is touched by a valid/non-valid actor&#160;:RejectSoundFx/ValidContactSoundFxand.</li>
+<li>Optional sound FX for the ejection itself.</li>
+</ul>
+<p>Both the <a href="../../../../articles/d/a/m/Legacy%7EDamageType_c81e.html" title="Legacy:DamageType">DamageTypes</a> for the diver and the vehicle can also be set by the mapper.</p>
+<p><a name="The_Script" id="The_Script"></a></p>
+<h3><span class="mw-headline">The Script</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">/////////////////////////////////////////////////////////////////////</span>
+<span class="co1">// by vitaloverdose Oct 2007.</span>
+<span class="co1">// Http://www.vitaloverdose.com</span>
+<span class="co1">///////////////////////////////////////////////////////////////////////</span>
+ 
+<span class="kw5">class</span> ONSVehicleEjectionTrigger <span class="kw5">extends</span> Triggers
+<span class="kw6">Placeable</span>;
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                            VehicleDamage;         <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">Int</span>                            DriverDamage;          <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>                          Ejectmultiplyer;       <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a>                          EjectSoundFx;          <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a>                          RejectSoundFx;         <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a>                          ValidContactSoundFx;   <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> Class&lt; <a href="/DamageType"><span class="kw10">Damagetype</span></a> &gt;            DriverDamageType;      <span class="co1">// Mapper can set in unrealEd.</span>
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> Class&lt; <a href="/DamageType"><span class="kw10">DamageType</span></a> &gt;            VehicleDamageType;     <span class="co1">// Mapper can set in unrealEd.</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">Function</span> Touch<span class="br0">(</span> <a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw6">Super</span>.<span class="me1">touch</span><span class="br0">(</span>other<span class="br0">)</span>;
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>!Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'onsVehicle'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>onsVehicle<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">Driver</span> == <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+    <span class="kw1">If</span> <span class="br0">(</span> RejectSoundFx!=<span class="kw9">None</span><span class="br0">)</span>
+         Playsound<span class="br0">(</span>RejectSoundFx<span class="br0">)</span>;
+    <span class="kw1">return</span>;
+    <span class="br0">}</span>
+<span class="co1">// calls the Eject function and passes it the valid reference of the vehicle that touched it.</span>
+Eject<span class="br0">(</span> OnsVehicle<span class="br0">(</span>Other<span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">Function</span> Eject<span class="br0">(</span> OnsVehicle Avehicle<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">local</span> <a href="/Pawn"><span class="kw10">pawn</span></a>  EjectedDriver;
+<span class="kw5">local</span> <span class="kw4">float</span> OldEjectMomentum;
+ 
+<span class="co1">//the old EjectMomentum is backed up so it can be restored after the ejection</span>
+OldEjectMomentum        = Avehicle.<span class="me1">EjectMomentum</span>;
+ 
+<span class="co1">//The ejection momentum is then altered on the vehicle</span>
+Avehicle.<span class="me1">EjectMomentum</span> *= Ejectmultiplyer;
+ 
+<span class="co1">// the valid reference to the driver is recored before hes ejected</span>
+EjectedDriver          = Avehicle.<span class="me1">Driver</span>;
+ 
+<span class="co1">// The function EjectDriver() is called on the vehicle which ejects the driver</span>
+Avehicle.<span class="me1">EjectDriver</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="co1">//The original ejection force is returned to the vehicle</span>
+Avehicle.<span class="me1">EjectMomentum</span> = OldEjectMomentum;
+ 
+<span class="co1">//applies damage to the Driver using the recorded reference.</span>
+<span class="kw1">if</span> <span class="br0">(</span> DriverDamage &gt; <span class="nu0">1</span><span class="br0">)</span>
+     EjectedDriver.<span class="me1">TakeDamage</span><span class="br0">(</span>DriverDamage , Instigator , EjectedDriver.<span class="me1">Location</span> , <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">10000</span><span class="br0">)</span>,DriverDamagetype <span class="br0">)</span> ;
+ 
+<span class="co1">//applies damage to the vehicle</span>
+<span class="kw1">if</span> <span class="br0">(</span> VehicleDamage &gt; <span class="nu0">1</span> <span class="br0">)</span>
+     Avehicle.<span class="me1">TakeDamage</span><span class="br0">(</span>VehicleDamage, Instigator , Avehicle.<span class="me1">Location</span> , <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">10000</span><span class="br0">)</span>,VehicleDamagetype <span class="br0">)</span>;
+ 
+<span class="co1">// if the mapper specified sound FX they are played here</span>
+<span class="kw1">If</span> <span class="br0">(</span> ValidContactSoundFx!=<span class="kw9">None</span><span class="br0">)</span>
+     Playsound<span class="br0">(</span>ValidContactSoundFx<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     VehicleDamage=<span class="nu0">1000</span>
+     DriverDamage=<span class="nu0">50</span>
+     Ejectmultiplyer=<span class="nu0">2.000000</span>
+     DriverDamageType=<span class="kw5">Class</span><span class="st0">'Engine.Crushed'</span>
+     VehicleDamageType=<span class="kw5">Class</span><span class="st0">'UT2k4Assault.DamTypeExploBarrel'</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Easy_to_embed_into_a_level" id="Easy_to_embed_into_a_level"></a></p>
+<h3><span class="mw-headline">Easy to embed into a level</span></h3>
+<p>You can download this script as a .UC file <a href="http://www.fataloverdose.copperstream.co.uk/files/protools/onsejectiontrigger/ONSVehicleEjectionTrigger.uc" class="external text" title="http://www.fataloverdose.copperstream.co.uk/files/protools/onsejectiontrigger/ONSVehicleEjectionTrigger.uc" rel="nofollow">ONSVehicleEjectionTrigger.uc</a></p>
+<p>Or download this script as a '<a href="http://www.fataloverdose.copperstream.co.uk/files/protools/onsejectiontrigger/MyLevel.u" class="external text" title="http://www.fataloverdose.copperstream.co.uk/files/protools/onsejectiontrigger/MyLevel.u" rel="nofollow">MyLevel.u</a>' file that can easily be imported into your level though you actor browser classes/open package.</p>
+<p><a name="Related" id="Related"></a></p>
+<h3><span class="mw-headline">Related</span></h3>
+<ul>
+<li><a href="../../../../articles/v/e/h/Legacy%7EVehicle_6bd9.html" title="Legacy:Vehicle">Vehicle</a></li>
+<li><a href="../../../../articles/o/n/s/Legacy%7EONSVehicle_101f.html" title="Legacy:ONSVehicle">ONSVehicle</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleBooster_4aeb.html" title="Legacy:VitalOverdose/ONSVehicleBooster">ONSVehicleBooster</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleTeleporter_c44f.html" title="Legacy:VitalOverdose/ONSVehicleTeleporter">ONSVehicleTeleporter</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleFXTagger_c12b.html" title="Legacy:VitalOverdose/ONSVehicleFXTagger">ONSVehicleFxTagger</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 224/2097152 bytes
+Template argument size: 129/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleEjectionTrigger_2a32.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/i/t/Legacy_talk%7EVitalOverdose_ONSVehicleEjectionTrigger_b8cc.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VitalOverdose/ONSVehicleEjectionTrigger">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:31, 8 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

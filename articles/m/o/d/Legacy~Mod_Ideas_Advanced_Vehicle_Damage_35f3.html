@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Ideas/Advanced Vehicle Damage - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Ideas/Advanced Vehicle Damage</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_bf77.html" title="Legacy:Mod Ideas">Legacy:Mod Ideas</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>What this mod should allow you to do is destroy parts of vehicles without destroying the vehicle itself. Let's take a Scorpion for example. Currently, you can only destroy the blades seperately. Why not have the same for the wheels &amp; turret? I believe that the wheels &amp; turrets are mounted by "bones". A simple "if" statement applied to the bones might work-if not, I can try editing the turrets &amp; wheels instead. Keep in mind that I just finished my DVD Edition's VTMs, so I may not understand everything.</p>
+<p>To-Do List:</p>
+<ul>
+<li>Destroyable Turrets-They seem to work fine.</li>
+<li>Destroyable Weapons-I haven't found a way to make them work yet. I remember being able to destroy the Goliath cannon in my past exploits, but the code has since been lost.</li>
+<li>Destroyable Wheels-I haven't found a way to make them work, and it's much more difficult than the other two.</li>
+</ul>
+<p><a name="Current_Code" id="Current_Code"></a></p>
+<h2><span class="mw-headline">Current Code</span></h2>
+<p><a name="AVDONSPRV" id="AVDONSPRV"></a></p>
+<h2><span class="mw-headline">AVDONSPRV</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Advanced Vehicle Damage HellBender</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> AVDONSPRV <span class="kw5">extends</span> ONSPRV;
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        PassengerWeapons<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>WeaponPawnClass=<span class="kw5">class</span><span class="st0">'AVD.AVDONSPRVRearGunPawn'</span>,WeaponBone=Dummy02<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="AVDONSPRVRearGunPawn" id="AVDONSPRVRearGunPawn"></a></p>
+<h2><span class="mw-headline">AVDONSPRVRearGunPawn</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Advanced Vehicle Damage HellBender Rear Turret</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> AVDONSPRVRearGunPawn <span class="kw5">extends</span> ONSPRVRearGunPawn;
+ 
+<span class="kw1">DefaultProperties</span>
+        bHasOwnHealth=<span class="kw9">True</span>
+        bCollideActors=<span class="kw9">True</span>
+        bCollideWorld=<span class="kw9">True</span>
+        bBlockActors=<span class="kw9">True</span>
+        bProjTarget=<span class="kw9">True</span>
+        Health=<span class="nu0">300</span>
+        HealthMax=<span class="nu0">300</span>
+</pre></div>
+<p><b>Foxpaw:</b> Hmm, this would be simpler with UT2003's vehicle code, but may still be plausable with UT2004's vehicle code. The wheels and turrets aren't "attached" by bones - they ARE bones. Basically, the entire vehicle is one mesh, simulated by Karma. Basically, a ragdoll with it's own internal forces and stuff acting on it's "body parts." It should be possible to remove parts of it similar to how limbs are "gibbed" from a player when they become a ragdoll, however, I don't know how accessible the vehicle's turret code, etc. is and so I don't know if you could plausably remove the functionality of turrets and wheels and stuff.</p>
+<p><b>NamelessPlayer:</b> I found a bHasOwnHealth variable in the ONSWeapon class. I experimented with it, and while the rear turret of a Hellbender had 100 health instead of 600, no damage was taken when the turret was shot. I was on the same team that it was set, so I added some bots &amp; let them take it. A driver got in, later to be joined by a side gunner. I shot the turret to no avail-it destroyed the Hellbender, and a Manta too!&#160;:) I might have to set up a health system for this to work, but I'll try it after I test it when it's fully manned.</p>
+<p><b>NamelessPlayer 5/4/2004:</b> I don't think it's working. I have to either check the hitbox or do smoe more coding to get the turrets to work. Speaking of which, how do I edit hitboxes?</p>
+<p><b>Foxpaw:</b> There's a discussion on the collision info for Skeletal Meshes on <a href="../../../../articles/s/v/e/Legacy%7ESVehicle_1039.html" title="Legacy:SVehicle">SVehicle</a>, though I don't know if you can edit the hitboxes after importing the mesh or if it must be done in the 3D modelling program.</p>
+<p><b>NamelessPlayer:</b> Been a while since I checked back, but I have it to the point where the Hellbender rear turret can be destroyed with a shot from any weapon. I didn't have to do any hitbox editing. I have problems setting the health, though, and you'll get 3 "Accessed None"s in your log when you enter it, shoot it, or switch to the rear turret seat when it's destroyed. I was mainly updating in the Atari Forums...</p>
+<p><b>NamelessPlayer:</b> Setting the health to 300 through DefaultProperties does NOTHING as far as the 1-shot-kill goes. I fired a Shock Rifle beam at it...damage recorded as 45, but the turret is destroyed anyway! A HellBender turret has to withstand more damage than THAT...</p>
+<p><b>NamelessPlayer:</b> Well, whaddaya know? I set it to destroy when Health &gt;1...when it should be &lt;1! I don't have time to test, because I don't usually get PC time on Mondays or Thursdays, so I'll have to wait 'til tomorrow to test this...</p>
+<p><b>NamelessPlayer (5/7/2004):</b> That didn't help. I'll try putting spaces at the beginning &amp; the end in-between the parentheses.</p>
+<p><b>NamelessPlayer:</b> That STILL doesn't work. I made it so that it logs health as well. Apparently, when shot, health is NOT deducted! It also only starts taking damage after it's entered. Maybe I turned on something that wasn't neccesary?</p>
+<p><b>NamelessPlayer:</b> I posted the code above. As you can see, it didn't change much. Adding the Died function simply prevents the rear turret from taking ANY damage, and removing it will enable you to destroy the turret-with one shot, regardless of health!</p>
+<p><b>NamelessPlayer (5/9/2004):</b> It was actually MUCH simpler than expected-all I had to do was set some default properties &amp; modify TakeDamage so that Health -= Damage! It works almost perfectly now-the only problem is, it ignores Friendly fire settings. But right now, I'm moving on to the other things.</p>
+<p><b>NamelessPlayer:</b> DOES ANYBODY ACTUALLY SEE THIS? Okay, I edited the weapons to be destroyed as well. The only thing left to do is add code to make wheels destroyable, but I can't compile my own subclass of SVehicleWheel. Maybe I'm not doing something right.</p>
+<p><b>NamelessPlayer:</b> Doesn't seem right when I'm mostly talking to myself here...</p>
+<p>Okay, when I said the turrets were done, I got the Hellbender rear turret to act the way I wanted, but OTHER turrets get destroyed with one shot! Also, the Leviathan weapons don't seem to have any collision detection. I wonder what causes this...</p>
+<p><b>WheatPuppet:</b> I'm definitely paying attention to this. I'm defining the basics of creating a simple Battlezone mod for UT2k4 and sectored damage is an intersesting possibility to me. My guess (and it's just that) for why leviathan turrets don't have collision detection is becuause they weren't designed to take invividual damage (although neither was the hellbender's...). I don't know how plausible it would be to rewrite the Levi's collision code *shrug*.</p>
+<p><b>NamelessPlayer:</b> VERY BAD NEWS-MY UT 2004 INSTALLATION IS SCREWED! First, I started crashing when in windowed mode(a real pain in the ass when you're trying to use the log), then I tried un-installing &amp; re-installing-but in the middle of installation, I get a BLUE ERROR SCREEN TELLING ME TO RESTART! I've only had this game for a little over a month! Any clue to what's going on?</p>
+<p><b>Mosquito:</b> Upgrade to XP or 2000, tbh, just pirate it, microsoft is a company that can do without your money.</p>
+<p><b>NamelessPlayer:</b> I've been having XP. My UT 2004 installation is back, but the problem that I tried to fix by re-installing is still there-the windowed crash bug! It's annoying when you need to check your log on a detailed map, mainly because the engine has to re-load all the textures &amp; stuff before you can start playing again. Now, I've been having this strange bug-only the Hellbender rear turret seens to have its health working the way I want it to. I used the same code for pretty much everything-for weapons, I added "var int Health", and the Goliath turret works fine, but everything else is destroyed with one shot, and the Leviathan weapons don't collide with anything.</p>
+<p><b>NamelessPlayer:</b> Okay, the log problem is gone. However, I still have yet to figure out a way to make ALL of the turrets &amp; weapons work properly!</p>
+<p><b>Syntax Error:</b> You should check in unreal ed if there are collision boxes for the leviathon turrets. to see the box, load the mesh and click view -&gt; collison</p>
+<p><b>NamelessPlayer (8/19/2005):</b> It's been a long time since I've got back to this. I've borrowed the TakeDamage code from class Vehicle, and it works fine as far as the HellBender rear turret is concerned-but it DOES take up a bit of space just to fit all of the TakeDamage code in. I've tried condensing the code to a simple "event Destroyed()" with the "if (Health &lt;1), destroy()", but I get an "infinite script recursion" error if I do it that way when the rear turret is destroyed. The code posted is the working code for a destroyable HellBender rear turret.</p>
+<p><b>MythOpus:</b> You're getting an infinite recursion because you're calling the 'Destroy()' function inside the 'destroyed' function. So... because it's health is lower than 1, it will keep calling itself over and over and over and over and over... and then you have an infinite recursion.</p>
+<p><b>NamelessPlayer (8/20/2005):</b> I can't believe I didn't notice this earlier. All I had to do was enter the DefaultProperties settings &amp; I'm done-no functions/events needed! Now all I have to do is find out how to destroy weapons &amp; wheels-I also want to find a way to not entirely remove the vehicle seat if I, say, destroyed the HellBender's side turret.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_Advanced_Vehicle_Damage_35f3.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Ideas_Advanced_Vehicle_Damage_d1ed.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Ideas/Advanced_Vehicle_Damage">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:09, 20 August 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2537 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:LadderGameRules - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:LadderGameRules</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> &gt;&gt; LadderGameRules (<a href="../../../../articles/l/a/d/Legacy%7ELadder1.46_a0ee.html" title="Legacy:Ladder1.46">Ladder1.46</a>)</div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<div class="source-uscript" style="font-family: monospace;">
+<ol>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Ladder.LadderGameRules</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Class responsible for maintenance of all profiles</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Handles all interface between game &amp; profiles</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Handles all interaction from webadmin interface &amp; adminmenu interface</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//-----------------------------------------------------------</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">class</span> LadderGameRules <span class="kw5">extends</span> GameRules</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw6">config</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">const</span> LOGNAME&#160; &#160;= <span class="st0">'LadderGameRules'</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Handles all ServerActors with PlayInfo</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> ConfigMaster&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; SAManager;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Server was shut down before game was finished</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">bool</span>&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bDirtyStart;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Profiles</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw4">struct</span> Profile</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">string</span> &#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileName;&#160; &#160; <span class="co1">// Name of Profile</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">bool</span> &#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bActive;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// This profile is currently in use</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">var</span> <span class="kw4">bool</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bReload;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// This profile was the last profile to be used</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Profile Storage</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">protected</span> <span class="kw6">config</span> array&lt;Profile&gt; &#160; &#160; Profiles;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">protected</span> <span class="kw6">config</span> <span class="kw4">int</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; NumRemainingMatches;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Profile Usage Variables</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> array&lt;ProfileConfigSet&gt; &#160; &#160; LadderProfiles;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> ProfileConfigSet &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; CurrentProfile;&#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Currently Active Profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> &#160; &#160; &#160; &#160; &#160; &#160; StringArray &#160; &#160; &#160; &#160; &#160; &#160; AllLadderProfiles;&#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Only used for sorting in switch profiles by name</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> &#160; &#160; &#160; &#160; &#160; &#160; StringArray&#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileMaps;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Holds maplist for switching server to new profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw4">string</span> &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileMutators;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Holds mutator string for switch server to new profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span>&#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; array&lt;string&gt;&#160; &#160;&#160; &#160; &#160; &#160; ProfileActors;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw4">bool</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bWaitingToSwitch;&#160; &#160; &#160; &#160;&#160; &#160; &#160; &#160; <span class="co1">// Waiting for end of match to switch server to new profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span>&#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw4">int</span>&#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Index;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Index of currently active profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span> &#160; &#160; &#160;&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfileClass;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw4">string</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; DefaultProfileName;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> class&lt;ProfileConfigSet&gt;&#160; &#160; &#160;&#160; &#160; &#160; &#160; ProfileClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw4">struct</span> CommandLineParam <span class="br0">{</span> <span class="kw5">var</span> <span class="kw4">string</span> ParamName; <span class="kw5">var</span> <span class="kw4">string</span> Value; <span class="br0">}</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> array&lt;CommandLineParam&gt; CommandLineOptions;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Localization</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownWhileTemporary;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownWhilePermanent;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownWhileWaiting;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownRemainingMatches;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownResumingTemporary;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownResumingPermanent;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> ShutdownTrackingCorrupted;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> EndOfGame;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> EndofGameIntercepting;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> EndofGameNoRemainingMatches;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> OverridingURL;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Error Messages</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> BadProfileClass;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> CannotRemoveActive;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> PreviousProfileRemoved;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Warning Messages</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> EmptyMaplist;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> InvalidMaplist;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> CancellingProfile;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> BadIndex;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Turns out there is a bug with the 2166 (and probably earlier) version</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// of the MatchEnded state of DeathMatch:</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Once Level.TimeSeconds &gt; EndTime + RestartWait, MatchEnded.Timer() begins</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// calling RestartGame(). &#160;This results in RestartGame (and thus GameRules.HandleRestartGame())</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// getting called multiple times.</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">var</span> <span class="kw4">bool</span>&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bRestartCalled;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//function bool AddTextParam(string ParamName, optional string DefaultValue, optional bool bAddIfNotExists)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//{</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; local int i;</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//&#160; &#160; &#160; local TextParam TmpT;</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//&#160; &#160; &#160; for (</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">bool</span> AddBoolParam<span class="br0">(</span><span class="kw4">string</span> ParamName, <span class="kw6">optional</span> <span class="kw4">bool</span> DefaultValue, <span class="kw6">optional</span> <span class="kw4">bool</span> bAddIfNotExists<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> AddSelectParam<span class="br0">(</span><span class="kw4">string</span> ParamName, array&lt;string&gt; VarOptions, <span class="kw6">optional</span> <span class="kw4">bool</span> bAddIfNotExists<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>&#160;!= <span class="kw9">None</span> &amp;&amp; <span class="kw8">Level</span>.<span class="me1">NextURL</span>&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bDirtyStart = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; ProfileClass = class&lt;ProfileConfigSet&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>LadderProfileClass, <span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ProfileClass == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>BadProfileClass@<span class="st0">"'"</span>$LadderProfileClass$<span class="st0">"'"</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Destroy<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Initialize String Arrays</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; AllLadderProfiles = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'SortedStringArray'</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; ProfileMaps = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span> <span class="kw5">class</span><span class="st0">'StringArray'</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; InitializeProfileArray<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw6">Super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">event</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, j, Matches;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; i = <span class="nu0">0</span> - <span class="nu0">1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; j = <span class="nu0">0</span> - <span class="nu0">1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>&#160;!= <span class="kw9">None</span> &amp;&amp; ConfigMaster<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span><span class="br0">)</span>&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; SAManager = ConfigMaster<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bDirtyStart<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = FindPreviousProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = FindActiveProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Matches = NumRemainingMatches;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &gt;= <span class="nu0">0</span><span class="br0">)</span> <span class="co1">// Found a previous profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &gt;= <span class="nu0">0</span><span class="br0">)</span> &#160;<span class="co1">// Found an active profile</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> Matches &gt; <span class="nu0">0</span> <span class="br0">)</span> &#160;<span class="co1">// Temporary profile was active</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownWhileTemporary@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownRemainingMatches$<span class="st0">":"</span>@NumRemainingMatches$<span class="st0">"."</span>@ShutdownResumingTemporary,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span> j, Matches <span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownWhileTemporary@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownRemainingMatches$<span class="st0">":"</span>@NumRemainingMatches$<span class="st0">"."</span>@ShutdownResumingPermanent@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span> i, <span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownWhileWaiting,LOGNAME<span class="br0">)</span>;&#160; &#160; &#160; <span class="co1">// Shutdown while waiting to apply temporary profile - cancel</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> Matches &gt; <span class="nu0">0</span> <span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ResetTrackingValues<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span>i,Matches<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ResetTrackingValues<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span>i,<span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>j &gt;= <span class="nu0">0</span><span class="br0">)</span> <span class="co1">// no reload, but found active profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>ShutdownWhilePermanent@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>@ShutdownResumingPermanent@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span> j, <span class="nu0">0</span> <span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>Matches &gt; <span class="nu0">0</span><span class="br0">)</span>&#160; &#160;<span class="co1">// no reload, no active</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; NumRemainingMatches = <span class="nu0">0</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bDirtyStart = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Game has ended - even if we want to handle restart, cannot simply</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// return True, or GameRulesModifiers later in the list do not recieve</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// HandleRestartGame() calls</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> HandleRestartGame<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">bool</span> bHandleRestart;&#160; &#160; &#160; <span class="co1">// True if we are handling restart</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bDirtyStart<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bDirtyStart = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>!<span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">bChangeLevels</span> || <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">bAlreadyChanged</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">HandleRestartGame</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bRestartCalled<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">HandleRestartGame</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">else</span> bRestartCalled = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> bWaitingToSwitch <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = FindPreviousProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &gt;= <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndOfGame,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndofGameIntercepting@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span>i,NumRemainingMatches<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bHandleRestart = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> NumRemainingMatches &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>NumRemainingMatches == <span class="nu0">1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="co1">// Time to switch server to previous profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = FindPreviousProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &gt;= <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndOfGame,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndOfGameNoRemainingMatches,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndOfGameIntercepting@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ApplyProfile<span class="br0">(</span>i,<span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bHandleRestart = <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>EndOfGame,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>PreviousProfileRemoved,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>&#160;!bHandleRestart <span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; NumRemainingMatches--;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Returns true if either one is true</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="br0">(</span><span class="kw6">Super</span>.<span class="me1">HandleRestartGame</span><span class="br0">(</span><span class="br0">)</span> || bHandleRestart<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//#########################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Profile Management</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Applies selected profile immediately</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> ApplyProfile<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">int</span> NewProfileIndex, <span class="kw4">int</span> NumberOfMatches<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> idx,i,j;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet TempPCS;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; TempArr;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> GameType,ShortName,FirstMap,Tmp,TmpV;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; idx = ActivateProfile<span class="br0">(</span>NewProfileIndex, NumberOfMatches &gt; <span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>idx &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span>CancellingProfile@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>NewProfileIndex<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'"</span>@<span class="st0">"("</span>$BadIndex$<span class="st0">")"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ActivateProfile<span class="br0">(</span>Index<span class="br0">)</span> &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ResetTrackingValues<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempPCS = LadderProfiles<span class="br0">[</span>idx<span class="br0">]</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">class</span><span class="st0">'Ladder.CommandLineParams'</span>.<span class="kw1">default</span>.<span class="me1">bRejectPlayInfo</span> = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempPCS.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; GameType = <span class="kw4">string</span><span class="br0">(</span>TempPCS.<span class="me1">GetGameClass</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Set the maplist</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; ProfileMaps.<span class="me1">Reset</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempArr = TempPCS.<span class="me1">GetUsedMaps</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>TempArr.<span class="kw6">Length</span> == <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span>CancellingProfile@<span class="st0">"'"</span>$Profiles<span class="br0">[</span>idx<span class="br0">]</span>.<span class="me1">ProfileName</span>$<span class="st0">"'"</span>@<span class="st0">"("</span>$EmptyMaplist$<span class="st0">")"</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Index == idx<span class="br0">)</span> DeactivateProfile<span class="br0">(</span>Index<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>ActivateProfile<span class="br0">(</span>Index, <span class="kw9">False</span><span class="br0">)</span> &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ResetTrackingValues<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; TempPCS.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NumRemainingMatches = NumberOfMatches;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;TempArr.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ProfileMaps.<span class="me1">Add</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>i<span class="br0">)</span>,TempArr<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; FirstMap = ProfileMaps.<span class="me1">getTag</span><span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; UpdateDefaultMaps<span class="br0">(</span>GameType,ProfileMaps<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//log("TempPCS:"$TempPCS@"ConfigManager:"$SAManager,'ApplyProfile');</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Set the mutators</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ProfileMutators = <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ProfileMutators = UpdateMutatorString<span class="br0">(</span>TempPCS<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Set the server actors</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; ProfileActors = TempPCS.<span class="me1">GetUsedServerActors</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempArr = SAManager.<span class="me1">GetAllManagedActors</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; TempArr.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Tmp = <span class="kw7">Left</span><span class="br0">(</span>TempArr<span class="br0">[</span>i<span class="br0">]</span>,<span class="kw7">InStr</span><span class="br0">(</span>TempArr<span class="br0">[</span>i<span class="br0">]</span>,<span class="st0">","</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; ProfileActors.<span class="kw6">Length</span>; j++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Tmp ~= ProfileActors<span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &lt; ProfileActors.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; EnableManagedActor<span class="br0">(</span>Tmp<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> DisableManagedActor<span class="br0">(</span>Tmp<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Set the PlayInfo</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;TempPCS.<span class="me1">Count</span><span class="br0">(</span><span class="br0">)</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Tmp = TempPCS.<span class="me1">GetProfileParamName</span><span class="br0">(</span>i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; TmpV = TempPCS.<span class="me1">GetProfileParam</span><span class="br0">(</span>i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; ShortName = <span class="kw7">GetItemName</span><span class="br0">(</span>Tmp<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// If this parameter was specified at the URL,</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// make sure to replace it, otherwise the URL value will</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// override the profile value</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>HasURLOption<span class="br0">(</span>ShortName<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>OverridingURL@ShortName$<span class="st0">"."</span>,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; UpdateURL<span class="br0">(</span>ShortName, TmpV, <span class="kw9">false</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>!TempPCS.<span class="me1">SetNamedParam</span><span class="br0">(</span>Tmp, TmpV<span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; CommandLineOptions.<span class="kw6">Length</span>; j++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Tmp ~= CommandLineOptions<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">ParamName</span> &amp;&amp; TmpV&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; UpdateURL<span class="br0">(</span>ShortName, TmpV, <span class="kw9">false</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; TempPCS.<span class="me1">SavePI</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempPCS.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bDirtyStart<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; bDirtyStart = <span class="kw9">False</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw8">Level</span>.<span class="me1">ServerTravel</span><span class="br0">(</span>FirstMap$<span class="st0">"?Game="</span>$GameType$<span class="st0">"?Mutator="</span>$ProfileMutators, <span class="kw9">False</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Applies selected profile at the end of the current match</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> WaitApplyProfile<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">int</span> NewProfileIndex, <span class="kw4">int</span> NumberOfMatches<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> CurrentActive;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CurrentActive = FindActiveProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Check to make sure we aren't attempting to switch to the currently active profile</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span> NewProfileIndex == CurrentActive<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Clean up any other profiles that were supposed to be reloaded</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = FindPreviousProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &gt;= <span class="nu0">0</span><span class="br0">)</span> Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>CurrentActive &gt;= <span class="nu0">0</span><span class="br0">)</span> Profiles<span class="br0">[</span>CurrentActive<span class="br0">]</span>.<span class="me1">bActive</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>NewProfileIndex<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; bWaitingToSwitch = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NumRemainingMatches = NumberOfMatches;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Add new profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> ProfileConfigSet AddProfile<span class="br0">(</span><span class="kw4">string</span> PCSName, <span class="kw6">optional</span> <span class="kw4">string</span> GameType<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> Profile TempP;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i, NumProfiles;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NumProfiles = Profiles.<span class="kw6">Length</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; NumProfiles; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">ProfileName</span> ~= PCSName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">None</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; TempP.<span class="me1">ProfileName</span> = PCSName;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>Profiles.<span class="kw6">Length</span><span class="br0">]</span> = TempP;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LoadProfile<span class="br0">(</span>TempP,GameType<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> LadderProfiles<span class="br0">[</span>NumProfiles<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Copy profile - NewProfileName must be unique</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> CopyProfile<span class="br0">(</span><span class="kw4">int</span> SourceProfileIndex, <span class="kw4">string</span> NewProfileName<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet PCS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>SourceProfileIndex &lt; <span class="nu0">0</span> || SourceProfileIndex &gt;= Profiles.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>LadderProfiles<span class="br0">[</span>SourceProfileIndex<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; PCS = AddProfile<span class="br0">(</span>NewProfileName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>SourceProfileIndex<span class="br0">]</span>.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS.<span class="me1">ReplaceWith</span><span class="br0">(</span>LadderProfiles<span class="br0">[</span>SourceProfileIndex<span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>SourceProfileIndex<span class="br0">]</span>.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Remove profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">bool</span> RemoveProfile<span class="br0">(</span><span class="kw4">int</span> idx<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet LastPCS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> LastIDX;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>idx &lt; <span class="nu0">0</span> || idx &gt;= LadderProfiles.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Profiles<span class="br0">[</span>idx<span class="br0">]</span>.<span class="me1">bActive</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">log</span><span class="br0">(</span>CannotRemoveActive,LOGNAME<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">false</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LastIDX = LadderProfiles.<span class="kw6">Length</span> - <span class="nu0">1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LastPCS = LadderProfiles<span class="br0">[</span>LastIDX<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LastPCS.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>idx &lt; LastIDX<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>idx<span class="br0">]</span> = Profiles<span class="br0">[</span>LastIDX<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>idx<span class="br0">]</span>.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>idx<span class="br0">]</span>.<span class="me1">ReplaceWith</span><span class="br0">(</span>LastPCS<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>idx<span class="br0">]</span>.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; AllLadderProfiles.<span class="kw6">Remove</span><span class="br0">(</span>AllLadderProfiles.<span class="me1">FindItemId</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>idx<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; AllLadderProfiles.<span class="me1">Add</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>idx<span class="br0">)</span>,Profiles<span class="br0">[</span>LastIDX<span class="br0">]</span>.<span class="me1">ProfileName</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LastPCS.<span class="me1">Wipe</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LastPCS.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Profiles.<span class="kw6">Remove</span><span class="br0">(</span>LastIDX,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; LadderProfiles.<span class="kw6">Remove</span><span class="br0">(</span>LastIDX,<span class="nu0">1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; AllLadderProfiles.<span class="kw6">Remove</span><span class="br0">(</span>AllLadderProfiles.<span class="me1">FindItemId</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>LastIDX<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="kw9">true</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Returns index of currently active profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">int</span> FindActiveProfile<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Index &lt; <span class="nu0">-1</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Profiles.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bActive</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Index = i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Index &lt; <span class="nu0">-1</span><span class="br0">)</span> Index++;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Index;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Returns index of previously active profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">int</span> FindPreviousProfile<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Profiles.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bReload</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//#####################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Profile Interface</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Returns an array of map names that in the maplist for this profile</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> array&lt;string&gt; GetProfileMaps<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> CurrentProfileItem<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> j;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet PCS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; TempMaps;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>CurrentProfileItem&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="kw4">int</span><span class="br0">(</span>CurrentProfileItem<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = LadderProfiles<span class="br0">[</span>j<span class="br0">]</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS == <span class="kw9">None</span> &amp;&amp; CurrentProfile!=<span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = CurrentProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; TempMaps = PCS.<span class="me1">GetUsedMaps</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> TempMaps;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Returns an array of class names for mutators that this profile will use in the game</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> array&lt;string&gt; GetProfileMutators<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> CurrentProfileItem<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> j;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet PCS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; TempString;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>CurrentProfileItem&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="kw4">int</span><span class="br0">(</span>CurrentProfileItem<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = LadderProfiles<span class="br0">[</span>j<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS == <span class="kw9">None</span> &amp;&amp; CurrentProfile&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = CurrentProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="co1">// Query profile for mutators to display</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS&#160;!= <span class="kw9">none</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; TempString = PCS.<span class="me1">GetUsedMutators</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> TempString;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> array&lt;string&gt; GetProfileServerActors<span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">string</span> CurrentProfileItem<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> j;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> ProfileConfigSet PCS;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Temp;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>CurrentProfileItem&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; j = <span class="kw4">int</span><span class="br0">(</span>CurrentProfileItem<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = LadderProfiles<span class="br0">[</span>j<span class="br0">]</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS == <span class="kw9">None</span> &amp;&amp; CurrentProfile&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; PCS = CurrentProfile;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Temp = PCS.<span class="me1">GetUsedServerActors</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Temp;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">//#####################################################</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Protected helper functions</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">//</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Clears LadderProfiles array and loads each stored (Profiles array)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// profile to the LadderProfiles array</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw5">function</span> InitializeProfileArray<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; LadderProfiles.<span class="kw6">Length</span> = <span class="nu0">0</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Load all profiles immediately</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; Profiles.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LoadProfile<span class="br0">(</span>Profiles<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Adds a profile to the LadderProfiles array &amp; initializes the profile</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw5">function</span> LoadProfile<span class="br0">(</span>Profile NewProfile, <span class="kw6">optional</span> <span class="kw4">string</span> GameType<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = LadderProfiles.<span class="kw6">Length</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; LadderProfiles.<span class="kw6">Length</span> = LadderProfiles.<span class="kw6">Length</span> + <span class="nu0">1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>i<span class="br0">]</span> = <span class="kw6">new</span><span class="br0">(</span><span class="kw9">None</span>,<span class="st0">"Profile"</span>$string<span class="br0">(</span>i<span class="br0">)</span><span class="br0">)</span> ProfileClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">GetGameClass</span><span class="br0">(</span><span class="br0">)</span>&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">StartEdit</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Wipe</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">EndEdit</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>GameType == <span class="st0">""</span><span class="br0">)</span> LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Init</span><span class="br0">(</span><span class="kw8">Level</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">else</span> LadderProfiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Init</span><span class="br0">(</span><span class="kw8">Level</span>,GameType<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; AllLadderProfiles.<span class="me1">Add</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>i<span class="br0">)</span>, NewProfile.<span class="me1">ProfileName</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw6">protected</span> <span class="kw5">function</span> <span class="kw4">int</span> ActivateProfile<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">int</span> ProfileId, <span class="kw6">optional</span> <span class="kw4">bool</span> bStoreLast<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i,j;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ProfileId &lt; <span class="nu0">0</span> || ProfileId &gt;= Profiles.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; i = FindActiveProfile<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i == ProfileId<span class="br0">)</span> <span class="kw1">return</span> ProfileId;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; j = <span class="nu0">0</span> - <span class="nu0">1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &gt;= <span class="nu0">0</span><span class="br0">)</span> j = DeactivateProfile<span class="br0">(</span>i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &gt;= <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>bStoreLast<span class="br0">)</span> Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">True</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">else</span> Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>ProfileId<span class="br0">]</span>.<span class="me1">bActive</span> = <span class="kw9">True</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>ProfileId<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> ProfileId;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw6">protected</span> <span class="kw5">function</span> <span class="kw4">int</span> DeactivateProfile<span class="br0">(</span><span class="kw6">coerce</span> <span class="kw4">int</span> j<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>j &lt; <span class="nu0">0</span> || j &gt; Profiles.<span class="kw6">Length</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="nu0">-1</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">bActive</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Index = <span class="kw1">default</span>.<span class="me1">Index</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> j;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="co1">// Copied from UTServerAdmin - Applies the profile's maplist to the server's maplist</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> UpdateDefaultMaps<span class="br0">(</span><span class="kw4">String</span> GameType, StringArray Maps<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> class&lt;GameInfo&gt; GameClass;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> MapList List;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>Maps == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Warn</span><span class="br0">(</span>InvalidMaplist<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; GameClass = class&lt;GameInfo&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>GameType, <span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>GameClass&#160;!= <span class="kw9">None</span> &amp;&amp; GameClass.<span class="kw1">Default</span>.<span class="me1">MapListType</span>&#160;!= <span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GetMapList</span><span class="br0">(</span>GameClass.<span class="kw1">Default</span>.<span class="me1">MapListType</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>List&#160;!= <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List.<span class="me1">Maps</span>.<span class="kw6">Length</span> = <span class="nu0">0</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;Maps.<span class="me1">Count</span><span class="br0">(</span><span class="br0">)</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List.<span class="me1">Maps</span><span class="br0">[</span>i<span class="br0">]</span> = Maps.<span class="me1">GetTag</span><span class="br0">(</span>i<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List.<span class="me1">MapNum</span> = <span class="nu0">0</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List.<span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; List.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> EnableManagedActor<span class="br0">(</span><span class="kw4">string</span> ActorName<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> S;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> class&lt;AutoLoader&gt; A;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Arr;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>SAManager == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; SAManager.<span class="me1">LoaderClasses</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A = SAManager.<span class="me1">LoaderClasses</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">AutoLoaderClass</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>A == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Arr = A.<span class="kw6">static</span>.<span class="me1">GetManagedActors</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>Arr.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; S = <span class="kw5">class</span><span class="st0">'wUtils103.wArray'</span>.<span class="kw6">static</span>.<span class="me1">ShiftS</span><span class="br0">(</span>Arr<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ActorName ~= <span class="kw7">Left</span><span class="br0">(</span>S, <span class="kw7">InStr</span><span class="br0">(</span>S,<span class="st0">","</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A.<span class="kw6">static</span>.<span class="me1">EnableLoader</span><span class="br0">(</span>ActorName<span class="br0">)</span>;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> DisableManagedActor<span class="br0">(</span><span class="kw4">string</span> ActorName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> S;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> class&lt;AutoLoader&gt; A;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Arr;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>SAManager == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; SAManager.<span class="me1">LoaderClasses</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A = SAManager.<span class="me1">LoaderClasses</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">AutoLoaderClass</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>A == <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">continue</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Arr = A.<span class="kw6">static</span>.<span class="me1">GetManagedActors</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span>Arr.<span class="kw6">Length</span> &gt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; S = <span class="kw5">class</span><span class="st0">'wUtils103.wArray'</span>.<span class="kw6">static</span>.<span class="me1">ShiftS</span><span class="br0">(</span>Arr<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>ActorName ~= <span class="kw7">Left</span><span class="br0">(</span>S, <span class="kw7">InStr</span><span class="br0">(</span>S,<span class="st0">","</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; A.<span class="kw6">static</span>.<span class="me1">DisableLoader</span><span class="br0">(</span>ActorName<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Replaces the&#160;?mutator= command line parameter with this profile's configured mutators</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> <span class="kw4">string</span> UpdateMutatorString<span class="br0">(</span>ProfileConfigSet PCS<span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> array&lt;string&gt; Mutators;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> MutatorString;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>PCS == <span class="kw9">None</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">return</span> <span class="st0">""</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Mutators = PCS.<span class="me1">GetUsedMutators</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; MutatorString = <span class="kw5">class</span><span class="st0">'wUtils103.wArray'</span>.<span class="kw6">static</span>.<span class="me1">Join</span><span class="br0">(</span>Mutators,<span class="st0">","</span>,<span class="kw9">True</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> MutatorString;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="co1">// Copied from UTServerAdmin and modified</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> HasURLOption<span class="br0">(</span><span class="kw4">string</span> ParamName<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">string</span> Param, Value;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Param = ParamName;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">while</span> <span class="br0">(</span><span class="kw9">true</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; i = <span class="kw7">Instr</span><span class="br0">(</span>Param, <span class="st0">"."</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">if</span> <span class="br0">(</span>i &lt; <span class="nu0">0</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw1">break</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Param = <span class="kw7">Mid</span><span class="br0">(</span>Param, i<span class="nu0">+1</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Value = <span class="kw8">Level</span>.<span class="me1">GetUrlOption</span><span class="br0">(</span>Param<span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> Value&#160;!= <span class="st0">""</span>;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw6">protected</span> <span class="kw5">function</span> ResetTrackingValues<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">local</span> <span class="kw4">int</span> i;</div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;Profiles.<span class="kw6">Length</span>;i++<span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bActive</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; Profiles<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">bReload</span> = <span class="kw9">False</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; NumRemainingMatches = <span class="nu0">0</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">function</span> <span class="kw4">int</span> GetRemainingMatches<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw1">return</span> NumRemainingMatches;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw1">defaultproperties</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Index=<span class="nu0">-2</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; LadderProfileClass=<span class="st0">"Ladder.ProfileConfigSet"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; ShutdownWhileTemporary=<span class="st0">"Server was shutdown with active temporary profile"</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; ShutdownWhilePermanent=<span class="st0">"Server was shutdown with active profile"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; ShutdownWhileWaiting=<span class="st0">"Server was shutdown while waiting to apply a profile. Now applying new profile."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; ShutdownRemainingMatches=<span class="st0">"Number of matches remaining for this profile"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; ShutdownResumingTemporary=<span class="st0">"Reactivating temporary profile with remaining number of matches."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; ShutdownResumingPermanent=<span class="st0">"Reactivating standard profile"</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; ShutdownTrackingCorrupted=<span class="st0">"Profile tracking was corrupted. &#160;Resetting profile tracking values."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; EndOfGame=<span class="st0">"END OF GAME DETECTED."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; EndofGameIntercepting=<span class="st0">"Intercepting map change &amp; activating profile"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; EndofGameNoRemainingMatches=<span class="st0">"Profile match limit reached. Reactivating previous profile."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; OverridingURL=<span class="st0">"Overriding command line value for parameter"</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; BadProfileClass=<span class="st0">"Bad Profile Class"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; CannotRemoveActive=<span class="st0">"Removal of active profile not allowed! Please switch server to a different profile, then try again."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; PreviousProfileRemoved=<span class="st0">"Attempted to return server to previous profile, but no previous profile was found. &#160;Leaving server set to current profile."</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; BadIndex=<span class="st0">"Invalid profile index"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; CancellingProfile=<span class="st0">"Cancelling activation of profile"</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; EmptyMaplist=<span class="st0">"Profile maplist is empty"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; InvalidMaplist=<span class="st0">"Attempting to load profile with invalid maplist!"</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.AdminUserName"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.AdminPassword"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.GameRules"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.DemoRec"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.bAutoNumBots"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.QuickStart"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">6</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.RedTeamAI"</span>,Value=<span class="st0">"UnrealGame.TeamAI"</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">7</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.BlueTeamAI"</span>,Value=<span class="st0">"UnrealGame.TeamAI"</span><span class="br0">)</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">8</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.RedTeamSymbol"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; CommandLineOptions<span class="br0">(</span><span class="nu0">9</span><span class="br0">)</span>=<span class="br0">(</span>ParamName=<span class="st0">"CommandLineParams.BlueTeamSymbol"</span>,Value=<span class="st0">""</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+</ol>
+</div>
+</div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 247/2097152 bytes
+Template argument size: 191/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/a/d/Legacy%7ELadderGameRules_4c45.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/a/d/Legacy_talk%7ELadderGameRules_f5e6.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:LadderGameRules">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:29, 19 March 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

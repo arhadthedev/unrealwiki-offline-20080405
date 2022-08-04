@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Creating A New Weapontype - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Creating A New Weapontype</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>I just started with coding but I am missing some practical examples. So I put here what I found out so far together with the code.</p>
+<p>I assume that you have installed the SDK files or exported the codefiles from UnrealEd. In that case you see various directories like "XWeapons" etc. in your unreal directory – see <a href="../../../../articles/s/e/t/Legacy%7ESetting_Up_UnrealScript_3ce8.html" title="Legacy:Setting Up UnrealScript">Setting Up UnrealScript</a> for instructions.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Getting_Started"><span class="tocnumber">1</span> <span class="toctext">Getting Started</span></a></li>
+<li class="toclevel-1"><a href="#A_little_more_tuning"><span class="tocnumber">2</span> <span class="toctext">A little more tuning</span></a></li>
+<li class="toclevel-1"><a href="#Final_words"><span class="tocnumber">3</span> <span class="toctext">Final words</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Getting_Started" id="Getting_Started"></a></p>
+<h2><span class="mw-headline">Getting Started</span></h2>
+<p>For learning Unreal, I started a new Package called <code>TestPak</code>.</p>
+<p>I created the <code>TestPak.int</code> file in that folder which contains:</p>
+<pre>
+[Public]
+Object=(Name=TestPak,Class=Class,MetaClass=Engine.Weapon)
+</pre>
+<p>Don't forget to add it to the <code>ut2003.ini</code> file:</p>
+<p><code>EditPackages=TestPak</code></p>
+<p>(below the other <i>EditPackages</i> lines)</p>
+<p>Create a subfolder to the <code>TestPak</code> directory called <code>classes</code></p>
+<p>That's now your point to start from.</p>
+<p>For the beginning I copied the AssaultRifleWeapon and the codefiles belonging to that weapon for later modification. You can start that way too. If you want to rename the Weapon classes, you have to rename the files but also the file's content. Example:</p>
+<pre>
+copy c:\ut2003\XWeapons\Classes\<b>AssaultRifle.uc</b> c:\ut2003\testpak\classes\<b>TestWeapon.uc</b>
+</pre>
+<p>open the file and change</p>
+<pre>
+class AssaultRifle extends Weapon
+   config(user);
+</pre>
+<p>to:</p>
+<pre>
+class TestWeapon extends Weapon
+   config(user);
+</pre>
+<p>If you have renamed all the files you want to modify (I copied, renamed and <i>modified</i> the files: <code>Grenade.uc to TestGrenade.uc, GrenadeAmmo.uc to TestGrenadeAmmo.uc, AssaultRifle.uc to TestWeapon.uc, AssaultAmmoPickup.uc to TestWeaponAmmoPickup.uc, AssaultAttachment.uc to TestWeaponAttachment.uc, AssaultFire.uc to TestWeaponFire.uc, AssaultGrenade.uc to TestWeaponGrenade.uc, AssaultRiflePickup.uc to TestWeaponPickup.uc</code>) You can start making minor corrections in the files. Before doing that you can run <code>ucc make all</code>, testing if your copying process was successfull. If not, you have done something wrong or I described it badly - in that case you are welcome to modify this page&#160;;).</p>
+<p>Well ok - if you start a testlevel (with cheatings enabled) you can put in the console: <code>summon testpak.testweaponpickup</code> and the weapon will appear right in front of you. If not, check if the testpak.u file is present in the system directory.</p>
+<p>You will find out that it is still the normal AssaultRifle gun. And it is still shooting the same way etc. So stop playing around and modify the files further. Open <code>TestWeapon.uc</code>. Jump to the last lines where the defaultproperties are written.</p>
+<p>Watch out for lines like that now:</p>
+<pre>
+PickupClass=class'AssaultRiflePickup'
+</pre>
+<p>These lines are still pointing to the "old" classes that you want to overwrite!</p>
+<p>So change the lines this way:</p>
+<pre>
+PickupClass=Class'TestPak.TestWeaponPickup'
+</pre>
+<p><b>You will have to do this in all the files that you copied!</b></p>
+<p>Change the</p>
+<pre>
+ItemName="Assault Rifle"
+</pre>
+<p>to something else like "supergun" or so...</p>
+<p>Watch out for errors and test it inbetween by compiling and testing! It is hard to find errors if you made lots of "heavy" changes. <i>Don't forget to delete <code>testpak.u</code> before compiling your code!</i></p>
+<p>If you rerun a level and summon your weapon, it should tell you that you collected the "supergun" - or whatever you named it. But there are lot's of further changes to be made.</p>
+<p>I won't describe every line that I have changed because if you are clever, you will see the property values yourself that are important while changing the class names. Lines like</p>
+<pre>
+InventoryGroup=2
+</pre>
+<p>should make you curious for changing (this value will move the weapon to another slot in your inventory and can be changed easily).</p>
+<p>So, you can easily make now minor changes yourself: How much ammo it has, how fast it shoots and so on. As I started up by zero I spend a lot of time on figuring out how the new gun behaves on the changes. I guess you should do the same.</p>
+<p>Tests like: <b>How fast can I shoot</b> are always funny&#160;;) - especially if you need only one second to fire 300 projectiles on your enemy&#160;:D</p>
+<p><a name="A_little_more_tuning" id="A_little_more_tuning"></a></p>
+<h2><span class="mw-headline">A little more tuning</span></h2>
+<p>Still not satisfied? Well I wasn't too, - I wanted to create a bow. I am unable to create my own animation stuff since I have no conversion tool for 3D meshes, but I created an Staticmesh arrow that will be shot when triggering the grenade. This is easily be done in the defaultproperties of the <code>TestGrenade.uc</code> file:</p>
+<pre>
+StaticMesh=StaticMesh'YourStaticMeshPackage.YourGrenade'
+</pre>
+<p>Now I was able to shoot arrows - that exploded and flew strange (rotating and so on). ...</p>
+<p>So I made some changes on the functions that let the grenade explode - I deleted the functions that made the thing blowing up. Get rid of the randomspin-values, too. Also, I wanted to make the arrow stick:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">bool</span> bLanded; <span class="co1">// put this in the beginning of the file</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Landed<span class="br0">(</span> <span class="kw4">vector</span> HitNormal <span class="br0">)</span> <span class="br0">{</span>
+    HitWall<span class="br0">(</span>HitNormal,<span class="kw9">None</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> HitWall<span class="br0">(</span><span class="kw4">vector</span> HitNormal, <a href="/Actor"><span class="kw10">actor</span></a> HitWall<span class="br0">)</span> <span class="br0">{</span>
+    bLanded=<span class="kw9">true</span>;
+    Velocity=<span class="nu0">0</span>*Velocity;
+    SetPhysics<span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Now, the arrow will stick wherever it lands (except for the players it is hitting).</p>
+<p>But you will see that the arrow is not flying realy... A simple function will fix it:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span> <span class="br0">{</span>
+   <span class="kw1">if</span> <span class="br0">(</span>!bLanded<span class="br0">)</span> SetRotation<span class="br0">(</span><span class="kw4">rotator</span><span class="br0">(</span>velocity<span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Tick is called every moment in Unreal, so I guess this is the dirty way how to implement it, but I also think it does not matter so much when testing. Has anyone a better Idea?</p>
+<p>At least the arrow is flying nice through the air and sticks where it lands in the right direction!</p>
+<p>Now - I wanted to make it stick in the body of the enemy of course *hehehe*.</p>
+<p>So I modified the ProcessTouch function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> ProcessTouch<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <span class="kw4">vector</span> HitLocation <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">float</span> dist;
+    <span class="kw5">local</span> <span class="kw4">Name</span> bone; <span class="co1">//which bone it should be attached</span>
+    <span class="kw5">local</span> <span class="kw4">Vector</span> X;
+    <span class="kw5">local</span> class&lt;DamageType&gt; dmg;
+ 
+    dmg=<span class="kw5">class</span><span class="st0">'XWeapons.DamTypeShieldImpact'</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; <span class="br0">(</span>Other != Instigator || bCanHitOwner<span class="br0">)</span> &amp;&amp; <span class="br0">(</span>!bLanded<span class="br0">)</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        bLanded=<span class="kw9">True</span>;
+        X=Normal<span class="br0">(</span>Velocity+<span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0.5</span><span class="br0">)</span><span class="br0">)</span>;
+        SetPhysics<span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+        bone=Other.<span class="me1">GetClosestBone</span><span class="br0">(</span>HitLocation,Velocity,dist<span class="br0">)</span>;
+        Other.<span class="me1">TakeDamage</span><span class="br0">(</span><span class="nu0">0</span>, Instigator, HitLocation, <span class="nu0">60000</span>*<span class="br0">(</span>X<span class="br0">)</span>, <span class="kw9">None</span><span class="br0">)</span>; <span class="co1">// just push the other player back</span>
+        Other.<span class="me1">AttachToBone</span><span class="br0">(</span><span class="kw8">Self</span>,bone<span class="br0">)</span>;
+ 
+        Velocity=<span class="nu0">0</span>*Velocity;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>So this is not much - but I needed some time to find out how all that works with together with a friend. And it is still not sticking the way in the enemy that how I like it to do...</p>
+<p><a name="Final_words" id="Final_words"></a></p>
+<h2><span class="mw-headline">Final words</span></h2>
+<p>I am not a professional in describing things. And I am not sure if I mentioned all the important stuff. If you think there is a bug, feel free to correct it. Add some lines if you are encountering problems, too.</p>
+<p>This all took me about 8 hours to get run. Much work, I hope you won't need so long with this little help. By the way- if Unrealed doesn't show your package - load it manually.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a></li>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeapon_Modeling_a1bf.html" title="Legacy:Weapon Modeling">Weapon Modeling</a></li>
+<li><a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a></li>
+<li><a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>RegularX:</b> Looks pretty good - added a link to this from the Weapon Mutator from the tute series.</p>
+<p><b>Foxpaw:</b> Some of the stuff at the beginning overlaps with the setting up your pacakge stuff. Or something. I don't know the actual link. Anyways, it could probrably get a <a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a>.</p>
+<p><b>Kentyman:</b> At the top of this page you create your own weapon folder structure and script files by copy/pasting existing script files. This sort of clashes with the idea of Object Orientated Programming where you simply extend existing classes and modify them as you see fit (instead of first replicating all the code and then changing it)</p>
+<p><b>Neo Reloaded:</b> Is it possible to create weapons in UnrealEd?</p>
+<p><b>Wormbo:</b> If you mean weapon models, that's a clear no. If you mean the code behind them – well, let's put it this way: Don't try it. Any <a href="../../../../articles/t/e/x/Legacy%7EText_Editor_a641.html" title="Legacy:Text Editor">text editor</a> is better for that.&#160;;)</p>
+<p><b>Beansdeath:</b> Wondering- once a new weapon is made, bow&amp;arrow, or what have you, how do you go about changing the weap. icon on the HUD to show a new weap. icon, say a little bow&amp;arrow, so you arent holding a bow and have a assault rife icon? would be a good bit to add here.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 41/1000000
+Post-expand include size: 50/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/r/e/Legacy%7ECreating_A_New_Weapontype_a4e2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/r/e/Legacy_talk%7ECreating_A_New_Weapontype_f38a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Creating_A_New_Weapontype">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:58, 16 December 2005 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

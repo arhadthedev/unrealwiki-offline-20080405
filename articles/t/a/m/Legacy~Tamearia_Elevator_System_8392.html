@@ -1,0 +1,565 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Tamearia Elevator System - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Tamearia Elevator System</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is the code I wrote for Tamearia's elevator system. Due to the complexity of it and the fact that it intertwines with the PlayerController and GameType classes, this can't be used for normal UT2004 maps as is. It would have to be rewritten to, among other things, take replication into account.</p>
+<p>This elevator system includes working inner and outer doors, call buttons, and floor indicators inside and outside the elevator. Any number of elevators can be linked to one set of call buttons (one per floor).</p>
+<p>This is the main elevator class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Elevator <span class="kw5">extends</span> Mover;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> DestinationFloor;
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw6">edfindable</span> ElevatorDoor InnerDoor;  <span class="co1">// Set by the mapper.</span>
+<span class="kw5">var</span> array&lt;ElevatorIndicator&gt; MyIndicators;  <span class="co1">// Holds the array of floor indicators.</span>
+<span class="kw5">var</span> ElevatorCallButton MyCallButton;  <span class="co1">// Holds the call button that the player used (so the elevator can 'turn off' the light on the call button).</span>
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw4">int</span> NumberOfFloors;
+ 
+<span class="kw4">struct</span> OuterDoors
+<span class="br0">{</span>
+    <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">edfindable</span> ElevatorDoor OuterDoor;
+<span class="br0">}</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> array&lt;OuterDoors&gt; TheDoors;  <span class="co1">// Used as a struct so edfindable works.  Holds the array of outer doors (in order of floor number).</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bIsMoving, bOuterDoorReady, bInnerDoorReady, bIsBeingCalled, bIsAtDestination;
+<span class="kw5">var</span> Shader Highlight;
+<span class="kw5">var</span> ConstantColor Nolight;  <span class="co1">// Used to change the internal floor indicator.</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>InnerDoor != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        InnerDoor.<span class="me1">MyElevator</span> = <span class="kw8">self</span>;
+        <span class="kw1">if</span><span class="br0">(</span>InnerDoor.<span class="me1">CompanionDoor</span> != <span class="kw9">none</span><span class="br0">)</span>
+            InnerDoor.<span class="me1">CompanionDoor</span>.<span class="me1">MyElevator</span> = <span class="kw8">self</span>;
+    <span class="br0">}</span>
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;TheDoors.<span class="kw6">length</span>;i++<span class="br0">)</span>
+        TheDoors<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">OuterDoor</span>.<span class="me1">MyElevator</span> = <span class="kw8">self</span>;
+    <span class="kw1">for</span><span class="br0">(</span>j=<span class="nu0">0</span>;j&lt;MyIndicators.<span class="kw6">length</span>;j++<span class="br0">)</span>
+        MyIndicators<span class="br0">[</span>j<span class="br0">]</span>.<span class="me1">SetIndicator</span><span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="br0">)</span>;
+    SetIndicator<span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UsedBy<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> User<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>bIsMoving<span class="br0">)</span>
+        <span class="kw1">return</span>;
+    <span class="co1">// An easy way for the menu to return the floor number pressed back to the elevator.</span>
+    TameariaController<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>.<span class="me1">CurrentlyUsedElevator</span> = <span class="kw8">self</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>NumberOfFloors == <span class="nu0">3</span><span class="br0">)</span>
+        TameariaController<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">GetLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>.<span class="me1">ClientOpenMenu</span><span class="br0">(</span><span class="st0">"TameariaInterface.ElevatorMenuThree"</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    <span class="co1">// Add more if there are other elevator banks that have more or less floor numbers.</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SetDestinationFloor<span class="br0">(</span><span class="kw4">int</span> FloorNumber<span class="br0">)</span>
+<span class="br0">{</span>
+    DestinationFloor = FloorNumber;
+    <span class="kw1">if</span><span class="br0">(</span>!bInnerDoorReady || !bOuterDoorReady<span class="br0">)</span>  <span class="co1">// If inner and outer doors aren't ready, close them before moving.</span>
+        MoveDoors<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;
+    <span class="kw1">else</span>
+        IncrementFloor<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckDoorsClosed<span class="br0">(</span><span class="kw4">bool</span> bInnerDoor<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>bInnerDoor<span class="br0">)</span>
+        bInnerDoorReady = <span class="kw9">true</span>;
+    <span class="kw1">else</span>
+        bOuterDoorReady = <span class="kw9">true</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>bInnerDoorReady &amp;&amp; bOuterDoorReady<span class="br0">)</span>  <span class="co1">// Once both inner and outer doors are closed, then move.</span>
+        SetDestinationFloor<span class="br0">(</span>DestinationFloor<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> IncrementFloor<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>PrevKeyNum == DestinationFloor &amp;&amp; <span class="br0">(</span>!bIsAtDestination || bIsBeingCalled<span class="br0">)</span><span class="br0">)</span>  <span class="co1">// If I'm already at the floor, open the doors.</span>
+    <span class="br0">{</span>
+        MoveDoors<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>InnerDoor != <span class="kw9">none</span><span class="br0">)</span>
+            InnerDoor.<span class="me1">StopFollowing</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// Release the Inner Door from being attached to the elevator.</span>
+        bIsMoving = <span class="kw9">false</span>;
+        bIsAtDestination = <span class="kw9">true</span>;
+        bIsBeingCalled = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>KeyNum &lt; DestinationFloor<span class="br0">)</span>  <span class="co1">// Move up.</span>
+    <span class="br0">{</span>
+        bIsMoving = <span class="kw9">true</span>;
+        <span class="kw1">if</span><span class="br0">(</span>InnerDoor != <span class="kw9">none</span><span class="br0">)</span>
+            InnerDoor.<span class="me1">FollowMe</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// Attach inner door to elevator.</span>
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MyIndicators.<span class="kw6">length</span>;i++<span class="br0">)</span>
+            MyIndicators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">SetIndicator</span><span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="nu0">+1</span><span class="br0">)</span>;  <span class="co1">// Sets the indicator to the dash between this floor and the next one.</span>
+        SetIndicator<span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="nu0">+1</span><span class="br0">)</span>;  <span class="co1">// Sets internal indicator.</span>
+        SetTimer<span class="br0">(</span>MoveTime/<span class="nu0">2</span>,<span class="kw9">false</span><span class="br0">)</span>;  <span class="co1">// If the indicator was set when it reached the floor,</span>
+                                     <span class="co1">//it would only be on for a fraction of a second.</span>
+                                     <span class="co1">//This switches it before it reaches the next floor.</span>
+        InterpolateTo<span class="br0">(</span>KeyNum<span class="nu0">+1</span>,MoveTime<span class="br0">)</span>;
+        bIsAtDestination = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>KeyNum &gt; DestinationFloor<span class="br0">)</span>
+    <span class="br0">{</span>
+        bIsMoving = <span class="kw9">true</span>;
+        <span class="kw1">if</span><span class="br0">(</span>InnerDoor != <span class="kw9">none</span><span class="br0">)</span>
+            InnerDoor.<span class="me1">FollowMe</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MyIndicators.<span class="kw6">length</span>;i++<span class="br0">)</span>
+            MyIndicators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">SetIndicator</span><span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="nu0">-1</span><span class="br0">)</span>;
+        SetIndicator<span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="nu0">-1</span><span class="br0">)</span>;
+        SetTimer<span class="br0">(</span>MoveTime/<span class="nu0">2</span>,<span class="kw9">false</span><span class="br0">)</span>;
+        InterpolateTo<span class="br0">(</span>KeyNum<span class="nu0">-1</span>,MoveTime<span class="br0">)</span>;
+        bIsAtDestination = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MyIndicators.<span class="kw6">length</span>;i++<span class="br0">)</span>
+        MyIndicators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">SetIndicator</span><span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="br0">)</span>;  <span class="co1">// Sets the floor indicator to the next floor a little bit before it gets there.</span>
+    SetIndicator<span class="br0">(</span>KeyNum*<span class="nu0">2</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> MoveDoors<span class="br0">(</span><span class="kw4">int</span> KeyFrame<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>KeyFrame == <span class="nu0">1</span> &amp;&amp; MyCallButton != <span class="kw9">none</span><span class="br0">)</span>
+        MyCallButton.<span class="me1">LightOff</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// 'Turns off' the call button that the player used.</span>
+    <span class="kw1">if</span><span class="br0">(</span>InnerDoor != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        InnerDoor.<span class="me1">MoveDoor</span><span class="br0">(</span>KeyFrame<span class="br0">)</span>;  <span class="co1">// Opens or closes the inner door.</span>
+        bInnerDoorReady = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+    <span class="kw1">if</span><span class="br0">(</span>TheDoors.<span class="kw6">length</span> != <span class="nu0">0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        TheDoors<span class="br0">[</span>KeyNum<span class="br0">]</span>.<span class="me1">OuterDoor</span>.<span class="me1">MoveDoor</span><span class="br0">(</span>KeyFrame<span class="br0">)</span>;  <span class="co1">// Opens or closes the outer doors.</span>
+        bOuterDoorReady = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> KeyFrameReached<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">byte</span> OldKeyNum;
+ 
+    OldKeyNum  = PrevKeyNum;
+    PrevKeyNum = KeyNum;
+    PhysAlpha  = <span class="nu0">0</span>;
+    AmbientSound = <span class="kw9">None</span>;
+ 
+    IncrementFloor<span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// Check to see if we're at the right floor, if not, keep going.</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SetIndicator<span class="br0">(</span><span class="kw4">int</span> FloorNumber<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;<span class="nu0">5</span>;i++<span class="br0">)</span>
+        Skins<span class="br0">[</span>i<span class="br0">]</span> = Nolight;
+    Skins<span class="br0">[</span>FloorNumber<span class="br0">]</span> = Highlight;  <span class="co1">// Changes the texture on the indicator section to an unlit version.</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    bOuterDoorReady=<span class="kw9">True</span>
+    bInnerDoorReady=<span class="kw9">True</span>
+    Highlight=Shader<span class="st0">'TameariaTextures.RedUnlit'</span>
+    Nolight=ConstantColor<span class="st0">'TameariaTextures.DarkRed'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The elevator was made in Max so that materials 0-4 were the floor indicator sections, to make the code easier.</p>
+<p>Next is the elevator doors. Only one class was needed for the inner and outer doors, a bool can be set by the mapper to indicate which one it is.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ElevatorDoor <span class="kw5">extends</span> Mover;
+ 
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw6">edfindable</span> ElevatorDoor CompanionDoor;  <span class="co1">// Optional companion door (for two door elevators).</span>
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw4">bool</span> bInnerDoor;  <span class="co1">// Set by the mapper to indicate that this is the inner door.</span>
+<span class="kw5">var</span> Elevator MyElevator;
+<span class="kw5">var</span> <span class="kw4">vector</span> InitialOffset;  <span class="co1">// Store the initial distance from the elevator for when we are attached to it.</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bInitialized, bIsMoving;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>bInnerDoor &amp;&amp; MyElevator != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        InitialOffset = Location - MyElevator.<span class="me1">Location</span>;
+        <span class="kw1">if</span><span class="br0">(</span>CompanionDoor != <span class="kw9">none</span><span class="br0">)</span>
+            CompanionDoor.<span class="me1">InitialOffset</span> = CompanionDoor.<span class="me1">Location</span> - MyElevator.<span class="me1">Location</span>;  <span class="co1">// This door controls the companion door.</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> FollowMe<span class="br0">(</span><span class="br0">)</span>  <span class="co1">// Called from the elevator to attach the door to it while moving.</span>
+<span class="br0">{</span>
+    <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+    bIsMoving = <span class="kw9">true</span>;
+    SetTimer<span class="br0">(</span><span class="nu0">0.1</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>CompanionDoor != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        CompanionDoor.<span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+        CompanionDoor.<span class="me1">bIsMoving</span> = <span class="kw9">true</span>;
+        CompanionDoor.<span class="me1">SetTimer</span><span class="br0">(</span><span class="nu0">0.1</span>,<span class="kw9">false</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> StopFollowing<span class="br0">(</span><span class="br0">)</span>  <span class="co1">// Called from the elevator to detach the door so it can open.</span>
+<span class="br0">{</span>
+    <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+    bIsMoving = <span class="kw9">false</span>;
+    <span class="kw1">if</span><span class="br0">(</span>CompanionDoor != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        CompanionDoor.<span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+        CompanionDoor.<span class="me1">bIsMoving</span> = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> MoveDoor<span class="br0">(</span><span class="kw4">int</span> MoveToKeyNum<span class="br0">)</span>
+<span class="br0">{</span>
+    StopFollowing<span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// Make sure we're detached.</span>
+    InterpolateTo<span class="br0">(</span>MoveToKeyNum,MoveTime<span class="br0">)</span>;  <span class="co1">// Open or close.</span>
+    <span class="kw1">if</span><span class="br0">(</span>CompanionDoor != <span class="kw9">none</span><span class="br0">)</span>
+        CompanionDoor.<span class="me1">MoveDoor</span><span class="br0">(</span>MoveToKeyNum<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>!bInitialized<span class="br0">)</span>
+    <span class="br0">{</span>
+        StopFollowing<span class="br0">(</span><span class="br0">)</span>;
+        bInitialized = <span class="kw9">true</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+    SetLocation<span class="br0">(</span>MyElevator.<span class="me1">Location</span> + InitialOffset<span class="br0">)</span>;  <span class="co1">// Follow the elevator.</span>
+    BasePos = Location;  <span class="co1">// Adjust the base position so the doors don't return to the ground floor while opening.</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> KeyFrameReached<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">super</span>.<span class="me1">KeyFrameReached</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>KeyNum == <span class="nu0">0</span> &amp;&amp; bInnerDoor &amp;&amp; MyElevator != <span class="kw9">none</span><span class="br0">)</span>
+        MyElevator.<span class="me1">CheckDoorsClosed</span><span class="br0">(</span><span class="kw9">True</span><span class="br0">)</span>;  <span class="co1">// Tell the door I'm ready.</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>KeyNum == <span class="nu0">0</span> &amp;&amp; MyElevator != <span class="kw9">none</span><span class="br0">)</span>
+        MyElevator.<span class="me1">CheckDoorsClosed</span><span class="br0">(</span><span class="kw9">False</span><span class="br0">)</span>;
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>KeyNum == <span class="nu0">1</span><span class="br0">)</span>
+        SetTimer<span class="br0">(</span>StayOpenTime,<span class="kw9">false</span><span class="br0">)</span>;  <span class="co1">// If I'm opening, set a timer so I close automatically (don't stay open forever).</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>bIsMoving<span class="br0">)</span>
+        <span class="kw1">return</span>;
+    MoveDoor<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> EncroachingOn<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// Tried to make the doors detect when they hit the player, but one of them always pushes the player.</span>
+    <span class="co1">// Can't seem to figure out the best way to do this.  This function is still a WIP.</span>
+    <span class="kw1">if</span> <span class="br0">(</span> Other == <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> Leader == <span class="kw9">None</span> <span class="br0">)</span>
+        Leader = <span class="kw8">self</span>;
+ 
+    Leader.<span class="me1">MakeGroupReturn</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>CompanionDoor != <span class="kw9">none</span><span class="br0">)</span>
+        CompanionDoor.<span class="me1">EncroachingOn</span><span class="br0">(</span>Other<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Pawn'</span><span class="br0">)</span> <span class="br0">)</span>
+                <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">PlayMoverHitSound</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Next up, the call button.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ElevatorCallButton <span class="kw5">extends</span> TameariaObject
+    <span class="kw6">placeable</span>;
+ 
+<span class="kw4">struct</span> Elevators
+<span class="br0">{</span>
+    <span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">edfindable</span> Elevator MyElevator;  <span class="co1">// Bank of elevators set by mapper.</span>
+<span class="br0">}</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> array&lt;Elevators&gt; MyElevators;
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw4">int</span> FloorNumber;  <span class="co1">// Floor number this call button is at.</span>
+<span class="kw5">var</span> Shader Highlight;
+<span class="kw5">var</span> ConstantColor Nolight;
+ 
+<span class="kw5">function</span> UsedBy<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> User<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i, x;
+    <span class="kw5">local</span> Elevator ClosestElevator;
+ 
+    x = <span class="nu0">99</span>;
+ 
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;MyElevators.<span class="kw6">length</span>;i++<span class="br0">)</span>  <span class="co1">// Find the closest elevator.</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>MyElevators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">MyElevator</span> != <span class="kw9">none</span> &amp;&amp; <span class="kw7">abs</span><span class="br0">(</span>FloorNumber - MyElevators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">MyElevator</span>.<span class="me1">KeyNum</span><span class="br0">)</span> &lt; x<span class="br0">)</span>
+        <span class="br0">{</span>
+            ClosestElevator = MyElevators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">MyElevator</span>;
+            x = <span class="kw7">abs</span><span class="br0">(</span>FloorNumber - MyElevators<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">MyElevator</span>.<span class="me1">KeyNum</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span>x &lt; <span class="nu0">99</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        ClosestElevator.<span class="me1">MyCallButton</span> = <span class="kw8">self</span>;  <span class="co1">// Tell the elevator to turn me off when it gets here.</span>
+        Skins<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = Highlight;
+        ClosestElevator.<span class="me1">bIsBeingCalled</span> = <span class="kw9">true</span>;
+        <span class="kw1">if</span><span class="br0">(</span>x == <span class="nu0">0</span><span class="br0">)</span>
+            ClosestElevator.<span class="me1">MoveDoors</span><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;  <span class="co1">// If there's an elevator at this floor, open it.</span>
+        <span class="kw1">else</span>
+            ClosestElevator.<span class="me1">SetDestinationFloor</span><span class="br0">(</span>FloorNumber<span class="br0">)</span>;  <span class="co1">// Otherwise, move the closest one here.</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> LightOff<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    Skins<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = Nolight;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    DrawType=DT_StaticMesh
+    StaticMesh=StaticMesh<span class="st0">'TameariaMeshes.ElevatorCallButtonMesh'</span>
+    bEdShouldSnap=<span class="kw9">True</span>
+    bHidden=<span class="kw9">False</span>
+    Highlight=Shader<span class="st0">'TameariaTextures.PaleYellowUnlit'</span>
+    Nolight=ConstantColor<span class="st0">'TameariaTextures.PaleYellow'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Simple script for the floor indicator outside the elevator:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ElevatorIndicator <span class="kw5">extends</span> TameariaObject
+    <span class="kw6">placeable</span>;
+ 
+<span class="kw2">#exec</span> obj load file=TameariaTextures.<span class="me1">utx</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span>Tamearia<span class="br0">)</span> <span class="kw6">edfindable</span> Elevator MyElevator;
+<span class="kw5">var</span> Shader Highlight;
+<span class="kw5">var</span> ConstantColor Nolight;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+    MyElevator.<span class="me1">MyIndicators</span><span class="br0">[</span>MyElevator.<span class="me1">MyIndicators</span>.<span class="kw6">Length</span><span class="br0">]</span> = <span class="kw8">self</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SetIndicator<span class="br0">(</span><span class="kw4">int</span> FloorNumber<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;<span class="nu0">5</span>;i++<span class="br0">)</span>
+        Skins<span class="br0">[</span>i<span class="br0">]</span> = Nolight;
+    Skins<span class="br0">[</span>FloorNumber<span class="br0">]</span> = Highlight;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    DrawType=DT_StaticMesh
+    StaticMesh=StaticMesh<span class="st0">'TameariaMeshes.ElevatorIndicatorMesh'</span>
+    bEdShouldSnap=<span class="kw9">True</span>
+    bHidden=<span class="kw9">False</span>
+    Highlight=Shader<span class="st0">'TameariaTextures.RedUnlit'</span>
+    Nolight=ConstantColor<span class="st0">'TameariaTextures.DarkRed'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now the menu that opens up when the player hits Use inside the elevator:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ElevatorMenuThree <span class="kw5">extends</span> TameariaGUIPage;
+ 
+<span class="kw5">var</span> <span class="kw6">automated</span> GUIGFxButton b0, b1, b2, b_OpenDoors;
+<span class="kw5">var</span> <span class="kw6">automated</span> BackgroundImage Bkgd;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> InternalOnClick<span class="br0">(</span>GUIComponent Sender<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> TameariaController TC;
+ 
+    TC = TameariaController<span class="br0">(</span>PlayerOwner<span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>Sender == b0<span class="br0">)</span>
+    <span class="br0">{</span>
+        TC.<span class="me1">CurrentlyUsedElevator</span>.<span class="me1">SetDestinationFloor</span><span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;  <span class="co1">// Move the elevator to floor 0 (ground floor).</span>
+            Controller.<span class="me1">CloseMenu</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>Sender == b1<span class="br0">)</span>
+    <span class="br0">{</span>
+        TC.<span class="me1">CurrentlyUsedElevator</span>.<span class="me1">SetDestinationFloor</span><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;
+            Controller.<span class="me1">CloseMenu</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>Sender == b2<span class="br0">)</span>
+    <span class="br0">{</span>
+        TC.<span class="me1">CurrentlyUsedElevator</span>.<span class="me1">SetDestinationFloor</span><span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>;
+            Controller.<span class="me1">CloseMenu</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>Sender == b_OpenDoors<span class="br0">)</span>
+    <span class="br0">{</span>
+        TC.<span class="me1">CurrentlyUsedElevator</span>.<span class="me1">MoveDoors</span><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>;  <span class="co1">// Open the elevator doors (open door button standard on elevators).</span>
+            Controller.<span class="me1">CloseMenu</span><span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    <span class="co1">// Standard GUI button stuff, not important.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now the interconnecting pieces. Part of the code is in the GameInfo:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TameariaGame <span class="kw5">extends</span> GameInfo
+        <span class="kw6">HideDropDown</span>
+        <span class="kw6">CacheExempt</span>
+        <span class="kw6">config</span><span class="br0">(</span>Tamearia<span class="br0">)</span>;
+ 
+...
+ 
+<span class="co1">// Things to keep track of that player can use.</span>
+<span class="kw5">var</span> array&lt;ElevatorCallButton&gt; ElevatorCallButtons;
+ 
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> ElevatorCallButton ECB;
+ 
+...
+    <span class="co1">// Use button is pretty flaky, so hold an array of all the items I can use so that I can access them easier.</span>
+    <span class="kw1">foreach</span> DynamicActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'ElevatorCallButton'</span>,ECB<span class="br0">)</span>
+        ElevatorCallButtons<span class="br0">[</span>ElevatorCallButtons.<span class="kw6">Length</span><span class="br0">]</span> = ECB;
+<span class="br0">}</span>
+</pre></div>
+<p>And finally, the PlayerController class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TameariaController <span class="kw5">extends</span> xPlayer
+        <span class="kw6">config</span><span class="br0">(</span>TameariaUser<span class="br0">)</span>;
+ 
+...
+ 
+<span class="kw5">var</span> TameariaGame TAMGame;
+<span class="kw5">var</span> Elevator CurrentlyUsedElevator;
+<span class="kw5">var</span> <span class="kw4">int</span> ObjectUseDistance;
+ 
+<span class="kw6">exec</span> <span class="kw5">function</span> Use<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span> != <span class="kw9">None</span><span class="br0">)</span>
+                <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Base</span>.<span class="me1">UsedBy</span><span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+ 
+        <span class="co1">// Order these in importance (will want to check for elevator buttons before NPC's etc)</span>
+        <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;TAMGame.<span class="me1">ElevatorCallButtons</span>.<span class="kw6">length</span>;i++<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span><span class="br0">(</span>VSize<span class="br0">(</span>TAMGame.<span class="me1">ElevatorCallButtons</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Location</span> - <a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span> &lt; ObjectUseDistance<span class="br0">)</span>
+            <span class="br0">{</span>
+                TAMGame.<span class="me1">ElevatorCallButtons</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">UsedBy</span><span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+                <span class="kw1">return</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="co1">// If I wanted to check for other usable objects, I would put for() statements here.</span>
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    ObjectUseDistance=<span class="nu0">128</span>
+<span class="br0">}</span>
+</pre></div>
+<p>[[Image:Legacy_AngelMapperElevator.jpeg|]]</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 22/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/a/m/Legacy%7ETamearia_Elevator_System_8392.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/a/m/Legacy_talk%7ETamearia_Elevator_System_e70f.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Tamearia_Elevator_System">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:18, 21 May 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

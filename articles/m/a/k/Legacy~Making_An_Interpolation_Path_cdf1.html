@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Making An Interpolation Path - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Making An Interpolation Path</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Definition"><span class="tocnumber">1</span> <span class="toctext">Definition</span></a></li>
+<li class="toclevel-1"><a href="#Laying_the_path"><span class="tocnumber">2</span> <span class="toctext">Laying the path</span></a></li>
+<li class="toclevel-1"><a href="#The_dynamics"><span class="tocnumber">3</span> <span class="toctext">The dynamics</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Setting_up_the_path.27s_parameters"><span class="tocnumber">3.1</span> <span class="toctext">Setting up the path's parameters</span></a></li>
+<li class="toclevel-2"><a href="#Finally"><span class="tocnumber">3.2</span> <span class="toctext">Finally</span></a></li>
+<li class="toclevel-2"><a href="#Adding_Interpolation_Points_to_your_map"><span class="tocnumber">3.3</span> <span class="toctext">Adding Interpolation Points to your map</span></a></li>
+<li class="toclevel-2"><a href="#Setting_the_speed_of_the_Interpolation_Points"><span class="tocnumber">3.4</span> <span class="toctext">Setting the speed of the Interpolation Points</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Definition" id="Definition"></a></p>
+<h2><span class="mw-headline">Definition</span></h2>
+<p>What the heck is an interpolation path? Quite simply, a triggered path that sends the player to diferrent points in it, in a specific order. An interpolation path was used for Unreal Tournament's CityIntro map that starts up when you first load UT. Some of the editable variables include skipping the next point, speed of the game (this makes cool matrix-like scenes possible if you know what you're doing), speed of the camera, etc.</p>
+<p>An interpolated curve doesn't actually touch the points at all. It is pulled towards the points, but without actually going through them. (It is not the same as splining. A spline is a smoothed line that goes through all of the points in the path. This is commonly used for smooth paths, but not in Unreal.)</p>
+<p><a name="Laying_the_path" id="Laying_the_path"></a></p>
+<h2><span class="mw-headline">Laying the path</span></h2>
+<p>The path points are defined with <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/k/e/y/Legacy%7EKeypoint_%28UT%29_1f33.html" title="Legacy:Keypoint (UT)">Keypoint (UT)</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInterpolationPoint_1b98.html" title="Legacy:InterpolationPoint">InterpolationPoint</a>. Set:</p>
+<table>
+<tr>
+<td>Events -&gt; Tag</td>
+<td>Tie all the points with the name</td>
+</tr>
+<tr>
+<td>InterpolationPoint -&gt; Position</td>
+<td>order of each poit in the path, starting with 0</td>
+</tr>
+<tr>
+<td>InterpolationPoint -&gt; bEndOfPath</td>
+<td>This value in the last point determines whether the path is open or closed</td>
+</tr>
+</table>
+<p>You need at least 3 points for a closed path, 4 for an open path. When any point of the path is selected, UnreaEd shows the path as a curved white line, with little axes glyphs at intervals. These don't actually mean anything, and they will never rotate.</p>
+<p>First of all, lay out your path. Find Actor &gt;&gt; Keypoint &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInterpolationPoint_1b98.html" title="Legacy:InterpolationPoint">InterpolationPoint</a> in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Classes_Browser_03a1.html" class="mw-redirect" title="Legacy:Actor Classes Browser">Actor Classes Browser</a>. The camera will travel in a straight line from one point to the next, so set your path up accordingly.</p>
+<p>Define the order of the points with the InterpolationPoint -&gt; Position property. This must be set to 0,1,2... etc.</p>
+<p><b>Tarquin:</b> No-one mentioned the freaky lines and circle that appears in UEd at this point! O_o Or that you need a minimum of 3. And bEndOfPath makes the lines disappear.</p>
+<p><b>EntropicLqd:</b> And how the heck do you figure out which way the camera is actually pointing? I've spent hours trying to figure out how to get my <i>InterpolatingSkyZone</i> to actually travel the path I want without any crazy rotations but to no avail. It's fine most of the way around and then it suddenly goes wacky and spins randomly.</p>
+<p><b>Tarquin:</b> I've just got this to work. Doesnt seem any way to take the player <i>off</i> the path again. The direction of each IP gives the directio the player will point in, but the path glyphs in UEd dont show this. I've just made myself seasick.,,, urg</p>
+<p><b>Mychaeel:</b> No, it doesn't spin randomly. It interpolates the angles numerically, so if one of your interpolation points is set to 355° and the next to 5° (a 10° difference, you'd think), it'll not rotate 355°...359°...0°...5° but <i>backwards</i>. To make it behave as you want it to, you'd have to set the second InterpolationPoint's rotation to 365° rather than 5°.</p>
+<p><a name="The_dynamics" id="The_dynamics"></a></p>
+<h2><span class="mw-headline">The dynamics</span></h2>
+<p>The main use of a path is to make the player follow it. This is done with a <a href="../../../../articles/s/p/e/Legacy%7ESpecialEvent_a604.html" title="Legacy:SpecialEvent">SpecialEvent</a>.</p>
+<p>(what about making movers folow paths?)</p>
+<p>Match the following to iniate the path</p>
+<ul>
+<li>SpecialEvent's Events -&gt; Event</li>
+<li>All the IP's Events -&gt; Tag</li>
+</ul>
+<p><b>Question</b>: How does one set the object which will take the path?</p>
+<p>Set up a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> to trigger the SpecialEVent to set off the whole process.</p>
+<p>Once you have your path laid out, right click on one of the points and select "Select All Interpolation Point". Now open the actor properties and change their Event Tags to "Path1" or, if you'd like, a diferrent name of your choice. Just make sure that you use that name instead of "Path1" wherever we mention it, if you do use something diferrent.</p>
+<p>Now add a regular <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> (Actor &gt;&gt; Triggers &gt;&gt; Trigger) wherever you like – just make sure you'll be able to find it. To see it in game, either</p>
+<ul>
+<li>set it to display the trigger's sprite in game with Advanced -&gt; bHidden = True</li>
+<li>set it to cast a small circle of light (set Lighting -&gt; LightType and LightColor properties)</li>
+</ul>
+<p>Now, anywhere you like (it can be literally anywhere in the map, doesn't matter where), add a <a href="../../../../articles/s/p/e/Legacy%7ESpecialEvent_a604.html" title="Legacy:SpecialEvent">SpecialEvent</a> from the same menu. Change its event tag to "PathStart", and its Event to "Path1". Now open up the regular Trigger's properties and change its Event to "PathStart".</p>
+<p><b>Flopsy:</b> Just a comment you need to set the Default State of the Special Event actor to PlayerPath under Object&gt;&gt;InitialState.</p>
+<p><a name="Setting_up_the_path.27s_parameters" id="Setting_up_the_path.27s_parameters"></a></p>
+<h4><span class="mw-headline">Setting up the path's parameters</span></h4>
+<p>In the properties for each point are modifiers for Game Speed (the speed of everything going on, including that of the camera - bullets will move slower based on this value, for example) and Camera Speed (the actual speed of the camera. This rate of movement depends on the value in the game speed property). Note that these are not the actual names of the properties - again my memory is foggy. It should, however, be pretty obvious. You'll just have to experiment with the values and se what speed works best for you. Start with low numbers however.</p>
+<p><a name="Finally" id="Finally"></a></p>
+<h4><span class="mw-headline">Finally</span></h4>
+<p>While the interpolation path should now work in any game mode, playing it in, say, DM, will show your weapon as you move along the path. You probably don't want this, unless you're making some sort of ride for the player (in single player for example). In order to make the player appear without any HUD or weaponry of any kind, you'll have to set the default game type (under level properties) to the appropriate actor. You can find these under Info&gt;GameInfo. Again I forget the proper name (sorry about all this folks, it's been over a month since I've messed with interpol points), but it should have something to do with "intro" and will be fairly obvious. Finally, you will need a playerstart in any case, of course, and rebuilding is just as mandatory as ever. Unless you're doing something special, you'll probably just want to start the player hovering in the air over the trigger, so that they drop onto upon start, triggering your cutscene.</p>
+<p>Please note that interpol points can be rotated just like playerstarts. Whatever direction they are facing is the direction the camera will rotate to.</p>
+<p>If I missed anything important, or if anybody wants to look up what the proper names are, feel free to edit it into this page.</p>
+<p><i>The following pages also have tutorial-style information on making paths. Merging those into this might be a good idea:</i></p>
+<ul>
+<li><a href="../../../../articles/u/m/s/Legacy%7EUMS_InterpolationTutorial_f9c6.html" title="Legacy:UMS/InterpolationTutorial">UMS/InterpolationTutorial</a></li>
+<li><a href="../../../../articles/i/n/t/Legacy%7EInterpolationPoint_1b98.html" title="Legacy:InterpolationPoint">InterpolationPoint</a></li>
+</ul>
+<hr />
+<p>content from other pages... refactoring &amp; mergine needed.</p>
+<p><a name="Adding_Interpolation_Points_to_your_map" id="Adding_Interpolation_Points_to_your_map"></a></p>
+<h3><span class="mw-headline">Adding Interpolation Points to your map</span></h3>
+<ol>
+<li>InterpolationPoints (hereafter called IP's) can be found under <b>Keypoint &gt;&gt; InterpolationPoint</b> in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Classes_eb42.html" class="mw-redirect" title="Legacy:Actor Classes">Actor Classes</a> Browser. The first thing to do is to add one to your level where you want the Interpolation path to start. IPs show a directional arrow in UnrealEd, which defines (funnily enough) the direction that the actor on the path will be pointing. Set their direction with the <a href="../../../../articles/b/r/u/Legacy%7EBrush_Rotate_5421.html" title="Legacy:Brush Rotate">Brush Rotate</a> tool or the Movement -&gt; Rotation property.</li>
+</ol>
+<ol>
+<li>In InterpolationPoint Properties -&gt; InterpolationPoint -&gt; Position, you should put the number that defines what point in the path this IP is at. This should start at 0, and I have been informed that the upper limit is 127 (thanks to TheMapper for that).</li>
+</ol>
+<ol>
+<li>I think the best thing to do, is to first add the IP's to your level, in aproximately the right places. Then you can get the path set up correctly, before changing the speed.</li>
+</ol>
+<ol>
+<li>Once you have got all your IP's in, there are two more that you have to put in. At the last point, you need to have two IP's. Then, put another one in the same position as the first, and give it the next Position after the last one. This is because IP paths actually loop, and the only way to get the path to go through a point is to put two IP's on top of each other. The reason the highest number IP is at the beginning of the path is because the actor following the path will start half way between the first and last IP's.</li>
+</ol>
+<p><a name="Setting_the_speed_of_the_Interpolation_Points" id="Setting_the_speed_of_the_Interpolation_Points"></a></p>
+<h3><span class="mw-headline">Setting the speed of the Interpolation Points</span></h3>
+<ol>
+<li>Once you have your path correct, you may want to play around with the speed. You will find that it looks a lot nicer if the speed does vary. Knowing when to vary the speed isn't something that I can teach you.</li>
+</ol>
+<ol>
+<li>To change the speed, go to <b>InterpolationPoint Properties -&gt; InterpolationPoint -&gt; RateModifier</b>. Again, it is a matter of trial and error to find a series of values which you like. On each IP, the rate will be at that point, and it will change between the two points. If you want to change the rate very quickly, have two IPs very close to each other with different rate values.</li>
+</ol>
+<ol>
+<li>You can, if you want, change the speed of the game with the <b>GameSpeedModifier</b>, but this works seperately from <b>SetSpeed</b>. If you do use <b>GameSpeedModifier</b>, then make sure that it is reset back to 1 for the end of the IP path.</li>
+</ol>
+<hr />
+<ul>
+<li>Note: Most of the content from this page is adapted from a tutorial for <a href="../../../../articles/u/m/s/Legacy%7EUMS_4365.html" title="Legacy:UMS">UMS</a> that <a href="../../../../articles/h/u/g/Legacy%7EHugh_503a.html" title="Legacy:Hugh">Hugh</a> wrote, and this section certainly isn't complete - the specifics of how to get an actor to actually follow the Interpolation path without using UMS I'm not clear on, maybe someone else could help out there – <i>Birelli</i></li>
+</ul>
+<p>This tutorial I'm only going to tell you the basic technical things you need to do to set up a regular interpolation path. I'm not expert in this area, but I do know how to create one. Please note that the terminal I am typing this up at is not equipped with Ued, so I may not tell you the exact name of things. An interpolation point is actually "InterpolPoint" or something like that, it should be pretty obvious when you're staring at the Keypoint menu.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a>, <a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a>: mucho refactoring to do.</p>
+<p><a href="http://www.planetdeusex.com/tack/InterpolationPoints.html" class="external free" title="http://www.planetdeusex.com/tack/InterpolationPoints.html" rel="nofollow">http://www.planetdeusex.com/tack/InterpolationPoints.html</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 56/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/k/Legacy%7EMaking_An_Interpolation_Path_cdf1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/k/Legacy_talk%7EMaking_An_Interpolation_Path_fd67.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Making_An_Interpolation_Path">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:07, 14 January 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

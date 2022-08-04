@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UnrealScript Language Reference/Introduction - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UnrealScript Language Reference/Introduction</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_cee2.html" title="Legacy:UnrealScript Language Reference">Legacy:UnrealScript Language Reference</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#UnrealScript_Language_Reference"><span class="tocnumber">1</span> <span class="toctext">UnrealScript Language Reference</span></a></li>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">2</span> <span class="toctext">Introduction</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Design_Goals_of_UnrealScript"><span class="tocnumber">2.1</span> <span class="toctext">Design Goals of UnrealScript</span></a></li>
+<li class="toclevel-2"><a href="#Example_Program_Structure"><span class="tocnumber">2.2</span> <span class="toctext">Example Program Structure</span></a></li>
+<li class="toclevel-2"><a href="#The_Unreal_Virtual_Machine"><span class="tocnumber">2.3</span> <span class="toctext">The Unreal Virtual Machine</span></a></li>
+<li class="toclevel-2"><a href="#Class_Overview"><span class="tocnumber">2.4</span> <span class="toctext">Class Overview</span></a></li>
+<li class="toclevel-2"><a href="#The_Class_Declaration"><span class="tocnumber">2.5</span> <span class="toctext">The Class Declaration</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="UnrealScript_Language_Reference" id="UnrealScript_Language_Reference"></a></p>
+<h2><span class="mw-headline">UnrealScript Language Reference</span></h2>
+<p><i>This subpage is part of a document by Tim Sweeney. The Unreal Wiki has been granted permission to host it. Please don't make any edits to these pages other than basic formatting of the text. If you have more to say on a topic here, please start a new Wiki page on it, for example from <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> or <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal Engine</a>, and then add a "related topics" section to the very end of a page here.</i></p>
+<blockquote class="legacyquote">
+<p>Tim Sweeney<br />
+Epic MegaGames, Inc.<br />
+tim@epicgames.com<br />
+<a href="http://www.epicgames.com" class="external free" title="http://www.epicgames.com" rel="nofollow">http://www.epicgames.com</a></p>
+</blockquote>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p><a name="Design_Goals_of_UnrealScript" id="Design_Goals_of_UnrealScript"></a></p>
+<h3><span class="mw-headline">Design Goals of UnrealScript</span></h3>
+<p>UnrealScript was created to provide the development team and the third-party Unreal developers with a powerful, built-in programming language that maps naturally onto the needs and nuances of game programming.</p>
+<p>The major design goals of UnrealScript are:</p>
+<ul>
+<li>To support the major concepts of time, state, properties, and networking which traditional programming languages don't address. This greatly simplifies UnrealScript code. The major complication in C/C++ based AI and game logic programming lies in dealing with events that take a certain amount of game time to complete, and with events which are dependent on aspects of the object's state. In C/C++, this results in spaghetti-code that is hard to write, comprehend, maintain, and debug. UnrealScript includes native support for time, state, and network replication which greatly simplify game programming.</li>
+</ul>
+<ul>
+<li>To provide Java-style programming simplicity, object-orientation, and compile-time error checking. Much as Java brings a clean programming platform to Web programmers, UnrealScript provides an equally clean, simple, and robust programming language to 3D gaming. The major programming concepts which UnrealScript derives from Java are:
+<ul>
+<li>a pointerless environment with automatic garbage collection;</li>
+<li>a simple single-inheritance class graph;</li>
+<li>strong compile-time type checking;</li>
+<li>a safe client-side execution "sandbox";</li>
+<li>and the familiar look and feel of C/C++/Java code.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>To enable rich, high level programming in terms of game objects and interactions rather than bits and pixels. Where design tradeoffs had to be made in UnrealScript, I sacrificed execution speed for development simplicity and power. After all, the low-level, performance-critical code in Unreal is written in C/C++ where the performance gain outweighs the added complexity. UnrealScript operates at a level above that, at the object and interaction level, rather than the bits and pixels level.</li>
+</ul>
+<p>During the early development of UnrealScript, several major different programming paradigms were explored and discarded before arriving at the current incarnation. First, I researched using the Sun and Microsoft Java VM's for Windows as the basis of Unreal's scripting language. It turned out that Java offered no programming benefits over C/C++ in the Unreal context, added frustrating restrictions due to the lack of needed language features (such as operator overloading), and turned out to be unfathomably slow due to both the overhead of the VM task switch and the inefficiencies of the Java garbage collector in the case of a large object graph. Second, I based an early implementation of UnrealScript on a Visual Basic variant, which worked fine, but was less friendly to programmers accustomed to C/C++. The final decision to base UnrealScript on a C++/Java variant was based on the desire to map game-specific concepts onto the language definition itself, and the need for speed and familiarity. This turned out to be a good decision, as it has greatly simplified many aspects of the Unreal codebase.</p>
+<p><a name="Example_Program_Structure" id="Example_Program_Structure"></a></p>
+<h3><span class="mw-headline">Example Program Structure</span></h3>
+<p>This example illustrates a typical, simple UnrealScript class, and highlights the syntax and features of UnrealScript. Note that this code may differ from that which appears in the current Unreal source, as this documentation is not synched with the code.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// TriggerLight.</span>
+<span class="co1">// A lightsource which can be triggered on or off.</span>
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw5">class</span> TriggerLight <span class="kw5">extends</span> Light;
+ 
+<span class="co1">//----------------------------------------------------------------------------</span>
+<span class="co1">// Variables.</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> ChangeTime; <span class="co1">// Time light takes to change from on to off.</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bInitiallyOn; <span class="co1">// Whether it's initially on.</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> bDelayFullOn; <span class="co1">// Delay then go full-on.</span>
+ 
+<span class="kw5">var</span> ELightType InitialType; <span class="co1">// Initial type of light.</span>
+<span class="kw5">var</span> <span class="kw4">float</span> InitialBrightness; <span class="co1">// Initial brightness.</span>
+<span class="kw5">var</span> <span class="kw4">float</span> Alpha, Direction;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">actor</span></a> Trigger;
+ 
+<span class="co1">//----------------------------------------------------------------------------</span>
+<span class="co1">// Engine functions.</span>
+ 
+<span class="co1">// Called at start of gameplay.</span>
+<span class="kw5">function</span> BeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+       <span class="co1">// Remember initial light type and set new one.</span>
+       <span class="kw7">Disable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       InitialType = LightType;
+       InitialBrightness = LightBrightness;
+       <span class="kw1">if</span><span class="br0">(</span> bInitiallyOn <span class="br0">)</span>
+       <span class="br0">{</span>
+               Alpha = <span class="nu0">1.0</span>;
+               Direction = <span class="nu0">1.0</span>;
+       <span class="br0">}</span>
+       <span class="kw1">else</span>
+       <span class="br0">{</span>
+               LightType = LT_None;
+               Alpha = <span class="nu0">0.0</span>;
+               Direction = <span class="nu0">-1.0</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Called whenever time passes.</span>
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span>
+<span class="br0">{</span>
+       LightType = InitialType;
+       Alpha += Direction * DeltaTime / ChangeTime;
+       <span class="kw1">if</span><span class="br0">(</span> Alpha &gt; <span class="nu0">1.0</span> <span class="br0">)</span>
+       <span class="br0">{</span>
+               Alpha = <span class="nu0">1.0</span>;
+               <span class="kw7">Disable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+               <span class="kw1">if</span><span class="br0">(</span> Trigger != <span class="kw9">None</span> <span class="br0">)</span>
+                       Trigger.<span class="me1">ResetTrigger</span><span class="br0">(</span><span class="br0">)</span>;
+       <span class="br0">}</span>
+       <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span> Alpha &lt; <span class="nu0">0.0</span> <span class="br0">)</span>
+       <span class="br0">{</span>
+               Alpha = <span class="nu0">0.0</span>;
+               <span class="kw7">Disable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+               LightType = LT_None;
+               <span class="kw1">if</span><span class="br0">(</span> Trigger != <span class="kw9">None</span> <span class="br0">)</span>
+                       Trigger.<span class="me1">ResetTrigger</span><span class="br0">(</span><span class="br0">)</span>;
+       <span class="br0">}</span>
+       <span class="kw1">if</span><span class="br0">(</span> !bDelayFullOn <span class="br0">)</span>
+               LightBrightness = Alpha * InitialBrightness;
+       <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span> <span class="br0">(</span>Direction&gt;<span class="nu0">0</span> &amp;&amp; Alpha!=<span class="nu0">1</span><span class="br0">)</span> || Alpha==<span class="nu0">0</span> <span class="br0">)</span>
+               LightBrightness = <span class="nu0">0</span>;
+       <span class="kw1">else</span>
+               LightBrightness = InitialBrightness;
+<span class="br0">}</span>
+ 
+<span class="co1">//----------------------------------------------------------------------------</span>
+<span class="co1">// Public states.</span>
+ 
+<span class="co1">// Trigger turns the light on.</span>
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> TriggerTurnsOn
+<span class="br0">{</span>
+       <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+       <span class="br0">{</span>
+               Trigger = <span class="kw9">None</span>;
+               Direction = <span class="nu0">1.0</span>;
+               <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Trigger turns the light off.</span>
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> TriggerTurnsOff
+<span class="br0">{</span>
+       <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+       <span class="br0">{</span>
+               Trigger = <span class="kw9">None</span>;
+               Direction = <span class="nu0">-1.0</span>;
+               <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Trigger toggles the light.</span>
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> TriggerToggle
+<span class="br0">{</span>
+       <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+       <span class="br0">{</span>
+               <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Toggle"</span><span class="br0">)</span>;
+               Trigger = Other;
+               Direction *= <span class="nu0">-1</span>;
+               <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Trigger controls the light.</span>
+<span class="kw5">state</span><span class="br0">(</span><span class="br0">)</span> TriggerControl
+<span class="br0">{</span>
+       <span class="kw5">function</span> Trigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+       <span class="br0">{</span>
+               Trigger = Other;
+               <span class="kw1">if</span><span class="br0">(</span> bInitiallyOn <span class="br0">)</span> Direction = <span class="nu0">-1.0</span>;
+               <span class="kw1">else</span> Direction = <span class="nu0">1.0</span>;
+               <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       <span class="br0">}</span>
+       <span class="kw5">function</span> UnTrigger<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other, <a href="/Pawn"><span class="kw10">pawn</span></a> EventInstigator <span class="br0">)</span>
+       <span class="br0">{</span>
+               Trigger = Other;
+               <span class="kw1">if</span><span class="br0">(</span> bInitiallyOn <span class="br0">)</span> Direction = <span class="nu0">1.0</span>;
+               <span class="kw1">else</span> Direction = <span class="nu0">-1.0</span>;
+               <span class="kw7">Enable</span><span class="br0">(</span> <span class="st0">'Tick'</span> <span class="br0">)</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The key elements to look at in this script are:</p>
+<dl>
+<dt>The class declaration&#160;</dt>
+<dd>Each class "extends" (derives from) one parent class, and each class belongs to a "package," a collection of objects that are distributed together. All functions and variables belong to a class, and are only accessible through an actor that belongs to that class. There are no system-wide global functions or variables.</dd>
+</dl>
+<dl>
+<dt>The variable declarations&#160;</dt>
+<dd>UnrealScript supports a very diverse set of variable types including most base C/Java types, object references, structs, and arrays. In addition, variables can be made into editable properties which designers can access in UnrealEd without any programming.</dd>
+</dl>
+<dl>
+<dt>The functions&#160;</dt>
+<dd>Functions can take a list of parameters, and they optionally return a value. Functions can have local variables. Some functions are called by the Unreal engine itself (such as BeginPlay), and some functions are called from other script code elsewhere (such as Trigger).</dd>
+</dl>
+<dl>
+<dt>The code&#160;</dt>
+<dd>All of the standard C and Java keywords are supported, like <b>for</b>, <b>while</b>, <b>break</b>, <b>switch</b>, <b>if</b>, and so on. Braces and semicolons are used in UnrealScript as in C, C++, and Java.</dd>
+</dl>
+<dl>
+<dt>Actor and object references&#160;</dt>
+<dd>Here you see several cases where a function is called within another object, using an object reference.</dd>
+</dl>
+<dl>
+<dt>The <b>state</b> keyword&#160;</dt>
+<dd>This script defines several "states", which are groupings of functions, variables, and code which are executed only when the actor is in that state.</dd>
+</dl>
+<p>Note that all keywords, variable names, functions, and object names in UnrealScript are case-insensitive. To UnrealScript, "Demon", "demON", and "demon" are the same thing.</p>
+<p><a name="The_Unreal_Virtual_Machine" id="The_Unreal_Virtual_Machine"></a></p>
+<h3><span class="mw-headline">The Unreal Virtual Machine</span></h3>
+<p>The Unreal Virtual Machine consists of several components: the server, the client, the rendering engine, and the engine support code.</p>
+<p>The Unreal server controls all gameplay and interaction between players and actors. In a single-player game, both the Unreal client and the Unreal server are run on the same machine; in an Internet game, there is a dedicated server running on one machine; all players connect to this machine and are clients.</p>
+<p>All gameplay takes place inside a "level", a self-contained environment containing geometry and actors. Though UnrealServer may be capable of running more than one level simultaneously, each level operates independently, and levels are shielded from each other: actors cannot travel between levels, and actors on one level cannot communicate with actors on another level.</p>
+<p>Each actor in a map can either be under player control (there can be many players in a network game) or under script control. When an actor is under script control, its script completely defines how the actor moves and interacts with other actors.</p>
+<p>With all of those actors running around, scripts executing, and events occuring in the world, you're probably asking how one can understand the flow of execution in an UnrealScript. The answer is as follows:</p>
+<p>To manage time, Unreal divides each second of gameplay into "ticks." A tick is the smallest unit of time in which all actors in a level are updated. A tick typically takes between 1/100th to 1/10th of a second. The tick time is limited only by CPU power; the faster machine, the lower the tick duration.</p>
+<p>Some commands in UnrealScript take zero ticks to execute (i.e. they execute without any game-time passing), and others take many ticks. Functions which require game-time to pass are called "latent functions". Some examples of latent functions include "Sleep", "FinishAnim", and "MoveTo." Latent functions in UnrealScript may only be called from code within a state, not from code within a function.</p>
+<p>While an actor is executing a latent function, that actor's state execution doesn't continue until the latent function completes. However, other actors, or the VM, may call functions within the actor. The net result is that all UnrealScript functions can be called at any time, even while latent functions are pending.</p>
+<p>In traditional programming terms, UnrealScript acts as if each actor in a level has its own "thread" of execution. Internally, Unreal does not use Windows threads, because that would be very inefficient (Windows 95 and Windows NT do not handle thousands of simultaneous threads efficiently). Instead, UnrealScript simulates threads. This fact is transparent to UnrealScript code, but becomes very apparent when you write C++ code which interacts with UnrealScript.</p>
+<p>All UnrealScripts execute in parallel. If there are 100 monsters walking around in a level, all 100 of those monsters' scripts are executing simultaneously and independently.</p>
+<p><a name="Class_Overview" id="Class_Overview"></a></p>
+<h3><span class="mw-headline">Class Overview</span></h3>
+<p>Before beginning work with UnrealScript, it's important to understand the high-level relationships of objects within Unreal. The architecture of Unreal is a major departure from that of most other games: Unreal is purely object-oriented (much like COM/ActiveX), in that it has a well-defined object model with support for high-level object oriented concepts such as the object graph, serialization, object lifetime, and polymorphism. Historically, most games have been designed monolithically, with their major functionality hardcoded and unexpandable at the object level, though many games, such as Doom and Quake, have proven to be very expandable at the content level. There is a major benefit to Unreal's form of object-orientation: major new functionality and object types can be added to Unreal at runtime, and this expansion can take the form of subclassing, rather than (for example) by modifying a bunch of existing code. This form of extensibility is extremely powerful, as it encourages the Unreal community to create Unreal enhancements that all interoperate.</p>
+<ul>
+<li><a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> is the parent class of all objects in Unreal. All of the functions in the Object class are accessible everywhere, because everything derives from Object. Object is an abstract base class, in that it doesn't do anything useful. All functionality is provided by subclasses, such as Texture (a texture map), TextBuffer (a chunk of text), and Class (which describes the class of other objects).</li>
+</ul>
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> (extends <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>) is the parent class of all standalone game objects in Unreal. The Actor class contains all of the functionality needed for an actor to move around, interact with other actors, affect the environment, and do other useful game-related things.</li>
+</ul>
+<ul>
+<li><a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> (expands <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>) is the parent class of all creatures and players in Unreal which are capable of high-level AI and player controls.</li>
+</ul>
+<ul>
+<li>Class (expands <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>) is a special kind of object which describes a class of object. This may seem confusing at first: a class is an object, and a class describes certain objects. But, the concept is sound, and there are many cases where you will deal with Class objects. For example, when you spawn a new actor in UnrealScript, you can specify the new actor's class with a Class object.</li>
+</ul>
+<p>With UnrealScript, you can write code for any Object class, but 99% of the time, you will be writing code for a class derived from Actor. Most of the useful UnrealScript functionality is game-related and deals with actors.</p>
+<p><a name="The_Class_Declaration" id="The_Class_Declaration"></a></p>
+<h3><span class="mw-headline">The Class Declaration</span></h3>
+<p>Each script corresponds to exactly one class, and the script begins by declaring the class, the class's parent, and any additional information that is relevant to the class. The simplest form is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyClass <span class="kw5">extends</span> MyParentClass;
+</pre></div>
+<p>Here I am declaring a new class named "MyClass", which inherets the functionality of "MyParentClass". Additionally, the class resides in the package named "MyPackage".</p>
+<p>Each class inherets all of the variables, functions, and states from its parent class. It can then add new variable declarations, add new functions (or override the existing functions), add new states (or add functionality to the existing states).</p>
+<p>The typical approach to class design in UnrealScript is to make a new class (for example a Minotaur monster) which expands an existing class that has most of the functionality you need (for example the Pawn class, the base class of all monsters). With this approach, you never need to reinvent the wheel. You can simply add the new functionality you want to customize, while keeping all of the existing functionality you don't need to customize. This approach is especially powerful for implementing AI in Unreal, where the built-in AI system provides a tremendous amount of base functionality which you can use as building blocks for your custom creatures.</p>
+<p>The class declaration can take several optional specifiers that affect the class:</p>
+<dl>
+<dt>native&#160;</dt>
+<dd>Says "this class uses behind-the-scenes C++ support". Unreal expects native classes to contain a C++ implementation in the DLL corresponding to the class's package. For example, if your package is named "Robots", Unreal looks in the "Robots.dll" for the C++ implementation of the native class, which is generated by the C++ IMPLEMENT_CLASS macro.</dd>
+</dl>
+<dl>
+<dt>abstract&#160;</dt>
+<dd>Declares the class as an "abstract base class". This prevents the user from adding actors of this class to the world in UnrealEd, because the class isn't meaningful on its own. For example, the "Pawn" base class is abstract, while the "Brute" subclass is not abstract&#160;? you can place a Brute in the world, but you can't place a Pawn in the world.</dd>
+</dl>
+<dl>
+<dt>guid(a,b,c,d)&#160;</dt>
+<dd>Associates a globally unique identifier (a 128-bit number) with the class. This Guid is currently unused, but will be relevant when native COM support is later added to Unreal.</dd>
+</dl>
+<dl>
+<dt>transient&#160;</dt>
+<dd>Says "objects belonging to this class should never be saved on disk". Only useful in conjunction with certain kinds of native classes which are non-persistent by nature, such as players or windows.</dd>
+</dl>
+<dl>
+<dt>config(section_name)&#160;</dt>
+<dd>If there are any configurable variables in the class (declared with "config" or "globalconfig"), causes those variables to be stored in a particular configuration file:</dd>
+<dt>* config(system) – Uses the system configuration file, Unreal.ini for Unreal.</dt>
+<dt>* config(user) – Uses the user configuration file, currently User.ini.</dt>
+<dt>* config(whatever) – Uses the specified configuration file, for example "whatever.ini".</dt>
+</dl>
+<hr />
+<p><b>Section 1 of 9</b> – Next Page: <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Variables_67bc.html" title="Legacy:UnrealScript Language Reference/Variables">Legacy:UnrealScript Language Reference/Variables</a></p>
+<p>See also: <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class Syntax</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 25/1000000
+Post-expand include size: 178/2097152 bytes
+Template argument size: 96/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Introduction_1f85.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnrealScript_Language_Reference_Introduction_15ba.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UnrealScript_Language_Reference/Introduction">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:20, 30 July 2006 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

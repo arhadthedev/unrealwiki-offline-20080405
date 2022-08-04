@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Triggered - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Triggered</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Definition"><span class="tocnumber">1</span> <span class="toctext">Definition</span></a></li>
+<li class="toclevel-1"><a href="#Purpose"><span class="tocnumber">2</span> <span class="toctext">Purpose</span></a></li>
+<li class="toclevel-1"><a href="#Sequence"><span class="tocnumber">3</span> <span class="toctext">Sequence</span></a></li>
+<li class="toclevel-1"><a href="#Some_abuses"><span class="tocnumber">4</span> <span class="toctext">Some abuses</span></a>
+<ul>
+<li class="toclevel-2"><a href="#.22The_player_triggers_the_light.22"><span class="tocnumber">4.1</span> <span class="toctext">"The player triggers the light"</span></a></li>
+<li class="toclevel-2"><a href="#.22The_player_triggers_the_trigger.22"><span class="tocnumber">4.2</span> <span class="toctext">"The player triggers the trigger"</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Summary"><span class="tocnumber">5</span> <span class="toctext">Summary</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Contributors_Refactored"><span class="tocnumber">7</span> <span class="toctext">Contributors Refactored</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">8</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Definition" id="Definition"></a></p>
+<h2><span class="mw-headline">Definition</span></h2>
+<dl>
+<dt>Trigger (noun)</dt>
+<dd>an actor of class Trigger or one of its subclasses.</dd>
+<dt>Trigger (verb)</dt>
+<dd>to cause an actor's "Trigger" event to be called.</dd>
+</dl>
+<p><a name="Purpose" id="Purpose"></a></p>
+<h2><span class="mw-headline">Purpose</span></h2>
+<p>The purpose of this page is to keep the terminology surrounding triggers and events clear. It is important to note that the terms set down here are frequently abused, i.e. the verb "to trigger" is used in a number of ways that may gloss over the actual mechanisms used to a greater or lesser degree.</p>
+<p><a name="Sequence" id="Sequence"></a></p>
+<h2><span class="mw-headline">Sequence</span></h2>
+<p>A Trigger in a map might be activated for a number of different reasons, e.g. the player might <i>touch</i> a trigger, or may hit the USE key whilst in range of the Trigger. This is the role of the Trigger actor - as a sort of "sensor" to detect the conditions that will cause the interaction to take place.</p>
+<p>When the Trigger is activated, it <i>raises</i> (or <i>fires</i>) an Event. The Event can be thought of as a message that is broadcast to all actors in the level. <b>NOTE:</b> this is <b>not</b> the same as the <b>event</b> keyword in unrealscript, which means that the function can be called from native code.</p>
+<p>All actors whose Tag property matches the trigger's Event property get their <b>Triggered</b> or <b>UnTriggered</b> function called.</p>
+<p>Note also that it's possible that some of these actors being triggered are themselves triggers, which may raise further events.</p>
+<p><a name="Some_abuses" id="Some_abuses"></a></p>
+<h2><span class="mw-headline">Some abuses</span></h2>
+<p><a name=".22The_player_triggers_the_light.22"></a></p>
+<h3><span class="mw-headline">"The player triggers the light"</span></h3>
+<p>This really means the player <i>activates</i> the trigger, which <i>fires</i> an event, which <i>triggers</i> the light.</p>
+<p><a name=".22The_player_triggers_the_trigger.22"></a></p>
+<h3><span class="mw-headline">"The player triggers the trigger"</span></h3>
+<p>This is just a rubbish sentence! In the scripting world, there is a <b>Touch' <i>function and a</i></b> <i>Triggered <b>function, so if a trigger is being triggered, do you mean it is being triggered by an event that is raised by another trigger? You probably don't, so try to say</b></i> <b>activates</b> or <b>touches</b> or <b>uses</b> or <b>fires</b>.</p>
+<p><a name="Summary" id="Summary"></a></p>
+<h2><span class="mw-headline">Summary</span></h2>
+<p>By saying that one actor "triggered" another, we are wrapping up this whole process of detection, event and consequence into a handy little phrase. Unfortunately it's misleading because it implies a one-to-one relationship: one trigger causes one actor to be affected. Of course, any number of actors may have a tag to match the event.</p>
+<hr />
+<p>Jump to the <a href="../../../../articles/t/r/i/Legacy%7ETriggers_1cde.html" title="Legacy:Triggers">Triggers</a> parent page</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a></li>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a></li>
+<li><a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> and <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a></li>
+<li><a href="../../../../articles/t/e/r/Legacy%7ETerminology_580e.html" title="Legacy:Terminology">Terminology</a></li>
+</ul>
+<p><a name="Contributors_Refactored" id="Contributors_Refactored"></a></p>
+<h2><span class="mw-headline">Contributors Refactored</span></h2>
+<p><a href="../../../../articles/m/y/c/Legacy%7EMychaeel_0406.html" title="Legacy:Mychaeel">Mychaeel</a></p>
+<p><a href="../../../../articles/t/a/r/Legacy%7ETarquin_1d9d.html" title="Legacy:Tarquin">Tarquin</a></p>
+<p><a href="../../../../articles/a/e/d/Legacy%7EAedis_76d1.html" title="Legacy:Aedis">Aedis</a></p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Sweavo:</b> Hope that's a satisfactory refactor for now. When I found the page it was more confusing than helpful. Hopefully it's clearer now. But I'm experienced with triggers so I'd appreciate someone reviewing it for glaring factual errors.</p>
+<p><b>SuperApe:</b> This looks clearer to me.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/i/Legacy%7ETriggered_4f8d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/i/Legacy_talk%7ETriggered_7814.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Triggered">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:46, 11 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

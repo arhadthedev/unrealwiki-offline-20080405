@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Authoring For UT2K3/HUD - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Authoring For UT2K3/HUD</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_For_UT2K3_c3b2.html" title="Legacy:Mod Authoring For UT2K3">Legacy:Mod Authoring For UT2K3</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#What_is_a_HUD.3F"><span class="tocnumber">1</span> <span class="toctext">What is a HUD?</span></a></li>
+<li class="toclevel-1"><a href="#Implementing_your_own_HUD"><span class="tocnumber">2</span> <span class="toctext">Implementing your own HUD</span></a></li>
+<li class="toclevel-1"><a href="#Inside_the_belly_of_the_beast"><span class="tocnumber">3</span> <span class="toctext">Inside the belly of the beast</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Tackling_the_NumericWidget_and_SpriteWidget"><span class="tocnumber">3.1</span> <span class="toctext">Tackling the NumericWidget and SpriteWidget</span></a></li>
+<li class="toclevel-2"><a href="#SpriteWidget"><span class="tocnumber">3.2</span> <span class="toctext">SpriteWidget</span></a>
+<ul>
+<li class="toclevel-3"><a href="#TextureScale"><span class="tocnumber">3.2.1</span> <span class="toctext">TextureScale</span></a></li>
+<li class="toclevel-3"><a href="#ScaleMode"><span class="tocnumber">3.2.2</span> <span class="toctext">ScaleMode</span></a></li>
+<li class="toclevel-3"><a href="#Scale"><span class="tocnumber">3.2.3</span> <span class="toctext">Scale</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Drawing_with_Numeric_and_Sprite_Widget."><span class="tocnumber">3.3</span> <span class="toctext">Drawing with Numeric and Sprite Widget.</span></a></li>
+<li class="toclevel-2"><a href="#Calculating_the_final_size_of_the_widget"><span class="tocnumber">3.4</span> <span class="toctext">Calculating the final size of the widget</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Adding_a_Time_Display"><span class="tocnumber">4</span> <span class="toctext">Adding a Time Display</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Writing_a_Function"><span class="tocnumber">4.1</span> <span class="toctext">Writing a Function</span></a></li>
+<li class="toclevel-2"><a href="#Calculating_Game_Time"><span class="tocnumber">4.2</span> <span class="toctext">Calculating Game Time</span></a></li>
+<li class="toclevel-2"><a href="#Getting_my_time_to_update"><span class="tocnumber">4.3</span> <span class="toctext">Getting my time to update</span></a></li>
+<li class="toclevel-2"><a href="#Giving_my_Widgets_a_look_in_the_defaultproperties"><span class="tocnumber">4.4</span> <span class="toctext">Giving my Widgets a look in the defaultproperties</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="What_is_a_HUD.3F" id="What_is_a_HUD.3F"></a></p>
+<h2><span class="mw-headline">What is a HUD?</span></h2>
+<p>The HUD is the graphical representation of information that the user sees superimposed over the action during play. It shows their health, weapons, armor, etc; anything relevant to the game at that time. If you are implementing a whole new game type you may wish to build your own HUD. However, if you wanted to add an element to the existing HUD, e.g. <i>time remaining</i> in the match or perhaps a <i>radar</i> like in the <i>Invasion</i> Gametype, you probably just want to create an <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a>.</p>
+<p><a name="Implementing_your_own_HUD" id="Implementing_your_own_HUD"></a></p>
+<h2><span class="mw-headline">Implementing your own HUD</span></h2>
+<p>Implementing your own HUD is not that hard. Let's start by simply copying an existing HUD and then making small changes to the code. You can find the <b>HUD</b> class in the following class structure.</p>
+<pre>
+<a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a>
+ +-<a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>
+     +-<a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a>  
+         +-CinematicHud
+         +-<a href="../../../../articles/h/u/d/Legacy%7EHudBase_bdaa.html" title="Legacy:HudBase">HudBase</a>
+             +-HudBDeathMatch
+                 +-<a href="../../../../articles/h/u/d/Legacy%7EHudBTeamDeathMatch_6425.html" title="Legacy:HudBTeamDeathMatch">HudBTeamDeathMatch</a>
+                 +-HudBBombingRun
+                 +-HudBCaptureTheFlag
+                 +-HudBDoubleDomination
+</pre>
+<p>There are several HUD subclasses to choose from. I looked at the one that matched my game type the most. <i>HudBDeathMatch</i> is the class that I wanted to copy so I subclassed <i>HudBase</i>, saved the file as <i>HudBMyNewHUDName</i> in my package and then copied the entire code from <i>HudBDeathMatch</i>.</p>
+<p>Then I went into the <b>GameType</b> that I created and added this line in my <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+HUDType=<span class="st0">"MyPackage.HUDMyNewHUDName"</span>
+</pre></div>
+<ul>
+<li><i>MyPackage</i> is simply the <a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">package</a> that you create and are saving your work.</li>
+<li><i>HUDMyNewHUDName</i> is the actual name of your HUD class, I chose one that was very similar to the existing HUD types.</li>
+</ul>
+<p>Compile the code and start your game and if you handled the copy and paste work correctly then everything should run and appear as normal correctly. The the hard part is trying to figure out everything inside the HUD and how to edit it. So lets actually look at the code.</p>
+<p><a name="Inside_the_belly_of_the_beast" id="Inside_the_belly_of_the_beast"></a></p>
+<h2><span class="mw-headline">Inside the belly of the beast</span></h2>
+<p>This code below is taken from the <b>HUDBase</b> class and talks about the multiple passes the class goes through when drawing the HUD.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Derived HUDs override UpdateHud to update variables before rendering;</span>
+<span class="co1">// NO draw code should be in derived DrawHud's; they should instead override</span>
+<span class="co1">// DrawHudPass[A-D] and call their base class' DrawHudPass[A-D] (This cuts</span>
+<span class="co1">// down on render state changes).</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateHud<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHudPassA <span class="br0">(</span>Canvas C<span class="br0">)</span>; <span class="co1">// Alpha Pass</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHudPassB <span class="br0">(</span>Canvas C<span class="br0">)</span>; <span class="co1">// Additive Pass</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHudPassC <span class="br0">(</span>Canvas C<span class="br0">)</span>; <span class="co1">// Alpha Pass</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHudPassD <span class="br0">(</span>Canvas C<span class="br0">)</span>; <span class="co1">// Alternate Texture Pass</span>
+</pre></div>
+<p>Each pass takes care of drawing a different aspect of the HUD. Now looking specifically at the functions in our HUD we should note what happens in each function as well as some other functions that are being used.</p>
+<dl>
+<dt>DrawHudPassA&#160;</dt>
+<dd>seems to take care of most of the graphical features of the HUD.</dd>
+<dt>ShowPointBarTop&#160;</dt>
+<dd>and &#160;: ShowPointBarBottom&#160;: draw parts of the graphical HUD in DrawHudPassA.</dd>
+<dt>DrawHudPassC&#160;</dt>
+<dd>seems to take care of most of the numbers and strings that the user sees, like his health, adrenaline, crosshairs and other personal information.</dd>
+<dt>DrawWeaponBar&#160;</dt>
+<dd>draws the weapon bar</dd>
+</dl>
+<p>So this HUD class uses two of the four passes and then uses three extra function to draw some of the HUD as well. But what is being drawn when it draws the HUD, what are the elements of the HUD. Looking at the element classes at the top of the class I find that there are types of objects being drawn <i>NumericWidget</i>, which controlls all number values (life,shield,ammo), and <i>SpriteWidget</i>, which is every other piece (borders,icons,pictures).</p>
+<p><a name="Tackling_the_NumericWidget_and_SpriteWidget" id="Tackling_the_NumericWidget_and_SpriteWidget"></a></p>
+<h3><span class="mw-headline">Tackling the NumericWidget and SpriteWidget</span></h3>
+<p>In <b>defaultproperties</b> the graphical look of both elements are set. I'm going to specifically look at <b>ShieldCount</b> which is the total amount of shield points that a player has in the game.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ShieldCount=<span class="br0">(</span>RenderStyle=STY_Alpha,TextureScale=<span class="nu0">0.100000</span>,DrawPivot=DP_LowerLeft,PosX=<span class="nu0">0.500000</span>,PosY=<span class="nu0">0.500000</span>,OffsetX=<span class="nu0">0</span>,OffsetY=<span class="nu0">0</span>,Tints<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span>,Tints<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>
+</pre></div>
+<p>Now, lets look specifically at what is being set here in detail and go blow-by-blow at each of these attributes.</p>
+<dl>
+<dt>RenderStyle&#160;</dt>
+<dd>RenderStyle is an ERenderStyle enumeration. It controls the type of <a href="../../../../articles/c/o/l/Legacy%7EColor_Blending_5ec2.html" title="Legacy:Color Blending">color blending</a> or its effect on the other units that it lays over in the HUD.</dd>
+</dl>
+<dl>
+<dt>TextureScale&#160;</dt>
+<dd>Texture Scale is the scale that is applied to the texture, relative to a screen resolution of 640 x 480 pixels (that means: at that screen resolution a sprite with TextureScale=1.0 will be drawn one-to-one; at other screen resolutions it will be proportionally scaled up or down).</dd>
+</dl>
+<dl>
+<dt>PosX, PosY, OffsetX, OffsetY&#160;</dt>
+</dl>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_ScreenPosition.gif_07eb.html" class="image" title="Legacy ScreenPosition.gif"><img alt="" src="../../../../images/Legacy_ScreenPosition.gif" width="200" height="200" border="0" /></a></span></div>
+</div>
+<p>The values of PosX and PosY are decimal values representing the position on the screen. This frees the user from having to worry about the position of their HUD items in relation to the screen resolution. So if you set the PosX=0.5000000 and PosY=0.5000000 then you always get a position in the center of the screen.</p>
+<p>OffsetX and OffsetY are in actual pixels. You might be able to get to the point of the map that you want, but then you want to shift it a specific number of pixels and this is where OffsetX and OffsetY would come into play.</p>
+<p><br /></p>
+<dl>
+<dt>Drawpivot&#160;</dt>
+</dl>
+<p>Drawpivot is a point on the texture or numeric image.</p>
+<pre>
+ DP_UpperLeft
+ DP_UpperMiddle
+ DP_UpperRight
+ DP_LowerLeft
+ DP_LowerMiddle
+ DP_LowerRight
+ DP_MiddleLeft
+ DP_MiddleMiddle
+ DP_MiddleRight
+</pre>
+<p>The position and offset properties specify a single point on the screen. Drawpivot specifies what part of the bitmap is to appear at that point. So if you specified DP_UpperLeft, the bitmap would "hang" down and to the right of the position specified.</p>
+<p><br /></p>
+<p><br /></p>
+<dl>
+<dt>Tints&#160;</dt>
+<dd>This is the color of the mesh/text and can be dependant on the team (in three color intensity format). Tint[0] is the first team and Tint[1] is the second team. For armor it isn’t important to have the difference in color. I would recommend using a graphical color chooser to find the Red-Green-Blue (three-color intensity) you are looking for.</dd>
+</dl>
+<p><a name="SpriteWidget" id="SpriteWidget"></a></p>
+<h3><span class="mw-headline">SpriteWidget</span></h3>
+<p>So here are the properties specific to the sprite widget call. Up to this point a lot of them are already covered in the <b>NumericWidget</b>.</p>
+<dl>
+<dt>WidgetTexture&#160;</dt>
+</dl>
+<p>WidgetTexture loads the texture from a texture pack for the SpriteWidget. You are able to view all the textures that UT2K3 uses through UnrealEd 3.0. Here is an example of the HUD Textures that are used.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+...<span class="me1">WidgetTexture</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'InterfaceContent.HUD.SkinA'</span>...
+</pre></div>
+<center>[[Image:Legacy_HUD_textures.gif|]]</center>
+<p>This texture is not actual size.</p>
+<p><br /></p>
+<dl>
+<dt>TextureCoords&#160;</dt>
+<dd>Textures usually come with several on the same sheet. So you often need to specify the rectangle that surrounds the texture that you want. In this case we just want to grab the shield from that texture pack, and so there is a start point (x,y) and then a length in both directions.</dd>
+</dl>
+<p><a name="TextureScale" id="TextureScale"></a></p>
+<h4><span class="mw-headline">TextureScale</span></h4>
+<center>[[Image:Legacy_textureScale.gif|]]</center>
+<p>The texture scale is a percentage at which you want the texture to be displayed. This is useful as the texture picture is usually larger than you want it to appear in your HUD.</p>
+<p><a name="ScaleMode" id="ScaleMode"></a></p>
+<h4><span class="mw-headline">ScaleMode</span></h4>
+<pre>
+ SM_None
+ SM_Up
+ SM_Down
+ SM_Left
+ SM_Right
+</pre>
+<p>This is the side that it is scale from. This is used for the bars that adjust with your health and ammo. Most of those start from the left side. But this is if you plan to have your texture start to get chopped off through use.</p>
+<p><a name="Scale" id="Scale"></a></p>
+<h4><span class="mw-headline">Scale</span></h4>
+<p>This is a float value that represents how much is cut off from the direction specified above. So for ammo depletion they probably calculate an amount appropriate based on the maximum and how much you are firing off.</p>
+<p><a name="Drawing_with_Numeric_and_Sprite_Widget." id="Drawing_with_Numeric_and_Sprite_Widget."></a></p>
+<h3><span class="mw-headline">Drawing with Numeric and Sprite Widget.</span></h3>
+<p>I noticed there were a two function calls: DrawSpriteWidge and DrawNumericWidget.</p>
+<p>These are native functions that take care of drawing the two widgets we defined above.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+DrawSpriteWidget <span class="br0">(</span>Canvas C, <span class="kw6">out</span> SpriteWidget W<span class="br0">)</span> <span class="br0">[</span><span class="kw6">simulated</span>, <span class="kw6">final</span><span class="br0">]</span>
+<span class="co1">// Draws the HUD element described by the SpriteWidget W.</span>
+ 
+DrawNumericWidget <span class="br0">(</span>Canvas C, <span class="kw6">out</span> NumericWidget W, <span class="kw6">out</span> DigitSet D<span class="br0">)</span> <span class="br0">[</span><span class="kw6">simulated</span>, <span class="kw6">final</span><span class="br0">]</span>
+<span class="co1">// Draws a number.</span>
+</pre></div>
+<p><a name="Calculating_the_final_size_of_the_widget" id="Calculating_the_final_size_of_the_widget"></a></p>
+<h3><span class="mw-headline">Calculating the final size of the widget</span></h3>
+<p>If your wanting to calculate the final size of the widget, from my observations the formula for doing so seems to be:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+SpriteWidgetWidth = <span class="br0">(</span>SpriteWidget.<span class="me1">TextureCoords</span>.<span class="me1">X2</span> - SpriteWidget.<span class="me1">TextureCoords</span>.<span class="me1">X1</span><span class="br0">)</span> * SpriteWidget.<span class="me1">TextureScale</span> * C.<span class="me1">ClipX</span>/<span class="nu0">640</span> * MyHUD.<span class="me1">HUDScale</span>;
+SpriteWidgetHeight = <span class="br0">(</span>SpriteWidget.<span class="me1">TextureCoords</span>.<span class="me1">Y2</span> - SpriteWidget.<span class="me1">TextureCoords</span>.<span class="me1">Y1</span><span class="br0">)</span> * SpriteWidget.<span class="me1">TextureScale</span> * C.<span class="me1">ClipY</span>/<span class="nu0">480</span> * MyHUD.<span class="me1">HUDScale</span>;
+</pre></div>
+<p><a name="Adding_a_Time_Display" id="Adding_a_Time_Display"></a></p>
+<h2><span class="mw-headline">Adding a Time Display</span></h2>
+<p>So I wanted the user to be aware of the time in the game. NOTE: I'm not sure if this is the players time in game or the lifetime of the game. And so, by example I thought I would go through adding a time display.</p>
+<p><a name="Writing_a_Function" id="Writing_a_Function"></a></p>
+<h3><span class="mw-headline">Writing a Function</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> NumericWidget myTime_seconds;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> NumericWidget myTime_minutes;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> NumericWidget myTime_hours;
+</pre></div>
+<p>I added these variables near the beginning of the class where the other Widgets were being declared.</p>
+<p><a name="Calculating_Game_Time" id="Calculating_Game_Time"></a></p>
+<h3><span class="mw-headline">Calculating Game Time</span></h3>
+<p>I wanted to calculate game time and as I previously discussed I know that some of the information about the game and the players were in it are carried in the <a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a> and <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a> classes.</p>
+<p><br />
+So I created a function that would calculate game time.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> CalculateGameTime<span class="br0">(</span><span class="br0">)</span>  <span class="br0">{</span>
+ 
+    <span class="kw5">local</span> <span class="kw4">int</span> iElapsedTime;
+ 
+    iElapsedTime = PlayerOwner.<span class="me1">GameReplicationInfo</span>.<span class="me1">ElapsedTime</span>;
+ 
+    myTime_hours.<span class="me1">Value</span> = iElapsedTime / <span class="nu0">3600</span>;
+ 
+    iElapsedTime = iElapsedTime % <span class="nu0">3600</span>;
+    myTime_minutes.<span class="me1">Value</span> = iElapsedTime / <span class="nu0">60</span>;
+ 
+    iElapsedTime = iElapsedTime % <span class="nu0">60</span>;
+    myTime_seconds.<span class="me1">Value</span> = iElapsedTime;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>This converts the game time in seconds into hours, minutes, and seconds. I didn't want the player to have to do the conversion in their head from the seconds. I imagine I could have done this another way, but these seemed like a good idea at the time.</p>
+<p><a name="Getting_my_time_to_update" id="Getting_my_time_to_update"></a></p>
+<h3><span class="mw-headline">Getting my time to update</span></h3>
+<p>So I created a way to update the game time but I needed to figure out how to get it displayed. I again copied form that the other widgets used. Inside a <b>DrawHudPassC</b> I added this code (replaced some code with a ... for space reasons).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> DrawHudPassC <span class="br0">(</span>Canvas C<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">float</span> PortraitWidth,PortraitHeight, XL, YL, Abbrev;
+    <span class="kw5">local</span> <span class="kw4">string</span> PortraitString;
+ 
+    ...
+ 
+    <span class="co1">// Screen</span>
+    <span class="kw1">if</span><span class="br0">(</span> bShowPersonalInfo <span class="br0">)</span>
+    <span class="br0">{</span>
+        …
+ 
+       <span class="co1">//time</span>
+       DrawNumericWidget<span class="br0">(</span> C, myTime_hours, DigitsBig <span class="br0">)</span>;
+       DrawNumericWidget<span class="br0">(</span> C, myTime_minutes, DigitsBig <span class="br0">)</span>;
+       DrawNumericWidget<span class="br0">(</span> C, myTime_seconds, DigitsBig <span class="br0">)</span>;
+    <span class="br0">}</span>
+</pre></div>
+<p><i>C</i> is the Canvas that these Widgets are drawn on, the widgets that I'm drawing are what follow, and the digits that I'm going to use are a set called DigitsBig previously loaded in the defaultproperties.</p>
+<p><a name="Giving_my_Widgets_a_look_in_the_defaultproperties" id="Giving_my_Widgets_a_look_in_the_defaultproperties"></a></p>
+<h3><span class="mw-headline">Giving my Widgets a look in the defaultproperties</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+myTime_hours=<span class="br0">(</span>RenderStyle=STY_Alpha,TextureScale=<span class="nu0">0.100000</span>,DrawPivot=DP_LowerMiddle,PosX=<span class="nu0">0.450000</span>,PosY=<span class="nu0">0.500000</span>,OffsetX=<span class="nu0">0</span>,OffsetY=<span class="nu0">0</span>,Tints<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span>,Tints<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>
+myTime_minutes=<span class="br0">(</span>RenderStyle=STY_Alpha,TextureScale=<span class="nu0">0.100000</span>,DrawPivot=DP_LowerMiddle,PosX=<span class="nu0">0.470000</span>,PosY=<span class="nu0">0.500000</span>,OffsetX=<span class="nu0">0</span>,OffsetY=<span class="nu0">0</span>,Tints<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span>,Tints<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>
+myTime_seconds=<span class="br0">(</span>RenderStyle=STY_Alpha,TextureScale=<span class="nu0">0.100000</span>,DrawPivot=DP_LowerMiddle,PosX=<span class="nu0">0.490000</span>,PosY=<span class="nu0">0.500000</span>,OffsetX=<span class="nu0">0</span>,OffsetY=<span class="nu0">0</span>,Tints<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span>,Tints<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<span class="br0">(</span>B=<span class="nu0">255</span>,G=<span class="nu0">255</span>,R=<span class="nu0">255</span>,A=<span class="nu0">255</span><span class="br0">)</span><span class="br0">)</span>
+</pre></div>
+<p>This places them on the screen somewhere near the center next to the cursor. The important thing is that they were displayed. I also need to go back and give them more space and fill empty zeros.</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Burtlo</b>: I haven't tried creating/adding/editing anything in the texture packs and need to read up on that so I can write more for this tutorial. Also some help on formatting would be great. First time really writing in a Wiki.</p>
+<p><b>Tarquin:</b> Can I move this to Working with the HUD maybe?</p>
+<p><b>Burtlo:</b> I got to this page from the bottom of Making Mods. If you think it would be more useful in a different category Working with the HUD then by all means go for it.</p>
+<p><b>Tarquin:</b> It's not really about "categories", it's just about making page names easier – subpages are not very easy to deal with or link to. And I would rather things were a part of the whole wiki than being seen as part of a smaller work-in-progress document.</p>
+<p><b>Nuleo:</b> Ok so I made a hud and it draws numeric widgets fine but for some reason the sprtie widgets aren't showing up, anyone want to do a tutorial on that?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 52/1000000
+Post-expand include size: 27/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_For_UT2K3_HUD_9c58.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Authoring_For_UT2K3_HUD_ada9.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Authoring_For_UT2K3/HUD">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:24, 14 March 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

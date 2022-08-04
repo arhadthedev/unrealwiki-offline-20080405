@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Power Core Volume Control Mutator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Power Core Volume Control Mutator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>After a team's Power Core has been destroyed in an Onslaught game in <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> it explodes. After the initial explosion a repetative and loud electricity-short-circuit type sound is played.</p>
+<p>This tutorial will show you the steps required to write a small mutator that will allow the volume of both the Power Core's initial explosion and the subsequent electricity sound to be adjusted to your preference.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#How_does_the_Power_Core_explosion_actually_work"><span class="tocnumber">1</span> <span class="toctext">How does the Power Core explosion actually work</span></a></li>
+<li class="toclevel-1"><a href="#Using_the_CheckReplacement.28.29_function"><span class="tocnumber">2</span> <span class="toctext">Using the CheckReplacement() function</span></a></li>
+<li class="toclevel-1"><a href="#Controlling_Emitters_on_the_game_clients"><span class="tocnumber">3</span> <span class="toctext">Controlling Emitters on the game clients</span></a></li>
+<li class="toclevel-1"><a href="#Catching_the_end_of_game"><span class="tocnumber">4</span> <span class="toctext">Catching the end of game</span></a></li>
+<li class="toclevel-1"><a href="#Adding_the_VolumeControlGameRule_to_the_current_game-rule_set"><span class="tocnumber">5</span> <span class="toctext">Adding the VolumeControlGameRule to the current game-rule set</span></a></li>
+<li class="toclevel-1"><a href="#Changing_the_Emitter_sound_volume"><span class="tocnumber">6</span> <span class="toctext">Changing the Emitter sound volume</span></a></li>
+<li class="toclevel-1"><a href="#Making_the_power_core_volume_changes_configurable"><span class="tocnumber">7</span> <span class="toctext">Making the power core volume changes configurable</span></a></li>
+<li class="toclevel-1"><a href="#Conclusion"><span class="tocnumber">8</span> <span class="toctext">Conclusion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="How_does_the_Power_Core_explosion_actually_work" id="How_does_the_Power_Core_explosion_actually_work"></a></p>
+<h2><span class="mw-headline">How does the Power Core explosion actually work</span></h2>
+<p>In order to change the volume of the Power Core's end of game sounds we must first find the code that is responsible for playing the sound and explosion. Since the explosion relates directly to the Power Core it would seem sensible to look for it within the Onslaught.PowerCore class. Sure enough conveniently tucked away within the class is the method <a href="../../../../articles/p/o/w/Legacy%7EPower_Core_Volume_Control_Mutator_PowerCoreDestroyed_16ed.html" title="Legacy:Power Core Volume Control Mutator/PowerCoreDestroyed">Legacy:Power Core Volume Control Mutator/PowerCoreDestroyed</a>. The critical lines are shown below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> PowerCoreDestroyed<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// If this code is running on either a Listen server or a pure game client then</span>
+    <span class="co1">// create the Power Core's explosion effect and sound.</span>
+    ExplosionEffect = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'ONSPowerCoreBreachEffect'</span>, <span class="kw8">self</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The most important thing to note about this code is that the <i>ONSPowerCoreBreachEffect</i> object that is ultimately responsible for playing the sounds we wish to modify is <b>only</b> spawn on game clients. This object is <b>never</b> created on a dedicated server.</p>
+<p>An inspection of the ONSPowerCoreBreachEffect code shows us two things.</p>
+<ul>
+<li>It is subclassed directly from Emitter.</li>
+<li>All of it's properties are created as in-line objects within the defaultproperties sections.</li>
+</ul>
+<p><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> objects by default have two really impotant properties.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_None</span> <span class="co1">// Emitters are never sent across the network</span>
+  bNotOnDedServer=<span class="kw9">true</span> <span class="co1">// Emitters cannot be created on a dedicated server</span>
+</pre></div>
+<p>So, in order to change the sound volumes via our mutator we need to locate the ONSPowerCoreBreachEffect object on each of the game clients and then adjust the Emitter's sound properties.</p>
+<p><a name="Using_the_CheckReplacement.28.29_function" id="Using_the_CheckReplacement.28.29_function"></a></p>
+<h2><span class="mw-headline">Using the CheckReplacement() function</span></h2>
+<p>When changing the properties of objects (like sound volume, ammo counts etc) you would typically <i>catch</i> their creation within the Mutator's <i>CheckReplacement()</i> function as follows:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> PowerCoreVolumeControl <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+<span class="kw5">function</span> <span class="kw4">bool</span> CheckReplacement<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other, <span class="kw6">out</span> <span class="kw4">byte</span> bSuperRelevant<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ONSPowerNodeEnergySphere'</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// Code to change volume goes in here.</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Unfortunately the <i>CheckReplacement()</i> function is called <b>on the server</b> rather than any of the game's clients. As we discovered in the previous section the <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> responsible for the Power Core's destruction effects is only ever spawned on the client. We need another way of doing it.</p>
+<p><a name="Controlling_Emitters_on_the_game_clients" id="Controlling_Emitters_on_the_game_clients"></a></p>
+<h2><span class="mw-headline">Controlling Emitters on the game clients</span></h2>
+<p>Since we cannot use our Mutator to trap the creation of the Power Core's breach effect we need to do the next best thing. That is, find it once it has been spawned on the client. In order to do this we create an instance of a new class that can be spawned by our Mutator and replicated to the game clients.</p>
+<p>The code to adjust the Emitter's sound volume has been left out for now and instead we write out a log message.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> VolumeControlClient <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bAdjustVolume; <span class="co1">// False once the volume has been changed.</span>
+ 
+<span class="co1">// Every game tick we run through all of the current Emitter actors looking</span>
+<span class="co1">// for the ONSPowerCoreBreachEffect Emitter.  Once we have found this we can</span>
+<span class="co1">// update its volume settings and stop checking.</span>
+<span class="kw6">simulated</span> <span class="kw5">event</span> <span class="kw8">Tick</span><span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> ONSPowerCoreBreachEffect breachEffect;
+  <span class="kw6">Super</span>.<span class="kw8">Tick</span><span class="br0">(</span> DeltaTime <span class="br0">)</span>;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">self</span>.<span class="me1">bAdjustVolume</span> <span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// The foreach will examine every actor in the game!!!</span>
+    <span class="co1">// This is an expensive (aka slow) operation.</span>
+    <span class="kw1">foreach</span> AllActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'ONSPowerCoreBreachEffect'</span>, breachEffect<span class="br0">)</span> <span class="br0">{</span>
+      <span class="kw8">self</span>.<span class="me1">bAdjustVolume</span> = <span class="kw9">False</span>;
+      <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"We found a breach effect so update its sound"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+<span class="co1">// Set the remote role so that the client will run the tick function when the</span>
+<span class="co1">// object is created there.</span>
+<span class="co1">// If bAlwaysRelevant is not set to true then the object is never replicated</span>
+<span class="co1">// to the game clients</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  bAdjustVolume=<span class="kw9">True</span>
+  <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+  bAlwaysRelevant=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Even though we only adjust our Emitters volume once as we set the <i>bAdjustVolume</i> property to <i>false</i> once we have adjusted the Emitters volume this is still a very inneficient way of doing things.</p>
+<p>Running through all of the Actors in the game with <b>every</b> game tick is bad news. Since the Power Core's breach effect is only ever created when the game has been won we only really need to start looking for the Emitter after the game has ended.</p>
+<p><a name="Catching_the_end_of_game" id="Catching_the_end_of_game"></a></p>
+<h2><span class="mw-headline">Catching the end of game</span></h2>
+<p>Luckily for us UT2004 has a class specifically designed to allow the game ending conditions to be trapped and/or overidden. We need to create a subclass of <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a>. The GameRules class has a bunch of methods that are called whenever a player needs to start, scores a kill, etc. Most importantly it has a function that is called to see if the game has ended. Our GameRules subclass looks like this.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> VolumeControlGameRule <span class="kw5">extends</span> GameRules;
+ 
+<span class="co1">// If the game has ended then create the object responsible for setting the</span>
+<span class="co1">// Power Core's sound effects volume on the game-client machines.</span>
+<span class="kw5">function</span> <span class="kw4">bool</span> CheckEndGame<span class="br0">(</span>PlayerReplicationInfo Winner, <span class="kw4">string</span> Reason<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> VolumeControlClient volTracker;
+  <span class="kw5">local</span> <span class="kw4">bool</span> bGameEnded;
+ 
+  bGameEnded = <span class="kw6">Super</span>.<span class="me1">CheckEndGame</span><span class="br0">(</span>Winner, Reason<span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> bGameEnded <span class="br0">)</span> <span class="br0">{</span>
+    volTracker = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'VolumeControlClient'</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> bGameEnded;
+<span class="br0">}</span>
+</pre></div>
+<p>As you can see from the above code it doesn't do very much. We are not interested in changing the rules of the game - merely detecting when it happens so we pass on the "game ended" check to any other game rules that are currently active. If the game has ended then we spawn the object (a VolumeControlClient) that will actually handle the volume update.</p>
+<p>So how do we get our VolumeControlGameRule object into the set of rules the game is using? Easy - we get our Mutator class to add our GameRule object to it.</p>
+<p><a name="Adding_the_VolumeControlGameRule_to_the_current_game-rule_set" id="Adding_the_VolumeControlGameRule_to_the_current_game-rule_set"></a></p>
+<h2><span class="mw-headline">Adding the VolumeControlGameRule to the current game-rule set</span></h2>
+<p>Adding an instance of our VolumeControlGameRule class to the current game rules is very easy. We can do it by adding the following code to our Mutator.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Announce to the log file that we have started and create the</span>
+<span class="co1">// GameRule object that will ultimately be responsible for spotting the end</span>
+<span class="co1">// of the game and creating the object that will actually update the sound</span>
+<span class="co1">// volumes we need.</span>
+<span class="kw5">event</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> GameRules volumeRule;
+  <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+  volumeRule = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'VolumeControlGameRule'</span><span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> == <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> = volumeRule;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span>.<span class="me1">AddGameRules</span><span class="br0">(</span>volumeRule<span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="co1">// NOTE: Vampire mutator calls Destroy() here!</span>
+<span class="br0">}</span>
+</pre></div>
+<dl>
+<dd>The only oddity about this function is that the Vampire mutator calls the Mutator's Destroy() function once it has spawned its game rule object. The implication of this is that game rules are <i>sticky</i>. By this I mean carried from one level to the next. However, in my testing I did not find that this was the case. It could be a minor performance enhancement - after all once our game rule object has been created the mutator object has no further use.</dd>
+</dl>
+<p><a name="Changing_the_Emitter_sound_volume" id="Changing_the_Emitter_sound_volume"></a></p>
+<h2><span class="mw-headline">Changing the Emitter sound volume</span></h2>
+<p>At this point we have created our <i>PowerCoreVolumeControl</i> mutator class. This mutator exists solely for the purpose of adding a custom game rule (<i>VolumeControlGameRule</i>) to the current list of game rules. Our game rule class detects when the game has ended and creates a <i>VolumeControlClient</i> object. It is the <i>VolumeControlClient</i> object that is responsible for actually adjusting the volume of the emitter sound.</p>
+<p>The Power Core's breach effect Emitter is actually a composition of 11 separate Emitters. All of these Emitters are stored in the Emitters property of the Emitter class. Adjusting the sound volume of the breach effect is simply a matter of looping through each of the emitters making up the breach effect and altering the volume of the sounds. The following code will do this.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// This is the function that actually updates the sound volume of the Emitter.</span>
+<span class="co1">// It loops through each of the Emitter's attached to the the BreachEffect</span>
+<span class="co1">// emitter and examines the sound attached to the "child" emitter updating as</span>
+<span class="co1">// required.</span>
+<span class="co1">// It is declared as simulated so it can be called from the simulated Tick() event.</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> AdjustSoundVolume<span class="br0">(</span> Emitter breachEffect <span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;breachEffect.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span> <span class="br0">{</span>
+    <span class="co1">// If the emitter we have found has a sound then check further.</span>
+    <span class="kw1">if</span> <span class="br0">(</span> breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span>.<span class="kw6">Length</span> &gt; <span class="nu0">0</span> <span class="br0">)</span> <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span> i == <span class="nu0">8</span> || i == <span class="nu0">9</span> <span class="br0">)</span> <span class="br0">{</span>
+        <span class="co1">// child emitters 8 and 9 are the electricity sound, so turn them off.</span>
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Min</span> = <span class="nu0">0.0</span>;
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Max</span> = <span class="nu0">0.0</span>;
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The for .. loop in the above code is a little redundant. However it does make it a little easier to allow the change in volume of the power core explosion and the electricity sound to be made configurable.</p>
+<p><a name="Making_the_power_core_volume_changes_configurable" id="Making_the_power_core_volume_changes_configurable"></a></p>
+<h2><span class="mw-headline">Making the power core volume changes configurable</span></h2>
+<p>In order to allow the user to configure the change in volume of the Power Core explosion and the electricity sound we need to update the signature of the class (to allow for the storage of the configuration information). We also need to add the configurable variables to the class definition. By the time you have done this your class should look something like that shown below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> PowerCoreVolumeControl <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> <span class="kw6">config</span> <span class="br0">(</span>MutPowerCoreVolumeControl<span class="br0">)</span>;
+ 
+<span class="co1">// Values that will be stored within the MutPowerCoreColumeControl.ini file</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> <span class="kw4">float</span> ExplosionVol;    <span class="co1">// The modifier for the explosion volume</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> <span class="kw4">float</span> ElectricityVol;  <span class="co1">// The modifier for the electricity volume</span>
+ 
+<span class="co1">// Create the GameRule object that will catch the end of the game</span>
+<span class="kw5">event</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> GameRules volumeRule;
+  <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+  volumeRule = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'VolumeControlGameRule'</span><span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> == <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> = volumeRule;
+  <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span>.<span class="me1">AddGameRules</span><span class="br0">(</span>volumeRule<span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  ExplosionVol=<span class="nu0">1.0</span>
+  ElectricityVol=<span class="nu0">0.1</span>
+<span class="br0">}</span>
+</pre></div>
+<p>However, this still doesn't make the attributes configurable via the GUI. In order to do this we can make use of some new functions added in UT2004. The function's are shown below:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// We need the following additional properties</span>
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GIPropsDisplayText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>; <span class="co1">// Config property display names</span>
+<span class="kw5">var</span> <span class="kw6">localized</span> <span class="kw4">string</span> GIPropDescText<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;     <span class="co1">// Config property descriptions</span>
+ 
+<span class="co1">// This function is called when the Mutator Configuration window is displayed</span>
+<span class="co1">// It is responsible for returning the widget information to be used to</span>
+<span class="co1">// configure the mutator.</span>
+<span class="kw6">static</span> <span class="kw5">function</span> FillPlayInfo<span class="br0">(</span>PlayInfo PlayInfo<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw6">Super</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;
+  PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span> <span class="kw1">default</span>.<span class="me1">RulesGroup</span>, <span class="st0">"ExplosionVol"</span>, <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">GIPropsDisplayText</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, <span class="nu0">0</span>, <span class="nu0">0</span>, <span class="st0">"Text"</span>, <span class="st0">"8;0.0:1.5"</span> <span class="br0">)</span>;
+  PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span> <span class="kw1">default</span>.<span class="me1">RulesGroup</span>, <span class="st0">"ElectricityVol"</span>, <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">GIPropsDisplayText</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>, <span class="nu0">0</span>, <span class="nu0">0</span>, <span class="st0">"Text"</span>, <span class="st0">"8;0.0:1.5"</span> <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// This function is called by the Mutator Configuration window when a</span>
+<span class="co1">// description of the configuration property is required.</span>
+<span class="kw6">static</span> <span class="kw5">event</span> <span class="kw4">string</span> GetDescriptionText<span class="br0">(</span><span class="kw4">string</span> PropName<span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw1">switch</span> <span class="br0">(</span>PropName<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">case</span> <span class="st0">"ExplosionVol"</span>:
+      <span class="kw1">return</span> <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">GIPropDescText</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+    <span class="kw1">case</span> <span class="st0">"ElectricityVol"</span>:
+      <span class="kw1">return</span> <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">GIPropDescText</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> <span class="kw6">Super</span>.<span class="me1">GetDescriptionText</span><span class="br0">(</span>PropName<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>The functions are relatively self explanatory. Note that the second parameter to the <i>PlayInfo.AddSetting()</i> function call, and that used in the case statement <b>must</b> match the class property name being changed. In this case we have allowed the properties to be assigned a value between 0.0 and 1.5.</p>
+<p>We still haven't quite finished yet though. We hard-coded the volume setting within the function responsible for adjusting the volume. We now need to go back and fix that. The final function is reproduced below.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> AdjustSoundVolume<span class="br0">(</span> Emitter breachEffect <span class="br0">)</span> <span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;breachEffect.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span>.<span class="kw6">Length</span> &gt; <span class="nu0">0</span> <span class="br0">)</span> <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span> i == <span class="nu0">8</span> || i == <span class="nu0">9</span> <span class="br0">)</span> <span class="br0">{</span>
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Min</span> *= <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">ElectricityVol</span>;
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Max</span> *= <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">ElectricityVol</span>;
+      <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Min</span> *= <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">ExplosionVol</span>;
+        breachEffect.<span class="me1">Emitters</span><span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">Sounds</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Volume</span>.<span class="kw7">Max</span> *= <span class="kw5">class</span><span class="st0">'PowerCoreVolumeControl'</span>.<span class="kw1">default</span>.<span class="me1">ExplosionVol</span>;
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>You will notice that at no point do I ever replicate the server's Mutator configuration values to the clients. This is done deliberately to allow each client to configure their own preferred volume settings.</p>
+<p><a name="Conclusion" id="Conclusion"></a></p>
+<h2><span class="mw-headline">Conclusion</span></h2>
+<p>If you got this far you should (in theory) have a working mutator that you can use to alter the volume of the Power Core's breach effects. Not only that but you should have an appreciation of Emitter structure. You should also be aware that Emitters are purely game-client constructions. That is, they will never exist on a dedicated server. I hope you found the tutorial useful.</p>
+<p>If you ever find a better way of catching an Emitter's creation than searching for it within the Tick() event I'd love to hear about it.</p>
+<p>The compiled code and source code for this mutator is available here: <a href="http://www.snout-clan.co.uk/p.php?p=3065" class="external free" title="http://www.snout-clan.co.uk/p.php?p=3065" rel="nofollow">http://www.snout-clan.co.uk/p.php?p=3065</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 42/1000000
+Post-expand include size: 72/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/o/w/Legacy%7EPower_Core_Volume_Control_Mutator_5e3d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/o/w/Legacy_talk%7EPower_Core_Volume_Control_Mutator_5d04.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Power_Core_Volume_Control_Mutator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:36, 7 September 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

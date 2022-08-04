@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VitalOverdose/Dynamic Emitter Control - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VitalOverdose/Dynamic Emitter Control</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">Legacy:VitalOverdose</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> &gt;&gt; DynamicEmitterControl (Package: custom)</div>
+<p>A custom Emitter actor for <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a></p>
+<p><br />
+by <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">VitalOverdose</a></p>
+<p>Part of Vital'sPMT</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#MeasureTileU.28.29"><span class="tocnumber">2</span> <span class="toctext">MeasureTileU()</span></a></li>
+<li class="toclevel-1"><a href="#Function_Partoverride.28.29"><span class="tocnumber">3</span> <span class="toctext">Function Partoverride()</span></a></li>
+<li class="toclevel-1"><a href="#Function_PartScale.28.29"><span class="tocnumber">4</span> <span class="toctext">Function PartScale()</span></a></li>
+<li class="toclevel-1"><a href="#FindSpriteE.28.29"><span class="tocnumber">5</span> <span class="toctext">FindSpriteE()</span></a></li>
+<li class="toclevel-1"><a href="#Simulated_Function_PartPause.28Emitter_Target.29"><span class="tocnumber">6</span> <span class="toctext">Simulated Function PartPause(Emitter Target)</span></a></li>
+<li class="toclevel-1"><a href="#Function_Bool_togPartPause.28Emitter_TargetE.29"><span class="tocnumber">7</span> <span class="toctext">Function Bool togPartPause(Emitter TargetE)</span></a></li>
+<li class="toclevel-1"><a href="#Partoverride_Resume.28.29"><span class="tocnumber">8</span> <span class="toctext">Partoverride_Resume()</span></a></li>
+<li class="toclevel-1"><a href="#Partoverride_Die.28.29.3B"><span class="tocnumber">9</span> <span class="toctext">Partoverride_Die();</span></a></li>
+<li class="toclevel-1"><a href="#Completed_script"><span class="tocnumber">10</span> <span class="toctext">Completed script</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">11</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<p>This custom emitter actor doesn't do very much by itself its more of a framework to be mod'ed from.</p>
+<p>The functions in this class are far more portable than usual. The don't depend on any special variables to be set up in the class the are being used for so they can easily be swapped about or event added to other actor actors without much bother.</p>
+<p>I'll do a few examples;-</p>
+<p><br /></p>
+<p><a name="MeasureTileU.28.29" id="MeasureTileU.28.29"></a></p>
+<h2><span class="mw-headline">MeasureTileU()</span></h2>
+<p>Returns the Length of A texture Side</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> <span class="kw4">Float</span> MeasureTileU<span class="br0">(</span><a href="/Texture"><span class="kw10">texture</span></a> T,<span class="kw4">Int</span> usubs<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Float</span> Result;
+<span class="kw1">IF</span> <span class="br0">(</span> usubs ==<span class="nu0">0</span> <span class="br0">)</span> usubs = <span class="nu0">1</span>;
+Result = T.<span class="me1">USize</span>/usubs;
+<span class="kw1">Return</span> Result;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Function_Partoverride.28.29" id="Function_Partoverride.28.29"></a></p>
+<h2><span class="mw-headline">Function Partoverride()</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> Partoverride<span class="br0">(</span>Emitter Target,<span class="kw4">Float</span> PartRateDiv,<span class="kw6">Optional</span> <span class="kw4">Bool</span> BFadein, <span class="kw6">Optional</span> <span class="kw4">Bool</span> BFadeout,<span class="kw6">Optional</span> <span class="kw4">Bool</span> ReSpawnDeadParts<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">For</span><span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span>;I++ <span class="br0">)</span>
+   <span class="br0">{</span>
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span>     = Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> / PartRateDiv;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ParticlesPerSecond</span>            = Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ParticlesPerSecond</span>        / PartRateDiv;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ReSpawnDeadParticles</span>          = ReSpawnDeadParts;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeOut</span>                       = BFadein;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeIn</span>                        = BFadeout;
+   <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Function_PartScale.28.29" id="Function_PartScale.28.29"></a></p>
+<h2><span class="mw-headline">Function PartScale()</span></h2>
+<p>Returns the Amount that one text texture has to Be Scale to Be the Same Size As Another;</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> <span class="kw4">Float</span> PartScale<span class="br0">(</span>Class&lt;Emitter&gt; Emit ,<span class="kw4">Int</span> usubs,<span class="kw6">Optional</span> <span class="kw4">Float</span> TargetSize,<span class="kw6">Optional</span> Emitter DonorEmitter  <span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Float</span> Result,finalResult;
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">if</span> <span class="br0">(</span> Emit == <span class="kw9">None</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">If</span> <span class="br0">(</span>DonorEmitter != <span class="kw9">None</span> <span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">For</span> <span class="br0">(</span>I=<span class="nu0">0</span>;I&lt;DonorEmitter.<span class="me1">Emitters</span>.<span class="kw6">Length</span>;I++<span class="br0">)</span>
+           <span class="br0">{</span>
+           <span class="kw1">If</span> <span class="br0">(</span>DonorEmitter.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span><span class="br0">)</span>
+               <span class="br0">{</span>
+               Emit=DonorEmitter.<span class="kw5">Class</span>;
+               <span class="br0">}</span>
+            <span class="kw1">If</span> <span class="br0">(</span>Emit != <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">Break</span>;
+            <span class="br0">}</span>
+       <span class="br0">}</span>
+       <span class="kw1">Else</span>
+       <span class="kw1">Return</span> FinalResult;
+    <span class="br0">}</span>
+Result=MeasureTileU<span class="br0">(</span>Emit.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<a href="/Texture"><span class="kw10">texture</span></a>,Emit.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">textureusubdivisions</span><span class="br0">)</span>;
+Result = TargetSize  / Result;
+finalResult = Result * Result;
+<span class="kw1">Return</span> FinalResult;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="FindSpriteE.28.29" id="FindSpriteE.28.29"></a></p>
+<h2><span class="mw-headline">FindSpriteE()</span></h2>
+<p>Returns A Scanned List of Emitter Actors that contain At Least 1 Sprite Emitter</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> Array&lt; Class&lt;Emitter&gt; &gt; FindSpriteE <span class="br0">(</span><span class="kw4">name</span> PType,<span class="kw6">Optional</span> <span class="kw4">Int</span> NeedtoFind,<span class="kw6">Optional</span> <span class="kw4">Int</span> RequiredPTypeAmount<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> Emitter FoundE;
+<span class="kw5">Local</span> Array&lt; Class&lt;Emitter&gt; &gt;    EmitterList;
+<span class="kw5">Local</span> <span class="kw4">Int</span> PTypeFound,i;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> NeedtoFind ==<span class="nu0">0</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+   NeedtoFind=<span class="nu0">10</span>;                                            <span class="co1">//checking &amp; Correcting Sent Data</span>
+   <span class="br0">}</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span> RequiredPTypeAmount &lt; <span class="nu0">1</span> <span class="br0">)</span> 
+   <span class="br0">{</span>
+   RequiredPTypeAmount = <span class="nu0">1</span>;                          <span class="co1">//checking &amp; Correcting Sent Data</span>
+   <span class="br0">}</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span>PType==<span class="st0">'Sprite'</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Emitter'</span>,FoundE<span class="br0">)</span>                                      <span class="co1">//look For All Actors of Class Emitter And Assign their valid Actor ref to A Variable of Type 'EmitterActor'  Called FoundE</span>
+         <span class="br0">{</span>                                                                       <span class="co1">//</span>
+          PTypeFound=<span class="nu0">0</span>;                                                          <span class="co1">//reset counter</span>
+          <span class="kw1">For</span> <span class="br0">(</span> I=<span class="nu0">0</span>; I&lt;FoundE.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; I++ <span class="br0">)</span>                             <span class="co1">// Start Loop through Available Emitters In the Emitter Actor;</span>
+              <span class="br0">{</span>
+              <span class="kw1">If</span> <span class="br0">(</span> FoundE.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span> <span class="br0">)</span>           <span class="co1">// Is It A Sprite Emitter(has A texture)</span>
+                 <span class="br0">{</span>
+                  PTypeFound++;                                                  <span class="co1">// Inc counter</span>
+                  <span class="kw1">If</span> <span class="br0">(</span>PTypeFound  == RequiredPTypeAmount<span class="br0">)</span>  EmitterList<span class="br0">[</span>I<span class="br0">]</span> = FoundE.<span class="kw5">Class</span>; <span class="co1">// Use This Emitter Actor If We Are At Target For Sprite Emitter's per Emitter Actor</span>
+                 <span class="br0">}</span>
+              <span class="kw1">If</span> <span class="br0">(</span> EmitterList<span class="br0">[</span>I<span class="br0">]</span> == FoundE<span class="br0">)</span>     <span class="kw1">Break</span>;                            <span class="co1">// Break Loop: If the Last Emitter was ok.</span>
+             <span class="br0">}</span>
+          <span class="kw1">If</span> <span class="br0">(</span>EmitterList.<span class="kw6">Length</span>  == NeedtoFind<span class="br0">)</span> <span class="kw1">Break</span>;                            <span class="co1">// Break Loop: If we Have Target Amount of Emitter Actors;</span>
+         <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="kw1">Return</span> EmitterList;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Simulated_Function_PartPause.28Emitter_Target.29" id="Simulated_Function_PartPause.28Emitter_Target.29"></a></p>
+<h2><span class="mw-headline">Simulated Function PartPause(Emitter Target)</span></h2>
+<p>Particle Override Pause:This Function Is used to Create the Illusion of A particle rate of 0.</p>
+<p>The particle rate Slowed Down to A rate of 0000.1 A Sec.</p>
+<p>This Function Should only really Be used If you Intend to Start the</p>
+<p>Emitter Actor Going Again At A Later time. Otherwise Use PartoverRide_Die to Achieve A SmoOther</p>
+<p>'Faded' Alternative to Simply Calling Destroy();</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> PartPause<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ; I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+     Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> =<span class="nu0">0000.1</span>;
+     Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>  = <span class="kw9">False</span>;
+     <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Function_Bool_togPartPause.28Emitter_TargetE.29" id="Function_Bool_togPartPause.28Emitter_TargetE.29"></a></p>
+<h2><span class="mw-headline">Function Bool togPartPause(Emitter TargetE)</span></h2>
+<p>A Simple toggle Function For 'PartPause'(Emitter Target) &amp;&amp; Partoverride_Resume(Emitter Target).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">Function</span> <span class="kw4">Bool</span> togPo_Pause<span class="br0">(</span>Emitter TargetE<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+ 
+<span class="kw1">For</span> <span class="br0">(</span> I=<span class="nu0">0</span>; I&lt;TargetE.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ;I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+    <span class="kw1">If</span> <span class="br0">(</span>TargetE.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'particleEmitter'</span><span class="br0">)</span><span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">If</span> <span class="br0">(</span>TargetE.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> ==<span class="nu0">0000.1</span><span class="br0">)</span>
+          <span class="br0">{</span>
+          Partoverride_Resume<span class="br0">(</span>TargetE<span class="br0">)</span>;
+          <span class="kw1">Return</span> <span class="kw9">False</span>;
+          <span class="br0">}</span>
+       PartPause<span class="br0">(</span>TargetE<span class="br0">)</span>;
+       <span class="kw1">Return</span> <span class="kw9">True</span>;
+      <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Partoverride_Resume.28.29" id="Partoverride_Resume.28.29"></a></p>
+<h2><span class="mw-headline">Partoverride_Resume()</span></h2>
+<p>Particle override Resume: ReSets PArtRate of Specified Emitter Back to Its Default Settings</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Partoverride_Resume<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span> ; I &lt; Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+    Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> = Target.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span>;
+    Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>  = Target.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Partoverride_Die.28.29.3B" id="Partoverride_Die.28.29.3B"></a></p>
+<h2><span class="mw-headline">Partoverride_Die();</span></h2>
+<p>ParticleOverride DIE: Causes Specified Emitter to Fade then Die;</p>
+<p>Particles Have time to Fade BeFore the Destroy Function Is Called.</p>
+<p>Results In A Much SmoOther Alternative to Calling the Destroy Function on An Emitter;</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Partoverride_Die<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+   <span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ; I++ <span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">If</span> <span class="br0">(</span>Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span><span class="br0">)</span>
+          <span class="br0">{</span>
+          Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeOut</span>             = <span class="kw9">True</span>;
+          Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeIn</span>              = <span class="kw9">True</span>;
+          <span class="br0">}</span>
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ReSpawnDeadParticles</span>   = <span class="kw9">False</span>;
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutoDestroy</span>            = <span class="kw9">True</span>;
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutoReset</span>              = <span class="kw9">False</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Completed_script" id="Completed_script"></a></p>
+<h2><span class="mw-headline">Completed script</span></h2>
+<p>Heres the full script for now. I do expect to be adding more to this soon;-</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">///////////////////////////////////////////////////////////////////////////////////</span>
+<span class="co1">//DynamicEmitterControl </span>
+<span class="co1">//By VitalOverdose 2006 http://www.VitalOverdose.com</span>
+<span class="co1">//Part Of the Vitals Pro Mapping tools mod.</span>
+<span class="co1">//</span>
+<span class="co1">//////////////////////////////////////////////////////////////////////////////////</span>
+<span class="kw5">class</span> DynamicEmitterControl <span class="kw5">extends</span> emitter
+<span class="kw6">placeable</span>;
+ 
+<span class="kw5">Function</span> <span class="kw4">Float</span> MeasureTileU<span class="br0">(</span><a href="/Texture"><span class="kw10">texture</span></a> T,<span class="kw4">Int</span> usubs<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Float</span> Result;
+<span class="kw1">IF</span> <span class="br0">(</span> usubs ==<span class="nu0">0</span> <span class="br0">)</span> usubs = <span class="nu0">1</span>;
+Result = T.<span class="me1">USize</span>/usubs;
+<span class="kw1">Return</span> Result;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> Partoverride<span class="br0">(</span>Emitter Target,<span class="kw4">Float</span> PartRateDiv,<span class="kw6">Optional</span> <span class="kw4">Bool</span> BFadein, <span class="kw6">Optional</span> <span class="kw4">Bool</span> BFadeout,<span class="kw6">Optional</span> <span class="kw4">Bool</span> ReSpawnDeadParts<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">For</span><span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span>;I++ <span class="br0">)</span>
+   <span class="br0">{</span>
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span>     = Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> / PartRateDiv;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ParticlesPerSecond</span>            = Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ParticlesPerSecond</span>        / PartRateDiv;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ReSpawnDeadParticles</span>          = ReSpawnDeadParts;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeOut</span>                       = BFadein;
+   Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeIn</span>                        = BFadeout;
+   <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> <span class="kw4">Float</span> PartScale<span class="br0">(</span>Class&lt;Emitter&gt; Emit ,<span class="kw4">Int</span> usubs,<span class="kw6">Optional</span> <span class="kw4">Float</span> TargetSize,<span class="kw6">Optional</span> Emitter DonorEmitter  <span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Float</span> Result,finalResult;
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">if</span> <span class="br0">(</span> Emit == <span class="kw9">None</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">If</span> <span class="br0">(</span>DonorEmitter != <span class="kw9">None</span> <span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">For</span> <span class="br0">(</span>I=<span class="nu0">0</span>;I&lt;DonorEmitter.<span class="me1">Emitters</span>.<span class="kw6">Length</span>;I++<span class="br0">)</span>
+           <span class="br0">{</span>
+           <span class="kw1">If</span> <span class="br0">(</span>DonorEmitter.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span><span class="br0">)</span>
+               <span class="br0">{</span>
+               Emit=DonorEmitter.<span class="kw5">Class</span>;
+               <span class="br0">}</span>
+            <span class="kw1">If</span> <span class="br0">(</span>Emit != <span class="kw9">None</span><span class="br0">)</span> <span class="kw1">Break</span>;
+            <span class="br0">}</span>
+       <span class="br0">}</span>
+       <span class="kw1">Else</span>
+       <span class="kw1">Return</span> FinalResult;
+    <span class="br0">}</span>
+Result=MeasureTileU<span class="br0">(</span>Emit.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<a href="/Texture"><span class="kw10">texture</span></a>,Emit.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">textureusubdivisions</span><span class="br0">)</span>;
+Result = TargetSize  / Result;
+finalResult = Result * Result;
+<span class="kw1">Return</span> FinalResult;
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> Array&lt; Class&lt;Emitter&gt; &gt; FindSpriteE <span class="br0">(</span><span class="kw4">name</span> PType,<span class="kw6">Optional</span> <span class="kw4">Int</span> NeedtoFind,<span class="kw6">Optional</span> <span class="kw4">Int</span> RequiredPTypeAmount<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> Emitter FoundE;
+<span class="kw5">Local</span> Array&lt; Class&lt;Emitter&gt; &gt;    EmitterList;
+<span class="kw5">Local</span> <span class="kw4">Int</span> PTypeFound,i;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> NeedtoFind ==<span class="nu0">0</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+   NeedtoFind=<span class="nu0">10</span>;                                  <span class="co1">//checking &amp; Correcting Sent Data</span>
+   <span class="br0">}</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span> RequiredPTypeAmount &lt; <span class="nu0">1</span> <span class="br0">)</span> 
+   <span class="br0">{</span>
+   RequiredPTypeAmount = <span class="nu0">1</span>;                          <span class="co1">//checking &amp; Correcting Sent Data</span>
+   <span class="br0">}</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span>PType==<span class="st0">'Sprite'</span><span class="br0">)</span>
+   <span class="br0">{</span>
+   <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Emitter'</span>,FoundE<span class="br0">)</span>                                      <span class="co1">//look For All Actors of Class Emitter And Assign their valid Actor ref to A Variable of Type 'EmitterActor'  Called FoundE</span>
+         <span class="br0">{</span>                                                                       <span class="co1">//</span>
+          PTypeFound=<span class="nu0">0</span>;                                                          <span class="co1">//reset counter</span>
+          <span class="kw1">For</span> <span class="br0">(</span> I=<span class="nu0">0</span>; I&lt;FoundE.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; I++ <span class="br0">)</span>                             <span class="co1">// Start Loop thRough Available Emitters In the Emitter Actor;</span>
+              <span class="br0">{</span>
+              <span class="kw1">If</span> <span class="br0">(</span> FoundE.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span> <span class="br0">)</span>           <span class="co1">// Is It A Sprite Emitter(has A texture)</span>
+                 <span class="br0">{</span>
+                  PTypeFound++;                                                  <span class="co1">// Inc counter</span>
+                  <span class="kw1">If</span> <span class="br0">(</span>PTypeFound  == RequiredPTypeAmount<span class="br0">)</span>  EmitterList<span class="br0">[</span>I<span class="br0">]</span> = FoundE.<span class="kw5">Class</span>; <span class="co1">// Use This Emitter Actor If We Are At Target For Sprite Emiters per Emitter Actor</span>
+                 <span class="br0">}</span>
+              <span class="kw1">If</span> <span class="br0">(</span> EmitterList<span class="br0">[</span>I<span class="br0">]</span> == FoundE<span class="br0">)</span>     <span class="kw1">Break</span>;                            <span class="co1">// Break Loop: If the Last Emitter was ok.</span>
+             <span class="br0">}</span>
+          <span class="kw1">If</span> <span class="br0">(</span>EmitterList.<span class="kw6">Length</span>  == NeedtoFind<span class="br0">)</span> <span class="kw1">Break</span>;                            <span class="co1">// Break Loop: If we Have Target Amount of Emitter Actors;</span>
+         <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="kw1">Return</span> EmitterList;
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> PartPause<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+ 
+ 
+<span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ; I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+     Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> =<span class="nu0">0000.1</span>;
+     Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>  = <span class="kw9">False</span>;
+     <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">Function</span> <span class="kw4">Bool</span> togPo_Pause<span class="br0">(</span>Emitter TargetE<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+ 
+<span class="kw1">For</span> <span class="br0">(</span> I=<span class="nu0">0</span>; I&lt;TargetE.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ;I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+    <span class="kw1">If</span> <span class="br0">(</span>TargetE.<span class="me1">Emitters</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'particleEmitter'</span><span class="br0">)</span><span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">If</span> <span class="br0">(</span>TargetE.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> ==<span class="nu0">0000.1</span><span class="br0">)</span>
+          <span class="br0">{</span>
+          Partoverride_Resume<span class="br0">(</span>TargetE<span class="br0">)</span>;
+          <span class="kw1">Return</span> <span class="kw9">False</span>;
+          <span class="br0">}</span>
+       PartPause<span class="br0">(</span>TargetE<span class="br0">)</span>;
+       <span class="kw1">Return</span> <span class="kw9">True</span>;
+      <span class="br0">}</span>
+   <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Partoverride_Resume<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+<span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span> ; I &lt; Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span>; I++ <span class="br0">)</span>
+    <span class="br0">{</span>
+    Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span> = Target.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">InitialParticlesPerSecond</span>;
+    Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>  = Target.<span class="kw1">Default</span>.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutomaticInitialSpawning</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Partoverride_Die<span class="br0">(</span>Emitter Target<span class="br0">)</span>
+<span class="br0">{</span>
+<span class="kw5">Local</span> <span class="kw4">Int</span> I;
+   <span class="kw1">For</span> <span class="br0">(</span> I =<span class="nu0">0</span>; I &lt;Target.<span class="me1">Emitters</span>.<span class="kw6">Length</span> ; I++ <span class="br0">)</span>
+       <span class="br0">{</span>
+       <span class="kw1">If</span> <span class="br0">(</span>Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="kw5">Class</span> == <span class="kw5">Class</span><span class="st0">'spriteEmitter'</span><span class="br0">)</span>
+          <span class="br0">{</span>
+          Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeOut</span>             = <span class="kw9">True</span>;
+          Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">FadeIn</span>              = <span class="kw9">True</span>;
+          <span class="br0">}</span>
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">ReSpawnDeadParticles</span>   = <span class="kw9">False</span>;
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutoDestroy</span>            = <span class="kw9">True</span>;
+       Target.<span class="me1">Emitters</span><span class="br0">[</span>I<span class="br0">]</span>.<span class="me1">AutoReset</span>              = <span class="kw9">False</span>;
+       <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Tarquin:</b> You haven't actually tried compiling this, have you? 'placeacble'.</p>
+<p><b>vitaloverdose</b> Lol...Busted! No not as a class on its own. i wrote an emitter mod a while back where i had one massive abstract actor that contained all the common functions for the entire mod. I tried to write each function to be completely self contained with no attached global variables. All the functions have been tested and work fine...so all i did was group a few together and gave it a class name. Your right its technically untested. The only reason i didn't spot it is that 'placeable' isn't a real word and always shows up as incorrect in my spell checker so i don't pay any attention to it....i Guess i should have at least given it one compile... i might have spotted it myself but about 10 mins after posting it i was locked out of wiki because id posted to many links in a short space of time... that was me adding the headers you asked for on each page...</p>
+<p>Grrr, Dyslexia ....you win again!</p>
+<p><b>SuperApe:</b> Perhaps you should move this page to your personal subpages as well, until you are able to compile, test and confirm its functionality and usefulness. <i>(Just a suggestion)</i></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 45/1000000
+Post-expand include size: 180/2097152 bytes
+Template argument size: 124/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_Dynamic_Emitter_Control_45bf.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/i/t/Legacy_talk%7EVitalOverdose_Dynamic_Emitter_Control_3a39.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VitalOverdose/Dynamic_Emitter_Control">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:49, 1 June 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Trystan/11 16 02b - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Trystan/11 16 02b</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/t/r/y/Legacy%7ETrystan_ee42.html" title="Legacy:Trystan">Legacy:Trystan</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="11.2F16.2F02_Breaking_down_Object.uc."></a></p>
+<h3><span class="mw-headline">11/16/02 Breaking down Object.uc.</span></h3>
+<p><b>EDIT:</b> Most of the information herein is referenced in <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a>. If you think I'm wrong about something or misinformed, let me know.&#160;:)</p>
+<p>Object.uc is the base class for everything within UnrealScript. I'm going to attempt to break it down and see what parts of it do what. This won't be comprehensive as I'm sure I won't understand it completely right now, but it'll be a good start. Wiki's <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> listing is of course available, but it doesn't go into specifics. (Is it supposed to?) Why explain it here? Why not. Putting my thoughts into words has always been the best way for me to ensure I understand something; it forces you to swallow knowledge and regurgitate in your own vocabulary. Unless you repeat the definition word for word understanding the subject becomes very important. The point of this exercise is, ultimately, to become familiar with how weapons are added and/or modified in Unreal Tournament 2003.</p>
+<p>Object is the base of everything. It has variables defined to allow for server side or client side use only (RF_NotForClient and RF_NotForServer) of objects; flags to keep objects from being loaded in the editor (RF_NotForEdit); flags to indicate whether an object is private or public (RF_Public); and flags to indicate that the object supports undo and redo in the editor (RF_Transactional) and whether or not the object should be saved and loaded (RF_Transient). These flags are applied to Object.ObjectFlags to take effect. From an UnrealEd dump of the classes (not the Epic source) these flags are located on lines 22 - 30.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Object flags.</span>
+<span class="kw5">const</span> RF_Transactional = 0x00000001; <span class="co1">// Supports editor undo/redo.</span>
+<span class="kw5">const</span> RF_Public         = 0x00000004; <span class="co1">// Can be referenced by external package files.</span>
+<span class="kw5">const</span> RF_Transient      = 0x00004000; <span class="co1">// Can't be saved or loaded.</span>
+<span class="kw5">const</span> RF_Standalone     = 0x00080000; <span class="co1">// Keep object around for editing even if unreferenced.</span>
+<span class="kw5">const</span> RF_NotForClient  = 0x00100000; <span class="co1">// Don't load for game client.</span>
+<span class="kw5">const</span> RF_NotForServer  = 0x00200000; <span class="co1">// Don't load for game server.</span>
+<span class="kw5">const</span> RF_NotForEdit        = 0x00400000; <span class="co1">// Don't load for editor.</span>
+</pre></div>
+<p>Most of the information I gathered was quite literally taken from the comments. This is the way almost every Epic created uc file is. If you read it, you'll generally find your way around it.</p>
+<p>Object is the home of the Guid struct. A Guid is used by many pieces of software (Windows, Mac OSX, and Linux all use them in one way or another) to help indicate a unique version of an object. They are usually randomly generated, 64 bit or larger numbers that make absolutely no sense to a human but can be used by a computer to ensure that it is using the correct version of your object. This struct is defined as</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// A globally unique identifier.</span>
+<span class="kw4">struct</span> <span class="kw4">Guid</span>
+<span class="br0">{</span>
+        <span class="kw5">var</span> <span class="kw4">int</span> A, B, C, D;
+<span class="br0">}</span>;
+</pre></div>
+<p>There's support for a quite large GUID built into the base class. It is my understanding that Unreal literally uses the GUID inside an object to ensure that the correct object is being used; that is, someone didn't go in and change your code and replace it with a trojan or cheat and then rebuild it. I haven't researched the full usage of the GUID as of yet; when I do I'll ensure I update this page to reflect it.</p>
+<p>The Object class includes support for many of the basic variable types and functions. Vector, Plane, Rotator, Coords, Quat, Range, RangeVector, Scale, Color, Box, IntBox, FloatBox, BoundingVolume, Matrix, InterpCurvePoint, InterpCurve, EDrawPivot, and Compressed Position are all defined inside Object. The maximum integer value and value of Pi are also defined herein as constants.</p>
+<p>Now we get to the heart of the Object class.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Bool operators.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">129</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">preoperator</span>  <span class="kw4">bool</span>  !  <span class="br0">(</span> <span class="kw4">bool</span> A <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">242</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">24</span><span class="br0">)</span> <span class="kw4">bool</span>  == <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw4">bool</span> B <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">243</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">26</span><span class="br0">)</span> <span class="kw4">bool</span>  != <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw4">bool</span> B <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">130</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">30</span><span class="br0">)</span> <span class="kw4">bool</span>  &amp;&amp; <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw6">skip</span> <span class="kw4">bool</span> B <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">131</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">30</span><span class="br0">)</span> <span class="kw4">bool</span>  ^^ <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw4">bool</span> B <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">132</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">32</span><span class="br0">)</span> <span class="kw4">bool</span>  || <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw6">skip</span> <span class="kw4">bool</span> B <span class="br0">)</span>;
+</pre></div>
+<p>That's a small sampling of what you'll find within the class. I won't reproduce it in whole here because it would be pointless. To understand what's going on inside Object at this point in time you have to understand a bit about C++.</p>
+<p>First off, <b>native</b> means that the code is actually defined within C++ and not UnrealScript. Considering how crucial speed would be for the base class of Object this makes great sense. The anticipated code execution difference between C++ and UnrealScript is that C++ will execute roughly 20 times faster than the equivalent UnrealScript code. The above lines are defining what function should be called when the operator is used against the variables. Let's take one line apart and explain what I mean.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">242</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">24</span><span class="br0">)</span> <span class="kw4">bool</span>  == <span class="br0">(</span> <span class="kw4">bool</span> A, <span class="kw4">bool</span> B <span class="br0">)</span>;
+</pre></div>
+<p><b>Native</b> is explained above. I'm not exactly sure what (242) is although I wager it's an array reference of some sort. Static means that the class that implements this function only implements it once; it does not require an instantiation of the class in order to be called. (This is in C++, not UnrealScript.) <b>Final</b> means that classes that derive from this object cannot override this method with their own. (Compare it to a "sealed" class in C++.) My best guess at what <b>operator</b> means is that it is telling the compiler that this function defines exactly that: a logical operator of some sort. <b>bool</b> is the return value. <b>==</b> is the operator being defined. <b>( bool A, bool B )</b> defines the arguments that this operator takes.</p>
+<p>To understand how this all works you'll have to understand operator overloading in C++. If you write the following code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> A, B;
+A = <span class="kw9">false</span>;
+B = <span class="kw9">true</span>;
+ 
+<span class="kw1">return</span> A == B;
+</pre></div>
+<p>as compared to</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> A, B;
+A = <span class="nu0">1</span>;
+B = <span class="nu0">2</span>;
+ 
+<span class="kw1">return</span> A == B;
+</pre></div>
+<p>how does the compiler know which function to properly call? It looks at what's called <b>function signatures</b>. Compilers have gotten much smarter through the years and C++ takes full advantage of that. In the case of the first section of code the compiler sees == (bool, bool) and calls the appropriate function. In the second case it sees == (int, int) and will call the appropriate integer comparison function rather than the boolean comparison function.</p>
+<p>I doubt that many of us will ever feel a need to write our own operators. The operators built into UnrealScript are quite complete - simply open Object.uc and take a look. However it's nice to understand how these operators are defined because if you're curious whether or not something can be bit shifted, or tested for equality, a quick peek into Object.uc should give you the answer you're looking for.</p>
+<p>Now that we've defined all of the operators that UnrealScript supports we move on.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Logging.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">231</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> <span class="kw5">function</span> <span class="kw7">Log</span><span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S, <span class="kw6">optional</span> <span class="kw4">name</span> Tag <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">232</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> <span class="kw5">function</span> <span class="kw7">Warn</span><span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S <span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">string</span> <span class="kw7">Localize</span><span class="br0">(</span> <span class="kw4">string</span> SectionName, <span class="kw4">string</span> KeyName, <span class="kw4">string</span> PackageName <span class="br0">)</span>;
+</pre></div>
+<p>Log writes an entry to the log and is useful for debugging purposes. Interested in whether or not your bullet is actually slowing down? Have it log messages. Although this is a native function it does require (I believe) drive access and thus is fairly costly. You should only log during development IMHO, and only where necessary. I believe Warn is identical to log except for the severity level of it; I could not find any information on how Warn and Log differed. (Possibly Warn prints to console a warning? Or perhaps to screen? I'll have to play with this later and see what the exact difference is.) Localization isn't supported as of yet inside Unreal 2K3 so I wager the last function is a placeholder for when it is. (From Wiki <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a> warn is the same as log, it simply prefixes what it writes to the log with "ScriptWarning:" and contains various information about the object that it was called with. Handy!)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Goto state and label.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">113</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">GotoState</span><span class="br0">(</span> <span class="kw6">optional</span> <span class="kw4">name</span> NewState, <span class="kw6">optional</span> <span class="kw4">name</span> Label <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">281</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">IsInState</span><span class="br0">(</span> <span class="kw4">name</span> TestState <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">284</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">name</span> <span class="kw7">GetStateName</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>Next up! State management! This is an entire subject and I've got a lot to learn about it. For now check out the Wiki page at <a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">State</a>. State management is incredibly important to any total conversion and I know I've got to master it.&#160;:)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Objects.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">258</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span> <span class="kw5">class</span> TestClass, <span class="kw5">class</span> ParentClass <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">303</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">IsA</span><span class="br0">(</span> <span class="kw4">name</span> ClassName <span class="br0">)</span>;
+</pre></div>
+<p>These are interesting functions. IsA() doesn't require an object of the class to be tested; it only requires the string name of the class. They can be used to determine effects if and only if the objects being referenced are of the right class. Perhaps you wish grenades to explode harmlessly in water; you could use the IsA() test to see if an exploding object is of the class you wish to disable underwater. Etc., etc. These two functions are usually quite popular and used a lot in the sample code I've seen. ClassIsChildOf requires objects of the classes to be tested. (More information is at <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a>.)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Probe messages.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">117</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">Enable</span><span class="br0">(</span> <span class="kw4">name</span> ProbeFunc <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">118</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">Disable</span><span class="br0">(</span> <span class="kw4">name</span> ProbeFunc <span class="br0">)</span>;
+</pre></div>
+<p>These reference Probe. Basically a ProbeFunc is one that you can enable or disable based on the state of an object. This is awesomely useful if you only wish ExplodeOnImpact to be enabled if AltFire was used to fire the projectile, or any other conditional functions. IsA('Grenade') and in water can be used to disable GrenadeExplode; etc. These functions are what are used to enable and disable said probe functions.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Properties.</span>
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> GetPropertyText<span class="br0">(</span> <span class="kw4">string</span> PropName <span class="br0">)</span>; 
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span>   <span class="kw7">SetPropertyText</span><span class="br0">(</span> <span class="kw4">string</span> PropName, <span class="kw4">string</span> PropValue <span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">name</span> <span class="kw7">GetEnum</span><span class="br0">(</span> <a href="/Object"><span class="kw10">object</span></a> E, <span class="kw4">int</span> i <span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <a href="/Object"><span class="kw10">object</span></a> <span class="kw7">DynamicLoadObject</span><span class="br0">(</span> <span class="kw4">string</span> ObjectName, <span class="kw5">class</span> ObjectClass, <span class="kw6">optional</span> <span class="kw4">bool</span> MayFail <span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <a href="/Object"><span class="kw10">object</span></a> <span class="kw7">FindObject</span><span class="br0">(</span> <span class="kw4">string</span> ObjectName, <span class="kw5">class</span> ObjectClass <span class="br0">)</span>;
+</pre></div>
+<p>Properties are used on an object to track information. GetPropertyText can be used to retrieve a previously SetPropertyText. They're generic functions used to, again, simply track information. This property information can then be referenced by any function that has a reference to the object itself: there's no need to pass variables about.</p>
+<p>The last three I'm not sure what they do. GetEnum sounds like it retrieves an enumeration of some sort. How, or why, I don't know. Let's do a search through the existing code and see what we come up with. GetEnum doesn't seem to exist or be called outside of the Object.uc class. Interesting.. What does Wiki say about GetEnum? See <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a>, or..</p>
+<dl>
+<dt>name GetEnum (Object E, int i) [static]&#160;</dt>
+<dd>Returns the i-th element of the given enumeration, as in GetEnum(enum'MyEnum', 2) or an empty name of the specified index exceeds the number of elements in the enumeration.</dd>
+</dl>
+<p>So you could use GetEnum as an indexer to a list of enumerations so you could possibly attach states or other information to a generic indicator.</p>
+<p>DynamicLoadObject does what it says. If MayFail is set to true no logging will occur if the object load fails. In our mod we'll probably end up using this to summon items like sandbags, etc. I imagine FindObject finds an instance of an object but no information is currently available in Wiki and context determination has failed in UT2K3 source. Another one to play with..</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Configuration.</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">536</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">SaveConfig</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">StaticSaveConfig</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="kw6">native</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">ResetConfig</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>These are used to retain information about an object's state. Not a lot of information is available about these either. SaveConfig() and StaticSaveConfig() have examples spread throughout the code; ResetConfig() is only defined but never used.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Return a random number within the given range.</span>
+<span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">float</span> <span class="kw7">RandRange</span><span class="br0">(</span> <span class="kw4">float</span> <span class="kw7">Min</span>, <span class="kw4">float</span> <span class="kw7">Max</span> <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">return</span> <span class="kw7">Min</span> + <span class="br0">(</span><span class="kw7">Max</span> - <span class="kw7">Min</span><span class="br0">)</span> * <span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Returns a random number between min and max. Self explanatory to me.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">535</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw7">StopWatch</span><span class="br0">(</span><span class="kw6">optional</span> <span class="kw4">bool</span> bStop<span class="br0">)</span>;   <span class="co1">//amb: for script timing</span>
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">IsOnConsole</span><span class="br0">(</span><span class="br0">)</span>;   <span class="co1">// for console specific stuff</span>
+<span class="kw6">native</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">IsSoaking</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>StopWatch is used for timing script code and seems to be available in UT2K3 only. IsOnConsole() is used to determine whether or not the mod is running on the XBox (or future) consoles. Since I don't know of a way to get a mod onto the XBox at this point in time I think it's fairly safe to ignore this. The only reference to IsOnConsole() in code is the following code fragment from PlayerController.uc:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">exec</span> <span class="kw5">function</span> InvertLook<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">bool</span> result;
+ 
+    result = PlayerInput.<span class="me1">InvertLook</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">IsOnConsole</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw5">class</span><span class="st0">'XBoxPlayerInput'</span>.<span class="kw1">default</span>.<span class="me1">bInvertVLook</span> = result;
+        <span class="kw5">class</span><span class="st0">'XBoxPlayerInput'</span>.<span class="kw6">static</span>.<span class="kw7">StaticSaveConfig</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>IsSoaking() also seems to be console specific. It's referenced in Console.KeyEvent as</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span><span class="br0">(</span> Action == IST_Press <span class="br0">)</span>
+    <span class="br0">{</span>
+        TimeIdle = <span class="nu0">0</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> bRunningDemo &amp;&amp; !<span class="kw7">IsSoaking</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+            StopRollingDemo<span class="br0">(</span><span class="br0">)</span>;
+            <span class="kw1">return</span><span class="br0">(</span> <span class="kw9">true</span> <span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+</pre></div>
+<p>and in Console.Initialized as</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> <span class="kw7">IsSoaking</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        TimePerTitle = <span class="nu0">1</span>;
+        TimePerDemo = TimePerSoak;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Again it seems fairly safe to ignore IsSoaking() unless you're doing console programming.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="kw5">event</span> <span class="kw7">EndState</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="kw5">event</span> Created<span class="br0">(</span><span class="br0">)</span>; <span class="co1">//amb: notifiction for object based classes only (not actors)</span>
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">197</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">iterator</span> <span class="kw5">function</span> AllObjects<span class="br0">(</span><span class="kw5">class</span> baseClass, <span class="kw6">out</span> <a href="/Object"><span class="kw10">Object</span></a> obj<span class="br0">)</span>; <span class="co1">//amb</span>
+</pre></div>
+<p>BeginState() is called when a state change is initiated, but prefer the state change is initiated. EndState() is called prior to exiting the current state. Both of these functions are meant to be overriden and made custom for your class. The default definition in Object does nothing.</p>
+<p>Created() is another function that can be overridden to perform custom tasks when an object is created. The default definition does nothing.</p>
+<p>AllObjects() is an iterator written that can be used to cycle through each and every object in game. A costly, but in some rare cases absolutely necessary, function. Although this isn't the best idea, consider if you had to find and remove every bullet in the game (perhaps a special power was used). You could call AllObjects and check each object returned against IsA('Bullet') and perform actions appropriately.</p>
+<p>I understand that a great deal of this information is a simple rehash of <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a> and <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> but it helps me to understand things when I'm forced to evaluate them myself. As well others may find the little extra I added enough for them to understand. Dunno.</p>
+<p>Next up is Actor.uc, then Inventory.uc, and finally Weapon.uc, the heart of the matter. Once I reach Weapon.uc I'll be examining the best way I've found to add weapons and change things. It's going to be a fun ride.</p>
+<p><br />
+<br /></p>
+<p>Return to <a href="../../../../articles/t/r/y/Legacy%7ETrystan_Developer_Journal_cb52.html" title="Legacy:Trystan/Developer Journal">Trystan/Developer Journal</a>.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 58/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/y/Legacy%7ETrystan_11_16_02b_d119.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/y/Legacy_talk%7ETrystan_11_16_02b_5e98.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Trystan/11_16_02b">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:03, 17 November 2002 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

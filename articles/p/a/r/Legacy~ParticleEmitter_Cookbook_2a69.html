@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:ParticleEmitter Cookbook - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:ParticleEmitter Cookbook</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A page of nice settings for <a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_f021.html" title="Legacy:ParticleEmitter">ParticleEmitters</a>.</p>
+<p>Owners of <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> can find some more examples to play around with in the map ParticleExamples.ut2.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Ingredients"><span class="tocnumber">1</span> <span class="toctext">Ingredients</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Spawn_Locations"><span class="tocnumber">1.1</span> <span class="toctext">Spawn Locations</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Flat_disc"><span class="tocnumber">1.1.1</span> <span class="toctext">Flat disc</span></a></li>
+<li class="toclevel-3"><a href="#Preset_Shapes"><span class="tocnumber">1.1.2</span> <span class="toctext">Preset Shapes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Colors"><span class="tocnumber">1.2</span> <span class="toctext">Colors</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Confetti"><span class="tocnumber">1.2.1</span> <span class="toctext">Confetti</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Ready-cooked_examples"><span class="tocnumber">2</span> <span class="toctext">Ready-cooked examples</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Beam"><span class="tocnumber">2.1</span> <span class="toctext">Beam</span></a></li>
+<li class="toclevel-2"><a href="#Sprite"><span class="tocnumber">2.2</span> <span class="toctext">Sprite</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">3</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Ingredients" id="Ingredients"></a></p>
+<h2><span class="mw-headline">Ingredients</span></h2>
+<p><a name="Spawn_Locations" id="Spawn_Locations"></a></p>
+<h3><span class="mw-headline">Spawn Locations</span></h3>
+<p>Here's some of the ways you can have the particles spawn</p>
+<p><a name="Flat_disc" id="Flat_disc"></a></p>
+<h4><span class="mw-headline">Flat disc</span></h4>
+<ul>
+<li>StartLocationShape = PTLS_Polar</li>
+<li>StartLocationPolarRange:
+<ul>
+<li>X = 0 - 65536 (This gives you the full circle of longitude in polar co-ordinates)</li>
+<li>Y = 16384 - 16384 (This gives you just the equator – latitude 16384 R<a href="../../../../articles/u/u/_/Legacy%7EUU_ae76.html" class="mw-redirect" title="Legacy:UU">UU</a> only, which is 90 degrees )</li>
+<li>Z = 0 - <i>r</i>, where <i>r</i> is the radius you want for the disc in <a href="../../../../articles/u/u/_/Legacy%7EUU_ae76.html" class="mw-redirect" title="Legacy:UU">UU</a>.</li>
+</ul>
+</li>
+</ul>
+<p><a name="Preset_Shapes" id="Preset_Shapes"></a></p>
+<h4><span class="mw-headline">Preset Shapes</span></h4>
+<dl>
+<dt>MeshSpawningStaticMesh&#160;</dt>
+<dd>A <a href="../../../../articles/s/t/a/Legacy%7EStaticMesh_5bd0.html" class="mw-redirect" title="Legacy:StaticMesh">StaticMesh</a>, whose vertices should be used as possible start location offsets.<br />
+The ParticleMeshes package provides some useful StaticMeshes for this.</dd>
+<dt>MeshSpawning&#160;</dt>
+<dd>usually PTMS_Random, but PTMS_Linear might be good for certain effects</dd>
+<dt>MeshScaleRange&#160;</dt>
+<dd>Similar to DrawScale3D for actors. Use this to scale the StaticMesh if it's too large or too small.</dd>
+</dl>
+<p><a name="Colors" id="Colors"></a></p>
+<h3><span class="mw-headline">Colors</span></h3>
+<p><a name="Confetti" id="Confetti"></a></p>
+<h4><span class="mw-headline">Confetti</span></h4>
+<p>To get multicolored particles spawning, use Color -&gt; ColorMultiplierRange. Set all three X, Y, Z components to the range 0.5 - 1, for example.</p>
+<p><a name="Ready-cooked_examples" id="Ready-cooked_examples"></a></p>
+<h2><span class="mw-headline">Ready-cooked examples</span></h2>
+<p><a name="Beam" id="Beam"></a></p>
+<h3><span class="mw-headline">Beam</span></h3>
+<p>Lighting from Asbestos:</p>
+<pre>
+BeamDistanceRange=(Min=120.000000,Max=120.000000)
+DetermineEndPointBy=PTEP_Distance
+BeamTextureUScale=3.000000
+HighFrequencyNoiseRange=(X=(Min=-10.000000,Max=10.000000),Y=(Min=-10.000000,Max=10.000000))
+HighFrequencyPoints=4
+FadeOutStartTime=0.180000
+FadeOut=True
+CoordinateSystem=PTCS_Relative
+StartLocationShape=PTLS_Polar
+StartLocationPolarRange=(Z=(Min=-150.000000,Max=150.000000))
+AlphaTest=False
+RevolutionsPerSecondRange=(X=(Min=1.000000,Max=1.000000),Y=(Min=1.000000,Max=1.000000),Z=(Min=1.000000,Max=1.000000))
+UseRotationFrom=PTRS_Normal
+RotationOffset=(Yaw=-16384)
+StartSizeRange=(X=(Min=40.000000,Max=40.000000),Y=(Min=2.000000,Max=2.000000))
+Texture=Texture'EpicParticles.Beams.HotBolt01aw'
+LifetimeRange=(Min=0.200000,Max=0.250000)
+StartVelocityRange=(X=(Min=-51.000000,Max=51.000000),Y=(Min=-51.000000,Max=51.000000))
+GetVelocityDirectionFrom=PTVD_AddRadial
+WarmupTicksPerSecond=1.000000
+RelativeWarmupTime=1.000000
+</pre>
+<p><a name="Sprite" id="Sprite"></a></p>
+<h3><span class="mw-headline">Sprite</span></h3>
+<p>Rising bubbles as in DM-Oceanic. These are in a line</p>
+<pre>
+Acceleration=(Z=35.000000)
+MaxParticles=30
+StartLocationRange=(X=(Min=-150.000000,Max=150.000000))
+UseRotationFrom=PTRS_Actor
+SpinParticles=True
+StartSpinRange=(X=(Min=0.500000,Max=0.400000))
+StartSizeRange=(X=(Min=1.000000,Max=6.000000),Y=(Min=1.000000,Max=6.000000))
+UniformSize=True
+Texture=Texture'AWGlobal.Liquids.Bubble01aw'
+LifetimeRange=(Min=6.000000,Max=6.000000)
+WarmupTicksPerSecond=1.000000
+RelativeWarmupTime=1.000000
+</pre>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>ZxAnPhOrIaN:</b> Should this have subpages with the actual copy n' paste stuff directly from the editor? It will save the mapper tons of time creating it, and still have the original stuff here.</p>
+<p><b>Tarquin:</b> If you want to copy emitters from other maps, you don't need the wiki: open the map, copy, paste into your map. The above lists need trimming down a bit, but I don't yet understand what all the properties do...</p>
+<p><b>Wormbo:</b> More examples can be found at <a href="http://udn.epicgames.com/Two/EmittersExamples" class="extiw" title="udn2:EmittersExamples">udn2:EmittersExamples</a>, Emitters and ParticleEmitter subclasses are explained at <a href="http://udn.epicgames.com/Two/EmittersTutorial" class="extiw" title="udn2:EmittersTutorial">udn2:EmittersTutorial</a></p>
+<p><b>Tarquin:</b> HElp! where do I find this texture: <a href="http://udn.epicgames.com/Two/EmittersExamples#The_Mist" class="external free" title="http://udn.epicgames.com/Two/EmittersExamples#The_Mist" rel="nofollow">http://udn.epicgames.com/Two/EmittersExamples#The_Mist</a> (or a decent equivalent?)</p>
+<p><b>JonAzz:</b> Just use the picture of the texture provided there or this one: <a href="http://forums.beyondunreal.com/showpost.php?p=1460381&amp;postcount=8" class="external free" title="http://forums.beyondunreal.com/showpost.php?p=1460381&amp;postcount=8" rel="nofollow">http://forums.beyondunreal.com/showpost.php?p=1460381&amp;postcount=8</a></p>
+<p><b>Bob_The_Beheader:</b> I've had some trouble making spark emmiters to give the effect of a short in an electrical system or something like that. Could someone please write the ingrediants for something like that?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 18/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_Cookbook_2a69.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/a/r/Legacy_talk%7EParticleEmitter_Cookbook_7e55.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:ParticleEmitter_Cookbook">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:02, 16 October 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

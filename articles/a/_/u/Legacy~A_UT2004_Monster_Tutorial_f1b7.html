@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:A UT2004 Monster Tutorial - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:A UT2004 Monster Tutorial</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i><b>This page is under contruction.</b></i></p>
+<p>This tutorial is meant to demonstrate the basics needed to implement <a href="../../../../articles/m/o/n/Legacy%7EMonster_d9bb.html" title="Legacy:Monster">Monster</a> class characters within a UT2004 environment. The Monster is a specific class introduced in UT2004 for the <a href="../../../../articles/i/n/v/Legacy%7EInvasion_0613.html" title="Legacy:Invasion">Invasion</a> gametype. For a tutorial on using UT Monsters, a subclass of <a href="../../../../articles/s/c/r/Legacy%7EScriptedPawn_0c3f.html" title="Legacy:ScriptedPawn">ScriptedPawn</a>, see <a href="../../../../articles/b/a/s/Legacy%7EBasic_ScriptedPawn_Tutorial_a5e1.html" title="Legacy:Basic ScriptedPawn Tutorial">Basic ScriptedPawn Tutorial</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Prerequisites"><span class="tocnumber">1</span> <span class="toctext">Prerequisites</span></a></li>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">2</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#ScriptedSequence"><span class="tocnumber">3</span> <span class="toctext">ScriptedSequence</span></a></li>
+<li class="toclevel-1"><a href="#The_Dummy_Pawn"><span class="tocnumber">4</span> <span class="toctext">The Dummy Pawn</span></a></li>
+<li class="toclevel-1"><a href="#Useful_Stock_ACTIONs"><span class="tocnumber">5</span> <span class="toctext">Useful Stock ACTIONs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#ACTION_SpawnActor"><span class="tocnumber">5.1</span> <span class="toctext">ACTION_SpawnActor</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_MoveToPoint"><span class="tocnumber">5.2</span> <span class="toctext">ACTION_MoveToPoint</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_PlayAnim"><span class="tocnumber">5.3</span> <span class="toctext">ACTION_PlayAnim</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_PlaySound"><span class="tocnumber">5.4</span> <span class="toctext">ACTION_PlaySound</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_IfCondition"><span class="tocnumber">5.5</span> <span class="toctext">ACTION_IfCondition</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_IfRandomPct"><span class="tocnumber">5.6</span> <span class="toctext">ACTION_IfRandomPct</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_EndSection"><span class="tocnumber">5.7</span> <span class="toctext">ACTION_EndSection</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_GotoAction"><span class="tocnumber">5.8</span> <span class="toctext">ACTION_GotoAction</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_TriggerEvent"><span class="tocnumber">5.9</span> <span class="toctext">ACTION_TriggerEvent</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_WaitForEvent"><span class="tocnumber">5.10</span> <span class="toctext">ACTION_WaitForEvent</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_WaitForTimer"><span class="tocnumber">5.11</span> <span class="toctext">ACTION_WaitForTimer</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_DestroyActor"><span class="tocnumber">5.12</span> <span class="toctext">ACTION_DestroyActor</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_ChangeScript"><span class="tocnumber">5.13</span> <span class="toctext">ACTION_ChangeScript</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Custom_ACTIONs"><span class="tocnumber">6</span> <span class="toctext">Custom ACTIONs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#ACTION_SpawnMonster"><span class="tocnumber">6.1</span> <span class="toctext">ACTION_SpawnMonster</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_Monsterize"><span class="tocnumber">6.2</span> <span class="toctext">ACTION_Monsterize</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_PossessPawn"><span class="tocnumber">6.3</span> <span class="toctext">ACTION_PossessPawn</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_IfMonsterHasEnemy"><span class="tocnumber">6.4</span> <span class="toctext">ACTION_IfMonsterHasEnemy</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_IfMonsterSeesEnemy"><span class="tocnumber">6.5</span> <span class="toctext">ACTION_IfMonsterSeesEnemy</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_IfMonsterIsHurt"><span class="tocnumber">6.6</span> <span class="toctext">ACTION_IfMonsterIsHurt</span></a></li>
+<li class="toclevel-2"><a href="#ACTION_HealPawn"><span class="tocnumber">6.7</span> <span class="toctext">ACTION_HealPawn</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Further_Development"><span class="tocnumber">7</span> <span class="toctext">Further Development</span></a>
+<ul>
+<li class="toclevel-2"><a href="#ACTION_myCustomAction"><span class="tocnumber">7.1</span> <span class="toctext">ACTION_myCustomAction</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Monster_Tutorial"><span class="tocnumber">8</span> <span class="toctext">Monster Tutorial</span></a>
+<ul>
+<li class="toclevel-2"><a href="#MonsterFactory"><span class="tocnumber">8.1</span> <span class="toctext">MonsterFactory</span></a></li>
+<li class="toclevel-2"><a href="#Patrolling"><span class="tocnumber">8.2</span> <span class="toctext">Patrolling</span></a></li>
+<li class="toclevel-2"><a href="#Guarding_An_Item"><span class="tocnumber">8.3</span> <span class="toctext">Guarding An Item</span></a></li>
+<li class="toclevel-2"><a href="#Healing"><span class="tocnumber">8.4</span> <span class="toctext">Healing</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#External_Links"><span class="tocnumber">9</span> <span class="toctext">External Links</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">10</span> <span class="toctext">Related Topics</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Custom_Content"><span class="tocnumber">10.1</span> <span class="toctext">Custom Content</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">11</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Prerequisites" id="Prerequisites"></a></p>
+<h2><span class="mw-headline">Prerequisites</span></h2>
+<p>This tutorial assumes you know how to <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create A Subclass</a>.</p>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<p>By default, Monsters in UT2004 use a <a href="../../../../articles/m/o/n/Legacy%7EMonsterController_8938.html" title="Legacy:MonsterController">MonsterController</a> that implements a complex set of behaviors to hunt down and attack players. This is specifically designed for the Invasion gametype, where Monsters are spawned at random <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoints</a> around the map and attack the players in increasingly aggressive waves.</p>
+<p>However, for other gametypes this default behavior may not be desirable to the mapper. As an example, placing UT2004 Monsters in a map designed for a TeamGame will result in a team imbalance, where the UnrealPawn PostNetBeginPlay() function attempts (and eventually fails) to place the Monster in an xTeamRoster. <i>(RedTeam's Size is incremented although there's no valid player added and extra BlueTeam memebers are the result)</i></p>
+<p>In cases where the mapper would like to get Monster class creatures to perform more complex tasks, such as Patrolling, Defending, Ambushing, just as UT was able to do, extra steps are needed.</p>
+<p><a name="ScriptedSequence" id="ScriptedSequence"></a></p>
+<h2><span class="mw-headline">ScriptedSequence</span></h2>
+<p>The <a href="../../../../articles/s/c/r/Legacy%7EScriptedSequence_4caa.html" title="Legacy:ScriptedSequence">ScriptedSequence</a> is a subclass of AIScript designed to control pawns. This takes the place of the AI portion of UT's ScriptedPawn, which is not available in UT200x. With the ScriptedSequence, mappers can define a script using predefined <a href="../../../../articles/s/c/r/Legacy%7EScriptedAction_8012.html" title="Legacy:ScriptedAction">ScriptedActions</a>. The ScriptedSequence is designed to work in conjunction with an associated Pawn; one who's AI -&gt; AIScriptTag matches the ScriptedSequence's Tag.</p>
+<p>For example, one of the most useful ACTIONs is ACTION_SpawnActor. But, if no Pawn is associated to the ScriptedSequence, the script will be removed from the level at map start. If the mapper would like to spawn a Monster out of thin air, a special Pawn will have to be used.</p>
+<p><a name="The_Dummy_Pawn" id="The_Dummy_Pawn"></a></p>
+<h2><span class="mw-headline">The Dummy Pawn</span></h2>
+<p>The Dummy Pawn is a simple custom <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> subclass that will act as the servant to our ScriptedSequence. Subclass Pawn and define the following default properties:</p>
+<dl>
+<dt>(Advanced) bool bHidden&#160;</dt>
+<dd>true</dd>
+<dt>(Advanced) bool bNoDelete&#160;</dt>
+<dd>true</dd>
+<dt>(Collision) bool bUseCylinderCollision&#160;</dt>
+<dd>false</dd>
+<dt>(Display) EDrawType DrawType&#160;</dt>
+<dd>DT_Sprite</dd>
+<dt>(Display) Texture Texture&#160;</dt>
+<dd>Texture'Engine.S_Pawn'</dd>
+<dt>(Movement) EPhysics Physics&#160;</dt>
+<dd>PHYS_None</dd>
+</dl>
+<p>For each ScriptedSequence that does not already have an associated Pawn (Monster), a Dummy can be used instead. This will allow full use of ACTIONs, like ACTION_SpawnActor to create a kind of "MonsterFactory".</p>
+<p><a name="Useful_Stock_ACTIONs" id="Useful_Stock_ACTIONs"></a></p>
+<h2><span class="mw-headline">Useful Stock ACTIONs</span></h2>
+<p>The following stock ScriptedActions are available to use in conjunction with Monsters. This is just a basic list of useful ACTIONs to implement Monsters. For a full list of ACTIONs, see also <a href="../../../../articles/s/c/r/Legacy%7EScriptedAction_8012.html" title="Legacy:ScriptedAction">ScriptedAction</a>.</p>
+<p><a name="ACTION_SpawnActor" id="ACTION_SpawnActor"></a></p>
+<h3><span class="mw-headline">ACTION_SpawnActor</span></h3>
+<p>As long as a Pawn is already associated with this ScriptedSequence, this will spawn the provided Actor class and give it the provided Tag. A "MonsterFactory" is easily made with this action, but it should be noted that the Monster will automatically spawn it's own MonsterController, making it attack any player it finds.</p>
+<p><a name="ACTION_MoveToPoint" id="ACTION_MoveToPoint"></a></p>
+<h3><span class="mw-headline">ACTION_MoveToPoint</span></h3>
+<p>This is a latent ACTION that gives the Pawn a destination defined as a <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> with a particular Tag that matches the provided name. The Monster will animate, make sounds, navigate and move appropriately without any further ACTIONs.</p>
+<p><a name="ACTION_PlayAnim" id="ACTION_PlayAnim"></a></p>
+<h3><span class="mw-headline">ACTION_PlayAnim</span></h3>
+<p>This will play the provided animation sequence (if it exists for this character mesh) and allows options for timing, looping, etc.</p>
+<p><a name="ACTION_PlaySound" id="ACTION_PlaySound"></a></p>
+<h3><span class="mw-headline">ACTION_PlaySound</span></h3>
+<p>This will play the provided sound and allows options for pitch, volume, etc.</p>
+<p><a name="ACTION_IfCondition" id="ACTION_IfCondition"></a></p>
+<h3><span class="mw-headline">ACTION_IfCondition</span></h3>
+<p>This conditional is true if the associated <a href="../../../../articles/t/r/i/Legacy%7ETriggeredCondition_b0ea.html" title="Legacy:TriggeredCondition">TriggeredCondition</a> actor is true. TriggeredCondition are a subclass of Trigger and can be activated or toggled on and off by another Trigger. TriggeredConditions act as a flag, a byte of memory that can store information about the map's current condition. Some examples are: Is a door open? Is an area occupied by a player? Has a flag been taken?</p>
+<p><a name="ACTION_IfRandomPct" id="ACTION_IfRandomPct"></a></p>
+<h3><span class="mw-headline">ACTION_IfRandomPct</span></h3>
+<p>This conditional is true if the random number generated, between 1 and 100, is greater than the provided threadhold. This is good to keep variety.</p>
+<p><a name="ACTION_EndSection" id="ACTION_EndSection"></a></p>
+<h3><span class="mw-headline">ACTION_EndSection</span></h3>
+<p>This is necessary to define the end of a conditional block of ACTIONs.</p>
+<p><a name="ACTION_GotoAction" id="ACTION_GotoAction"></a></p>
+<h3><span class="mw-headline">ACTION_GotoAction</span></h3>
+<p>This will send focus to another part of the script.</p>
+<p><a name="ACTION_TriggerEvent" id="ACTION_TriggerEvent"></a></p>
+<h3><span class="mw-headline">ACTION_TriggerEvent</span></h3>
+<p>This will trigger the provided Event and trigger those Actors with a matching Tag.</p>
+<p><a name="ACTION_WaitForEvent" id="ACTION_WaitForEvent"></a></p>
+<h3><span class="mw-headline">ACTION_WaitForEvent</span></h3>
+<p>This latent ACTION will pause the script's focus until the provided Event is triggered.</p>
+<p><a name="ACTION_WaitForTimer" id="ACTION_WaitForTimer"></a></p>
+<h3><span class="mw-headline">ACTION_WaitForTimer</span></h3>
+<p>This latent ACTION will pause the script's focus for the provided number of seconds.</p>
+<p><a name="ACTION_DestroyActor" id="ACTION_DestroyActor"></a></p>
+<h3><span class="mw-headline">ACTION_DestroyActor</span></h3>
+<p>This will delete the Actor(s) with a Tag that matches the provided name.</p>
+<p><a name="ACTION_ChangeScript" id="ACTION_ChangeScript"></a></p>
+<h3><span class="mw-headline">ACTION_ChangeScript</span></h3>
+<p>This will transfer control of the associate Pawn to the ScriptedSequence with a matching Tag.</p>
+<p><a name="Custom_ACTIONs" id="Custom_ACTIONs"></a></p>
+<h2><span class="mw-headline">Custom ACTIONs</span></h2>
+<p>Many of the stock ACTIONs are left over from UT and were never meant to effect the Monster's MonsterController. To perform complex behavior like Patrolling, we'll need some custom SciptedActions to take control of the Monster, give up control and detemine various aspects of this relatively new object class. For more on custom ScriptedActions, see also <a href="../../../../articles/c/r/e/Legacy%7ECreating_And_Using_ScriptedActions_53bc.html" title="Legacy:Creating And Using ScriptedActions">Creating And Using ScriptedActions</a>.</p>
+<p><a name="ACTION_SpawnMonster" id="ACTION_SpawnMonster"></a></p>
+<h3><span class="mw-headline">ACTION_SpawnMonster</span></h3>
+<p>This will spawn the provided Monster class and automatically Possess it, unless otherwise configured. Other options include setting Tag for the Monster and it's MonsterController, if needed. This particular ScriptedAction is very useful in implementing Monsters in TeamGame maps. By spawning them after match start, as opposed to explicitly placing them in a map, you avoid the team imbalance problem described in the Overview above.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_SpawnMonster.</span>
+<span class="co1">// Spawn a Monster class and Possess unless bMonsterizeAtStart is true.</span>
+<span class="co1">// by SuperApe        -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_SpawnMonster <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        class&lt;Monster&gt;            MonsterClass;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">name</span>                           MonsterTag;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">bool</span>                           bMonsterizeAtStart;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">name</span>                           MonsterControllerTag;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> InitActionFor<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span>  Monster                         M;
+        <span class="kw5">local</span>  MonsterController       MC;
+ 
+        M = C.<span class="me1">spawn</span><span class="br0">(</span> MonsterClass, C, MonsterTag, C.<span class="me1">Location</span>, C.<span class="me1">Rotation</span> <span class="br0">)</span>;
+        C.<a href="/Pawn"><span class="kw10">Pawn</span></a> = M;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> bMonsterizeAtStart <span class="br0">)</span>
+                M.<span class="me1">Controller</span>.<span class="me1">Tag</span> = MonsterControllerTag;
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+                M.<span class="me1">Controller</span>.<span class="me1">Unpossess</span><span class="br0">(</span><span class="br0">)</span>;
+                C.<span class="me1">Possess</span><span class="br0">(</span> M <span class="br0">)</span>;
+                M.<span class="me1">Controller</span> = C;
+                M.<span class="me1">AIScriptTag</span> = C.<span class="me1">Tag</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_Monsterize" id="ACTION_Monsterize"></a></p>
+<h3><span class="mw-headline">ACTION_Monsterize</span></h3>
+<p>This spawns a MonsterController for the Monster Pawn and has the MonsterController Possess it. This is what gets the Monsters to begin to attack any player they see.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_Monsterize.</span>
+<span class="co1">// Spawn a MonsterController for this Pawn and have it possess the Pawn.</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_Monsterize <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">name</span>   MonsterControllerTag;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> InitActionFor<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span>  MonsterController       MC;
+ 
+        MC = C.<span class="me1">spawn</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'MonsterController'</span>, <span class="kw9">None</span> <span class="br0">)</span>;
+        MC.<span class="me1">Tag</span> = MonsterControllerTag;
+        MC.<span class="me1">Possess</span><span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a> <span class="br0">)</span>;
+ 
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_PossessPawn" id="ACTION_PossessPawn"></a></p>
+<h3><span class="mw-headline">ACTION_PossessPawn</span></h3>
+<p>This Possesses the Monster Pawn matching the provided Tag, making it the currently associated Pawn. This will also destroy the previous Controller if it is a MonsterController. This is what stops the Monsters from attacking at will and puts them under the control of this ScriptedSequence.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_PossessPawn.</span>
+<span class="co1">// Possess the Pawn with the PawnTag.  Destroy any previous MonsterController.</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_PossessPawn <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">name</span>   PawnTag;
+<span class="kw5">var</span>            <span class="kw4">bool</span>   bPawnExists;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> InitActionFor<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span>  <a href="/Pawn"><span class="kw10">Pawn</span></a>                      P;
+        <span class="kw5">local</span>  MonsterController       MC;
+ 
+        bPawnExists = <span class="kw9">false</span>;
+        <span class="kw1">forEach</span> C.<span class="me1">DynamicActors</span><span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Pawn'</span>, P, PawnTag <span class="br0">)</span>
+        <span class="br0">{</span>
+                bPawnExists = <span class="kw9">true</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> P.<span class="me1">Controller</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'MonsterController'</span><span class="br0">)</span> <span class="br0">)</span>
+                        MC = MonsterController<span class="br0">(</span> P.<span class="me1">Controller</span> <span class="br0">)</span>;      
+                P.<span class="me1">Controller</span>.<span class="me1">Unpossess</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> P.<span class="me1">Health</span> &gt; <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        C.<span class="me1">Possess</span><span class="br0">(</span> P <span class="br0">)</span>;
+                        P.<span class="me1">Controller</span> = C;
+                        P.<span class="me1">AIScriptTag</span> = C.<span class="me1">Tag</span>;
+                <span class="br0">}</span>
+                <span class="kw1">else</span>
+                        P.<span class="me1">AIScriptTag</span> = <span class="st0">''</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> MC != <span class="kw9">None</span> <span class="br0">)</span>
+                        MC.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span> <span class="br0">(</span> !bPawnExists <span class="br0">)</span>
+                <span class="kw7">Warn</span><span class="br0">(</span><span class="st0">"No Pawn with tag "</span>$PawnTag$<span class="st0">" exists!"</span><span class="br0">)</span>;
+ 
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_IfMonsterHasEnemy" id="ACTION_IfMonsterHasEnemy"></a></p>
+<h3><span class="mw-headline">ACTION_IfMonsterHasEnemy</span></h3>
+<p>This conditional is true if the Monster Pawn's Controller.Enemy property is occupied. Useful for situations where you want to know if it's a good time to ACTION_PossessPawn, otherwise you may want to keep it "Monsterized" and wait until the Enemy is gone.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_IfMonsterHasEnemy.</span>
+<span class="co1">// Conditional on Pawn.Controller.Enemy != None</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_IfMonsterHasEnemy <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">function</span> ProceedToNextAction<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> !C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Monster'</span><span class="br0">)</span> <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+ 
+        C.<span class="me1">ActionNum</span> += <span class="nu0">1</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Controller</span>.<span class="me1">Enemy</span> == <span class="kw9">None</span> <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> StartsSection<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_IfMonsterSeesEnemy" id="ACTION_IfMonsterSeesEnemy"></a></p>
+<h3><span class="mw-headline">ACTION_IfMonsterSeesEnemy</span></h3>
+<p>This conditional is true based on the property MonsterController.bEnemyIsVisible. Useful in the same way that ACTION_IfMonsterHasEnemy is, but this will only be true if the Enemy is visible. So an Enemy that's ducked out of sight will cause this conditional to be false.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_IfMonsterSeesEnemy.</span>
+<span class="co1">// Conditional on MonsterController.bEnemyIsVisible</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_IfMonsterSeesEnemy <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">function</span> ProceedToNextAction<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> !C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Monster'</span><span class="br0">)</span> || MonsterController<span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Controller</span> <span class="br0">)</span> == <span class="kw9">None</span> <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+ 
+        C.<span class="me1">ActionNum</span> += <span class="nu0">1</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> !MonsterController<span class="br0">(</span>C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Controller</span><span class="br0">)</span>.<span class="me1">bEnemyIsVisible</span> <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> StartsSection<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_IfMonsterIsHurt" id="ACTION_IfMonsterIsHurt"></a></p>
+<h3><span class="mw-headline">ACTION_IfMonsterIsHurt</span></h3>
+<p>This conditional is true if the Pawn's Health is less than the provided HealthThreshold. This works whether the Monster is currently Monsterized or not. It's useful to determine if the ScriptedSequence should take control of a hurt Monster to move it to a safer place, etc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_IfMonsterIsHurt.</span>
+<span class="co1">// Conditional on Pawn.Health &lt; HealthThreshold</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_IfMonsterIsHurt <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">int</span>            HealthThreshold;
+ 
+<span class="kw5">function</span> ProceedToNextAction<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> !C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Monster'</span><span class="br0">)</span> <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+ 
+        C.<span class="me1">ActionNum</span> += <span class="nu0">1</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Health</span> &gt; HealthThreshold <span class="br0">)</span>
+                ProceedToSectionEnd<span class="br0">(</span> C <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> StartsSection<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="ACTION_HealPawn" id="ACTION_HealPawn"></a></p>
+<h3><span class="mw-headline">ACTION_HealPawn</span></h3>
+<p>This gives the Pawn Health, up to it's MaxHealth, based on the provided HealAmount. Ironically, ACTION_HealActor doesn't work with Pawns. This is useful in situations where you'd like to keep the Monster around a bit longer. In conjunction with ACTION_IfMonsterIsHurt, this can be used to provide a kind of "Healing Station" for the Monster, giving it a sophisticated combat tactic: Retreat to <i>Live and fight another day</i>.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ACTION_HealPawn.</span>
+<span class="co1">// Calls Pawn.GiveHealth( HealAmount, HealthMax ).  Does what HealActor can't.</span>
+<span class="co1">// by SuperApe -- Dec 2005</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ACTION_HealPawn <span class="kw5">extends</span> ScriptedAction;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span>        <span class="kw4">int</span>            HealAmount;
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> InitActionFor<span class="br0">(</span> ScriptedController C <span class="br0">)</span>
+<span class="br0">{</span>
+        C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">GiveHealth</span><span class="br0">(</span> HealAmount, <span class="kw4">int</span><span class="br0">(</span> C.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">HealthMax</span> <span class="br0">)</span> <span class="br0">)</span>;
+ 
+        <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Further_Development" id="Further_Development"></a></p>
+<h2><span class="mw-headline">Further Development</span></h2>
+<p>The possibilities are endless. Some useful ACTIONs to make include setting specific Properties or switching to behavior States. Other custom ACTIONs should be appended here to this section.</p>
+<p><a name="ACTION_myCustomAction" id="ACTION_myCustomAction"></a></p>
+<h3><span class="mw-headline">ACTION_myCustomAction</span></h3>
+<p><a name="Monster_Tutorial" id="Monster_Tutorial"></a></p>
+<h2><span class="mw-headline">Monster Tutorial</span></h2>
+<p>Now that we have the ScriptedActions available to affect Monsters, we can begin to construct a complex Monster behavior patrolling to guard an item in a map. We will start with a MonsterFactory. We will give our Monsters a path to follow while on patrol. We will keep track of the item so the Monsters know when it's been taken. We will also give our Monsters a safe "homebase" where they can heal themselves when they're hurt.</p>
+<p>We will use a variety of actors to make this behavior happen. We could do it with one Dummy Pawn and one ScriptedSequence, however the ScriptedSequence script would be <u>very</u> long and complex. It's very easy to make a mistake in a script that long, so we will break it up into manageable chunks and spread the script around to several ScriptedSequences.</p>
+<p><a name="MonsterFactory" id="MonsterFactory"></a></p>
+<h3><span class="mw-headline">MonsterFactory</span></h3>
+<p>A MonsterFactory starts with a Dummy Pawn and a ScriptedSequence. The Dummy -&gt; AIScript -&gt; AIScriptTag will match the ScriptedSequence -&gt; Tag. We will place the Dummy at the spot we would like our Monsters to spawn. We will keep the ScriptedSequence close by, just for organization.</p>
+<p>This MonsterFactory script will consist of the following ScriptedActions:</p>
+<dl>
+<dt>[0] ACTION_TriggerEvent&#160;</dt>
+<dd>An emitter actor will be set up here to give some simple effects for our spawning Monster. We will match it's Tag, "MonsterSpawnFX", to this ACTION's arguement.</dd>
+<dt>[1] ACTION_PlaySound&#160;</dt>
+<dd>A sound effect will also be played at this point so both a visual and audial queue will signal to any close player that a Monster is about to be spawned.</dd>
+<dt>[2] ACTION_SpawnMonster&#160;</dt>
+<dd>We will spawn a <a href="../../../../articles/k/r/a/Legacy%7EKrall_507b.html" title="Legacy:Krall">Krall</a> and give it the MonsterTag, "KrallPatrol". We will keep it's control on this script rather than Monsterizing it at start.</dd>
+<dt>[3] ACTION_MoveToPoint&#160;</dt>
+<dd>A nearby PathNode with a Tag set to, "MonsterStart", will be designated as the first spot our Monsters will move. This will simply get them out of the way of other Monsters.</dd>
+<dt>[4] ACTION_TriggerEvent&#160;</dt>
+<dd>This action will signal the next ScriptedSequence that a Monster has been spawned and moved to the MonsterStart spot. This signal, Event "MonsterToPatrol", will start transferring control of the Monster to the next script.</dd>
+<dt>[5] ACTION_WaitForEvent&#160;</dt>
+<dd>At this point, our MonsterFactory has done its job. We will have it wait here for a signal to continue. Our signal will be the Event, "MonsterSpawn".</dd>
+<dt>[6] ACTION_GotoAction&#160;</dt>
+<dd>Once the signal is given, we will goto the Action 0 to start this script again and spawn a new Monster.</dd>
+</dl>
+<p><a name="Patrolling" id="Patrolling"></a></p>
+<h3><span class="mw-headline">Patrolling</span></h3>
+<p>Here another ScriptedSequence will take over control of the Monsters from our MonsterFactory. A series of PathNodes will have Tags that we will use to define the Patrol points for our Monsters. Each Patrol point will have a corresponding ScriptedSequence. Our Patrolling scripts will perform checks to make sure our Monsters are Monsterized to attack visible enemies. At various points, we will also give the Monsters the opportunity to keep track of the item they are guarding and go to a safe healing place if they need it.</p>
+<p>The Patrolling script will have the following ScriptedActions:</p>
+<dl>
+<dt>[0] ACTION_WaitForEvent&#160;</dt>
+<dd>This script waits for the Event, "MonsterToPatrol", as a signal to take control of the Monster.</dd>
+<dt>[1] ACTION_PossessPawn&#160;</dt>
+<dd>This will take control of the Monster Pawn with the Tag, "KrallPatrol".</dd>
+<dt>[2] ACTION_MoveToPoint&#160;</dt>
+<dd>We will send this Monster to the first Patrol point, a PathNode with a Tag, "Patrol1".</dd>
+<dt>[3] ACTION_Monsterize&#160;</dt>
+<dd>We will give the Monster the opportunity to attack any player it sees. The MonsterControllerTag will be, "KrallMonster".</dd>
+<dt>[4] ACTION_WaitForTimer&#160;</dt>
+<dd>We will have the Monster wait 5 seconds while Monsterized.</dd>
+<dt>[5] ACTION_IfMonsterSeesEnemy&#160;</dt>
+<dd>This conditional gives the Monster a chance to tell us if they see an Enemy while at this Patrol point.</dd>
+<dt>[6] ACTION_GotoAction&#160;</dt>
+<dd>Send the script to Action 4, to continue the attack for another 5 seconds.</dd>
+<dt>[7] ACTION_EndSection&#160;</dt>
+<dd>This ends the conditional block for IfMonsterSeesEnemy.</dd>
+<dt>[8] ACTION_TriggerEvent&#160;</dt>
+<dd>This will signal to the next Patrol script to take control of this Monster and move it to the next Patrol point. The Event to trigger will be, "Patrol2".</dd>
+<dt>[9] ACTION_GotoAction&#160;</dt>
+<dd>This script has done its job and should return to the original state, at Action 0, waiting for the next Monster to take control of.</dd>
+</dl>
+<p>Now the next Patrol script and Patrol point will take over. They will look exactly like this one with the exception of some of the Tags. The script will be waiting for Event, "Patrol2". The Patrol point PathNode and ACTION_MoveToPoint will have the tag, "Patrol2". When the script has finished checking to see IfMonsterSeesEnemy, it will trigger the next Patrol script using Event, "Patrol3".</p>
+<p>This series of Patrol points and scripts will loop around the Patrol path back to the first point, where the last Patrol script will be triggering, "MonsterToPatrol", to signal the first Patrol script to take over again.</p>
+<p><a name="Guarding_An_Item" id="Guarding_An_Item"></a></p>
+<h3><span class="mw-headline">Guarding An Item</span></h3>
+<p>In our case, we will have the Monsters guard a BombingRun <a href="../../../../articles/x/b/o/Legacy%7EXBombFlag_2d7a.html" title="Legacy:XBombFlag">xBombFlag</a> at the <a href="../../../../articles/x/b/o/Legacy%7EXBombSpawn_0b50.html" title="Legacy:XBombSpawn">xBombSpawn</a> point. This will force players to get through the Monster patrol to get the BombFlag in order to score.</p>
+<p><a name="Healing" id="Healing"></a></p>
+<h3><span class="mw-headline">Healing</span></h3>
+<p><a name="External_Links" id="External_Links"></a></p>
+<h2><span class="mw-headline">External Links</span></h2>
+<ul>
+<li><a href="http://forums.unrealplayground.com/showthread.php?t=37962" class="external text" title="http://forums.unrealplayground.com/showthread.php?t=37962" rel="nofollow">UnrealPlayground Forum topic, Monster Experiments</a> – Implementation of Monsters via custom ScriptedActions.</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">Artificial Intelligence</a> – A super topic for all AI (bots, NPCs, etc.)
+<ul>
+<li><a href="../../../../articles/m/o/n/Legacy%7EMonster_Support_c874.html" title="Legacy:Monster Support">Monster Support</a> – A hub for all Monster Support topics.</li>
+</ul>
+</li>
+<li><a href="../../../../articles/m/o/n/Legacy%7EMonster_d9bb.html" title="Legacy:Monster">Monster</a> – The UT2004 parent class of all Monsters.</li>
+<li><a href="../../../../articles/m/o/n/Legacy%7EMonsterController_8938.html" title="Legacy:MonsterController">MonsterController</a> – The Controller class for Monsters.</li>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScriptedPawn_0c3f.html" title="Legacy:ScriptedPawn">ScriptedPawn</a> – The UT parent class for all Monsters and NPCs.</li>
+<li><a href="../../../../articles/a/i/s/Legacy%7EAIScript_8039.html" title="Legacy:AIScript">AIScript</a>
+<ul>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScriptedSequence_4caa.html" title="Legacy:ScriptedSequence">ScriptedSequence</a>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScriptedSequence_7ca2.html" title="Legacy:UnrealScriptedSequence">UnrealScriptedSequence</a></li>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a></li>
+</ul>
+<p><a name="Custom_Content" id="Custom_Content"></a></p>
+<h3><span class="mw-headline">Custom Content</span></h3>
+<ul>
+<li><a href="../../../../articles/s/u/p/Legacy%7ESuperApe_Old_Skool_Monsta_Toolz_5e52.html" title="Legacy:SuperApe/Old Skool Monsta Toolz">Old Skool Monsta Toolz</a> – A mod/mapping toolset for implementing monsters and complex monster AI in any gametype for UT2004.</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SuperApe:</b> Created. Working...</p>
+<p><b>SuperApe:</b> These are okay. It's beginning to work. There are a few key issues that need to be addressed:</p>
+<ol>
+<li>With these Actions, you can have the Monster attack <u>or</u> be controlled by the ScriptedSequence, not both. So, setting something akin to Alertness level is difficult.</li>
+<li>Technically, the MonsterController <u>will</u> "teleport" a Monster to a PlayerStart after several seconds if it hasn't encountered a player. Perhaps another controller should be used anyway. (like a subclass that at least removes that method)</li>
+<li>A daisy chain of ScriptedSequences should work, but I've been having problems. (I haven't figured out why, but it intermitently "misses" the Trigger for the next script.)</li>
+</ol>
+<p>So, I'm beginning to think re-creating the <a href="../../../../articles/h/o/m/Legacy%7EHomeBase_6287.html" title="Legacy:HomeBase">HomeBase</a>, <a href="../../../../articles/a/m/b/Legacy%7EAmbushPoint_f2e2.html" title="Legacy:AmbushPoint">AmbushPoint</a>, <a href="../../../../articles/a/l/a/Legacy%7EAlarmPoint_50a1.html" title="Legacy:AlarmPoint">AlarmPoint</a> and <a href="../../../../articles/p/a/t/Legacy%7EPatrolPoint_0feb.html" title="Legacy:PatrolPoint">PatrolPoint</a> might be helpful in conjunction with a modified <a href="../../../../articles/m/o/n/Legacy%7EMonsterController_8938.html" title="Legacy:MonsterController">MonsterController</a>.</p>
+<p><b>Moofed:</b> Any progress on this? I'll be learning monster scripting (very) soon and this page looks useful.. until your comment about it not working.</p>
+<p><b>SuperApe:</b> Your timing is impecable.&#160;:) I'm working on this now. It's not that it <i>doesn't</i> work, it's that there are serious limitations without further development, as I mention above. At the moment, I'm right on the edge of either continuing to use custom ScriptedActions (and making a lot more of them) or creating a custom MonsterController that will include much of the functionality needed. It's a bit of a mess to have both. I will be updating this soon.</p>
+<p><b>Moofed:</b> ... What I will be learning monster scripting for (is) civilian pedestrians and vehicles ... to recreate the GTA2 feel.</p>
+<p><b>SuperApe:</b> So, you're thinking more along the lines of an NPC? This could be done with ScriptedSequences, I suppose. I might be a little too much to do, or a little too simple an NPC. This page is specifically talking about the problems using Monsters with ScriptedSequences, so it's not gonna be directly applicable to what you want to do. Monsters are defined as a specific kind of NPC whose sole purpose is to hunt down and kill players. Civilians and pedestrians would be more along the lines of a general NPC. See <a href="../../../../articles/n/p/c/Legacy%7ENPC_Support_b02e.html" title="Legacy:NPC Support">NPC Support</a> and describe for us what you'd like them to do. Perhaps we can offer suggestions.&#160;:)</p>
+<p><b>Moofed:</b> It seemed relevant to what I want, but you're probably right. A custom controller would be better. I'm making a personal page now to descibe my ideas for this.</p>
+<p><b>SuperApe:</b> Great. Be glad to help.&#160;:)</p>
+<hr />
+<p><b>SuperApe:</b> This page will be updated soon, but while I like being able to use (mostly) stock objects to implement UT2004 Monsters, there's some drastic limitations. It's no where near as cool as original ScriptedPawn Monsters used to be in UT. While I may keep this tutorial the same, I am beginning to recreate the older actors and code for the ScriptedPawn AI, with all their functionality. This will eventually include all the NavPoints, a new Monster parent class that mimics some ScriptedPawn functionality, as many individual Monsters as UT2004 has (with all their original functionality) and a new ScriptedMonsterController which will handle the bulk of what ScriptedPawn used to. I suppose that qualifies as a different project, a different page, but it related directly to and evolved from these experiments. In the meantime, I will try to finish up this tutorial as best I can using the custom work already described above.</p>
+<p><b>SuperApe:</b> This line of thinking has led to a new project, <a href="http://forums.unrealplayground.com/showthread.php?t=39783" class="external text" title="http://forums.unrealplayground.com/showthread.php?t=39783" rel="nofollow">Old Skool Monsta Toolz</a>, implementing UT-style monsters in UT2004. EDIT: It has been publicly released.</p>
+<p><b>SuperApe:</b> The current wiki page for the OSMT project is here: <a href="../../../../articles/s/u/p/Legacy%7ESuperApe_Old_Skool_Monsta_Toolz_5e52.html" title="Legacy:SuperApe/Old Skool Monsta Toolz">Old Skool Monsta Toolz</a>.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Category:Legacy Mapping</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – SuperApe is working on a tutorial. (This actually needs to be refactored, redone)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 68/1000000
+Post-expand include size: 75/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/_/u/Legacy%7EA_UT2004_Monster_Tutorial_f1b7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/_/u/Legacy_talk%7EA_UT2004_Monster_Tutorial_5a00.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:A_UT2004_Monster_Tutorial">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:17, 22 September 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Maintaining Compatibility - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Maintaining Compatibility</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i>The idea behind this page is <a href="http://www.ina-community.com/forums/showthread.php?s=&amp;threadid=228918" class="external text" title="http://www.ina-community.com/forums/showthread.php?s=&amp;threadid=228918" rel="nofollow">this Infogrames Forum thread</a> and <a href="http://www.ina-community.com/forums/showthread.php?s=&amp;threadid=247052" class="external text" title="http://www.ina-community.com/forums/showthread.php?s=&amp;threadid=247052" rel="nofollow">this other Infogrames Forum thread</a> further pushed it.&#160;:)</i></p>
+<p><i>For those who doubt Epic's intentions as to what a mutator should do you need look no further than the header comments in Engine.Mutator.</i></p>
+<blockquote class="legacyquote">
+<p>Mutators allow modifications to gameplay while keeping the game rules intact.</p>
+</blockquote>
+<p>There are several problems when coding a new mutator or gametype. This page deals with problems that are often neglected: Compatibility with other mods and mutators.</p>
+<p>This page can probably be divided in subpages for Game Types and Mutators later, but for now two headings should be enough.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Mutators"><span class="tocnumber">1</span> <span class="toctext">Mutators</span></a>
+<ul>
+<li class="toclevel-2"><a href="#HUD_.2F_ScoreBoard_Additions"><span class="tocnumber">1.1</span> <span class="toctext">HUD / ScoreBoard Additions</span></a></li>
+<li class="toclevel-2"><a href="#Storing_and.2For_Replicating_Per-Player_Information"><span class="tocnumber">1.2</span> <span class="toctext">Storing and/or Replicating Per-Player Information</span></a></li>
+<li class="toclevel-2"><a href="#Movement_and_Physics:_The_Controller_Classes"><span class="tocnumber">1.3</span> <span class="toctext">Movement and Physics: The Controller Classes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Game_Types"><span class="tocnumber">2</span> <span class="toctext">Game Types</span></a>
+<ul>
+<li class="toclevel-2"><a href="#GameInfo"><span class="tocnumber">2.1</span> <span class="toctext">GameInfo</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Mutators" id="Mutators"></a></p>
+<h2><span class="mw-headline">Mutators</span></h2>
+<p>Avoid replacing <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>-specific classes such as the <a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a>, the <a href="../../../../articles/s/c/o/Legacy%7EScoreBoard_eab2.html" title="Legacy:ScoreBoard">ScoreBoard</a>, the <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfos</a> (or PRI for short), <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> classes, <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> classes and the <a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_504d.html" title="Legacy:GameReplicationInfo">GameReplicationInfo</a> (GRI).</p>
+<p>Just imagine what happens when two mutators try to replace the PRI with their own versions. One of the mutators definately won't work. Maybe the gametype itself depends on its own PRI class, so both mutators can't be used with that gametype.</p>
+<p>How to work round these problems:</p>
+<p><a name="HUD_.2F_ScoreBoard_Additions" id="HUD_.2F_ScoreBoard_Additions"></a></p>
+<h3><span class="mw-headline">HUD / ScoreBoard Additions</span></h3>
+<p>Use <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interactions</a> for this.</p>
+<p><a name="Storing_and.2For_Replicating_Per-Player_Information" id="Storing_and.2For_Replicating_Per-Player_Information"></a></p>
+<h3><span class="mw-headline">Storing and/or Replicating Per-Player Information</span></h3>
+<p>Sure, the most straightforward idea is replacing the PRI, but there's another way: Create your own <a href="../../../../articles/r/e/p/Legacy%7EReplicationInfo_5a4c.html" title="Legacy:ReplicationInfo">ReplicationInfo</a> subclass. This class might look like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyReplicationInfo <span class="kw5">extends</span> ReplicationInfo;
+ 
+<span class="kw5">var</span> PlayerReplicationInfo MyPRI;  <span class="co1">// Pawns or Controllers aren't generally available on clients</span>
+<span class="kw5">var</span> <span class="kw4">int</span> MyImportantVariable;      <span class="co1">// the value you want to replicate per-player</span>
+ 
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+    <span class="kw6">unreliable</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+        MyPRI, MyImportantVariable;
+<span class="br0">}</span>
+</pre></div>
+<p>You only need to find and use the new MyReplicationInfo actors now. If you set the <code>MyPRI</code> variable to reference the associate player's <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>, that's easily done both server- and client-side with the DynamicActors <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MyReplicationInfo FindInfoFor<span class="br0">(</span>PlayerReplicationInfo PRI<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> MyReplicationInfo MyReplicationInfo;
+ 
+    <span class="kw1">foreach</span> DynamicActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'MyReplicationInfo'</span>, MyReplicationInfo<span class="br0">)</span>
+        <span class="kw1">if</span> <span class="br0">(</span>MyReplicationInfo.<span class="me1">MyPRI</span> == PRI<span class="br0">)</span>
+            <span class="kw1">return</span> MyReplicationInfo;
+ 
+    <span class="kw1">return</span> <span class="kw9">None</span>;  <span class="co1">// no matching MyReplicationInfo actor found</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Movement_and_Physics:_The_Controller_Classes" id="Movement_and_Physics:_The_Controller_Classes"></a></p>
+<h3><span class="mw-headline">Movement and Physics: The Controller Classes</span></h3>
+<p><b>Regulating the amount of dodges per jump</b></p>
+<p>You'd expect modifying the amount of dodging moves allowed per jump is deeply burried in one of the controller classes. Well, it is, but I was able to "hack into" the PlayerController class without actually subclassing it:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> DodgeHack <span class="kw5">extends</span> Info;
+ 
+<span class="kw5">var</span> PlayerController Controller;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        Controller = PlayerController<span class="br0">(</span>Owner<span class="br0">)</span>;
+        <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> Controller == <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                Destroy<span class="br0">(</span><span class="br0">)</span>;
+                <span class="kw1">return</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> Controller.<span class="me1">DoubleClickDir</span> &gt;= DCLICK_Active <span class="br0">)</span> <span class="br0">{</span>
+                Controller.<span class="me1">ClearDoubleClick</span><span class="br0">(</span><span class="br0">)</span>;
+                Controller.<span class="me1">DoubleClickDir</span> = DCLICK_None;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This simple piece of code re-enables the walldodge after a dodging move has been executed. It only needs to be spawned via:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'DodgeHack'</span>, thePlayerController<span class="br0">)</span>;
+</pre></div>
+<p>Why does this work? Well, the <a href="../../../../articles/p/l/a/Legacy%7EPlayerController_178b.html" title="Legacy:PlayerController">PlayerController</a> class has a DoubleClickDir property which stores the current state of the dodging move. (see <a href="../../../../articles/a/c/t/Legacy%7EActor_Enums_e986.html" title="Legacy:Actor/Enums">Actor/Enums</a>/EDoubleClickDir) You could very well limit this to 2 dodges per jump-session, using the fact that the count should be reset whenever the movement type is walking, a way to see whether people have landed.</p>
+<p><b>Detecting which direction a player is pressing</b></p>
+<p>This might be of use whenever you want to do a combo system of your own, without having to adhere to the strict rules Epic set for these combos, AND without having to replace the controller class. (The rules I was talking about: You can only do a combo when you're not currently using one, each combo must have 4 keypresses etc.)</p>
+<p>The trick to use is that the original controller class stores the direction(s) a player is pressing in the OldKey variable, to compare it with the next tick. We could compose this variable ourselves by checking the aBaseY and aStrafe variables, but these are reset after the player's movement code. (meaning we only get second servings)</p>
+<p>Now, if you want to change the xPawn's PlayerTick function without replacing it, just make sure there's a clientside object that has the exact same function, but replace the</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span>aForward &gt; <span class="nu0">0</span><span class="br0">)</span>                CurrentKey = CurrentKey | <span class="nu0">1</span>; <span class="co1">// CK_Up</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>aForward &lt; <span class="nu0">0</span><span class="br0">)</span>  CurrentKey = CurrentKey | <span class="nu0">2</span>; <span class="co1">// CK_Down</span>
+    <span class="kw1">if</span> <span class="br0">(</span>aStrafe &gt; <span class="nu0">0</span><span class="br0">)</span>             CurrentKey = CurrentKey | <span class="nu0">4</span>; <span class="co1">// CK_Left</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>aStrafe &lt; <span class="nu0">0</span><span class="br0">)</span>   CurrentKey = CurrentKey | <span class="nu0">8</span>; <span class="co1">// CK_Right</span>
+</pre></div>
+<p>with something like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+CurrentKey=CheckPlayer.<span class="me1">OldKey</span>;
+</pre></div>
+<p>And the rest of the function should work fine! (of course, any variables that belong to the player should have this CheckPlayer. in front of them, but that's only detail)</p>
+<p>Now you can change whatever you want in the function. For an example of this code in action, check the Advanced Adrenaline mutator once it's out. (I will replace that with a link once it is&#160;:))</p>
+<p>Explore the various functions and properties used in the controller classes to see if you can modify something without actually subclassing a <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> or <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> class. Ofter there are ways to avoid subclassing, try to find them.</p>
+<p><a name="Game_Types" id="Game_Types"></a></p>
+<h2><span class="mw-headline">Game Types</span></h2>
+<p>With game types you don't have any problems replacing <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controllers</a>, <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawns</a>, the <a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a> or any other things specific for game types. Still there are some things you should check. These include Mutator and GameRules function calls.</p>
+<p>Some things to watch out for when subclassing certain classes:</p>
+<p>When overriding functions, make sure you either call the superclass version of those functions or add the relevant Mutator or GameRules function calls back in.<br />
+(see the individual class script files for details)</p>
+<p><a name="GameInfo" id="GameInfo"></a></p>
+<h3><span class="mw-headline">GameInfo</span></h3>
+<p>The Login function should call BaseMutator.ModifyLogin before it parses any of the options.</p>
+<p>RestartPlayer calls BaseMutator.PlayerChangedClass when the player changed his/her class since the last respawn.</p>
+<p>Some functions ask the mutators to return a default weapon class via the mutators' GetDefaultWeapon function. You should do the same in every place where that class is used. (or cache the output in a class variable)</p>
+<p>The SetPlayerDefaults function executes BaseMutator.ModifyPlayer. This function is used by mutators to initialize or update player-specific things and should always be called.</p>
+<p>PreventDeath calls the GameRulesModifiers.PreventDeath function if there are any GameRules.</p>
+<p>ReduceDamage should always call GameRulesModifiers.NetDamage. This is broken in UT2k3's <a href="../../../../articles/t/e/a/Legacy%7ETeamGame_5c58.html" title="Legacy:TeamGame">TeamGame</a> class, so please try to fix it in your GameInfo class. If you don't want GameRules classes to modify the actual damage you can still return a different value, but NetDamage often does other things based on the damage and not calling it might render those GameRules classes useless.</p>
+<p>In PickupQuery the GameRules' OverridePickupQuery function is called and has the chance to make the gametype skip the HandlePickupQuery function of the <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a>'s <a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a> items.</p>
+<p>GameRules also get a chance to override the RestartGame function with their own HandleRestartGame function, but they might as well only prepare for this event instead of completely handling it themselves.</p>
+<p>GameRules can also are allowed to define additional end-of-game conditions via their CheckEndGame function which is called by the GameInfo's own CheckEndGame function.</p>
+<p>This list is far from complete, but should give you an idea of what you have to look out for. Mutators, GameRules and also Controllers are allowed to handle a lot of things.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/y/c/Legacy%7EMychaeel_Modding_Etiquette_34cc.html" title="Legacy:Mychaeel/Modding Etiquette">Mychaeel/Modding Etiquette</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Wormbo:</b> This page has become neccessary since more and more mutator authors solve their problems (and unknowingly create a lot of new ones) by subclassing gametype-specific classes and replace them in their mutator. I hope it will minimize the number of incompatible mutators although I'm confident that there will still be enough people ignoring this fact.&#160;:(</p>
+<p><b>Tarquin:</b> How about we put a link to this page from all class pages that should NOT be subclassed in modding – there's a chance authors will look up those pages for info.&#160;:)</p>
+<p><b>Wormbo:</b> Good idea. /me goes and adds some linkage...&#160;:)</p>
+<p><b>Trystan:</b> At least here alternatives are proposed. A lot of the time you're working on something and don't really have time to wade through the various places to find an alternative - you just want to prototype and see if it works. With the alternatives to common pitfalls listed here you've saved the programmer that much time and made it that much more probable that he will do as the page suggests.</p>
+<p><b>Boksha:</b> Added a way to "replace" the PlayerTick function without replacing the controller.</p>
+<p><b>Dingus:</b> Not quite understanding the 'Replace PlayerTick' method described above. I need to do so in UT99 in order to check/modify mouseinput (aMouseX, aMouseY) on the client. Can you give a more specific example OR sample code. Thx.</p>
+<p><b>Tarquin:</b> When you make a custom PRI, how do you go about spawning them for each player? What about the <a href="../../../../articles/l/i/n/Legacy%7ELinkedReplicationInfo_fac0.html" title="Legacy:LinkedReplicationInfo">LinkedReplicationInfo</a> CustomReplicationInfo property in <a href="../../../../articles/p/l/a/Legacy%7EPlayerReplicationInfo_be80.html" title="Legacy:PlayerReplicationInfo">PlayerReplicationInfo</a>? Basically, what's the "way in"?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 36/1000000
+Post-expand include size: 125/2097152 bytes
+Template argument size: 80/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/i/Legacy%7EMaintaining_Compatibility_7f4d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/i/Legacy_talk%7EMaintaining_Compatibility_80b7.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Maintaining_Compatibility">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:54, 31 August 2005 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

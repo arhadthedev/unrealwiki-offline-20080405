@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:LibHTTP/HttpUtil - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:LibHTTP/HttpUtil</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_dd21.html" title="Legacy:LibHTTP">Legacy:LibHTTP</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; HttpUtil</div>
+<p>Miscelaneous static functions. Part of <a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_dd21.html" title="Legacy:LibHTTP">LibHTTP</a>.</p>
+<p>Contains various algorithms, under which <a href="../../../../articles/b/a/s/Legacy%7EBase64_644e.html" title="Legacy:Base64">Base64</a> encoding and <a href="../../../../articles/m/d/5/Legacy%7EMD5_9275.html" title="Legacy:MD5">MD5</a> hash generation. <a href="../../../../articles/m/d/5/Legacy%7EMD5_9275.html" title="Legacy:MD5">MD5</a> code by Petr Jelinek.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Constants"><span class="tocnumber">1</span> <span class="toctext">Constants</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Structures"><span class="tocnumber">3</span> <span class="toctext">Structures</span></a>
+<ul>
+<li class="toclevel-2"><a href="#DateTime"><span class="tocnumber">3.1</span> <span class="toctext">DateTime</span></a></li>
+<li class="toclevel-2"><a href="#MD5_CTX"><span class="tocnumber">3.2</span> <span class="toctext">MD5_CTX</span></a></li>
+<li class="toclevel-2"><a href="#xURL"><span class="tocnumber">3.3</span> <span class="toctext">xURL</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">4</span> <span class="toctext">Functions</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Constants" id="Constants"></a></p>
+<h2><span class="mw-headline">Constants</span></h2>
+<dl>
+<dt>TOKEN_HASH = "#"&#160;</dt>
+<dd>URL delimiter</dd>
+</dl>
+<dl>
+<dt>TOKEN_PATH = "/"&#160;</dt>
+<dd>URL delimiter</dd>
+</dl>
+<dl>
+<dt>TOKEN_PORT = ":"&#160;</dt>
+<dd>URL delimiter</dd>
+</dl>
+<dl>
+<dt>TOKEN_PROTOCOL = "://"&#160;</dt>
+<dd>URL delimiter; to seperate protocol from the rest</dd>
+</dl>
+<dl>
+<dt>TOKEN_QUERY = "?"&#160;</dt>
+<dd>URL delimiter</dd>
+</dl>
+<dl>
+<dt>TOKEN_USER = "@"&#160;</dt>
+<dd>URL delimiter</dd>
+</dl>
+<dl>
+<dt>TOKEN_USERPASS = ":"&#160;</dt>
+<dd>URL delimiter; to seperate the user and pass from the url</dd>
+</dl>
+<dl>
+<dt>URL_ESCAPE = "%"&#160;</dt>
+<dd>URL escape token</dd>
+</dl>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>string DayNamesLong[7]&#160;</dt>
+<dd>names of the days, 0 = sunday</dd>
+</dl>
+<dl>
+<dt>string DayNamesShort[7]&#160;</dt>
+<dd>names of the days, 0 = sunday</dd>
+</dl>
+<dl>
+<dt>int LOGDATA&#160;</dt>
+<dt>int LOGERR&#160;</dt>
+<dt>int LOGINFO&#160;</dt>
+<dt>int LOGWARN&#160;</dt>
+<dt>string MonthNames[13]&#160;</dt>
+<dd>month names to use for date string generation</dd>
+</dl>
+<dl>
+<dt>int MonthOffsetLeap[13]&#160;</dt>
+<dd>days offsets for each month</dd>
+</dl>
+<dl>
+<dt>int MonthOffset[13]&#160;</dt>
+<dd>days offsets for each month</dd>
+</dl>
+<p><a name="Structures" id="Structures"></a></p>
+<h2><span class="mw-headline">Structures</span></h2>
+<p><a name="DateTime" id="DateTime"></a></p>
+<h3><span class="mw-headline">DateTime</span></h3>
+<dl>
+<dt>int day&#160;</dt>
+<dt>int hour&#160;</dt>
+<dt>int minute&#160;</dt>
+<dt>int month&#160;</dt>
+<dt>int second&#160;</dt>
+<dt>int weekday&#160;</dt>
+<dt>int year&#160;</dt>
+</dl>
+<p><a name="MD5_CTX" id="MD5_CTX"></a></p>
+<h3><span class="mw-headline">MD5_CTX</span></h3>
+<p>MD5 context</p>
+<dl>
+<dt>array&lt;byte&gt; buffer&#160;</dt>
+<dd>input buffer</dd>
+</dl>
+<dl>
+<dt>array&lt;int&gt; count&#160;</dt>
+<dd>number of bits, modulo 2^64 (lsb first)</dd>
+</dl>
+<dl>
+<dt>array&lt;int&gt; state&#160;</dt>
+<dd>state (ABCD)</dd>
+</dl>
+<p><a name="xURL" id="xURL"></a></p>
+<h3><span class="mw-headline">xURL</span></h3>
+<p>a better URL structure that contains all elements</p>
+<dl>
+<dt>string hash&#160;</dt>
+<dd>the part after the #, without the leading #</dd>
+</dl>
+<dl>
+<dt>string hostname&#160;</dt>
+<dd>the hostname</dd>
+</dl>
+<dl>
+<dt>string location&#160;</dt>
+<dd>the location field, all from the hostname up to the query or hash string, includes leading /</dd>
+</dl>
+<dl>
+<dt>string password&#160;</dt>
+<dd>possible password that was in the url</dd>
+</dl>
+<dl>
+<dt>int port&#160;</dt>
+<dd>the port number specified in the URL</dd>
+</dl>
+<dl>
+<dt>string protocol&#160;</dt>
+<dd>protocol used, like http://, https://, ftp://. But without the '://' part. (ignore the space between the two slashes, it's required because of a bug in UE2)</dd>
+</dl>
+<dl>
+<dt>string query&#160;</dt>
+<dd>the part after the&#160;?, without the leading&#160;?</dd>
+</dl>
+<dl>
+<dt>string username&#160;</dt>
+<dd>username that was provided in the URL</dd>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<dl>
+<dt>int AdvSplit(string input, string delim, out array&lt;string&gt; elm, optional string quoteChar )</dt>
+<dd>Split a string with quotes, quotes may appear anywhere in the string, escape the quote char with a \ to use a literal.<br />
+Qoutes are removed from the result, and escaped quotes are used as normal quotes.</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; Base64Decode(array&lt;string&gt; indata )</dt>
+<dd>Decode a base64 encoded string</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; Base64Encode(array&lt;string&gt; indata, out array&lt;string&gt; B64Lookup )</dt>
+<dd>base64 encode an input array</dd>
+</dl>
+<dl>
+<dt>Base64EncodeLookupTable(out array&lt;string&gt; LookupTable )</dt>
+<dd>Generate the base 64 encode lookup table</dd>
+</dl>
+<dl>
+<dt>string basename(string filename )</dt>
+<dd>get the base filename</dd>
+</dl>
+<dl>
+<dt>int daysInYear(int year )</dt>
+<dd>returns the number of days in a year</dd>
+</dl>
+<dl>
+<dt>string DecToHex(int dec, int size )</dt>
+<dd>convert a decimal to hexadecimal notation</dd>
+</dl>
+<dl>
+<dt>string dirname(string filename )</dt>
+<dd>get the dirname of a filename, with traling slash</dd>
+</dl>
+<dl>
+<dt>int getPortByProtocol(string protocol )</dt>
+<dd>return the default port based on the protocol</dd>
+</dl>
+<dl>
+<dt>int HexToDec(string hexcode )</dt>
+<dd>convert a hexadecimal number to the integer counterpart</dd>
+</dl>
+<dl>
+<dt>string HTTPResponseCode(int code )</dt>
+<dd>return the description of a HTTP response code</dd>
+</dl>
+<dl>
+<dt>bool isLeapYear(int year )</dt>
+<dd>returns if year is a leap year</dd>
+</dl>
+<dl>
+<dt>int leapsThruEndOf(int y )</dt>
+</dl>
+<dl>
+<dt>Logf(name Comp, coerce string message, optional int level, optional coerce string Param1, optional coerce string Param2 )</dt>
+<dd>Write a log entry</dd>
+</dl>
+<dl>
+<dt>MD5Decode(out array&lt;int&gt; output, array&lt;byte&gt; input, int len )</dt>
+<dt>MD5Encode(out array&lt;byte&gt; output, array&lt;int&gt; input, int len )</dt>
+<dt>MD5Final(out array&lt;byte&gt; digest, out MD5_CTX context )</dt>
+<dd>finalize the MD5 context</dd>
+</dl>
+<dl>
+<dt>MD5Init(out MD5_CTX context )</dt>
+<dd>initialize the MD5 context</dd>
+</dl>
+<dl>
+<dt>MD5Move(string src, int srcindex, out array&lt;byte&gt; buffer, int bufindex, int len )</dt>
+<dt>string MD5String(string str )</dt>
+<dd>return the MD5 of the input string</dd>
+</dl>
+<dl>
+<dt>string MD5StringArray(array&lt;string&gt; stra, optional string Concat )</dt>
+<dd>Return the MD5 of the input string array. Concat is added after each line.</dd>
+</dl>
+<dl>
+<dt>MD5Transform(out array&lt;int&gt; Buf, array&lt;byte&gt; block )</dt>
+<dt>MD5Update(out MD5_CTX Context, string Data, int inputLen )</dt>
+<dd>update MD5 context</dd>
+</dl>
+<dl>
+<dt>bool parseUrl(string inURL, out xURL outURL )</dt>
+<dd>parses the inURL to an xURL structure, return true when succesful</dd>
+</dl>
+<dl>
+<dt>string RawUrlDecode(string instring, optional bool bIgnorePlus )</dt>
+<dd>This will decode URL encoded elements. If bIgnorePlus is set to true '+' will not be changed to a space</dd>
+</dl>
+<dl>
+<dt>string RawUrlEncode(string instring )</dt>
+<dd>Encode special characters, you should not use this function, it's slow and not secure, so try to avoid it.<br />
+This is replace the following characters: ";", "/", "?", ":", "@", "&amp;", "=", "+", ",", "$" and " "</dd>
+</dl>
+<dl>
+<dt>ReplaceChar(out string instring, string from, string to )</dt>
+<dd>replace part of a string</dd>
+</dl>
+<dl>
+<dt>int ROTATE_LEFT(int x, int n )</dt>
+<dt>int stringToTimestamp(string datestring, optional int TZoffset )</dt>
+<dd>Parse a string to a timestamp</dd>
+</dl>
+<p>The date string is formatted as: Wdy, DD-Mon-YYYY HH:MM:SS GMT<br />
+TZoffset is the local offset to GMT</p>
+<dl>
+<dt>int timestamp(int year, int mon, int day, int hour, int min, int sec )</dt>
+<dd>Create a UNIX timestamp.<br />
+Warning: Assumes info is passed in GMT. So make sure you correct the timezone if you are going to send a timestamp generated with this function to an other server.</dd>
+</dl>
+<dl>
+<dt>DateTime timestampToDatetime(int timestamp )</dt>
+<dd>converts a timestamp to a DateTime record</dd>
+</dl>
+<dl>
+<dt>string timestampToString(int timestamp, optional string Timezone, optional string format )</dt>
+<dd>convert a timestamp into a string.<br />
+Format can be one of the following strings:<br />
+"822", "1123"&#160;: <a href="http://tools.ietf.org/html/rfc822" class="external" title="http://tools.ietf.org/html/rfc822">RFC 822</a>, updated by <a href="http://tools.ietf.org/html/rfc1123" class="external" title="http://tools.ietf.org/html/rfc1123">RFC 1123</a> (default), timezone is the TZ CODE<br />
+"850", "1036"&#160;: <a href="http://tools.ietf.org/html/rfc850" class="external" title="http://tools.ietf.org/html/rfc850">RFC 850</a>, obsoleted by <a href="http://tools.ietf.org/html/rfc1036" class="external" title="http://tools.ietf.org/html/rfc1036">RFC 1036</a>, timezone is the TZ CODE<br />
+"2822"&#160;: <a href="http://tools.ietf.org/html/rfc2822" class="external" title="http://tools.ietf.org/html/rfc2822">RFC 2822</a>, timezone is a +0000 like string<br />
+"asctime": ANSI C's asctime() format, timezone is an integer that will increment the hour</dd>
+</dl>
+<dl>
+<dt>string Trim(coerce string S )</dt>
+<dd>Trim leading and trailing spaces</dd>
+</dl>
+<dl>
+<dt>float TZtoOffset(string TZ )</dt>
+<dd>Converts a timezone code to an offset.</dd>
+</dl>
+<dl>
+<dt>string xURLtoLocation(xURL inURL, optional bool bIncludePassword )</dt>
+<dd>convert a xURL to a location string, just the location+query+hash</dd>
+</dl>
+<dl>
+<dt>string xURLtoString(xURL inURL, optional bool bIncludePassword )</dt>
+<dd>converts a xURL to a string. bIncludePassword defaults to false</dd>
+</dl>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 36/1000000
+Post-expand include size: 157/2097152 bytes
+Template argument size: 85/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_HttpUtil_8ee0.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/i/b/Legacy_talk%7ELibHTTP_HttpUtil_d984.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:LibHTTP/HttpUtil">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:15, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

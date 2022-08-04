@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Zoning - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Zoning</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Zoning is the dividing of a map into several distinct areas called <b>zones</b>. It is one of several <a href="../../../../articles/m/a/p/Legacy%7EMap_Optimization_c3b2.html" title="Legacy:Map Optimization">Map Optimization</a> techniques: put simply, the engine renders only the zones that the player can see. In versions of the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal Engine</a> prior to <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>, zoning also allowed physical effects such as water, gravity, etc: see <a href="../../../../articles/z/o/n/Legacy%7EZoning_%28UT%29_4815.html" title="Legacy:Zoning (UT)">Zoning (UT)</a>. These are now made with <a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">volumes</a>. In summary, zones are used for:</p>
+<ul>
+<li>Optimizing the map to improve performance.</li>
+<li>Naming areas of the map for team <a href="../../../../articles/g/a/m/Legacy%7EGametype_98de.html" title="Legacy:Gametype">gametype</a> info displays (e.g. "Blue base", "Red base").</li>
+<li>Special effects (in older versions of the engine - this is now done with volumes).</li>
+<li>Set lighting for a large area with <a href="../../../../articles/z/o/n/Legacy%7EZonelight_6510.html" title="Legacy:Zonelight">Zonelight</a>. Note that this usually doesn't look good.</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Making_Zones"><span class="tocnumber">1</span> <span class="toctext">Making Zones</span></a></li>
+<li class="toclevel-1"><a href="#Seeing_Zones"><span class="tocnumber">2</span> <span class="toctext">Seeing Zones</span></a></li>
+<li class="toclevel-1"><a href="#Defining_Zone_Properties"><span class="tocnumber">3</span> <span class="toctext">Defining Zone Properties</span></a></li>
+<li class="toclevel-1"><a href="#How_Zones_Optimize"><span class="tocnumber">4</span> <span class="toctext">How Zones Optimize</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Example"><span class="tocnumber">4.1</span> <span class="toctext">Example</span></a></li>
+<li class="toclevel-2"><a href="#Another_Example"><span class="tocnumber">4.2</span> <span class="toctext">Another Example</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#External_Reference_.3D"><span class="tocnumber">6</span> <span class="toctext">External Reference =</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Making_Zones" id="Making_Zones"></a></p>
+<h2><span class="mw-headline">Making Zones</span></h2>
+<p>This is accomplished by flagging certain <a href="../../../../articles/b/s/p/Legacy%7EBSP_220f.html" title="Legacy:BSP">BSP</a> <a href="../../../../articles/s/u/r/Legacy%7ESurface_133c.html" title="Legacy:Surface">surfaces</a> to be <a href="../../../../articles/z/o/n/Legacy%7EZone_Portal_e679.html" title="Legacy:Zone Portal">zone portals</a>: these mark the limit between zones. Zones are defined when the <a href="../../../../articles/b/u/i/Legacy%7EBuild_af4b.html" title="Legacy:Build">build</a> process runs, and identifies areas which are separate. In practice, most zone portals are made as <a href="../../../../articles/s/h/e/Legacy%7ESheet_cbf6.html" title="Legacy:Sheet">sheet</a> <a href="../../../../articles/b/r/u/Legacy%7EBrush_03bb.html" title="Legacy:Brush">brushes</a> and added with the <a href="../../../../articles/a/d/d/Legacy%7EAdd_Special_c3e6.html" title="Legacy:Add Special">Add Special</a> button. But more advanced users can set the flags in the <a href="../../../../articles/s/u/r/Legacy%7ESurface_Properties_767d.html" class="mw-redirect" title="Legacy:Surface Properties">Surface Properties</a> themselves.</p>
+<ul>
+<li>two unconnected spaces are different zones (eg two separate subtracted cubes)</li>
+<li>two spaces which are completely divided by zone portals are different zones.</li>
+</ul>
+<p>If you don't get different zones where you think you should, you have a leak! Check you have portals everywhere and that they cover properly.</p>
+<p><a name="Seeing_Zones" id="Seeing_Zones"></a></p>
+<h2><span class="mw-headline">Seeing Zones</span></h2>
+<p>To show the different zones in <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a>, click the Zone/Portal icon (#11 in the screenshot below) on the <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Viewport_4e72.html" title="Legacy:UnrealEd Viewport">UnrealEd Viewport</a> title bar. The surfaces of different zones will be drawn using different colors instead of showing the textures. Use this function to ensure that a zone doesn't leak.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_interface-Ed3-viewportbar.png_dac4.html" class="image" title="Viewport Title Bar: Icon 11 - Zone/Portal View"><img alt="Viewport Title Bar: Icon 11 - Zone/Portal View" src="../../../../images/Legacy_interface-Ed3-viewportbar.png" width="447" height="165" border="0" /></a></span></div>
+</div>
+<p><a name="Defining_Zone_Properties" id="Defining_Zone_Properties"></a></p>
+<h2><span class="mw-headline">Defining Zone Properties</span></h2>
+<p>Zone properties are defined by a <a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a> actor (or one of its subclasses). Zones don't <i>need</i> one of these: without one, a zone will simple have default properties. To set the properties of a zone:</p>
+<ol>
+<li><a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an Actor</a> &gt;&gt; Info &gt;&gt; <a href="../../../../articles/z/o/n/Legacy%7EZoneInfo_c38f.html" title="Legacy:ZoneInfo">ZoneInfo</a></li>
+<li>Set its properties as you wish</li>
+<li><a href="../../../../articles/r/e/b/Legacy%7ERebuild_3acc.html" title="Legacy:Rebuild">Rebuild</a></li>
+</ol>
+<p>If you want the <a href="../../../../articles/s/k/y/Legacy%7ESkyBox_f388.html" title="Legacy:SkyBox">SkyBox</a> to be visible, then they <b>do</b> need a ZoneInfo.</p>
+<p>You can change the actor's properties later without rebuilding, but rebuilding is necessary so UnrealEd "notices" the ZoneInfo belongs with the zone.</p>
+<p><a name="How_Zones_Optimize" id="How_Zones_Optimize"></a></p>
+<h2><span class="mw-headline">How Zones Optimize</span></h2>
+<p>By using a number of zone portals to separate areas of the map into air-tight chunks, whole sections of the map can be tested for "visibility" simply by processing the zone portals that enclose the area.</p>
+<p>If no part of the zone portal(s) sealing an area of the map are visible then the entire area cannot be seen. This means that that area of the map need not be processed. This lets the engine quickly throw out everything inside that zone.</p>
+<p>Conversely, if any part of the zone portal is visible then the parts of the zone that are visible through the geometry of the brush(es) creating the zone portal(s) into that zone will be visible. For this reason it is best to place zone portals separate areas of the map in the corridors that join the map areas. In particular, if you have a hallway between two rooms, it is beneficial to place zone portal on either end of that hallway so that the room on the other side can be thrown out from many view angles. This works because from anywhere but straight on the portal on the other end of the hallway isn't visible through the portal on the near end. It is also important to make portals as small as possible while still sealing the zone because it is the source geometry of the portal sheets that is used for determining visibility of objects and other zone portals inside the zone.</p>
+<p>As a general rule of thumb zone portals used in this manner should be visible from as few angles as possible. Essentially, the less you can see these zone portals the better. However, the only way to limit what angles the zone portal is visible from in UT2003 are to place additional zone portals or anti-portals in front of it.</p>
+<p><a name="Example" id="Example"></a></p>
+<h3><span class="mw-headline">Example</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_zoning-optimization-example.png_cdb5.html" class="image" title="A very simple map."><img alt="A very simple map." src="../../../../images/Legacy_zoning-optimization-example.png" width="195" height="195" border="0" /></a></span></div>
+</div>
+<p>Above is the top view of a simple map. We have four rooms, connected by corridors. The green lines are zone portals, so we have four zones.</p>
+<p>When the player is in the North room, she can't see <i>any</i> of South. So that room simply isn't rendered. But she might be able to see some of East or West, depending on how she faces. So the engine looks at how much of the portal she sees, and works out which bits of the E and W zones are visible through the portals.</p>
+<p>In other words, out of four zones:</p>
+<dl>
+<dd>N – we're in it</dd>
+<dd>S – not rendered</dd>
+<dd>E, W – partially rendered.</dd>
+</dl>
+<p><a name="Another_Example" id="Another_Example"></a></p>
+<h3><span class="mw-headline">Another Example</span></h3>
+<p>Here's a map that shows how the size of the portal affects view culling:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_zoning_portalsizematters.jpeg_e804.html" class="image" title="The same geometry with different portals, in the editor and in-game."><img alt="The same geometry with different portals, in the editor and in-game." src="../../../../images/Legacy_zoning_portalsizematters.jpeg" width="500" height="590" border="0" /></a></span></div>
+</div>
+<p>The top picture is an overhead view of the map, you can see that in the left room the portal extends across the whole width of the room, where as in the right image it only fills the doorway. The middle is again the editor, this time with the zone color overlaid to show that the zones are infact being created. Bottom is in-game shots from the exact same position relative to the rooms, showing how the zones in the left room do nothing, while the zones in the right room cull to their bounds.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/a/p/Legacy%7EMap_Optimization_c3b2.html" title="Legacy:Map Optimization">Map Optimization</a></li>
+<li><a href="../../../../articles/a/n/t/Legacy%7EAntiportal_c9ef.html" title="Legacy:Antiportal">Antiportal</a></li>
+<li><a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">Volume</a></li>
+<li><a href="../../../../articles/z/o/n/Legacy%7EZonelight_6510.html" title="Legacy:Zonelight">Zonelight</a></li>
+</ul>
+<p><a name="External_Reference_.3D" id="External_Reference_.3D"></a></p>
+<h2><span class="mw-headline">External Reference =</span></h2>
+<p>See this basic reference for Zone Technique: <a href="http://unreal.epicgames.com/Zones.htm" class="external text" title="http://unreal.epicgames.com/Zones.htm" rel="nofollow">Unreal Zones by Tim Sweeney</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 6/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/z/o/n/Legacy%7EZoning_64c1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/z/o/n/Legacy_talk%7EZoning_26b5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Zoning">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 16:37, 3 April 2004 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

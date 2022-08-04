@@ -1,0 +1,721 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:LibHTTP/HttpSock - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:LibHTTP/HttpSock</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_dd21.html" title="Legacy:LibHTTP">Legacy:LibHTTP</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; HttpSock</div>
+<p>Base of <a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_dd21.html" title="Legacy:LibHTTP">LibHTTP</a> this implements the main network methods for connecting</p>
+<p>to a webserver and retreiving data from it. Binary data is not supported.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Constants"><span class="tocnumber">1</span> <span class="toctext">Constants</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Authentication"><span class="tocnumber">2.1</span> <span class="toctext">Authentication</span></a></li>
+<li class="toclevel-2"><a href="#Options"><span class="tocnumber">2.2</span> <span class="toctext">Options</span></a></li>
+<li class="toclevel-2"><a href="#Proxy"><span class="tocnumber">2.3</span> <span class="toctext">Proxy</span></a></li>
+<li class="toclevel-2"><a href="#URL"><span class="tocnumber">2.4</span> <span class="toctext">URL</span></a></li>
+<li class="toclevel-2"><a href="#XferMode"><span class="tocnumber">2.5</span> <span class="toctext">XferMode</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Enums"><span class="tocnumber">3</span> <span class="toctext">Enums</span></a>
+<ul>
+<li class="toclevel-2"><a href="#EAuthMethod"><span class="tocnumber">3.1</span> <span class="toctext">EAuthMethod</span></a></li>
+<li class="toclevel-2"><a href="#ETransferMode"><span class="tocnumber">3.2</span> <span class="toctext">ETransferMode</span></a></li>
+<li class="toclevel-2"><a href="#HTTPState"><span class="tocnumber">3.3</span> <span class="toctext">HTTPState</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Structures"><span class="tocnumber">4</span> <span class="toctext">Structures</span></a>
+<ul>
+<li class="toclevel-2"><a href="#RequestHistoryEntry"><span class="tocnumber">4.1</span> <span class="toctext">RequestHistoryEntry</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Delegates"><span class="tocnumber">5</span> <span class="toctext">Delegates</span></a></li>
+<li class="toclevel-1"><a href="#Functions"><span class="tocnumber">6</span> <span class="toctext">Functions</span></a></li>
+<li class="toclevel-1"><a href="#Events"><span class="tocnumber">7</span> <span class="toctext">Events</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Constants" id="Constants"></a></p>
+<h2><span class="mw-headline">Constants</span></h2>
+<dl>
+<dt>BUFFERSIZE = 2048&#160;</dt>
+<dd>the output buffer size</dd>
+</dl>
+<dl>
+<dt>HTTP_CONNECT = "CONNECT"&#160;</dt>
+<dt>HTTP_DELETE = "DELETE"&#160;</dt>
+<dt>HTTP_GET = "GET"&#160;</dt>
+<dt>HTTP_HEAD = "HEAD"&#160;</dt>
+<dt>HTTP_OPTIONS = "OPTIONS"&#160;</dt>
+<dt>HTTP_POST = "POST"&#160;</dt>
+<dt>HTTP_PUT = "PUT"&#160;</dt>
+<dt>HTTP_TRACE = "TRACE"&#160;</dt>
+</dl>
+<dl>
+<dt>VERSION = 401&#160;</dt>
+<dd>LibHTTP version number</dd>
+</dl>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>array&lt;string&gt; authBasicLookup&#160;</dt>
+<dd>Base64 encoding lookup table</dd>
+</dl>
+<dl>
+<dt>bool bAuthTrap&#160;</dt>
+<dd>true if an authentication retry should happen</dd>
+</dl>
+<dl>
+<dt>bool bIsChunked&#160;</dt>
+<dd>true if the data is chunked (e.g. Transfer-Encoding: chunked )</dd>
+</dl>
+<dl>
+<dt>int BoundPort&#160;</dt>
+<dd>the port we are connected to</dd>
+</dl>
+<dl>
+<dt>bool bTempProxyOverride&#160;</dt>
+<dd>will be set to true in case of a ...</dd>
+</dl>
+<dl>
+<dt>bool bTimeout&#160;</dt>
+<dd>true in case of a connection timeout</dd>
+</dl>
+<dl>
+<dt>bool bUseTempProxy&#160;</dt>
+<dd>if true use the TempProxy</dd>
+</dl>
+<dl>
+<dt>int chunkedCounter&#160;</dt>
+<dd>bytes left in the chunk</dd>
+</dl>
+<dl>
+<dt>HTTPCookies Cookies&#160;</dt>
+<dd>the cookie data instance</dd>
+</dl>
+<dl>
+<dt>string CRLF&#160;</dt>
+<dd>constant CR LF</dd>
+</dl>
+<dl>
+<dt>int CurRedir&#160;</dt>
+<dd>current number of redirections</dd>
+</dl>
+<dl>
+<dt>HTTPState curState&#160;</dt>
+<dd>The current state of the socket</dd>
+</dl>
+<dl>
+<dt>string EXTENTION&#160;</dt>
+<dd>If you make a custom build of this package, or subclass this class then please change the following constant to countain your "extention" name. This will be used in the UserAgent string. (Change it in the defaultproperties)</dd>
+</dl>
+<dl>
+<dt>bool FollowingRedir&#160;</dt>
+<dd>true if a redirection should be followed</dd>
+</dl>
+<dl>
+<dt>class&lt;HttpCookies&gt; HttpCookieClass&#160;</dt>
+<dd>Cookie class to use (if it has not been set)</dd>
+</dl>
+<dl>
+<dt>HttpLink HttpLink&#160;</dt>
+<dd>handle to the HttpLink</dd>
+</dl>
+<dl>
+<dt>class&lt;HttpLink&gt; HttpLinkClass&#160;</dt>
+<dd>the link class to use</dd>
+</dl>
+<dl>
+<dt>string HTTPVER&#160;</dt>
+<dd>The HTTP version to use. Either 1.0 or 1.1 are supported.</dd>
+</dl>
+<dl>
+<dt>string inBuffer&#160;</dt>
+<dd>i/o buffers</dd>
+</dl>
+<dl>
+<dt>int LastStatus&#160;</dt>
+<dd>The last returned HTTP status code</dd>
+</dl>
+<dl>
+<dt>InternetLink.IpAddr LocalLink&#160;</dt>
+<dd>local link address</dd>
+</dl>
+<dl>
+<dt>string MultiPartBoundary&#160;</dt>
+<dd>Multipart boundary string, used to split fields</dd>
+</dl>
+<dl>
+<dt>string outBuffer&#160;</dt>
+<dd>i/o buffers</dd>
+</dl>
+<dl>
+<dt>bool procHeader&#160;</dt>
+<dd>true if headers are being processed</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; RequestData&#160;</dt>
+<dd>the request data</dd>
+</dl>
+<dl>
+<dt>float RequestDuration&#160;</dt>
+<dd>duration of the last request</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; RequestHeaders&#160;</dt>
+<dd>the request headers</dd>
+</dl>
+<dl>
+<dt>array&lt;RequestHistoryEntry&gt; RequestHistory&#160;</dt>
+<dd>history with requests for a single request, will contain more then one entry when redirections are followed</dd>
+</dl>
+<dl>
+<dt>string RequestMethod&#160;</dt>
+<dd>the request method</dd>
+</dl>
+<dl>
+<dt>HttpResolveCache ResolveCache&#160;</dt>
+<dd>cache object with hostname resolves</dd>
+</dl>
+<dl>
+<dt>string ResolveHostname&#160;</dt>
+<dd>the hostname being resolved, used to add to the resolve cache</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; ReturnData&#160;</dt>
+<dd>the return data</dd>
+</dl>
+<dl>
+<dt>array&lt;string&gt; ReturnHeaders&#160;</dt>
+<dd>the return headers</dd>
+</dl>
+<dl>
+<dt>float StartRequestTime&#160;</dt>
+<dd>start of the request, will be set after the connection was opened and before the actual request will be send</dd>
+</dl>
+<dl>
+<dt>HttpUtil.xURL TempProxy&#160;</dt>
+<dd>temporary proxy configuration</dd>
+</dl>
+<dl>
+<dt>int TZoffset&#160;</dt>
+<dd>Timezone Offset, dynamically calculated from the server's time</dd>
+</dl>
+<dl>
+<dt>HttpUtil Utils&#160;</dt>
+<dd>utility class, used to speed up lookups (optimization)</dd>
+</dl>
+<p><a name="Authentication" id="Authentication"></a></p>
+<h3><span class="mw-headline">Authentication</span></h3>
+<dl>
+<dt>array&lt;GameInfo.KeyValuePair&gt; AuthInfo&#160;</dt>
+<dd>authentication information</dd>
+</dl>
+<dl>
+<dt>EAuthMethod AuthMethod&#160;</dt>
+<dd>Authentication method to use when <code>sUsername</code> is set. This will automatically be set when a <code>WWW-Authenticate</code> header is received</dd>
+</dl>
+<dl>
+<dt>bool bAutoAuthenticate&#160;</dt>
+<dd>If username and password have been set automatically retry the request to authenticate. Note: this can only be done in a second try because the authentication method is required.</dd>
+</dl>
+<p><a name="Options" id="Options"></a></p>
+<h3><span class="mw-headline">Options</span></h3>
+<dl>
+<dt>bool bFollowRedirect&#160;</dt>
+<dd>when set to false it won't follow redirects</dd>
+</dl>
+<dl>
+<dt>bool bProcCookies&#160;</dt>
+<dd>Process incoming cookies, defaults to true</dd>
+</dl>
+<dl>
+<dt>bool bRfcCompliantRedirect&#160;</dt>
+<dd>responding to HTTP redirect headers is RFC compliant, otherwise it will behave much like some other HTTP clients behave. This means that in case of a 301/302 it will set the request method from POST to GET. This is not the way it should happen according to the standard.</dd>
+</dl>
+<dl>
+<dt>bool bSendCookies&#160;</dt>
+<dd>Send cookie data when available, defaults to true</dd>
+</dl>
+<dl>
+<dt>float fConnectTimout&#160;</dt>
+<dd>connection timeout, if the connection couldn't be established within this time limit it will abort the connection and call <code>OnTimeout()</code></dd>
+</dl>
+<dl>
+<dt>int iMaxRedir&#160;</dt>
+<dd>Maximum redirections to follow</dd>
+</dl>
+<dl>
+<dt>int iVerbose&#160;</dt>
+<dd>log verbosity, you probably want to leave this 0. check the HttpUtil class for various log levels.</dd>
+</dl>
+<p><a name="Proxy" id="Proxy"></a></p>
+<h3><span class="mw-headline">Proxy</span></h3>
+<dl>
+<dt>bool bUseProxy&#160;</dt>
+<dd>Use a proxy server, this is (and the other proxy settins) a client setting. It's meant for clients to be set when they need to use a proxy.</dd>
+</dl>
+<dl>
+<dt>int iProxyPort&#160;</dt>
+<dd>The proxy port</dd>
+</dl>
+<dl>
+<dt>array&lt;GameInfo.KeyValuePair&gt; ProxyAuthInfo&#160;</dt>
+<dd>authentication information</dd>
+</dl>
+<dl>
+<dt>EAuthMethod ProxyAuthMethod&#160;</dt>
+<dd>Authentication method to use when <code>sUsername</code> is set. This will automatically be set when a <code>Proxy-Authorisation</code> header is received</dd>
+</dl>
+<dl>
+<dt>string sProxyHost&#160;</dt>
+<dd>The hostname of the proxy</dd>
+</dl>
+<dl>
+<dt>string sProxyPass&#160;</dt>
+<dd>proxy authentication information</dd>
+</dl>
+<dl>
+<dt>string sProxyUser&#160;</dt>
+<dd>proxy authentication information</dd>
+</dl>
+<p><a name="URL" id="URL"></a></p>
+<h3><span class="mw-headline">URL</span></h3>
+<dl>
+<dt>HttpUtil.xURL CurrentURL&#160;</dt>
+<dd>the URL struct for the current request</dd>
+</dl>
+<dl>
+<dt>string DefaultAccept&#160;</dt>
+<dd>the default value for the Accept header, we only support "text/*"</dd>
+</dl>
+<dl>
+<dt>int iLocalPort&#160;</dt>
+<dd>the local port, leave zero to use a random port (adviced)</dd>
+</dl>
+<p><a name="XferMode" id="XferMode"></a></p>
+<h3><span class="mw-headline">XferMode</span></h3>
+<dl>
+<dt>int iMaxBytesPerTick&#160;</dt>
+<dd>maximum number of bytes to download in a single tick</dd>
+</dl>
+<dl>
+<dt>int iMaxIterationsPerTick&#160;</dt>
+<dd>Maximum iterations per tick in fast transfer mode. This defines the number of download retries (when nothing was received) the code may perform within a single tick. Because the data pending variable is only updated each tick it will remain true until the transfer function returns even tho there is no data pending.</dd>
+</dl>
+<dl>
+<dt>ETransferMode TransferMode&#160;</dt>
+<dd>Transfer mode to use during downloads</dd>
+</dl>
+<p><a name="Enums" id="Enums"></a></p>
+<h2><span class="mw-headline">Enums</span></h2>
+<p><a name="EAuthMethod" id="EAuthMethod"></a></p>
+<h3><span class="mw-headline">EAuthMethod</span></h3>
+<p>Possible authentication methods, Basic used Base64 encoding to encode the username and password. Digest is more secure.</p>
+<dl>
+<dt>AM_None&#160;</dt>
+<dt>AM_Unknown&#160;</dt>
+<dt>AM_Basic&#160;</dt>
+<dt>AM_Digest&#160;</dt>
+</dl>
+<p><a name="ETransferMode" id="ETransferMode"></a></p>
+<h3><span class="mw-headline">ETransferMode</span></h3>
+<p>Method used to download the data. <code>TM_Fast</code> will try to read as much as possible in a single tick, this will have an impact on the game performance during the download. Only use this mode when it's time critical. Use the variables <code>iMaxBytesPerTick</code> and <code>iMaxIterationsPerTick</code> to tweak this transfer mode.</p>
+<dl>
+<dt>TM_Normal&#160;</dt>
+<dt>TM_Fast&#160;</dt>
+</dl>
+<p><a name="HTTPState" id="HTTPState"></a></p>
+<h3><span class="mw-headline">HTTPState</span></h3>
+<dl>
+<dt>HTTPState_Resolving&#160;</dt>
+<dt>HTTPState_Connecting&#160;</dt>
+<dt>HTTPState_SendingRequest&#160;</dt>
+<dt>HTTPState_WaitingForResponse&#160;</dt>
+<dt>HTTPState_ReceivingData&#160;</dt>
+<dt>HTTPState_Closed&#160;</dt>
+</dl>
+<p><a name="Structures" id="Structures"></a></p>
+<h2><span class="mw-headline">Structures</span></h2>
+<p><a name="RequestHistoryEntry" id="RequestHistoryEntry"></a></p>
+<h3><span class="mw-headline">RequestHistoryEntry</span></h3>
+<dl>
+<dt>string Hostname&#160;</dt>
+<dd>server hostname</dd>
+</dl>
+<dl>
+<dt>int HTTPresponse&#160;</dt>
+<dd>the HTTP response code received</dd>
+</dl>
+<dl>
+<dt>string Location&#160;</dt>
+<dd>location, can include GET data</dd>
+</dl>
+<dl>
+<dt>string Method&#160;</dt>
+<dd>method used in the request</dd>
+</dl>
+<dl>
+<dt>HttpUtil.xURL URL&#160;</dt>
+<dd>the request URL</dd>
+</dl>
+<p><a name="Delegates" id="Delegates"></a></p>
+<h2><span class="mw-headline">Delegates</span></h2>
+<dl>
+<dt>bool OnComplete(HttpSock Sender )</dt>
+<dd>Will be called when the operation was completed successfully.<br />
+It won't be called when an time out occured.</dd>
+</dl>
+<dl>
+<dt>bool OnConnectError(HttpSock Sender )</dt>
+<dd>Called when Open() fails</dd>
+</dl>
+<dl>
+<dt>bool OnConnectionTimeout(HttpSock Sender )</dt>
+<dd>called when the connection has timed out (e.g. open() failed after a set time)</dd>
+</dl>
+<dl>
+<dt>bool OnError(HttpSock Sender, string ErrorMessage, optional string Param1, optional string Param2 )</dt>
+<dd>Will be called in case of an internal error.</dd>
+</dl>
+<dl>
+<dt>OnFollowRedirect(HttpSock Sender, HttpUtil.xURL NewLocation )</dt>
+<dd>Called before the redirection is followed, return false to prevernt following the redirection</dd>
+</dl>
+<dl>
+<dt>OnPreConnect(HttpSock Sender )</dt>
+<dd>Called before the connection is established.</dd>
+</dl>
+<dl>
+<dt>OnRequestBody(HttpSock Sender )</dt>
+<dd>Will be called when the request body has to be send. Do note that you are required to set the <code>Content-Length</code> header to the total size of the content being send. If you use this delegate to send the request body manually you will have to set the Content-Length header yourself.</dd>
+</dl>
+<dl>
+<dt>bool OnRequireAuthorization(HttpSock Sender, EAuthMethod method, array&lt;GameInfo.KeyValuePair&gt; info )</dt>
+<dd>Will be called when authorization is required for the current location.<br />
+This will be called directly after receiving the WWW-Authenticate header. So it's best not to stall this call. It's just a notification.</dd>
+</dl>
+<dl>
+<dt>int OnRequireProxyAuthorization(HttpSock Sender, EAuthMethod method, array&lt;GameInfo.KeyValuePair&gt; info )</dt>
+<dd>Will be called when authorization is required for the current proxy.<br />
+This will be called directly after receiving the Proxy-Authenticate header. So it's best not to stall this call. It's just a notification.</dd>
+</dl>
+<dl>
+<dt>OnResolved(HttpSock Sender, string hostname, InternetLink.IpAddr Addr )</dt>
+<dd>Will be called when the host name is resolved.<br />
+Return true to continue, or false to abort.</dd>
+</dl>
+<dl>
+<dt>string OnResolveFailed(HttpSock Sender, string hostname )</dt>
+<dd>Called when the resolved failed, hostname is the hostname that could not be resolved</dd>
+</dl>
+<dl>
+<dt>string OnResponseBody(HttpSock Sender, string line )</dt>
+<dd>Will be called for every response line received (only the body). Return false to stop the default behavior of storing the response body. Use this delegate if you need to have live updates of the content and can not wait until the request is complete.</dd>
+</dl>
+<dl>
+<dt>string OnReturnCode(HttpSock Sender, int ReturnCode, string ReturnMessage, string HttpVer )</dt>
+<dd>Will be called when the return code has been received; This is the first function called after the request has been send.</dd>
+</dl>
+<dl>
+<dt>bool OnSendRequestHeaders(HttpSock Sender )</dt>
+<dd>This delegate will be send right before the headers are send to the webserver. If you want to change the headers you should do it here.<br />
+Warning: becarefull not to change or unset automatically generated headers that are important for this request (like authentication or request body headers)</dd>
+</dl>
+<p><a name="Functions" id="Functions"></a></p>
+<h2><span class="mw-headline">Functions</span></h2>
+<dl>
+<dt>bool Abort( )</dt>
+<dd>Abort the current request, if possible</dd>
+</dl>
+<dl>
+<dt>bool AddHeader(string hname, coerce string value, optional bool bNoReplace )</dt>
+<dd>Add a header, case insensitive. Set bNoReplace to false to not overwrite the old header. Returns true when the header has been set.</dd>
+</dl>
+<dl>
+<dt>bool CachedResolve(coerce string hostname, optional bool bDontConnect )</dt>
+<dd>lookup a chached resolve and connect if found</dd>
+</dl>
+<dl>
+<dt>bool clearFormData( )</dt>
+<dd>This will clear the POST data. Use this before calling <code>setFormData</code></dd>
+</dl>
+<dl>
+<dt>ClearRequestData(optional bool bDontClearAuth )</dt>
+<dd>This function will clear the previous request data. You may want to use this when you do a new request with the same socket. Previous set headers won't be unset automatically.</dd>
+</dl>
+<dl>
+<dt>Closed( )</dt>
+<dd>connection closed, check for a required redirection</dd>
+</dl>
+<dl>
+<dt>CloseSocket( )</dt>
+<dd>destroy the current socket, should only be called in case of a timeout</dd>
+</dl>
+<dl>
+<dt>bool CreateSocket( )</dt>
+<dd>create the socket, if required</dd>
+</dl>
+<dl>
+<dt>int DataSize(array&lt;string&gt; data )</dt>
+<dd>Return the actual data size of a string array, it appends sizeof(CRLF) for each line. This is used for sending the RequestData.</dd>
+</dl>
+<dl>
+<dt>string genAuthorization(EAuthMethod method, string Username, string Password, array&lt;GameInfo.KeyValuePair&gt; Info )</dt>
+<dd>generate the authentication data, depending on the method it will be either a Basic or Digest response</dd>
+</dl>
+<dl>
+<dt>string genBasicAuthorization(string Username, string Password )</dt>
+<dd>Generated a basic authentication response</dd>
+</dl>
+<dl>
+<dt>string genDigestAuthorization(string Username, string Password, array&lt;GameInfo.KeyValuePair&gt; Info )</dt>
+<dd>generate the Digest authorization data string</dd>
+</dl>
+<dl>
+<dt>bool get(string location )</dt>
+<dd>This will perform a simple HTTP GET request. This will be the most commonly used function to retrieve a document from a webserver. The location is just like the location you would use in your webbrowser.</dd>
+</dl>
+<dl>
+<dt>string getHTTPversion( )</dt>
+<dd>return thr current HTTP version setting</dd>
+</dl>
+<dl>
+<dt>string GetRequestHeader(string hname, optional coerce string def )</dt>
+<dd>Returns the value of the requested header, or default if not found</dd>
+</dl>
+<dl>
+<dt>string GetReturnHeader(string hname, optional coerce string def )</dt>
+<dd>Returns the value of the returned header, or default if not found</dd>
+</dl>
+<dl>
+<dt>int getTZoffset( )</dt>
+<dd>Return the timezone offset</dd>
+</dl>
+<dl>
+<dt>string GetValue(string key, array&lt;GameInfo.KeyValuePair&gt; Info, optional coerce string def )</dt>
+<dd>Returns the value of a <code>KeyValuePair</code></dd>
+</dl>
+<dl>
+<dt>bool head(string location )</dt>
+<dd>perform a HTTP HEAD request. This will only return the headers. Use this this if you only want to check the file info on the server and not the whole body.</dd>
+</dl>
+<dl>
+<dt>bool HttpRequest(string location, string Method )</dt>
+<dd>Start the HTTP request. Location can be a fully qualified url, or just the location on the configured server.<br />
+This is an internal function called by the <code>get()</code>, <code>head()</code> and <code>post()</code> functions. If you want to support additional HTTP requests you should subclass this class.</dd>
+</dl>
+<dl>
+<dt>bool httrace(string location )</dt>
+<dd>perform a HTTP TRACE request. This will simply cause the webserver to return the request it received. It's only usefull for debugging.</dd>
+</dl>
+<dl>
+<dt>InternalResolved(InternetLink.IpAddr Addr , optional bool bDontCache )</dt>
+<dd>hostname has been resolved</dd>
+</dl>
+<dl>
+<dt>bool IsAuthMethodSupported(EAuthMethod method )</dt>
+<dd>return if the authentication method is supported</dd>
+</dl>
+<dl>
+<dt>bool IsSupportedMethod( )</dt>
+<dd>Returns true when the request method is supported</dd>
+</dl>
+<dl>
+<dt>Logf(coerce string message, optional int level, optional coerce string Param1, optional coerce string Param2 )</dt>
+<dd>manage logging</dd>
+</dl>
+<dl>
+<dt>int now( )</dt>
+<dd>Returns the current timestamp. Warning this is not a valid UNIX timestamp because the timezone is unknown (e.g. timestamps are always GMT)</dd>
+</dl>
+<dl>
+<dt>bool OpenConnection( )</dt>
+<dd>start the download</dd>
+</dl>
+<dl>
+<dt>Opened( )</dt>
+<dd>will be called from HttpLink</dd>
+</dl>
+<dl>
+<dt>bool post(string location, optional string PostData )</dt>
+<dd>This will perform a simple HTTP POST request. If the PostData is not empty it will overwrite the current post data and set the content type to <code>application/x-www-form-urlencoded</code>.</dd>
+</dl>
+<dl>
+<dt>bool postex(string location, optional array&lt;string&gt; PostData )</dt>
+<dd>Perform a HTTP POST request using an array containing the postdata. if the array length &gt; 0 it will overwrite the current post data. It will send the post data AS IS and doesn't set the content-type.<br />
+You might want to use the <code>post();</code> function together with <code>setFormData();</code>, that method is easier to use.</dd>
+</dl>
+<dl>
+<dt>ProccessWWWAuthenticate(string HeaderData, bool bProxyAuth )</dt>
+<dd>Process the header data of a WWW-Authenticate or Proxy-Authorization header</dd>
+</dl>
+<dl>
+<dt>ProcHeaders( )</dt>
+<dd>Will be called by ProcInput after all headers have been received</dd>
+</dl>
+<dl>
+<dt>ProcInput(string inline )</dt>
+<dd>Process the input</dd>
+</dl>
+<dl>
+<dt>string randString(optional int size, optional coerce string prefix )</dt>
+<dd>Generates a random string. The size defaults to 16. Prefix isn't included with the size;</dd>
+</dl>
+<dl>
+<dt>ReceivedText(string Line )</dt>
+<dd>called from HttpLink</dd>
+</dl>
+<dl>
+<dt>bool RemoveHeader(string hname )</dt>
+<dd>Remove a header, case insensitive. Returns true when the header is deleted</dd>
+</dl>
+<dl>
+<dt>ResolveFailed( )</dt>
+<dd>will be called from HttpLink when the resolve failed</dd>
+</dl>
+<dl>
+<dt>SendData(string data, optional bool bFlush )</dt>
+<dd>Send data buffered<br />
+if bFlush it will flush all remaining data (should be used for the last call)</dd>
+</dl>
+<dl>
+<dt>bool setFormData(string field, coerce string data, optional string contentType, optional string contentEncoding )</dt>
+<dd>Simple form of <code>setFormDataEx</code> when the data is only one line</dd>
+</dl>
+<dl>
+<dt>bool setFormDataEx(string field, array&lt;string&gt; data, optional string contentType, optional string contentEncoding )</dt>
+<dd>Add form data (used for <code>multipart/form-data</code> instead of <code>application/x-www-form-urlencoded</code>). This method makes it easier to add form-data. It doesn't clear the previous data, it will just append it. Form Data gives you more control over the actual data send. Also you don't have to escape the data.<br />
+It will also force the content type to <code>multipart/form-data</code>.</dd>
+</dl>
+<dl>
+<dt>bool setHTTPversion(optional string newver )</dt>
+<dd>Set the HTTP version, if empty the default will be used. Returns true when the version has been updated</dd>
+</dl>
+<dl>
+<dt>bool ShouldFollowRedirect(int retc, string method )</dt>
+<dd>returns true when a redirect should be followed, also updates headers for the next request.</dd>
+</dl>
+<dl>
+<dt>EAuthMethod StrToAuthMethod(coerce string method )</dt>
+<dd>string to EAuthMethod</dd>
+</dl>
+<dl>
+<dt>Timer( )</dt>
+<dd>timer is used for the conenection timeout.</dd>
+</dl>
+<dl>
+<dt>string UserAgent( )</dt>
+<dd>Returns the useragent string we use</dd>
+</dl>
+<p><a name="Events" id="Events"></a></p>
+<h2><span class="mw-headline">Events</span></h2>
+<dl>
+<dt>Destroyed( )</dt>
+<dd>clean up as much as possible</dd>
+</dl>
+<dl>
+<dt>PreBeginPlay( )</dt>
+<dd>initialize some variables</dd>
+</dl>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 75/1000000
+Post-expand include size: 207/2097152 bytes
+Template argument size: 135/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/i/b/Legacy%7ELibHTTP_HttpSock_b3f9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/i/b/Legacy_talk%7ELibHTTP_HttpSock_5e2f.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:LibHTTP/HttpSock">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:15, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

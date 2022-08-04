@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Weapon Modeling With 3dsmax - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Weapon Modeling With 3dsmax</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <dl>
+<dt>Tutorial Goal&#160;</dt>
+<dd>This is an advanced tutorial that will walk you through taking a weapon model from <a href="../../../../articles/3/d/_/Legacy%7E3D_Studio_Max_5e8e.html" title="Legacy:3D Studio Max">3D Studio Max</a> to UT2004 and getting the weapon fully functional by using UnrealScript.</dd>
+</dl>
+<p>Disclaimer: This tutorial was written using UT2004. Some code may not work properly in UT2003. You have been warned.&#160;;)</p>
+<p>Assumptions:</p>
+<ul>
+<li>You know how to model in 3dsmax and can create your mesh and texture on your own or have one already made.</li>
+<li>You know the basics of 3dsmax</li>
+<li>You know the basics of UnrealScript and can compile</li>
+<li>Your weapon is similar to one of the weapons already in UT (for simplicity)</li>
+<li>You have all of the tools required
+<ul>
+<li>A copy of <a href="../../../../articles/3/d/_/Legacy%7E3D_Studio_Max_5e8e.html" title="Legacy:3D Studio Max">3D Studio Max</a> and UT2004</li>
+<li>The <a href="http://udn.epicgames.com/Two/ActorX" class="external text" title="http://udn.epicgames.com/Two/ActorX" rel="nofollow">ActorX plugin</a> for your version of 3dsmax</li>
+<li>A text editor to make UC files. (Notepad works, but <a href="../../../../articles/w/o/t/Legacy%7EWOTgreal_7bba.html" title="Legacy:WOTgreal">WOTgreal</a> is recommended)</li>
+</ul>
+</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#First_Decision:"><span class="tocnumber">1</span> <span class="toctext">First Decision:</span></a></li>
+<li class="toclevel-1"><a href="#Inverse_What.3F"><span class="tocnumber">2</span> <span class="toctext">Inverse What?</span></a></li>
+<li class="toclevel-1"><a href="#Animating:"><span class="tocnumber">3</span> <span class="toctext">Animating:</span></a></li>
+<li class="toclevel-1"><a href="#Exporting_the_mesh_and_animation:"><span class="tocnumber">4</span> <span class="toctext">Exporting the mesh and animation:</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="First_Decision:" id="First_Decision:"></a></p>
+<h2><span class="mw-headline">First Decision:</span></h2>
+<p>Once you have your weapon model finished and textured, you must choose between two different animation types. Vertex animation is the simplest to create in 3dsmax, but UT2004 has complex import methods for this type of animation. Skeletal animation is done very similar to player models. You make bones relative to how you would like your weapon to animate. There is a catch here too: to animate a cocking motion, such as a pistol slide, you must use Inverse Kinematics (IK) to allow the slide bone to stretch and compress. Skeletal animation was used in the example. Here’s how to make the bones for the example:</p>
+<ol>
+<li>Select the bones tool from the prefabs page, systems tab</li>
+<li>Click to place your first bone (the root) then click where you want each joint</li>
+<li>Be sure to place bone ends where you want the muzzle flash to go
+<ul>
+<li>For the example there are only 4 bones: one root, one connector, one slide bone, and one flash bone.</li>
+<li>(link to example pic, bones)</li>
+</ul>
+</li>
+<li>Now you must rig your weapon to the bones in much the same way as a player model would be rigged
+<ul>
+<li>See Player_Modeling/3dsmax_Tutorial for specifics on rigging</li>
+<li>I would recommend using vertex assignment exclusively as envelope is meant for more organic movements</li>
+<li>The example was rigged in only 2 places: the bottom half was rigged to the root, while the slide was rigged to the flash bone ( this prevents the mesh from "squishing" when the slide bone is compressed)</li>
+</ul>
+</li>
+</ol>
+<p><a name="Inverse_What.3F" id="Inverse_What.3F"></a></p>
+<h2><span class="mw-headline">Inverse What?</span></h2>
+<ol>
+<li>To get the slide to... slide you must apply a specific type of IK called History Dependant (HD)</li>
+<li>Select Animations menu &gt; IK &gt; HD</li>
+<li>Select the first bone you wish to apply IK to
+<ul>
+<li>In the example the root bone was selected</li>
+</ul>
+</li>
+<li>Select the last bone in the chain
+<ul>
+<li>The slide bone in the example</li>
+</ul>
+</li>
+<li>This makes these bones an IK chain and you can now drag the IK crosshair to place the end bones</li>
+<li>On the movers(?) page there is an IK rollout, use this to edit the IK properties of each bone in the chain
+<ul>
+<li>The example locked all rotation axes and only allowed the slide bone to slide along the x axis</li>
+</ul>
+</li>
+</ol>
+<p><a name="Animating:" id="Animating:"></a></p>
+<h2><span class="mw-headline">Animating:</span></h2>
+<p>Because of the use of IK and Forward Kinematics (FK) on the root to simulate recoil, you weapon may appear to "fall apart" and leave the IK bones and rigged mesh behind. This is caused by 3dsmax trying to work in two different directions at once. Follow these steps to animate your weapon properly (all animations are at 30 frames per second):</p>
+<ol>
+<li>The firing animation is typically the most complex and will be tackled first</li>
+<li>In the example the slide was animated alone first
+<ol>
+<li>Change the animation slider to go from 0 - 7(?)</li>
+<li>Select the whole scene [ctrl+a] and click Set Key Frame(?)</li>
+<li>Click auto-key(?) and drag the animation slider to frame 3(?)</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li>
+<ol>
+<li>Drag the IK crosshair to where the slide would be for fully cocked back</li>
+<li>Drag animation slider to frame 7</li>
+<li>Drag IK crosshair back to starting point</li>
+<li>test play the animation</li>
+</ol>
+</li>
+<li>You should see your slide kicking as if a shot were fired, but there is usually some recoil with weapons.</li>
+<li>To animate the recoil rotate the root so your weapon rocks back as if fired on the last frame of your slide animation
+<ul>
+<li>You can also have the weapon move back and a little up fore more kick</li>
+</ul>
+</li>
+<li>Expand the animation slider range to fit how long you wish your fire animation to be</li>
+<li>Place more key frames for the recovery and place the weapon back in the starting position on the last frame</li>
+<li>The slide will likely position itself strangely during these animations as you have not adjusted the crosshair for the recoil</li>
+<li>Simply move the crosshair with auto-key on and adjust your key frames accordingly</li>
+</ol>
+<p>Any alternate fires that require animations are created in much the same way. The other animations UT2004 uses for weapons are Select (when the weapon is selected), Idle, and PutDown (when another weapon is selected). These animations can be done on the same animation slider, just use later frames.</p>
+<p><a name="Exporting_the_mesh_and_animation:" id="Exporting_the_mesh_and_animation:"></a></p>
+<h2><span class="mw-headline">Exporting the mesh and animation:</span></h2>
+<p><b>TO DO</b></p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Tarquin:</b> It's best to only use subpages for groups of pages that are part of one document. I suggest renaming this to <strong class="selflink">Weapon Modeling with 3dsmax</strong>, and doing the same for the player modelling tute.</p>
+<p><b>Syntax_Error:</b> Will do Tarquin. Thanks for the suggestion.</p>
+<hr />
+<p>Category_Tutorial</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/e/a/Legacy%7EWeapon_Modeling_With_3dsmax_4ed8.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/e/a/Legacy_talk%7EWeapon_Modeling_With_3dsmax_e6a3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Weapon_Modeling_With_3dsmax">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:06, 2 March 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

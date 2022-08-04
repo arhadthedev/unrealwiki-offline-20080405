@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Utft - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Utft</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A <a href="../../../../articles/c/a/c/Legacy%7ECache_Cleaner_c7e0.html" title="Legacy:Cache Cleaner">cache cleaner</a> by <a href="../../../../articles/s/w/e/Legacy%7ESweavo_4a2f.html" title="Legacy:Sweavo">sweavo</a>.</p>
+<p><a name="Code" id="Code"></a></p>
+<h2><span class="mw-headline">Code</span></h2>
+<p>Copy and paste this into your text editor, save as <tt>utft</tt>.</p>
+<hr />
+<pre>
+#!/usr/bin/python -tt
+#
+# $Id: utft 91 2007-11-15 17:39:50Z sweavo $
+#
+# By Sweavo November 2007
+#
+# Unreal Tournament File Tool for UT2004
+#
+# A cache-cleaner written in python for cygwin
+#
+# usage:
+#
+#   utft {command} {pattern}
+# 
+#   {command}:
+#     ls      lists all files in the cache that match {pattern}
+#     get     moves all files from the cache that match {pattern} to a directory 
+#             named after the current time.
+#     check   check whether everything in the Cache.ini is present in the cache
+#             and report those missing
+#     cleanup fix Cache.ini by removing entries for files that are missing.
+#
+#   {pattern}:
+#     matches the start of the filename that would be created (e.g. 
+#     VCTF-WS-StupdDeathRocket.ut2as rather than 20e9c02c809e098209580.uxx)
+#     It is a python regexp rather than a nice shell glob.  And if you are typing
+#     it in a cygwin shell, you'll need to add extra backslashes and stuff.
+#
+# Examples:
+#
+#   utft ls ONS-        lists all ONS maps
+#   utft get .\*Stupid  gets all files with stupid in the name
+#   utft get utx$       gets all .utx textures ($ matches end of name)
+#
+# Notes:
+#
+#   In order to avoid messing up your installation directories, the get command 
+#   does not put the files into the right directories, but into a directory 
+#   called Cleaned-YYYYMMDD-HHMMSS where YYYYMMDD-HHMMSS is the date and time
+#   you ran the tool.  Under that directory, correct directories are used, so
+#   you can simply drag-n-drop from there into the real dirs if you are 
+#   convinced those files are the ones you really want.
+#
+# Example:
+#
+#   Before:
+#     UT2004
+#       +-Cache
+#       |   +- 2309820348230948203.uxx   
+#       |   +- 2340982034982438953.uxx   
+#       +-Maps
+#       +-Textures
+#
+#   After:
+#     UT2004
+#       +-Cache
+#       +-Cleaned-20071114-233006
+#       |   +-Maps
+#       |   |   +-VCTF-TheCapOnTheMap.ut2
+#       |   +-Textures
+#       |       +-TexTuren.utx
+#       +-Maps
+#       +-Textures
+#
+#   Then, drag them:
+#     UT2004
+#       +-Cache
+#       +-Cleaned-20071114-233006
+#       +-Maps
+#       |   +-VCTF-TheCapOnTheMap.ut2
+#       +-Textures
+#           +-TexTuren.utx
+
+import os,re,shutil,sys,time
+
+# Where your UT is installed
+UTDIR="/cygdrive/c/ut2004"
+
+# If you get told about an unknown filetype, add it here.
+EXTDEST={
+    'ka':   'KarmaData',
+    'ogg':  'Music',
+    'uax':  'Sounds',
+    'u':    'System',
+    'ukx':  'Animations',
+    'usx':  'StaticMeshes',
+    'ut2':  'Maps',
+    'utx':  'Textures',
+    'xml':  'Speech',
+    }
+
+# "unique" directory name for the got files.
+DESTDIR=time.strftime('Cleaned-%Y%m%d-%H%M%S')
+## Try this next line if you want to go 'instantly live' with the extracted files
+#DESTDIR='.'
+
+# Friendly mkdir by Trent Mick
+# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/82465
+def _mkdir(newdir):
+    """works the way a good mkdir should :)
+        - already exists, silently complete
+        - regular file in the way, raise an exception
+        - parent directory(ies) does not exist, make them as well
+    """
+    if os.path.isdir(newdir):
+        pass
+    elif os.path.isfile(newdir):
+        raise OSError("a file with the same name as the desired " \
+                      "dir, '%s', already exists." % newdir)
+    else:
+        head, tail = os.path.split(newdir)
+        if head and not os.path.isdir(head):
+            _mkdir(head)
+        if tail:
+            os.mkdir(newdir)
+# end of Trent Mick's code
+
+# Grab the command and pattern from the commandline
+if len(sys.argv)&gt;1:
+    command=sys.argv[1]
+    if len(sys.argv)&gt;2:
+        pattern=sys.argv[2]
+    else:
+        pattern='.*'
+
+# outfile is the new cache.ini, should we choose to write it.
+outfile=[]
+
+inCache=False
+for l in open('%s/Cache/cache.ini'%UTDIR): # Go through every line in Cache.ini
+    if inCache:
+        if '=' in l:  # it's one of our lines
+            (name,new)=l.strip().split('=')
+            if re.match(pattern,new): 
+                # pattern matches, so let's see what we're supposed to do with the file
+                if command=='ls':
+                    print new
+
+                elif command=='get':
+                    (base,ext)=new.split('.')
+                    if not ext in EXTDEST.keys():
+                        print "%s: no destination known for extension %s. Skipped."%(new,ext)
+                    elif not os.path.isfile('%s/Cache/%s.uxx'%(UTDIR,name)):
+                        print "%s: source file does not exist any more. Skipped."%(new)
+                    else:
+                        print "Cache/%s.uxx -&gt; %s/%s/%s"%(name,DESTDIR,EXTDEST[ext],new)
+                        _mkdir('%s/%s/%s'%(UTDIR,DESTDIR,EXTDEST[ext]))
+                        shutil.move('%s/Cache/%s.uxx'%(UTDIR,name),'%s/%s/%s/%s'%(UTDIR,DESTDIR,EXTDEST[ext],new))
+
+                elif command=='check':
+                    (base,ext)=new.split('.')
+                    if not ext in EXTDEST.keys():
+                        print "%s: no destination known for extension %s."%(new,ext)
+                    elif not os.path.isfile('%s/Cache/%s.uxx'%(UTDIR,name)):
+                        print "%s: source file does not exist any more."%(new)
+
+                elif command=='cleanup':
+                    if os.path.isfile('%s/Cache/%s.uxx'%(UTDIR,name)):
+                        outfile=outfile+[l]
+                        
+    else: # We have'nt seen the "[cache]" tag yet, or we've received lines that didn't have blah=blah in them.
+        outfile=outfile+[l]
+        if '[cache]' in l.lower():
+            inCache=True
+
+# This could probably be added for "get" command as well, save the user having to always do "cleanup".
+if command=='cleanup':
+    f=open('%s/Cache/cache.ini'%UTDIR,'w')
+    f.writelines(outfile)
+    f.close()
+
+</pre>
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/t/f/Legacy%7EUtft_741a.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/t/f/Legacy_talk%7EUtft_71c7.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Utft">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:01, 15 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Event - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Event</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>An <b>Event</b> is a key <a href="../../../../articles/e/n/g/Legacy%7EEngine_Concept_6268.html" title="Legacy:Engine Concept">Engine Concept</a> in Unreal. (For details on the 'event' keyword in <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> see <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">Function Syntax</a>.)</p>
+<p>An "Event" is a type of message sent during the game by one <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> to other actors. Every event has a name, chosen by the mapper or coder. Certain conditions will make an Actor "call" an event; and some Actors are "listening" for a particular event name to be called, and when it does they will react in some way.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Triggering_an_Event"><span class="tocnumber">2</span> <span class="toctext">Triggering an Event</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Chain_of_.22Events.22"><span class="tocnumber">2.1</span> <span class="toctext">Chain of "Events"</span></a>
+<ul>
+<li class="toclevel-3"><a href="#The_Trigger"><span class="tocnumber">2.1.1</span> <span class="toctext">The Trigger</span></a></li>
+<li class="toclevel-3"><a href="#The_Target"><span class="tocnumber">2.1.2</span> <span class="toctext">The Target</span></a></li>
+<li class="toclevel-3"><a href="#Dispatchers"><span class="tocnumber">2.1.3</span> <span class="toctext">Dispatchers</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Continuous_Events"><span class="tocnumber">3</span> <span class="toctext">Continuous Events</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Technical"><span class="tocnumber">3.1</span> <span class="toctext">Technical</span></a></li>
+<li class="toclevel-2"><a href="#Actors_that_call_an_event_when_touched"><span class="tocnumber">3.2</span> <span class="toctext">Actors that call an event when touched</span></a></li>
+<li class="toclevel-2"><a href="#Actors_that_process_events"><span class="tocnumber">3.3</span> <span class="toctext">Actors that process events</span></a></li>
+<li class="toclevel-2"><a href="#Actors_that_listen_for_an_event"><span class="tocnumber">3.4</span> <span class="toctext">Actors that listen for an event</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Troubleshooting"><span class="tocnumber">4</span> <span class="toctext">Troubleshooting</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p>Every actor has two properties under the Events heading:</p>
+<dl>
+<dt>Event</dt>
+<dd>The name of the Event that this actor can call</dd>
+<dt>Tag</dt>
+<dd>The name of the Event that will make this actor react – in other words, the name of the event that it listens for</dd>
+</dl>
+<p>You can think of this like a paging system in a hotel lobby: a groom walks through calling out the event name. Any Actor that is set to listen to this event name will respond.</p>
+<p>In the UnrealScript code, this actually works with an <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a> that looks at every actor in the game. Any actors whose Tag matches the event being called have their Trigger function executed:</p>
+<dl>
+<dd><b>function Trigger( actor Other, pawn EventInstigator )</b></dd>
+</dl>
+<p>This system effectively ties two or more actors together. UnrealEd helps you keep track of this by drawing a red line between actors with matching Tag and Event properties. You can also list actors by the value of their Tag or Event in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Search_39e0.html" title="Legacy:Actor Search">Actor Search</a> window.</p>
+<p>The properties themselves can be set to any string. The important thing is the matching, though it helps to use words relevant to the map, eg "MainDoor" or "Explosion".</p>
+<p>Some actors expand on this behaviour, and can call or listen for several events: more on this below.</p>
+<p><a name="Triggering_an_Event" id="Triggering_an_Event"></a></p>
+<h2><span class="mw-headline">Triggering an Event</span></h2>
+<p>Starting an Event is called "triggering", "calling", "initiating" or "firing" it – every mapper or coder has their way of visualizing the process. When an actor actually calls an event depends on how its class script and its properties. The simplest example is the <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> actor. This calls its Event whenever a player passes through its <a href="../../../../articles/c/o/l/Legacy%7ECollision_Cylinder_d450.html" title="Legacy:Collision Cylinder">Collision Cylinder</a>.</p>
+<p>All actors whose Tag matches the Trigger's Event will receive the message – we say that they have been <i>triggered</i>. What these actors then do depends, again, on their own class script and their own properties. Some actors will do nothing, some can react, and some can trigger other actors in turn.</p>
+<p>It's possible to create complex chains of events like this: see <a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a> for examples.</p>
+<p><a name="Chain_of_.22Events.22" id="Chain_of_.22Events.22"></a></p>
+<h3><span class="mw-headline">Chain of "Events"</span></h3>
+<p>This is what happens when Actors are triggered:</p>
+<p><a name="The_Trigger" id="The_Trigger"></a></p>
+<h4><span class="mw-headline">The Trigger</span></h4>
+<p>Player Bob walks into the Trigger's radius:</p>
+<ul>
+<li>Touch( actor Other )
+<ul>
+<li>IsRelevant( Other ) checks the actor can actually do stuff</li>
+</ul>
+</li>
+</ul>
+<p>The Trigger runs a ForEach <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a>, to find matching actors.</p>
+<ul>
+<li>A.Trigger( Other, Other.Instigator )</li>
+</ul>
+<p>where:</p>
+<ul>
+<li>Other is the actor Bob that touched the Trigger.</li>
+<li>Other.Instigator is another script chase for another day.</li>
+</ul>
+<p><a name="The_Target" id="The_Target"></a></p>
+<h4><span class="mw-headline">The Target</span></h4>
+<p>function Trigger( actor Other, pawn EventInstigator )</p>
+<p>So...</p>
+<ul>
+<li>Other is the same Other as in Trigger – Bob</li>
+<li>EventInstigator is Other.Instigator from before</li>
+</ul>
+<p><a name="Dispatchers" id="Dispatchers"></a></p>
+<h4><span class="mw-headline">Dispatchers</span></h4>
+<p>These break the chain:</p>
+<dl>
+<dd>Target.Trigger( Self, Instigator )</dd>
+</dl>
+<p>in other words, they pass on themselves as the Other for the triggered actor, not the thing that touched the Trigger that then triggered the dispatcher. This causes problems with, for example the BumpButton state in <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">movers</a>. See <a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html" title="Legacy:Dispatcher">Dispatcher</a> for a fix.</p>
+<p><a name="Continuous_Events" id="Continuous_Events"></a></p>
+<h2><span class="mw-headline">Continuous Events</span></h2>
+<p>So far, an Event is a discrete occurence. The player walks into the Trigger, something happens. But Events are technically continuous: they don't end until the player walks out of the Trigger radius.</p>
+<p>For most setups, the length of the event is irrelevant. For example, most doors are set to start opening when Triggered, wait when fully open, then close: once Triggered there's no way to affect them. From this point of view, an Event is instantaneous.</p>
+<p>However, some actors will respond to being UnTriggered. A door whose InitialState is "TriggerControl" will start opening when triggered, but will start closing as soon as the player steps out of the Trigger's radius. A good example of this behavious is the door to the Redeemer in UT's DM-Stalwart-XL.</p>
+<p>Just remembered... Triggers can also be set to repeatedly send the trigger message... sort of repeating discrete events.... the plot thickens!</p>
+<p><a name="Technical" id="Technical"></a></p>
+<h3><span class="mw-headline">Technical</span></h3>
+<p>Functions to cover:</p>
+<dl>
+<dt>Trigger()&#160;</dt>
+<dt>UnTrigger()&#160;</dt>
+<dt>Touch()&#160;</dt>
+<dt>UnTouch()&#160;</dt>
+</dl>
+<p>In terms of mapping, an event is a combination of certain circumstances which occurs during the game and especially a string which represents the event for Unreal. This could be player touching a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> or an opening door.</p>
+<p>Mention built-in events too.</p>
+<p><a name="Actors_that_call_an_event_when_touched" id="Actors_that_call_an_event_when_touched"></a></p>
+<h3><span class="mw-headline">Actors that call an event when touched</span></h3>
+<ul>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>: This is the main actor for calling an event. It can be set to react when a player, pawn or indeed any class walks into its <a href="../../../../articles/c/o/l/Legacy%7ECollision_Cylinder_d450.html" title="Legacy:Collision Cylinder">collision cylinder</a> or when it suffers a certin amount of damage from being shot.</li>
+</ul>
+<p><a name="Actors_that_process_events" id="Actors_that_process_events"></a></p>
+<h3><span class="mw-headline">Actors that process events</span></h3>
+<p>These actors are not affected by players passing through their collision cylinder.</p>
+<ul>
+<li><a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html" title="Legacy:Dispatcher">Dispatcher</a>&#160;: this calls a list of events, with an optional delay between each call.</li>
+<li><a href="../../../../articles/r/o/u/Legacy%7ERoundRobin_5678.html" title="Legacy:RoundRobin">RoundRobin</a>&#160;: each time this is triggered it calls the next event in a list</li>
+</ul>
+<p>(note this isn't a complete list, just some of the important ones)</p>
+<p><a name="Actors_that_listen_for_an_event" id="Actors_that_listen_for_an_event"></a></p>
+<h3><span class="mw-headline">Actors that listen for an event</span></h3>
+<ul>
+<li>The Trigger actor itself can be set to wake up or go to sleep when triggered by something else.</li>
+</ul>
+<p>(note this isn't a complete list, just some of the important ones)</p>
+<p><a name="Troubleshooting" id="Troubleshooting"></a></p>
+<h2><span class="mw-headline">Troubleshooting</span></h2>
+<p>Even simple chains of events can be hard to get right. Only actors that set events and tags in the "Event" section are linked with red lines in the editor, so actors such as Dispatcher are somewhat harder to troubleshoot.</p>
+<p>Suggestions:</p>
+<ul>
+<li>Use the CAUSEEVENT console command (in <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a>; you must be a server admin). It calls Trigger on all actors with the tag given as a parameter.</li>
+<li>Test the chain of command: give the first Trigger that players walk into a message, and test it in game. You should see the message.</li>
+<li>If an actor that is being trigerred is capable of sending a player-visible message (eg SpecialEvent), set it up so you can see in game whether it has been triggered.</li>
+<li>If triggered movers or pawns don't work, create a SpecialEvent that listens for the same event &amp; set it to broadcast.</li>
+</ul>
+<p><br /></p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a></li>
+<li>A <a href="../../../../articles/l/e/g/Category%7ELegacy_Basic_Procedure_8702.html" title="Category:Legacy Basic Procedure">Category:Legacy Basic Procedure</a> on this: <a href="../../../../articles/m/a/t/Legacy%7EMatch_These_Tags_2799.html" title="Legacy:Match These Tags">Match These Tags</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Overview_89eb.html" title="Legacy:Actor Overview">Actor Overview</a> – How to add actors, set properties etc.</li>
+<li><a href="../../../../articles/d/y/n/Legacy%7EDynamics_8762.html" title="Legacy:Dynamics">Dynamics</a> – Main topic page for triggers &amp; sounds
+<ul>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a></li>
+<li><a href="../../../../articles/t/y/p/Legacy%7ETypes_Of_Trigger_07fa.html" title="Legacy:Types Of Trigger">Types of Trigger</a> – Summary of trigger types</li>
+</ul>
+</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Unknown:</b> How does Trigger deal with a situation when more than 1 player walks into the radius? Which player makes UnTrigger occur by leaving?</p>
+<p><b>Birelli:</b> Think of it as every player inside the radius is "holding open the event", the event in this case starts when any player enters the Trigger radius and is UnTriggered when there are no players left inside the radius of the trigger.</p>
+<p><b>SuperApe:</b> Edited. Refactored some.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Category:Legacy Troubleshooting</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – Answer questions, fill in. Related with <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a>.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 10/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Legacy Troubleshooting</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/v/e/Legacy_talk%7EEvent_88d0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Event">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:12, 4 January 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

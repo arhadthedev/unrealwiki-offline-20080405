@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Proximity- And Damage-Triggered Doors - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Proximity- And Damage-Triggered Doors</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial will show you a way to create doors that can open when shot or when a player approaches it. The door will close after some time if no player is near it anymore.</p>
+<p>Using this type of door might help a lot when porting Quake maps. It might add a new tactical twist to your map since players now can't rely on the opponent being near a door when it opens. On the other hand, closing doors will not be as harmful for a fire fight anymore because the players can simply shoot it to instantly reopen it, even if the door hasn't finished closing yet.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Prerequisites"><span class="tocnumber">1</span> <span class="toctext">Prerequisites</span></a></li>
+<li class="toclevel-1"><a href="#Door_Movers"><span class="tocnumber">2</span> <span class="toctext">Door Movers</span></a></li>
+<li class="toclevel-1"><a href="#Door_Controls"><span class="tocnumber">3</span> <span class="toctext">Door Controls</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Open.2C_Wait.2C_Close"><span class="tocnumber">3.1</span> <span class="toctext">Open, Wait, Close</span></a></li>
+<li class="toclevel-2"><a href="#Don.27t_hurt_me.21"><span class="tocnumber">3.2</span> <span class="toctext">Don't hurt me!</span></a></li>
+<li class="toclevel-2"><a href="#Open_up_wide.21"><span class="tocnumber">3.3</span> <span class="toctext">Open up wide!</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Prerequisites" id="Prerequisites"></a></p>
+<h2><span class="mw-headline">Prerequisites</span></h2>
+<p>In this tutorial we will be creating a multi-part door. When any of the door parts is hit, the whole door should open, i.e. all parts should start moving at the same time. Unfortunalety, regular movers don't provide the neccessary functionality, so we need to use the custom <a href="../../../../articles/d/a/m/Legacy%7EDamageTriggerMover_1c89.html" title="Legacy:DamageTriggerMover">DamageTriggerMover</a>. Single-part doors with similar functionality are probably possible with a regular <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">Mover</a> as well, but will require a different trigger setup then.</p>
+<p>Our door mechanism will consist of:</p>
+<ul>
+<li>two <a href="../../../../articles/d/a/m/Legacy%7EDamageTriggerMover_1c89.html" title="Legacy:DamageTriggerMover">DamageTriggerMovers</a> as the door parts (You can add more movers to your door, if you like. This trigger/mover system can be extended quite easily.)</li>
+<li>one <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> to detect player proximity</li>
+<li>one <a href="../../../../articles/t/r/i/Legacy%7ETriggeredCondition_b0ea.html" title="Legacy:TriggeredCondition">TriggeredCondition</a> to store the Trigger's state for...</li>
+<li>one <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a> (1) that closes the door after some time when no player is nearby</li>
+<li>another <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a> (2) that opens the door when a player touches the Trigger</li>
+</ul>
+<p><a name="Door_Movers" id="Door_Movers"></a></p>
+<h2><span class="mw-headline">Door Movers</span></h2>
+<p>Place your DamageTriggerMovers like you would place any regular mover. Set their Object -&gt; InitialState to <i>TriggerToggle</i>, match their ReturnGroup -&gt; ReturnGroup names and give them the same MoverEvents -&gt; DamageEvent names. It's probably also a good idea to set their Mover -&gt; MoverEncroachType to <i>ME_CrushWhenEncroach</i> or <i>ME_IgnoreWhenEncroach</i>, so they don't get out of sync when something blocks one of them.</p>
+<p>Now you need to decide, which of your movers will be the leader of your door's <i>ReturnGroup</i>. This "leading mover" will receive the events for opening or closing the door. Set its Events -&gt; <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a> to the <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">event</a> you want to control the door with. That event will be fired by the ScriptedTriggers and should be unique for each door. You also need to specify an event name in MoverEvents -&gt; OpenedEvent, that will be used by ScriptedTrigger (1) to find out, when to start checking whether the door should close again.</p>
+<p>Example of mover properties so far:</p>
+<table class="wikitable">
+<tr>
+<td style="text-align: center"><b><i>Property</i></b></td>
+<td style="text-align: center"><b><i>Leading Mover</i></b></td>
+<td style="text-align: center"><b><i>Other Door Parts</i></b></td>
+</tr>
+<tr>
+<td><b>Events -&gt; Tag</b></td>
+<td>MyDoor</td>
+<td>→</td>
+</tr>
+<tr>
+<td><b>Mover -&gt; MoverEncroachType</b></td>
+<td>ME_CrushWhenEncroach</td>
+<td>ME_CrushWhenEncroach</td>
+<td>You could also use <i>ME_IgnoreWhenEncraoch</i> here.</td>
+</tr>
+<tr>
+<td><b>MoverEvents -&gt; DamageEvent</b></td>
+<td>MyDoorHit</td>
+<td>MyDoorHit</td>
+</tr>
+<tr>
+<td><b>MoverEvents -&gt; OpenedEvent</b></td>
+<td>MyDoorOpened</td>
+<td>→</td>
+</tr>
+<tr>
+<td><b>Object -&gt; InitialState</b></td>
+<td>TriggerToggle</td>
+<td>TriggerToggle</td>
+</tr>
+<tr>
+<td><b>ReturnGroup -&gt; bIsLeader</b></td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<td><b>ReturnGroup -&gt; ReturnGroup</b></td>
+<td>MyDoor</td>
+<td>MyDoor</td>
+<td>This is not associated with Tags/Events in any way, it's just convenient to use the same name as the leader's Tag.</td>
+</tr>
+</table>
+<p>After setting up the movers as described above, you can <a href="../../../../articles/p/l/a/Legacy%7EPlaytest_86da.html" title="Legacy:Playtest">playtest</a> your map and the movers will do exactly... <i>nothing</i>.</p>
+<p>If your movers activate when you run into them or shoot them, something is wrong! Make sure they are really <a href="../../../../articles/d/a/m/Legacy%7EDamageTriggerMover_1c89.html" title="Legacy:DamageTriggerMover">DamageTriggerMovers</a> and that their initial state really is TriggerToggle.</p>
+<p><a name="Door_Controls" id="Door_Controls"></a></p>
+<h2><span class="mw-headline">Door Controls</span></h2>
+<p>Let's add some functionality to the door. The basic door control will be handled by a <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a> that opens the door when triggered and closes it again after some time. Player proximity is detected by a Trigger.</p>
+<p><a name="Open.2C_Wait.2C_Close" id="Open.2C_Wait.2C_Close"></a></p>
+<h3><span class="mw-headline">Open, Wait, Close</span></h3>
+<p><a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an Actor</a> &gt;&gt; Keypoint &gt;&gt; AIScript &gt;&gt; ScriptedSequence &gt;&gt; ScriptedTrigger. It will control the door movers with a script that works like this:</p>
+<pre>
+<i>door is closed or closing</i>
+<b>Wait for event</b> <i>MyDoorHit</i>
+<b>Trigger event</b> <i>MyDoor</i> (to open the door)
+<b>Wait for event</b> <i>MyDoorOpened</i>
+<i>door is open</i>
+<b>Wait</b> <i>2 seconds</i>
+<b>If</b> <i>player is near door</i> (starts a new subsection)
+  <b>Go to</b> "<i>door is open</i>" (to wait a little longer)
+<b>End subsection</b>
+<b>Trigger event</b> <i>MyDoor</i> (to close the door)
+<b>Go to</b> "<i>door is closed or closing</i>"
+</pre>
+<p>The lines starting with <b>bold</b> words in the above algorithm can be translated directly into <a href="../../../../articles/s/c/r/Legacy%7EScriptedAction_8012.html" title="Legacy:ScriptedAction">ScriptedActions</a> for <a href="../../../../articles/s/c/r/Legacy%7EScriptedTrigger_5316.html" title="Legacy:ScriptedTrigger">ScriptedTrigger</a> (1):</p>
+<table>
+<tr>
+<td></td>
+<td style="text-align: center"><b><i>Action</i></b></td>
+<td style="text-align: center"><b><i>Parameter Name</i></b></td>
+<td style="text-align: center"><b><i>Parameter Value</i></b></td>
+<td style="text-align: center"><b><i>Comment</i></b></td>
+</tr>
+<tr>
+<td>0</td>
+<td>ACTION_WaitForEvent</td>
+<td style="text-align: center">ExternalEvent</td>
+<td style="text-align: center">MyDoorHit</td>
+<td>waits for the door to be hit</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ACTION_TriggerEvent</td>
+<td style="text-align: center">Event</td>
+<td style="text-align: center">MyDoor</td>
+<td>opens the door</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ACTION_WaitForEvent</td>
+<td style="text-align: center">ExternalEvent</td>
+<td style="text-align: center">MyDoorOpened</td>
+<td>waits for the door to finish opening</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ACTION_WaitForTimer</td>
+<td style="text-align: center">PauseTime</td>
+<td style="text-align: center">2</td>
+<td>wait 2 seconds</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ACTION_IfCondition</td>
+<td style="text-align: center">TriggeredConditionTag</td>
+<td style="text-align: center">MyDoorProximity</td>
+<td>check, if player is near the door (see next section of this tutorial)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ACTION_GotoAction</td>
+<td style="text-align: center">ActionNumber</td>
+<td style="text-align: center">3</td>
+<td>go to action 3 ("wait 2 seconds")</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ACTION_EndSection</td>
+<td style="text-align: center">→</td>
+<td style="text-align: center">→</td>
+<td>end of the IfCondition section</td>
+</tr>
+<tr>
+<td>7</td>
+<td>ACTION_TriggerEvent</td>
+<td style="text-align: center">Event</td>
+<td style="text-align: center">MyDoor</td>
+<td>close the door</td>
+</tr>
+<tr>
+<td>8</td>
+<td>ACTION_GotoAction</td>
+<td style="text-align: center">ActionNumber</td>
+<td style="text-align: center">0</td>
+<td>go to action 0 ("wait for the door to be hit")</td>
+</tr>
+</table>
+<p>You can playtest the map again and the doors should already open when you shoot them, even though the If Condition in the script will probably throw an error because we haven't placed the specified <a href="../../../../articles/t/r/i/Legacy%7ETriggeredCondition_b0ea.html" title="Legacy:TriggeredCondition">TriggeredCondition</a> yet. The door doesn't yet react to player proximity, so you can get crushed it you stand between the movers when they close.</p>
+<p><a name="Don.27t_hurt_me.21" id="Don.27t_hurt_me.21"></a></p>
+<h3><span class="mw-headline">Don't hurt me!</span></h3>
+<p>To tell the door that a player is still nearby, we <a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">add an actor</a> &gt;&gt; Triggers &gt;&gt; Trigger to the doorway and adjust its collision size. If a cylinder doesn't really fit the area you need, <a href="../../../../articles/a/d/d/Legacy%7EAdd_A_Volume_a668.html" title="Legacy:Add A Volume">add a volume</a> with the desired shape and match its Volume -&gt; AssociatedActorTag with the Trigger's Events -&gt; Tag. Specify the Trigger's Events -&gt; Event (in our example "MyDoorProximity") and check that its Object -&gt; InitialState is <i>NormalTrigger</i>.</p>
+<p><a href="../../../../articles/a/d/d/Legacy%7EAdd_An_Actor_105f.html" title="Legacy:Add An Actor">Add an actor</a> &gt;&gt; Triggers &gt;&gt; TriggeredCondition and set its Events -&gt; Tag to the same as the Trigger's event (in our case "MyDoorProximity", again). Match its Events -&gt; Tag with the Trigger's Events -&gt; Event and set its TriggeredCondition -&gt; bTriggerControlled to True and the other properties in that group to false.</p>
+<p>Summary of properties:</p>
+<table class="wikitable">
+<tr>
+<td style="text-align: center"><b><i>Property</i></b></td>
+<td style="text-align: center"><b><i>TriggeredCondition</i></b></td>
+<td style="text-align: center"><b><i>Trigger</i></b></td>
+</tr>
+<tr>
+<td>Events -&gt; Event</td>
+<td style="text-align: center">→</td>
+<td style="text-align: center">MyDoorProximity</td>
+</tr>
+<tr>
+<td>Events -&gt; Tag</td>
+<td style="text-align: center">MyDoorProximity</td>
+<td style="text-align: center">MyDoorProximityVolume<br />
+<i>(only when using a volume as described above)</i></td>
+</tr>
+<tr>
+<td>Object -&gt; InitialState</td>
+<td style="text-align: center">→</td>
+<td style="text-align: center">NormalTrigger</td>
+</tr>
+<tr>
+<td>TriggeredCondition -&gt; bEnabled</td>
+<td style="text-align: center">False</td>
+</tr>
+<tr>
+<td>TriggeredCondition -&gt; bToggled</td>
+<td style="text-align: center">False</td>
+</tr>
+<tr>
+<td>TriggeredCondition -&gt; bTriggerControlled</td>
+<td style="text-align: center">True</td>
+</tr>
+</table>
+<p>After adding these two actors your damage-triggered door should already stay open when a player is nearby, but it still only opens when you shoot it.</p>
+<p><a name="Open_up_wide.21" id="Open_up_wide.21"></a></p>
+<h3><span class="mw-headline">Open up wide!</span></h3>
+<p>Our door is only missing a single feature: It doesn't open automatically when a player walks up close to it. We already have a Trigger that fires an event when a player touches it, so let's just use it to open the door.</p>
+<p>Add another ScriptedTrigger and set it up to translate the player proximity event into the door hit event, which already opens the door properly:</p>
+<table>
+<tr>
+<td></td>
+<td style="text-align: center"><b><i>Action</i></b></td>
+<td style="text-align: center"><b><i>Parameter Name</i></b></td>
+<td style="text-align: center"><b><i>Parameter Value</i></b></td>
+<td style="text-align: center"><b><i>Comment</i></b></td>
+</tr>
+<tr>
+<td>0</td>
+<td>ACTION_WaitForEvent</td>
+<td style="text-align: center">ExternalEvent</td>
+<td style="text-align: center">MyDoorProximity</td>
+<td>waits for a player to touch the trigger</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ACTION_WaitForTimer</td>
+<td style="text-align: center">PauseTime</td>
+<td style="text-align: center">0.01</td>
+<td>In my tests the script managed to crash the game with an Infinite Recursion message – this prevented it from happening.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ACTION_TriggerEvent</td>
+<td style="text-align: center">Event</td>
+<td style="text-align: center">MyDoorHit</td>
+<td>triggers the other ScriptedTrigger, which opens the door</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ACTION_GotoAction</td>
+<td style="text-align: center">ActionNumber</td>
+<td style="text-align: center">0</td>
+<td>go to action 0 ("wait for player touch")</td>
+</tr>
+</table>
+<p>That's all! Your door should now open when it gets hit or when a player approaches it and will only close again if the player is no longer nearby.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/o/v/Legacy%7EMover_Topics_947d.html" title="Legacy:Mover Topics">Mover Topics</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>FreshMeat:</b> Would you kindly put some notes in here for those of us who only want to proximity trigger double doors? Trying to sort out the damage stuff from the proximity stuff has me confused.</p>
+<p><b>Wormbo:</b> Only proximity triggering can be done with regular movers and a much simpler setup. I think a good example of proximity-triggered movers is the UT2004 map <a href="http://angelmapper.com/inforeconstruct.htm" class="external text" title="http://angelmapper.com/inforeconstruct.htm" rel="nofollow">DM-Reconstruct</a> by AngelMapper, which uses it in a very unique way.</p>
+<p><b>Tarquin:</b> Indeed. IIRC, you just stick a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> to detect player presence, and change a few settings of the mover.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 74/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/r/o/Legacy%7EProximity-_And_Damage-Triggered_Doors_d139.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/r/o/Legacy_talk%7EProximity-_And_Damage-Triggered_Doors_b11d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Proximity-_And_Damage-Triggered_Doors">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 10:53, 26 August 2006 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

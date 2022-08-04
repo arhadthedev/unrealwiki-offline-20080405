@@ -1,0 +1,473 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Dma/JetPack - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Dma/JetPack</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/d/m/a/Legacy%7EDma_adcc.html" title="Legacy:Dma">Legacy:Dma</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>I was just writing this to see how hard it would be...</p>
+<p>Known bugs:</p>
+<ul>
+<li>No HUD notification of the fuel status.</li>
+<li>Expire message doesn't disappear.</li>
+<li>You can't see your own trails in first-person mode.</li>
+<li>There isn't any physical jetpack attached to shoulder or spine bones.</li>
+<li>Client-side simulation isn't right.</li>
+</ul>
+<p><b>Dma:</b> I just realized that PostNetBeginPlay is used to catch variable replications. And I was the one who posted it at <a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">Creating_Actors_And_Objects</a>. Looks like I forgot.&#160;:-)</p>
+<p>If you have any hints about the proper method of replicating the acceleration caused by the jet pack so as to avoid ClientAdjustPosition calls (the jerkiness that results when the authoritative server tells the client where the pawn should be), I would be <b>very</b> grateful. The calls seem to have changed since UT1.</p>
+<p>Also, feel free to make comments on this page. Feel free to chastise me for my overuse of the <b>simulated</b> keyword. Perhaps I should use an autonomous proxy or something.</p>
+<p>This whole "project" is actually my excercise in understanding the player movement commands under lag and packet-loss conditions, not to mention the pitfalls of the visibility of attached objects and changing relevance of actors.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// JetPack</span>
+<span class="co1">// http://www.coe.uncc.edu/~danderse/</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> JetPack <span class="kw5">extends</span> Powerups;
+ 
+<span class="kw1">replication</span> <span class="br0">{</span>
+ 
+    <span class="co1">// Send these variables to the client.</span>
+    <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span>==<span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        Strength, AmbJetSound, JetTrailClass, JetTrail, SoundActor;
+ 
+    <span class="co1">// Server calls these functions on the client.</span>
+    <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span>==<span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        ClientGotoState;
+<span class="br0">}</span>
+ 
+<span class="kw5">var</span> xEmitter JetTrail;                  <span class="co1">// The Jet Trail.</span>
+<span class="kw5">var</span> JetPackInteraction OurInteraction;  <span class="co1">// Our hud stuff!</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bGotOwner;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> class&lt;xEmitter&gt; JetTrailClass;    <span class="co1">// This isn't used yet.</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">sound</span></a> AmbJetSound;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> Strength;
+ 
+<span class="kw5">var</span> JetPackSound SoundActor;
+<span class="kw5">var</span> <span class="kw4">int</span> TickCount;
+ 
+<span class="co1">//=============================================================================</span>
+<span class="co1">// This little piece of garbage waits until the owner is successfully</span>
+<span class="co1">// replicated to the client.  This is a bizarre way to fix accessed nones.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">state</span> ActivateWhenGetOwner <span class="br0">{</span>
+    <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>Owner != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="kw7">log</span><span class="br0">(</span><span class="st0">"ActivateWhenGetOwner.  Owner="</span> $ Owner<span class="br0">)</span>;
+            bNetNotify=<span class="kw9">false</span>;
+            <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Activated'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw6">simulated</span> <span class="kw5">function</span> PostNetReceive<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">PostNetReceive</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Got PostNetReceive.  Owner="</span> $ Owner<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>Owner != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            bNetNotify=<span class="kw9">false</span>;
+            <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Activated'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">//=============================================================================</span>
+<span class="co1">// I hate this.  'Activate' is not simulated so it must manually</span>
+<span class="co1">// instruct the client to ALSO go into the 'Activated' state.  </span>
+<span class="co1">//</span>
+<span class="co1">// However, Owner (and probably some other properties) are not </span>
+<span class="co1">// valid for the first few ticks.  Therefore, I must instruct the </span>
+<span class="co1">// client to go to the intermediate state of 'ActivateWhenGetOwner',</span>
+<span class="co1">// which uses the new PostNetReceive() notification function that </span>
+<span class="co1">// is enabled when bNetNotify=true.  Since the 'Activated' state must</span>
+<span class="co1">// have access to Owner, I make the client wait until it gets an Owner</span>
+<span class="co1">// before activating.  </span>
+ 
+<span class="co1">// This usually only takes a few ticks.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> ClientGotoState<span class="br0">(</span><span class="kw4">name</span> NewState<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"ClientGotoState: "</span> $ <span class="kw4">String</span><span class="br0">(</span>NewState<span class="br0">)</span><span class="br0">)</span>;
+    <span class="kw7">GotoState</span><span class="br0">(</span>NewState<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw5">function</span> PerformMove<span class="br0">(</span>PlayerController PC, <span class="kw4">vector</span> Accel, <span class="kw4">float</span> DeltaTime<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw5">local</span> SavedMove sm;
+ 
+    sm = PC.<span class="me1">getFreeMove</span><span class="br0">(</span><span class="br0">)</span>;
+    sm.<span class="me1">SetMoveFor</span><span class="br0">(</span>PC, DeltaTime, Accel, PC.<span class="me1">DoubleClickDir</span><span class="br0">)</span>;
+    sm.<span class="me1">SavedLocation</span> = PC.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span>;
+    sm.<span class="me1">SavedVelocity</span> = PC.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Velocity</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw5">state</span> Activated <span class="br0">{</span>
+    <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+        <span class="kw5">local</span> PlayerController PC;
+ 
+        <span class="co1">// Be sure that we are no longer being distracted by</span>
+        <span class="co1">// notifications of replication events.</span>
+        bNetNotify=<span class="kw9">false</span>;
+ 
+        P = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="co1">// Give the player's spinebone an effect.  Make sure this works.</span>
+            JetTrail = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'SpeedTrail'</span>, P,, P.<span class="me1">Location</span>, P.<span class="me1">Rotation</span><span class="br0">)</span>; 
+ 
+            JetTrail.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+            JetTrail.<span class="me1">bSuspendWhenNotVisible</span>=<span class="kw9">false</span>;
+ 
+            <span class="kw1">if</span> <span class="br0">(</span>P != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                P.<span class="me1">AttachToBone</span><span class="br0">(</span>JetTrail, <span class="st0">'Bip01 Spine2'</span><span class="br0">)</span>;
+                JetTrail.<span class="me1">SetRelativeLocation</span><span class="br0">(</span><span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">-10</span>,<span class="nu0">50</span>,<span class="nu0">-50</span><span class="br0">)</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Calling spawn..."</span><span class="br0">)</span>;
+            SoundActor = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'JetPackSound'</span>,P,,P.<span class="me1">Location</span>, P.<span class="me1">Rotation</span><span class="br0">)</span>;
+            <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Spawn got: "</span> $ SoundActor<span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+ 
+        <span class="co1">// Add some stuff to the HUD.</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> <span class="br0">{</span>
+            PC = PlayerController<span class="br0">(</span>P.<span class="me1">Controller</span><span class="br0">)</span>;
+            <span class="kw1">if</span> <span class="br0">(</span>PC != <span class="kw9">None</span> &amp;&amp; Viewport<span class="br0">(</span>PC.<span class="me1">Player</span><span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                <span class="co1">// Player is being controlled locally at the time of activation!</span>
+                <span class="co1">// Pre-existing Global Interactions:</span>
+                <span class="co1">// GUIController'Package.InteractionMaster0.GUIController0'</span>
+                <span class="co1">// ExtendedConsole'Package.InteractionMaster0.ExtendedConsole0'</span>
+ 
+                <span class="co1">// Create a local interaction.</span>
+                OurInteraction = JetPackInteraction<span class="br0">(</span>
+                    PC.<span class="me1">Player</span>.<span class="me1">InteractionMaster</span>.<span class="me1">AddInteraction</span><span class="br0">(</span><span class="st0">"JetPack.JetPackInteraction"</span>, PC.<span class="me1">Player</span><span class="br0">)</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw6">Super</span>.<span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw7">EndState</span><span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> &amp;&amp; JetTrail != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            JetTrail.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>SoundActor != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            SoundActor.<span class="me1">SetSound</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span>;
+            SoundActor.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="co1">// Get rid of our HUD interaction.</span>
+        <span class="kw1">if</span> <span class="br0">(</span>OurInteraction != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            OurInteraction.<span class="me1">DieAlready</span><span class="br0">(</span><span class="br0">)</span>;
+            OurInteraction = <span class="kw9">None</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw6">Super</span>.<span class="kw7">EndState</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw5">local</span> PlayerController PC;
+        <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> P;
+        <span class="kw5">local</span> <span class="kw4">vector</span> X,Y,Z;
+        <span class="kw5">local</span> <span class="kw4">vector</span> Accel;
+ 
+        P = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span>;
+        PC = PlayerController<span class="br0">(</span>P.<span class="me1">Controller</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>PC != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P != <span class="kw9">None</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>PC.<span class="me1">bDuck</span> != <span class="nu0">0</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>P.<span class="me1">Physics</span> == PHYS_Falling<span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+ 
+                <span class="co1">// Turn on the Jet Trail.  Unpause the xEmitter.</span>
+                <span class="kw1">if</span> <span class="br0">(</span>JetTrail != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                    JetTrail.<span class="me1">mRegenPause</span>=<span class="kw9">False</span>;
+                <span class="br0">}</span>
+ 
+                <span class="co1">// Thrust the player.</span>
+                GetAxes<span class="br0">(</span>PC.<span class="me1">Rotation</span>, X, Y, Z<span class="br0">)</span>;
+                <span class="co1">// Z = Normal(Z);</span>
+                Accel = Z*Strength;
+<span class="coMULTI">/*
+                // Try to replicate client movement to server.
+                if (Role &lt; ROLE_Authority) {
+                    PerformMove(PC, Accel, DeltaTime);
+                }
+*/</span>
+                P.<span class="me1">AddVelocity</span><span class="br0">(</span>Z*Strength*DeltaTime<span class="br0">)</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">ROLE_Authority</span><span class="br0">)</span> <span class="br0">{</span>
+                    PC.<span class="me1">ShortServerMove</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>, P.<span class="me1">Location</span>, PC.<span class="me1">bRun</span>!=<span class="nu0">0</span>, PC.<span class="me1">bDuck</span>!=<span class="nu0">0</span>, PC.<span class="me1">bJumpStatus</span>, P.<span class="me1">Rotation</span>.<span class="me1">Roll</span> / <span class="nu0">256</span>, <span class="nu0">0</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+<span class="co1">//              log("Would replicate move - accel = " $ String(-4*Accel));</span>
+                <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//                  log("Replicating move - accel = " $ String(-4*Accel));</span>
+<span class="co1">//                  PC.ReplicateMove(DeltaTime, -4*Accel, PC.DoubleClickDir, rot(0,0,0));</span>
+                <span class="br0">}</span>
+ 
+                <span class="co1">// Turn on the jetpack sound.</span>
+                <span class="kw1">if</span> <span class="br0">(</span>SoundActor != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                    SoundActor.<span class="me1">SetSound</span><span class="br0">(</span>AmbJetSound<span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+                <span class="co1">// Make it burn fuel.</span>
+                Charge -= <span class="br0">(</span>DeltaTime * <span class="nu0">100</span><span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span>Charge &lt;= <span class="nu0">0</span><span class="br0">)</span> <span class="br0">{</span>
+                    UsedUp<span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+            <span class="br0">}</span> <span class="kw1">else</span> <span class="br0">{</span>
+ 
+                <span class="co1">// Turn off the Jet Trail.  Pause the xEmitter.</span>
+                <span class="kw1">if</span> <span class="br0">(</span>JetTrail != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                    JetTrail.<span class="me1">mRegenPause</span>=<span class="kw9">True</span>;
+                <span class="br0">}</span>
+ 
+                <span class="co1">// Turn off the jetpack sound.  </span>
+                <span class="kw1">if</span> <span class="br0">(</span>SoundActor != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+                    SoundActor.<span class="me1">SetSound</span><span class="br0">(</span><span class="kw9">None</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+            <span class="br0">}</span> <span class="co1">// if (not) thrusting</span>
+            <span class="co1">// ...</span>
+        <span class="br0">}</span>
+<span class="co1">//      Global.Tick(DeltaTime);</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// We are no longer being held.</span>
+<span class="kw5">function</span> Destroyed<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">''</span><span class="br0">)</span>;
+ 
+    <span class="co1">// Get rid of our HUD interaction.</span>
+    <span class="kw1">if</span> <span class="br0">(</span>OurInteraction != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+        OurInteraction.<span class="me1">DieAlready</span><span class="br0">(</span><span class="br0">)</span>;
+        OurInteraction = <span class="kw9">None</span>;
+    <span class="br0">}</span>
+ 
+    <span class="co1">// Remove from player's inventory.</span>
+    <span class="kw6">Super</span>.<span class="me1">Destroyed</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Activate<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> bActivatable <span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw7">GoToState</span><span class="br0">(</span><span class="st0">'Activated'</span><span class="br0">)</span>;
+        <span class="co1">// I suppose the first part is redundant below.</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_ListenServer</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+            <span class="co1">// The client is being told to activate once it gets an owner.</span>
+            ClientGotoState<span class="br0">(</span><span class="st0">'ActivateWhenGetOwner'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+   <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+   <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+   <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+   ExpireMessage=<span class="st0">"Your jetpack ran out of gas."</span>
+   bAutoActivate=<span class="kw9">True</span>
+   bActivatable=<span class="kw9">True</span>
+   bNetNotify=<span class="kw9">True</span>
+   PickupClass=<span class="kw5">class</span><span class="st0">'JetPackPickup'</span>
+   Charge=<span class="nu0">10000</span>
+   Strength=<span class="nu0">3000</span>
+   AmbJetSound=<a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'WeaponSounds.BaseGunTech.BTranslocatorHoverModule'</span>
+   JetTrailClass=<span class="kw5">class</span><span class="st0">'RocketTrailSmoke'</span>;
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> JetPackInteraction <span class="kw5">extends</span> Interaction;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> Fuel;
+ 
+<span class="kw5">function</span> GetFuelFromViewTarget<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> VT;
+    <span class="kw5">local</span> JetPack JP;
+    VT = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ViewTarget</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>VT != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+        <span class="co1">// Viewport is looking at a pawn.</span>
+        JP = JetPack<span class="br0">(</span>VT.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'JetPack'</span><span class="br0">)</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>JP != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">{</span>
+            Fuel = JP.<span class="me1">Charge</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Initialized<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="kw8">self</span>@<span class="st0">"I'm alive"</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PostRender<span class="br0">(</span> canvas Canvas <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> VT;
+    VT = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ViewTarget</span><span class="br0">)</span>;
+ 
+    GetFuelFromViewTarget<span class="br0">(</span><span class="br0">)</span>;
+    Canvas.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">20</span>,<span class="nu0">300</span><span class="br0">)</span>;
+    Canvas.<span class="me1">Style</span> = <span class="nu0">1</span>;
+    Canvas.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+    Canvas.<span class="me1">DrawText</span><span class="br0">(</span><span class="st0">"Fuel remaining: "</span> $ <span class="kw4">String</span><span class="br0">(</span>Fuel<span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// Stops the magic.</span>
+<span class="kw5">function</span> DieAlready<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"JPI: Dying!"</span><span class="br0">)</span>;
+ 
+    <span class="co1">// Dunno why.</span>
+    bVisible=<span class="kw9">False</span>;
+    bActive=<span class="kw9">False</span>;
+    bNativeEvents=<span class="kw9">False</span>;
+    bRequiresTick=<span class="kw9">False</span>;
+ 
+    <span class="co1">// Remove ourself.</span>
+    Master.<span class="me1">RemoveInteraction</span><span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// Called when level changes.</span>
+<span class="kw5">function</span> NotifyLevelChange<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    DieAlready<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    bVisible=<span class="kw9">true</span>
+    bActive=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// JetPackSound.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> JetPackSound <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw1">replication</span> <span class="br0">{</span>
+   <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> &lt; <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+      ServerSetSound;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> ServerSetSound<span class="br0">(</span><a href="/sound"><span class="kw10">Sound</span></a> S<span class="br0">)</span> <span class="br0">{</span>
+   AmbientSound=S;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SetSound<span class="br0">(</span><a href="/sound"><span class="kw10">Sound</span></a> S<span class="br0">)</span> <span class="br0">{</span>
+   AmbientSound=S;
+   ServerSetSound<span class="br0">(</span>S<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+   <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_None</span>
+   Physics=PHYS_Trailer
+   SoundVolume=<span class="nu0">200</span>
+   SoundPitch=<span class="nu0">56</span>
+   bAlwaysRelevant=<span class="kw9">true</span>
+   bHidden=<span class="kw9">true</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Category:Legacy Custom Class (UT)</a>//<a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Category:Legacy Custom Class (UT2004)</a></p>
+<p><a name="Comments" id="Comments"></a></p>
+<h3><span class="mw-headline">Comments</span></h3>
+<p><b>SocratesJohnson</b>: WRT ClientAdjustPosition() jerkiness, I experienced the same thing while working on my <a href="../../../../articles/s/o/c/Legacy%7ESocratesJohnson_Freefall_f4b1.html" title="Legacy:SocratesJohnson/Freefall">Freefall</a> mutator. It seems to happen when a client explicitly tries to set the velocity of the Pawn. Try just working with Acceleration i.e. change the P.AddVelocity(Z*Strength*DeltaTime) line to adjust acceleration instead, for a start, perhaps make it decay over time. I don't have the Pawn source in front of me but just modifying P.Acceleration seemed to work in my case and that gets replicated back to the server when the physics engine does its thing. I'm pretty new to UnrealScript so your milage may vary.&#160;:D I'd love to see this in action!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 22/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/m/a/Legacy%7EDma_JetPack_ad51.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/m/a/Legacy_talk%7EDma_JetPack_d602.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Dma/JetPack">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 11:28, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

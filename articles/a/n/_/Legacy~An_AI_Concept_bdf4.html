@@ -1,0 +1,430 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:An AI Concept - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:An AI Concept</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><i><b>Disclaimer:</b></i> This page represents an idea for a proposed way of coding some particular functionality / behavior in UnrealScript. It does not represent the way that <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> / <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> / <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> actually do things in the normal game engine.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#The_New_Pattern"><span class="tocnumber">2</span> <span class="toctext">The New Pattern</span></a>
+<ul>
+<li class="toclevel-2"><a href="#What_does_it_do.3F"><span class="tocnumber">2.1</span> <span class="toctext">What does it do?</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Is_It_For_Me"><span class="tocnumber">2.1.1</span> <span class="toctext">Is It For Me</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Concept_Extended_.28More_Advanced.29"><span class="tocnumber">3</span> <span class="toctext">The Concept Extended (More Advanced)</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Semi-Abstract_Classes"><span class="tocnumber">3.1</span> <span class="toctext">Semi-Abstract Classes</span></a></li>
+<li class="toclevel-2"><a href="#Sub-whatta.3F"><span class="tocnumber">3.2</span> <span class="toctext">Sub-whatta?</span></a></li>
+<li class="toclevel-2"><a href="#Polymorphism"><span class="tocnumber">3.3</span> <span class="toctext">Polymorphism</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Conclusion"><span class="tocnumber">4</span> <span class="toctext">Conclusion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>I'm going to generalize for a minute briefly and explain that in a game "world," any and every object has a behaviour. Even if it's as simple as a cup or as complex as monster. Each behaviour can be more eaisily comprehended if split up into two categories:</p>
+<ol>
+<li>General Behaviour</li>
+<li>Specific Behaviour</li>
+</ol>
+<p>General Behaviours are behaviours that all objects of a certain type know. With Unreal, most monsters general behaviour is located in their parent class. For example the Skaarj:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Skaarj <span class="kw5">extends</span> ScriptedPawn;
+ 
+<span class="co1">//some behavioural code</span>
+</pre></div>
+<p>ScriptedPawn is the Skaarj's parent class, and defines general behaviour for all instances of itself. And down the heirarchy:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> SkaarjWarrior <span class="kw5">extends</span> Skaarj;
+ 
+<span class="co1">//some behavioural code</span>
+</pre></div>
+<p>Where Skaarj is the parent class and contains general behaviour code for all instances of itself. SkaarjWarrior now has the behaviour defined in Skaarj, general, and it's own behaviour for doing more "specific to it" things, specific. This concept is old and for new coders, is called inheritance. (If your one of those newer coders, I'd suggest reading a tutorial on Object Oriented Programming before you continue).</p>
+<p><a name="The_New_Pattern" id="The_New_Pattern"></a></p>
+<h2><span class="mw-headline">The New Pattern</span></h2>
+<p>Before I actually show how to implement the new patten, I'd like to explain what it does, and if you should use it.</p>
+<p><a name="What_does_it_do.3F" id="What_does_it_do.3F"></a></p>
+<h3><span class="mw-headline">What does it do?</span></h3>
+<p>I can best show you what it does by using an example. Most of it is pseudo code, but it gets the point across&#160;;).</p>
+<p>Basically, the pattern creates a class structure for creating GENERAL TYPES of monsters with specific behaviours. It allows you to make one class for every general type of monster, one behaviour for every general type of behaviour, and allow both to be used in eachother.This requires two new classes, class Behaviour, and class Creature:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Behaviour <span class="kw5">extends</span> ScriptedPawn;
+ 
+<span class="co1">//an instance of every sub-class of behaviour will need to be here(eventually)</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Creature <span class="kw5">extends</span> ScriptedPawn;
+ 
+<span class="co1">//Every variable that a subclass of Creature needs will go here(eventually)</span>
+</pre></div>
+<p>Note that I say 'general' several times in that paragraph. The classes NEED to be general. Example: Say I wanted to create a new brute that can crouch and hide behind boxes, shoot missles and machine guns, and talk to the player. To do this, I could create a general 'Creature' class called newBrute and a general 'Behaviour' classes called Hiding:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> newBrute <span class="kw5">extends</span> Creature;
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Hiding <span class="kw5">extends</span> Behaviour;
+</pre></div>
+<p>Notice that it isin't 'HidngBehindBoxes', or 'BruteWarrior' extending Brute. They are both general names and both general classes. newBrute will define more specific functions for instances of itself and Hiding will define functions for hiding. All sub-classes of Behaviour are abstract, or only contain functions that make up an interface. Let us map out what needs to be in each class:</p>
+<ul>
+<li>newBrute
+<ul>
+<li>UseMachineGun()</li>
+<li>UseMissileLauncher()</li>
+<li>CheckWeaponStates()</li>
+<li>CheckHealthState()</li>
+<li>SeePlayer()</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Hiding
+<ul>
+<li>CheckForBox()</li>
+<li>CheckForShadows()</li>
+<li>HideBehindNearestBox()</li>
+<li>HideBehindNearestShadow()</li>
+</ul>
+</li>
+</ul>
+<p>(By no means are these complete, they are just for the sake of the example)</p>
+<p>A redefinition of Creature:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// same class as before just added on to</span>
+ 
+<span class="kw5">class</span> Creature <span class="kw5">extends</span> ScriptedPawn;
+ 
+<span class="kw5">var</span> Behaviour _behaviour;
+</pre></div>
+<p>Now that we have mapped out what will be needed for the newBrute and Hiding, we will continue to define states:</p>
+<ul>
+<li>newBrute
+<ul>
+<li>TalkingToPlayer</li>
+<li>Firing</li>
+<li>Idling</li>
+<li>Hiding</li>
+</ul>
+</li>
+</ul>
+<dl>
+<dt>TalkingToPlayer&#160;</dt>
+<dd>A state for calling functions that send logs to players.</dd>
+<dt>Firing&#160;</dt>
+<dd>A state that calls firing functions and plays animations.</dd>
+<dt>Idling&#160;</dt>
+<dd>A state that checks ammo and checks which weapons can be used.</dd>
+<dt>HidingBehindBox&#160;</dt>
+<dd>A state for using the _behaviour instance for calling the 'Hiding' interface.</dd>
+</dl>
+<p>No states will be needed for Hiding, for it is abstract.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//The same class as above, just added on to</span>
+ 
+<span class="kw5">class</span> newBrute <span class="kw5">extends</span> Creature;
+ 
+<span class="co1">//---------------------------------------------------</span>
+<span class="co1">// Functions</span>
+<span class="co1">//---------------------------------------------------</span>
+ 
+<span class="kw5">function</span> UseMachineGun<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UseMissileLauncher<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckWeaponStates<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckHealthState<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SeePlayer<span class="br0">(</span><a href="/Actor"><span class="kw10">actor</span></a> SeenPlayer<span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="co1">//-------------------------------------------------------------</span>
+<span class="co1">// States</span>
+<span class="co1">//-------------------------------------------------------------</span>
+ 
+<span class="kw5">state</span> TalkingToPlayer <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Firing <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Idling <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Hiding <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// same class as above, just added on to</span>
+ 
+<span class="kw5">class</span> Hiding <span class="kw5">extends</span> Behaviour;
+ 
+<span class="co1">//------------------------------------</span>
+<span class="co1">// Functions</span>
+<span class="co1">//------------------------------------</span>
+ 
+<span class="kw5">function</span> CheckForBoxes<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckForShadows<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> HideBehindNearestBox<span class="br0">(</span>Creature _creature<span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> HideBehindNearestShadow<span class="br0">(</span>Creature _creature<span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now the Behaviour class can be modified:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//same class as above, just added on to</span>
+ 
+<span class="kw5">class</span> Behaviour <span class="kw5">extends</span> ScriptedPawn;
+ 
+<span class="kw5">var</span> Hiding  _hiding;  <span class="co1">// an instance of the Hiding class</span>
+</pre></div>
+<p>Now the _behaviour instance can be used in newBrute to access 'Hiding' interface.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> newBrute <span class="kw5">extends</span> Creature;
+ 
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">actor</span></a> player;
+ 
+<span class="co1">//---------------------------------------------------</span>
+<span class="co1">// Functions</span>
+<span class="co1">//---------------------------------------------------</span>
+ 
+<span class="kw5">function</span> UseMachineGun<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> UseMissileLauncher<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckWeaponStates<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> CheckHealthState<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+<span class="kw1">if</span><span class="br0">(</span><span class="kw8">self</span>.<span class="me1">health</span> &lt;= <span class="nu0">50</span><span class="br0">)</span> <span class="br0">{</span> <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Hiding'</span><span class="br0">)</span>; <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> SeePlayer<span class="br0">(</span><a href="/Actor"><span class="kw10">actor</span></a> Seenplayer<span class="br0">)</span> <span class="br0">{</span>
+SeenPlayer = player;
+<span class="br0">}</span>
+ 
+<span class="co1">//-------------------------------------------------------------</span>
+<span class="co1">// States</span>
+<span class="co1">//-------------------------------------------------------------</span>
+ 
+<span class="kw5">state</span> TalkingToPlayer <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Firing <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Idling <span class="br0">{</span>
+Begin:
+<span class="co1">//code</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Hiding <span class="br0">{</span>
+Begin:
+behaviour._hiding.<span class="me1">HideBehindBox</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>;
+CheckHealthState<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Is_It_For_Me" id="Is_It_For_Me"></a></p>
+<h4><span class="mw-headline">Is It For Me</span></h4>
+<p>Well, thats not really an easy question to awnser. But here are somethings to check over. If you can awnser yes to these questions I would try the concept, just to see what can be gotten out of it, explore it.</p>
+<ol>
+<li>Am I making a mod where I want to include my own models and meshes?</li>
+<li>Is my mod large enough to be doing all this work for just a few monsters?</li>
+<li>Am I going to be adding a lot of new features with AI?</li>
+<li>Will I be making new weapons and items in my mod?</li>
+<li>If my mod is multiplayer, is this system appropriate?</li>
+</ol>
+<p><a name="The_Concept_Extended_.28More_Advanced.29" id="The_Concept_Extended_.28More_Advanced.29"></a></p>
+<h2><span class="mw-headline">The Concept Extended (More Advanced)</span></h2>
+<p><a name="Semi-Abstract_Classes" id="Semi-Abstract_Classes"></a></p>
+<h3><span class="mw-headline">Semi-Abstract Classes</span></h3>
+<p>I like to call Creature and Behaviour 'semi-abstract classes' because they aren't really abstract, they contain variables and functions just like any other class. They become semi-abstract because they are basically interfaces for accessing multiple interfaces.</p>
+<p><a name="Sub-whatta.3F" id="Sub-whatta.3F"></a></p>
+<h3><span class="mw-headline">Sub-whatta?</span></h3>
+<p>I like to define these terms in this way:</p>
+<dl>
+<dt>Sub-Behavioural classes&#160;</dt>
+<dd>Any class that inherits 'Behaviour' a sub-behavioural class.</dd>
+<dt>Sub-Creature classes&#160;</dt>
+<dd>Any class that inherits 'Creature' a sub-creature class.</dd>
+</dl>
+<p><a name="Polymorphism" id="Polymorphism"></a></p>
+<h3><span class="mw-headline">Polymorphism</span></h3>
+<p>Many elements of the pattern will be polymorphic. Hence the terms semisub-polymorphic, sub-polymorphic, and semi-abstract polymorphic. A behavioural trigger which can be called by the creature could use polymorphism by having the creature call the trigger placed somewhere in some map, and having it call some interface to change that creatures behaviour, all at runtime. More on this will be added later.</p>
+<p><a name="Conclusion" id="Conclusion"></a></p>
+<h2><span class="mw-headline">Conclusion</span></h2>
+<p>The pattern can be used on anything, not just AI, just with a little change insystem. Weapons, items, etc. all have behaviours... One could write general classes for every type of item or weapon or whatever and provide interfaces through behaviour and '_Item' instead of Creature, or _Weapon. Remember, it's just a concept, a theory, don't live by it... Much is untested. Take it and expand it... find ways to make it better.</p>
+<p><a href="../../../../articles/c/0/r/Legacy%7EC0ry_2190.html" title="Legacy:C0ry">C0ry</a></p>
+<p>Cory Vogel 2002</p>
+<p>fusion815@cox.net</p>
+<p>Questions?</p>
+<p>email me&#160;:)</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">Artificial Intelligence</a> – Super Topic for all AI (custom or stock)
+<ul>
+<li><a href="../../../../articles/i/n/t/Legacy%7EIntroduction_To_Game_AI_a529.html" title="Legacy:Introduction To Game AI">Introduction to Game AI</a></li>
+<li><a href="../../../../articles/f/i/r/Legacy%7EFirst_Person_Shooter_AI_Architecture_32dc.html" title="Legacy:First Person Shooter AI Architecture">First Person Shooter AI Architecture</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Foogod:</b> I added the disclaimer at the top, because the way these pages are linked from <a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">Artificial Intelligence</a> could confuse some people into thinking this is an explanation of the way that the UT-based games actually do things.</p>
+<p><b>Ghost3021:</b>fixed a typo, "just a some monsters? is now "for just a few monsters?".&#160;;)</p>
+<p><b>SuperApe:</b> I hope Cory doesn't mind; I took out a lot of unecessary spacing in the code and text of this page.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 46/1000000
+Post-expand include size: 13/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/n/_/Legacy%7EAn_AI_Concept_bdf4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/n/_/Legacy_talk%7EAn_AI_Concept_3f23.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:An_AI_Concept">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:05, 2 June 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

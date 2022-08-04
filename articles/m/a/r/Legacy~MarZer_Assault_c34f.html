@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MarZer/Assault - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MarZer/Assault</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/a/r/Legacy%7EMarZer_4d83.html" title="Legacy:MarZer">Legacy:MarZer</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#MarZer.27s_Assault_Mapping_Tips"><span class="tocnumber">1</span> <span class="toctext">MarZer's Assault Mapping Tips</span></a>
+<ul>
+<li class="toclevel-2"><a href="#General_Assault_Pathing"><span class="tocnumber">1.1</span> <span class="toctext">General Assault Pathing</span></a></li>
+<li class="toclevel-2"><a href="#Vehicle_Assault_Pathing"><span class="tocnumber">1.2</span> <span class="toctext">Vehicle Assault Pathing</span></a></li>
+<li class="toclevel-2"><a href="#AI_Scripts"><span class="tocnumber">1.3</span> <span class="toctext">AI Scripts</span></a></li>
+<li class="toclevel-2"><a href="#Optimization"><span class="tocnumber">1.4</span> <span class="toctext">Optimization</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">2</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="MarZer.27s_Assault_Mapping_Tips" id="MarZer.27s_Assault_Mapping_Tips"></a></p>
+<h3><span class="mw-headline">MarZer's Assault Mapping Tips</span></h3>
+<p>Recently, while helping PointlesS with his Assault map AS-CityInvasion, I realised that many mappers are having trouble mapping for Assault. Having completed a fully-pathed and co-ordinated Assault map myself I'm pretty well-versed in the subject. As such, I'm posting a bunch of random Assault Mapping tips (most of which I gave to PointlesS) for mappers to use as a reference:</p>
+<p><a name="General_Assault_Pathing" id="General_Assault_Pathing"></a></p>
+<h4><span class="mw-headline">General Assault Pathing</span></h4>
+<p>First things first: NEVER use the autodoor/door actors. They are complete ****. Use 2 pathnodes and force a path between them accross the door. I have noticed bots often get confused when Door/AutoDoors are used.</p>
+<p>For every single vehicle path you have, try to have about 3 normal paths nearby. This is good for two reasons: bots on foot will attack/defend from different directions and if the vehicle gets off track, it can use the normal paths to find it's way back.</p>
+<p>BlockedPaths, ForcedPaths and ProscribedPaths are your friend. Sometimes, bots just need to be forced:</p>
+<p><i><b>ForcedPaths</b></i>: Even if the editor doesn't make a link, you can force it yourcelf by first finding out the name of the node you want the path to (Properties -&gt; Object -&gt; Name), then selecting the node you want to make the link from and going to it's properties. Here, go to the Navigation group and head down to ForcedPaths. In the first item in the list, add the name of the pathnode you are forcing a link to. The next time you rebuild there will be a yellow line between the two nodes. This is one-way. To have it two way like a normal link, do the same thing, starting with the second node and linking back to the first.</p>
+<p><i><b>ProscribedPaths</b></i>: Set them up exactly like ForcedPaths, but they tell bots that they SHOULD NOT take this path, no matter what. This is useful as sometimes bots keep taking some stupid route and end up stuck, confused etc.. When you Rebuild, they will be red paths.</p>
+<p><i><b>BlockedPaths</b></i>: Sometimes you want bots to follow a path until something happens (a door closes, something falls in the path). This is what blockedpaths are for. Say you have a blast door that is shut and opens when a particular objective is completed. Put a BlockedPath in front of it then make sure that its bBlockedPath property (or whatever it is called) under Navigation is set to true. Seeing as though you will already have nodes on the other side of the door, force a path from the blocked path to one of the nodes on the other side (and back again). Set the tag of the BlockedPath to whatever event opens the door, and when it is triggered (when the door opens), the bBlockedPath property will be toggled to false which lets bots know they can now go down that route.</p>
+<p><a name="Vehicle_Assault_Pathing" id="Vehicle_Assault_Pathing"></a></p>
+<h4><span class="mw-headline">Vehicle Assault Pathing</span></h4>
+<p>ANY objective that requires the bots to use a vehicle, even if it is not mission-critical, should be given a VehiclePathName. You may have noticed this property before, here's how to use it:</p>
+<p>In the GameObjective group of the objective, there is the VehiclePathName field. Here, you enter the name of the <i>vehicle-accessible pathnode closest to the objective they should be trying to reach</i>.</p>
+<p>Another thing about vehicle pathing: When vehicle Assault mapping, remember ANY navigation points can be used by vehicles as long as bVehicleDestination (under Navigation) is true. In fact, you don't even need RoadPathNodes at all. The only benefit of using those over normal PathNodes is the distance they link over.</p>
+<p>Vehicle paths should be as simple as possible: try to keep them as curves as opposed to sharp bends. The reason is this: If you have an L-shaped bend with one pathnode, it looks like an L to the bots. They don't slow down for it and generally crash. If you use a lot of pathnodes close together to round off the corner (say, 5 pathnodes, 300 Unreal Units apart in a curve, making up the corner), the bots will better judge the corner and slow down.</p>
+<p>Defensive bots will not use their vehicles unless they see an enemy to attack with. Not by default. It is turned off in the vehicle code. Turning it back on is a simple matter of adding a few lines and saving it in myLevel. These scripts are used in AS-Confexia.</p>
+<p><a name="AI_Scripts" id="AI_Scripts"></a></p>
+<h4><span class="mw-headline">AI Scripts</span></h4>
+<p>The AI scripts system is bugged. I noticed this early in the making of HighRise. Here is the way it works:</p>
+<p>In an Assault map, <b>EVERY</b> AI SCRIPT IN THE MAP <u>MUST</u> be linked to an objective. The AI in UT2004 is very intelligent, but not intelligent enough to be able to decipher a mapper's random tags and events&#160;:p</p>
+<p>You do this: The group of AI scripts you want defenders to use when they defend an objective you give the same tag to. MyTag. Then in the properties of the objective they are to defend, go to the GameObjective group. Look for the DefenseScriptTags field. Enter MyTag (subbing in your actual tag obviously). The bots will now know what to do come that objective.</p>
+<p>This must be done for every single AI script in the level, there cannot be one single one that is not attached to an objective of some kind or ALL OF THEM WILL FAIL.</p>
+<p><a name="Optimization" id="Optimization"></a></p>
+<h4><span class="mw-headline">Optimization</span></h4>
+<p><i><b>Fog</b></i>: No further than 20000 units for the max distance is sufficient for outside levels, assuming you have antiportals and other optimization methods in place.</p>
+<p><i><b>StaticMesh CullDistance</b></i> <b>(Properties -&gt; Display -&gt; CullDistance)</b>: If you have an indoor Assault Map, there is a good chance you won't be using fog, but there is also a good chance that most of the Static Meshes in the level won't be seen at the same time. By setting the static meshes a CullDistance, they won't be rendered by the engine when they are further away from you than this distance, even if they aren't occluded by fog, AntiPotals or Zones.</p>
+<p><i><b>Checkpoints</b></i>: Another thing that you can do is have 'checkpoint' areas close off as previous parts of your map become empty (as the mission progresses). This allows you to trigger antiportals to hide these unused inaccessable areas, making rendering much less taxing.</p>
+<p><i><b>Doors</b></i>: Make an antiportal that is the same size of your door but a bit narrower. Put it over the door. In the properties of the door, go to the Mover group. In AntiPortalTag set it a unique name. Then in the properties of the AntiPortal, go to the Events group and set its Tag the same as what you just entered in the mover's AntiPortalTag. Go to the Movement group and set the AntiPortal's AttachTag to that of the tag of the door. Then go to the Object group (still in the AntiPortal's properties) and set InitialState to TriggerToggle. This will stop whatever is behind the door (line of sight, unless the door is a zone portal as well) being rendered when the door is closed (when the AntiPortal is active and down) but when the door opens the AntiPortal gets turned off and moved out with the door, so it is as if it was never there. When the door shuts again it turns back on. This is very useful if you have a lot of indoor-outdoor areas.</p>
+<p><i><b>Hiding Areas</b></i>: When you place an AntiPortal it is turned on by default. Triggering it will disable it (provided it's Object -&gt; InitialState property is set to TriggerToggle). You can use a sheet AP to stop rendering of all the behind bits of a map until players can actually get in there, at which point you turn it off.</p>
+<p><i><b>AntiPortal size</b></i>: Remember, one big antiportal is always better than lots of little ones. Always.</p>
+<p><i><b>Zoning</b></i>: Try to place ZonePortals in a place where they wont be seen that often. This causes the other zones to be rendered less often.</p>
+<p>That is all for now, I hope it helps some people. I will update this later, as well as writing a decent Assault mapping tutorial that gets into the nitty-gritty, evil, nasty bits of it at some point. Feel free to add things to it (hey, this is the Wiki after all!)</p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Graphik:</b> Before you link to this page on <a href="../../../../articles/g/a/m/Legacy%7EGametype_98de.html" title="Legacy:Gametype">Gametype</a>:</p>
+<p>If you desire this page to be part of the 'public domain', please create a new page for it not subpaged from your personal page. Anything on or below your personal page is considered just that: personal.</p>
+<p>Additionally, a bit of cleanup is in order. If you move this content to a different page as mentioned above I'll do the cleanup for you if you like.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 9/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/r/Legacy%7EMarZer_Assault_c34f.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/r/Legacy_talk%7EMarZer_Assault_5c42.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MarZer/Assault">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 04:40, 21 September 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

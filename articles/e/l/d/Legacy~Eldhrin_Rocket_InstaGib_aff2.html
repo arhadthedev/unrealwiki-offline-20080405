@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Eldhrin/Rocket InstaGib - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Eldhrin/Rocket InstaGib</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/e/l/d/Legacy%7EEldhrin_3e5c.html" title="Legacy:Eldhrin">Legacy:Eldhrin</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Rocket_InstaGib"><span class="tocnumber">1</span> <span class="toctext">Rocket InstaGib</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_concept..."><span class="tocnumber">1.1</span> <span class="toctext">The concept...</span></a></li>
+<li class="toclevel-2"><a href="#How_to_make_your_own_rocket_launcher"><span class="tocnumber">1.2</span> <span class="toctext">How to make your own rocket launcher</span></a></li>
+<li class="toclevel-2"><a href="#How_to_make_a_rocket_always_kill_people"><span class="tocnumber">1.3</span> <span class="toctext">How to make a rocket always kill people</span></a></li>
+<li class="toclevel-2"><a href="#How_to_make_it_look_different"><span class="tocnumber">1.4</span> <span class="toctext">How to make it look different</span></a></li>
+<li class="toclevel-2"><a href="#8th_December_2002_-_how_to_make_it_look_different_part_two"><span class="tocnumber">1.5</span> <span class="toctext">8th December 2002 - how to make it look different part two</span></a></li>
+<li class="toclevel-2"><a href="#9th_December_2002_-_how_to_make_it_work_with_the_Linux_client"><span class="tocnumber">1.6</span> <span class="toctext">9th December 2002 - how to make it work with the Linux client</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Rocket_InstaGib" id="Rocket_InstaGib"></a></p>
+<h2><span class="mw-headline">Rocket InstaGib</span></h2>
+<p>A little more complicated to do than I imagined, but still seems to have come together a lot more quickly than I would have thought, given that I've got the majority of it done in two days, barring cosmetic changes. There must be something wrong with it, there's no way it could be this easy...</p>
+<p><a name="The_concept..." id="The_concept..."></a></p>
+<h3><span class="mw-headline">The concept...</span></h3>
+<p>...was simple, just make an InstaGib mutator which uses rocket launchers instead of shock rifles. Oh that's easy, I thought to myself. I'll just subclass RocketProj, make it always-lethal, then subclass RocketLauncher, make it launch my new kind of rocket, and then poke around in the InstaGib mutator to see how to get it to replace the weapons in the map. Well, that bit went smoothly enough, but it turns out weapons are more complicated than I thought.</p>
+<p><a name="How_to_make_your_own_rocket_launcher" id="How_to_make_your_own_rocket_launcher"></a></p>
+<h3><span class="mw-headline">How to make your own rocket launcher</span></h3>
+<p>Subclassing RocketLauncher seemed like the thing to do since I wanted all its functionality, but oh no, that doesn't work very well at all. Why not? Because the RocketLauncher code has explicit typecasts to RocketLauncher in it - most specifically to call SpawnProjectile. So guess what - it fires RocketProj instead of the new projectile I'd so carefully crafted.</p>
+<p>A further complication is added by the fact that actually firing a weapon is handled by another class derived from WeaponFire, so I had to modify those as well. As it turns out, this isn't such a bad thing, but it was irritating at the time. RocketLauncher has two firing classes derived from ProjectileFire - one of them handles primary fire mode and launches a single rocket, while the other handles secondary fire mode and launches up to three rockets in two different patterns, as you all no doubt know.</p>
+<p>So I thought of subclassing both of them. Big mistake - it ended up firing RocketProj again no matter what I did to the default properties. And why's that? Explicit typecasts again. Haven't the UT coders heard of type abstraction? So I ended up overriding so many methods that I ended up throwing my arms up in despair and just overriding almost every method in RocketLauncher. But hey, that's what overriding is for after all... and at least UnrealScript's methods are virtual by default.</p>
+<p><a name="How_to_make_a_rocket_always_kill_people" id="How_to_make_a_rocket_always_kill_people"></a></p>
+<h3><span class="mw-headline">How to make a rocket always kill people</span></h3>
+<p>First I had to get rid of the proportional splash damage. By default this is handled by a method of Actor called HurtRadius, which automatically tracks down and deals damage to all the suitable Actors in the vicinity of the specified location, based on the distance from that location. I, however, wanted to kill everything in the rocket's explosion radius. This, happily, is easy enough by making a new method called HurtRadiusConstant inside my projectile class, making it do pretty much the same thing as HurtRadius but without the proportional damage falloff calculation, and then call it with a suitably high amount of damage - say 250, a figure I picked out of the RedeemerProjectile code. I was kind of hoping to do it in a slightly less cludgy way by being able to call Actor.Kill() or something, but so far I haven't located such a method.</p>
+<p><a name="How_to_make_it_look_different" id="How_to_make_it_look_different"></a></p>
+<h3><span class="mw-headline">How to make it look different</span></h3>
+<p>At the moment, Rocket InstaGib games look a lot like using the Arena mutator with Rocket Launcher as the chosen weapon, because the InstaGib version of the rocket launcher</p>
+<ol>
+<li>doesn't InstaGib, it just kills people</li>
+<li>has precisely the same textures and explosion effects</li>
+</ol>
+<p>I'd like to change all this, but I haven't worked out how yet. Well, explosion effects are simple enough if there's already a class which does it, just Spawn the thing (what do all those extra arguments for Spawn do anyway?) but at the moment there isn't, so I need to work out how to make Emitter classes which do what I want them to do - i.e. anything at all really. Must go hunting for a tutorial, or at least someone who knows how to use them. UDN doesnt' seem to be any help. Anyone? Oh well.</p>
+<p><a name="8th_December_2002_-_how_to_make_it_look_different_part_two"></a></p>
+<h3><span class="mw-headline">8th December 2002 - how to make it look different part two</span></h3>
+<p>So one of the most visual parts of the rocket is the smoke trail, right? I mean, it's not exactly something you don't see... therefore I figured I'd change that a bit, just to make sure that people notice they're playing with rockets which are considerably more dangerous than the usual kind - infinite numbers of them at that. As I may have mentioned, games with this mutator are noisy, albeit quieter than ones using Redeemer missiles (I tried that for a laugh - never again!)</p>
+<p>Anyway, how to make the trail different? Well, XEffects.RocketTrailSmoke is a subclass of <a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a>, which is, it seems, the Digital Extremes particle emitter class, as distinct from <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> which is the one provided by Epic. Why they couldn't use Epic's I have no idea, the feature sets of the two at the basic level seem similar. Maybe it's some hyper-optimised version or something, I can't tell as it's implemented in native code (note to self: check if <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> is native or not. If it's not, that would explain a great deal, but would be very silly). So we either subclass RocketTrailSmoke and tweak it a bit, or subclass xEmitter, copy RocketTrailSmoke's defaultproperties (which are the only thing it contains, makes sense really as it's quite a simple effect so needs no extra UnrealScript) and modify them on a more extensive basis? I opted for the latter, as I was originally intended to make larger changes than I actually did. However, it does now mean that I'm not dependent on changes in RocketTrailSmoke which might possibly be implemented in future patches, although I'll probably need to keep an eye on it to see if they change anything for the better which I should copy.</p>
+<p>So, to the business state of affairs. I wasn't sure exactly what I could do, but the two things which suggested themselves to me immediately were mucking about with the dispersion of the smoke trail, and of course the colour.</p>
+<p>I changed mGrowthRate a little bit, which makes the trails a bit fatter at their older ends, although not all that much that I can tell, so this change isn't really important.</p>
+<p>What is important is mColorRange. This is a two-element array containing R, G and B components, and it's a colour which is used to modify the colour of the texture used for the xEmitter's skin (xEmitter sprite particle textures are specified using the generic Skins array rather than anything added on, as Epic's system opted to do. Clearly their design goals were different). I was happy with the texture, and I don't like mucking about with them anyway (don't know how), so I just changed mColorRange(0) and mColorRange(1). As far as I can determine, xEmitter picks a random value from 0 to 1 for each particle, and interpolates between the two mColorRange values to see how much it should modify the particle texture by. Unsure what colour I really wanted, I randomly set mColorRange(0) to (R=50,G=210,B=0) and mColorRange(1) to (R=210,G=210,B=210). The 210 comes from the settings used for RocketTrailSmoke.</p>
+<p>This produced a rather nice green and grey kind of trail, but I figured green was too indicative of poison gas rockets (which are really something I should implement at some stage I think) so I went for red, the standard colour of danger, and changed mColorRange(0) to (R=210,G=0,B=0). Here's what it looks like:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_eldhrin-rocketinstagib-redsmokesample.jpeg_9ba1.html" class="image" title="Instant-kill rockets with snazzy red smoke trails"><img alt="Instant-kill rockets with snazzy red smoke trails" src="../../../../images/Legacy_eldhrin-rocketinstagib-redsmokesample.jpeg" width="554" height="454" border="0" /></a></span></div>
+</div>
+<p>This screenshot is out of date, as I have now implemented team-coloured smoke trails in team games. Non-team games use red trails.</p>
+<p>Once I've determined that it works on a LAN, I'll make it available for download. Some kind of stupidly open licence probably, I don't want to conflict too much with all the code I used from Epic and Digital Extremes, and someone might even be able to learn something from my scripting mess.</p>
+<p><a name="9th_December_2002_-_how_to_make_it_work_with_the_Linux_client"></a></p>
+<h3><span class="mw-headline">9th December 2002 - how to make it work with the Linux client</span></h3>
+<p>This doesn't seem to work... surely I should just be able to put the .u and .int file for the package into ~/.ut2003/System, right? Well it doesn't show up in the Mutators list! Argh! Tried /usr/games/ut2003/System as well and it didn't help any, neither did adding it to ServerPackages and EditPackages.</p>
+<hr />
+<p><a href="../../../../articles/e/l/d/Legacy%7EEldhrin_Developer_Journal_b5f3.html" title="Legacy:Eldhrin/Developer Journal">Eldhrin/Developer Journal</a></p>
+<p><a href="../../../../articles/e/l/d/Legacy%7EEldhrin_3e5c.html" title="Legacy:Eldhrin">Eldhrin</a></p>
+<hr />
+<p><b>Bullet:</b> I think you could have done all of it without building a new Weapon by modifing the exiting Rocket Launchers in CheckReplacement() and dealing lethal damage in NetDamage(). The problem with the Rocket Launcher using hardcoded projectiles is bad</p>
+<p>but could have been resolved by subclassing and overwriting these functions&#160;;)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/l/d/Legacy%7EEldhrin_Rocket_InstaGib_aff2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/l/d/Legacy_talk%7EEldhrin_Rocket_InstaGib_72a6.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Eldhrin/Rocket_InstaGib">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:14, 11 December 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Function Syntax - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Function Syntax</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Function_Declaration"><span class="tocnumber">1</span> <span class="toctext">Function Declaration</span></a></li>
+<li class="toclevel-1"><a href="#Function_Calls"><span class="tocnumber">2</span> <span class="toctext">Function Calls</span></a></li>
+<li class="toclevel-1"><a href="#Function_vs_Event"><span class="tocnumber">3</span> <span class="toctext">Function vs Event</span></a></li>
+<li class="toclevel-1"><a href="#Delegates"><span class="tocnumber">4</span> <span class="toctext">Delegates</span></a></li>
+<li class="toclevel-1"><a href="#Function_Modifiers"><span class="tocnumber">5</span> <span class="toctext">Function Modifiers</span></a></li>
+<li class="toclevel-1"><a href="#Parameter_Types"><span class="tocnumber">6</span> <span class="toctext">Parameter Types</span></a></li>
+<li class="toclevel-1"><a href="#Parameter_Modifiers"><span class="tocnumber">7</span> <span class="toctext">Parameter Modifiers</span></a></li>
+<li class="toclevel-1"><a href="#Empty_Functions"><span class="tocnumber">8</span> <span class="toctext">Empty Functions</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">9</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Function_Declaration" id="Function_Declaration"></a></p>
+<h2><span class="mw-headline">Function Declaration</span></h2>
+<p>The general function declaration looks like this:</p>
+<pre>
+&lt;<i>function modifiers</i>&gt; <b>function</b>/<b>event</b>/<b>delegate</b> &lt;<i>return type</i>&gt; &lt;<i>function name</i>&gt; 
+ <b>(</b>&lt;<i>parameter modifier</i>&gt; &lt;<i>type</i>&gt; &lt;<i>parameter name</i>&gt;<b>,</b> ...<b>)</b>
+     <b>{</b>
+      ...
+     <b>}</b>
+</pre>
+<dl>
+<dt>&lt;function modifiers&gt;&#160;</dt>
+<dd>Keywords that specify aspects of the function's overall nature and behaviour.</dd>
+<dt>&lt;return type&gt;&#160;</dt>
+<dd>The <a href="../../../../articles/v/a/r/Legacy%7EVariable_Type_ce04.html" title="Legacy:Variable Type">variable type</a> the function returns. You can't return static arrays due to the way they have to be declared. However, you can use an <i>out</i> variable in this case. See Parameter Modifiers further down this page.</dd>
+<dt>&lt;function name&gt;&#160;</dt>
+<dd>The name of the function, chosen by the coder. For advice on naming conventions see <a href="../../../../articles/c/o/d/Legacy%7ECoding_Guidelines_5ef3.html" title="Legacy:Coding Guidelines">Coding Guidelines</a>.</dd>
+<dt>&lt;parameter modifier&gt;&#160;</dt>
+<dd>Changes the nature of individual parameters.</dd>
+<dt>&lt;type&gt;&#160;</dt>
+<dd>The type of each parameter.</dd>
+</dl>
+<p>Example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> MyFunction<span class="br0">(</span> <span class="kw4">bool</span> FirstParam , <span class="kw6">out</span> <span class="kw4">int</span> SecondParam, <span class="kw6">optional</span> <span class="kw4">string</span> ThirdParam <span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="co1">// function code</span>
+<span class="br0">}</span>
+</pre></div>
+<p>You can declare up to 16 parameters for each function. If you need to pass more variables or values you might consider putting those in a struct or array and pass that to the function.</p>
+<p><a name="Function_Calls" id="Function_Calls"></a></p>
+<h2><span class="mw-headline">Function Calls</span></h2>
+<p>There are different ways of calling a function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">bool</span> bReturn, bHaveIt;
+<span class="kw5">local</span> <span class="kw4">int</span> Number;
+ 
+MyFunction<span class="br0">(</span><span class="kw9">True</span>, <span class="nu0">34</span>, <span class="st0">"Hello World!"</span><span class="br0">)</span>; <span class="co1">// parameters passed as literals</span>
+MyFunction<span class="br0">(</span>bHaveIt, Number<span class="br0">)</span>;          <span class="co1">// parameters passed as variables</span>
+bReturn = MyFunction<span class="br0">(</span><span class="kw9">False</span>, Number, <span class="st0">"Hi there!"</span><span class="br0">)</span>; <span class="co1">// save function's return value in another variable</span>
+</pre></div>
+<p>The third version is only allowed when the function has a return value. Note, that any return value you don't save in a variable will be thrown away. For (non-actor) objects this means they are lost and will be garbage collected.</p>
+<p><a name="Function_vs_Event" id="Function_vs_Event"></a></p>
+<h2><span class="mw-headline">Function vs Event</span></h2>
+<p>The <b>event</b> keyword is similar to function, but it creates a C++ header so you can call the function from C++ code. See <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Functions_d7f7.html" title="Legacy:UnrealScript Language Reference/Functions">UnrealScript Language Reference/Functions</a>.</p>
+<p><a name="Delegates" id="Delegates"></a></p>
+<h2><span class="mw-headline">Delegates</span></h2>
+<p>Delegates could be described as a mixture between a function and a class variable. Delegates can be called like functions, but you can also assign "something" to them. This "something would be another function, but see <a href="../../../../articles/d/e/l/Legacy%7EDelegate_60b8.html" title="Legacy:Delegate">Delegate</a> for details since this topic is worth a whole new page.</p>
+<p>The delegate keyword also includes the effect of the <b>event</b> keyword.</p>
+<p><a name="Function_Modifiers" id="Function_Modifiers"></a></p>
+<h2><span class="mw-headline">Function Modifiers</span></h2>
+<dl>
+<dt>final&#160;</dt>
+<dd>This function can't be overridden in subclasses or states of this class. Functions that are <i>static</i> and <i>final</i> are automatically <i>simulated</i> as well.</dd>
+</dl>
+<dl>
+<dt>iterator&#160;</dt>
+<dd>This function is an <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a> function for the use with <i>ForEach</i>. Only native functions can be iterator functions.</dd>
+</dl>
+<dl>
+<dt>latent&#160;</dt>
+<dd>Latent functions require some time to be executed. Typical examples are <i>Sleep</i> which waits for the specified amount of time before returning and <i>FinishAnim</i> which returns when the current animation has finished.<br />
+Latent functions can only be called from state code and may not be called from within ForEach loops. Latent functions have to be native.<br />
+See <a href="../../../../articles/l/a/t/Legacy%7ELatent_Function_1fe0.html" title="Legacy:Latent Function">Latent Function</a>.</dd>
+</dl>
+<dl>
+<dt>native (or intrinsic in older Unreal versions)&#160;</dt>
+<dd>The function is written in native C++ code.</dd>
+<dt>native(<i>&lt;number&gt;</i>)&#160;</dt>
+<dd>The number is a unique identifier for the function. Functions in UScript get numbers automatically, except for native functions, which can "reserve" a function number with this syntax. This is useful because this number must appear in the native code, and if it is not fixed in this fashion it could fluctuate with different builds.</dd>
+</dl>
+<dl>
+<dt>simulated&#160;</dt>
+<dd>The function can be executed on the server or a client in a network game. Any function not declared simulated is ignored on the client.<br />
+See <a href="../../../../articles/s/i/m/Legacy%7ESimulated_Function_71f0.html" title="Legacy:Simulated Function">Simulated Function</a>.<br />
+<b>Note:</b> Simulated functions are not automatically executed on the server and all clients. See <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a> for details.</dd>
+<dt>singular&#160;</dt>
+<dd>prevents reentrancy (recursively calling the same function, in the same object). It can be very useful to prevent certain types of 'endless recursion loop' crashes, but it usefulness is limited by a few caveats. When an object enters a singular function, a flag is set <b>on the object itself</b> that prevents it from re-entering a singular function. This means that any other singular functions that are called on that object will not be executed until the initial singular function has returned, and the 'i'm in a singular function' flag has been unset on the object. This includes base versions of the same function declared in super classes. For example:</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Base <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+<span class="kw6">singular</span> <span class="kw5">function</span> DoSomething<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span> <span class="kw7">log</span><span class="br0">(</span><span class="st0">"blah"</span><span class="br0">)</span>; <span class="br0">}</span>
+...
+...
+<span class="kw5">class</span> Derived <span class="kw5">extends</span> Base;
+<span class="kw6">singular</span> <span class="kw5">function</span> DoSomething<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span> <span class="kw6">Super</span>.<span class="me1">DoSomething</span><span class="br0">(</span><span class="br0">)</span>; <span class="br0">}</span>
+</pre></div>
+<p>When Derived.DoSomething() is called, Super.DoSomething() will not be called, since the object already has a 'singular' function in its call stack.</p>
+<dl>
+<dt>static&#160;</dt>
+<dd>Declares the function as static. See <a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">Static Function</a>.</dd>
+<dt>exec&#160;</dt>
+<dd>The function can be called from the console.</dd>
+<dt>protected&#160;</dt>
+<dd>The function is only visible from the class it was declared in and in all subclasses.</dd>
+<dt>private&#160;</dt>
+<dd>The function is only visible from the class it was declared in, but not in any of its subclasses.</dd>
+</dl>
+<p><a name="Parameter_Types" id="Parameter_Types"></a></p>
+<h2><span class="mw-headline">Parameter Types</span></h2>
+<p>You can use any built-in <a href="../../../../articles/v/a/r/Legacy%7EVariable_Type_ce04.html" title="Legacy:Variable Type">variable types</a>, structs, enums, static and dynamic arrays or objects as type. However, you can't use <i>out</i> bool or <i>optional</i> dynamic arrays. See Parameter Modifiers below.</p>
+<p><a name="Parameter_Modifiers" id="Parameter_Modifiers"></a></p>
+<h2><span class="mw-headline">Parameter Modifiers</span></h2>
+<dl>
+<dt>out&#160;</dt>
+</dl>
+<p>When you pass a variable to a function, its value is copied to a local variable in that function. The <b>out</b> modifier will copy the modified local value back to the original variable when the function returns.</p>
+<p>You can use this modifier when you want a function to return more than one variable. Don't try to use it as performance improvement, though. Especially with larger variable types like dynamic arrays it tends to actually slow things down.</p>
+<p>Here's a simple test case to demonstrate how the <b>out</b> modifier works:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TestCommandlet <span class="kw5">extends</span> Commandlet;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> i;
+ 
+<span class="kw5">function</span> <span class="kw4">int</span> Main<span class="br0">(</span><span class="kw4">string</span> Args<span class="br0">)</span>
+<span class="br0">{</span>
+  i = <span class="nu0">1</span>;
+  <span class="kw7">log</span><span class="br0">(</span>i<span class="br0">)</span>;
+  testout<span class="br0">(</span>i<span class="br0">)</span>;
+  <span class="kw7">log</span><span class="br0">(</span>i<span class="br0">)</span>;
+  <span class="kw1">return</span> <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> testout<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> j<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw7">log</span><span class="br0">(</span>i@j<span class="br0">)</span>;
+  j++;
+  <span class="kw7">log</span><span class="br0">(</span>i@j<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Call <code>UCC YourPackage.Test</code> at the command line and you get:</p>
+<pre>
+1
+1 1
+1 2
+2
+</pre>
+<p>As you can see, the global variable didn't change while the <code>testout</code> function was executed. But it changed right after the function returned.</p>
+<dl>
+<dt>optional&#160;</dt>
+<dd>This parameter may be skipped in a call. If a parameter should be skipped add commas as normal. If the skipped parameter is the last one the comma can be left out as well. This modifier is ignored for dynamic arrays.</dd>
+<dt>coerce&#160;</dt>
+<dd>Automatically casts the parameter to the specified type. (see <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">Typecasting</a> for details)</dd>
+<dt>skip&#160;</dt>
+<dd>Only valid as modifier of the second parameter of a native operator. If the first parameter already is enough to decide the operators return value then the second one will not be evaluated. This is used for the <code>{|</code></dd>
+</dl>
+<p><code>|- | |}</code> and <code>&amp;&amp;</code> operators.</p>
+<p><a name="Empty_Functions" id="Empty_Functions"></a></p>
+<h2><span class="mw-headline">Empty Functions</span></h2>
+<p>Two reasons to declare an 'empty' function:</p>
+<ul>
+<li>declare an "abstract" empty function that can then be "specialised" in a subclass or a state</li>
+<li>override a function with one that does nothing, in a subclass or state</li>
+</ul>
+<p>Both of the following types of syntax work for both applications:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Foo<span class="br0">(</span> <span class="kw4">float</span> MyParam <span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+<span class="kw5">function</span> Foo<span class="br0">(</span> <span class="kw4">float</span> MyParam <span class="br0">)</span> ;
+</pre></div>
+<p>When such a function is called, it does nothing. If it is declared to return a value, that value is the respective data type's "empty" value (0, "", None or the like).</p>
+<p><b>Note:</b> There's not much use in making an empty function simulated. The simulated keyword (like most other function modifiers) isn't inherited and when there's no code, there's nothing to be executed on a client.&#160;;)</p>
+<p><b>Vitaloverdose</b> I cant seem to find any example of how to overwrite a function with a return value. Can this be done without recieving a warning in the log?</p>
+<p><b>Wormbo:</b> What do you mean? UT is full of overridden functions that have a return value and use the super version's return value in some way as well.</p>
+<p><b>Sweavo:</b> @vital: do you mean overriding a function that hasn't got a return value with one that has? (I don't have the answer, I just thought that was a version of the question that might make sense!)</p>
+<p><b>Wormbo:</b> That'd involve changing the function prototype, which is not allowed in UnrealScript.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>
+<ul>
+<li><a href="../../../../articles/d/e/l/Legacy%7EDelegate_60b8.html" title="Legacy:Delegate">Delegate</a></li>
+<li><a href="../../../../articles/e/x/e/Legacy%7EExec_Function_8667.html" title="Legacy:Exec Function">Exec Function</a></li>
+<li><a href="../../../../articles/l/a/t/Legacy%7ELatent_Function_1fe0.html" title="Legacy:Latent Function">Latent Function</a></li>
+<li><a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a></li>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplicated_Function_d4c6.html" title="Legacy:Replicated Function">Replicated Function</a></li>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScripting_Operators_5be1.html" title="Legacy:Scripting Operators">Scripting Operators</a></li>
+<li><a href="../../../../articles/s/i/m/Legacy%7ESimulated_Function_71f0.html" title="Legacy:Simulated Function">Simulated Function</a></li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStatic_Function_4b1d.html" title="Legacy:Static Function">Static Function</a></li>
+</ul>
+</li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Functions_d7f7.html" title="Legacy:UnrealScript Language Reference/Functions">UnrealScript Language Reference/Functions</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 48/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/u/n/Legacy_talk%7EFunction_Syntax_cf36.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Function_Syntax">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 14:10, 23 May 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

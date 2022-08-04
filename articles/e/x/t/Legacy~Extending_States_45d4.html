@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Extending States - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Extending States</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">States</a> can be extended in the same way as classes. A state that extends another inherits functions of its parent state, and can of course override them or add new ones.</p>
+<p>Extending states is probably most useful within a single class. With a child class, there is already inheritance: the Child's state Foo inherits the Parent's state Foo anyway. Extending states is useful if you have a state Foo and you also want a state FooSpecialCase, perhaps.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Example"><span class="tocnumber">1</span> <span class="toctext">Example</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Add_to_an_Inherited_State"><span class="tocnumber">1.1</span> <span class="toctext">Add to an Inherited State</span></a></li>
+<li class="toclevel-2"><a href="#Add_a_New_State"><span class="tocnumber">1.2</span> <span class="toctext">Add a New State</span></a></li>
+<li class="toclevel-2"><a href="#Extend_a_State"><span class="tocnumber">1.3</span> <span class="toctext">Extend a State</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Examples"><span class="tocnumber">2</span> <span class="toctext">Examples</span></a></li>
+<li class="toclevel-1"><a href="#Base_state_function_overriding_and_extended_states"><span class="tocnumber">3</span> <span class="toctext">Base state function overriding and extended states</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Workarounds:"><span class="tocnumber">3.1</span> <span class="toctext">Workarounds:</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Example" id="Example"></a></p>
+<h2><span class="mw-headline">Example</span></h2>
+<p>(needs to be rewritten, as is overly complex...)</p>
+<p>Suppose we have a class Monster and a subclass BugEyedMonster.</p>
+<p>Monster has the following states:</p>
+<ul>
+<li>Idle</li>
+<li>Attacking</li>
+</ul>
+<p>BugEyedMonster inherits these states. We can do the following:</p>
+<p><a name="Add_to_an_Inherited_State" id="Add_to_an_Inherited_State"></a></p>
+<h3><span class="mw-headline">Add to an Inherited State</span></h3>
+<p>e.g. Add a function RollEyes to the Attacking state. (though I'm not sure what happens to label code outside of functions. help!)</p>
+<dl>
+<dd>AFAIK label code outside of functions are simply executed when control is passed there via the Goto() command. Epic pretty much always have a set of function calls after the label which invariably change the state of the object to make it do more stuff. When defining a state they place all of the functions within the state first and then have a series of labels after the functions that do appropriate "stuff". In subclasses it <i>looks</i> like you can redefine labels to "override them" but you can never call up to the label defined in the superclass once it has been overidden in the subclass's state. – <a href="../../../../articles/e/n/t/Legacy%7EEntropicLqd_4784.html" title="Legacy:EntropicLqd">EntropicLqd</a></dd>
+</dl>
+<p><a name="Add_a_New_State" id="Add_a_New_State"></a></p>
+<h3><span class="mw-headline">Add a New State</span></h3>
+<p>e.g. RunningAway (because BugEyedMonsters are very cowardly)</p>
+<p>This state will inherit functions from BugEyedMonster's null state</p>
+<p><a name="Extend_a_State" id="Extend_a_State"></a></p>
+<h3><span class="mw-headline">Extend a State</span></h3>
+<p>e.g. ScratchingButt extends Idle. We'd want most of the functionality of Idle, but with an extra occasional animation. We'd also have to add to our inherited Idle state to sometimes switch to ScratchingButt depending on circumstances.</p>
+<dl>
+<dd><i>I've probably got it all wrong, but if it makes Mych laugh enough he may fix it.&#160;:-) – Tarquin</i></dd>
+</dl>
+<p>So if we consider a function present in Monster, eg Trigger, we now have this in several flavours:</p>
+<p>In Monster we have:</p>
+<ul>
+<li>Trigger() in null state
+<ul>
+<li>Idle.Trigger() inherits null.Trigger unless we override</li>
+<li>Atacking.Trigger() inherits null.Trigger unless we override</li>
+</ul>
+</li>
+</ul>
+<p>In BugEyedMonster we have</p>
+<ul>
+<li>Trigger() in null state, inherits Monster.Trigger unless we override
+<ul>
+<li>Idle.Trigger() – this is the confusing one. see below</li>
+<li>Atacking.Trigger()</li>
+<li>ScratchingButt.Trigger() inherits Idle.Trigger() unless we override</li>
+</ul>
+</li>
+</ul>
+<blockquote class="legacyquote">
+<p>from <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_States_8f56.html" title="Legacy:UnrealScript Language Reference/States">UnrealScript Language Reference/States</a> The scoping rules, which resolves these complex situations, are:</p>
+<ul>
+<li>If the object is in a state, and an implementation of the function exists somewhere in that state (either in the actor?s class or in some parent class), the most-derived state version of the function is called.</li>
+<li>Otherwise, the most-derived non-state version of the function is called.</li>
+</ul>
+</blockquote>
+<p><a name="Examples" id="Examples"></a></p>
+<h2><span class="mw-headline">Examples</span></h2>
+<p><i>Taken from a Discussion on UnrealScript Language Test:</i></p>
+<p><b>Wormbo:</b> What I mean with "super states" is:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> SomeClass <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="co1">// Super() compiler bug:</span>
+<span class="kw5">function</span> A<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// super call to sibling class function that doesn't exist in this or the super class</span>
+  <span class="kw6">Super</span><span class="br0">(</span>DestroyableTrigger<span class="br0">)</span>.<span class="me1">SpawnEffects</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// compiles and even executes! (spawns some visual effects)</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Super states:</span>
+ 
+<span class="co1">// new function, does not exist in Actor</span>
+<span class="kw5">function</span> X<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw7">log</span><span class="br0">(</span><span class="st0">"SomeClass global X"</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// new state, does not exist in Actor</span>
+<span class="kw5">state</span> BaseState
+<span class="br0">{</span>
+  <span class="kw5">function</span> X<span class="br0">(</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"SomeClass BaseState X"</span><span class="br0">)</span>;
+    <span class="co1">// Super.X() -&gt; "Error, Unknown Function 'X' in 'Class Engine.Actor'"</span>
+    <span class="kw6">Global</span>.<span class="me1">X</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// logs the same</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> ExtendedState <span class="kw5">extends</span> BaseState
+<span class="br0">{</span>
+  <span class="kw5">function</span> X<span class="br0">(</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"SomeClass ExtendedState X"</span><span class="br0">)</span>;
+    <span class="kw6">Super</span>.<span class="me1">X</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// "SomeClass BaseState X"</span>
+    <span class="kw6">Global</span>.<span class="me1">X</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// "SomeClass global X"</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> AnotherExtendedState <span class="kw5">extends</span> ExtendedState
+<span class="br0">{</span>
+  <span class="kw5">function</span> X<span class="br0">(</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">log</span><span class="br0">(</span><span class="st0">"SomeClass AnotherExtendedState X"</span><span class="br0">)</span>;
+    <span class="kw6">Super</span>.<span class="me1">X</span><span class="br0">(</span><span class="br0">)</span>;  <span class="co1">// "SomeClass ExtendedState X"</span>
+    <span class="co1">// it's not possible to call "SomeClass BaseState X" directly through a Super(Something).X() construction:</span>
+    <span class="co1">// Super(BaseState).X() -&gt; "Error, Bad class name 'BaseState'"</span>
+    <span class="co1">// Super(SomeClass.BaseState).X() -&gt; "Error, Missing ')' in 'super(classname)'"</span>
+    <span class="kw6">Global</span>.<span class="me1">X</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// "SomeClass global X"</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>If the object is in state AnotherExtendedState, it will log the following when X is called:</p>
+<pre>
+SomeClass AnotherExtendedState X
+SomeClass ExtendedState X
+SomeClass BaseState X
+SomeClass global X
+SomeClass global X
+SomeClass global X
+</pre>
+<p>The calling structure looks like this:</p>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;">AnotherExtendedState.X()<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />ExtendedState.X()<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />BaseState.X()<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />global X()<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />global X()<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />global X()<br /></div>
+<p><b>OlympusMons:</b> Ahh yes thats very, very clever wormbo&#160;:D How did you ever come up with that concept, might be handy for some AI or something.</p>
+<p><b>Wormbo:</b> PlayerController already uses the concept of extending states within the sme class with BaseSpectating being the base state for Spectating, AttractMode and WaitingForPawn. The Bot class makes extensive use of extending states as well:</p>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;">MoveToGoal<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />MoveToGoalWithEnemy<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Fallback<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Retreating<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Charging<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />VehicleCharging<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Hunting<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />MoveToGoalNoEnemy<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />Roaming<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;">NoGoal<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />RestFormation<br /></div>
+<p><a name="Base_state_function_overriding_and_extended_states" id="Base_state_function_overriding_and_extended_states"></a></p>
+<h2><span class="mw-headline">Base state function overriding and extended states</span></h2>
+<p>There's a catch with behaviour of extended states when a base state function in subclass is overriden. Suppose we have class like this one:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<div class="source-uscript" style="font-family: monospace;">
+<ol>
+<li class="li1">
+<div class="de1"><span class="kw5">class</span> SbA <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> Test<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"A"</span> @<span class="kw7">GetStateName</span><span class="br0">(</span><span class="br0">)</span> ,<span class="kw4">name</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; Test<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'SBase'</span><span class="br0">)</span>; Test<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'SExtended'</span><span class="br0">)</span>; Test<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; Destroy<span class="br0">(</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">state</span> SBase</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="kw5">function</span> Test<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"A.Base"</span> @<span class="kw7">GetStateName</span><span class="br0">(</span><span class="br0">)</span> ,<span class="kw4">name</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="kw5">state</span> SExtended <span class="kw5">extends</span> SBase</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">/*</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">Log:</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbA: A SbA</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbA: A.Base SBase</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbA: A.Base SExtended</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">*/</span></div>
+</li>
+</ol>
+</div>
+</div>
+<p>This actor behaves as expected.</p>
+<p>Lets override the test function in a subclass:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<div class="source-uscript" style="font-family: monospace;">
+<ol>
+<li class="li1">
+<div class="de1"><span class="kw5">class</span> SbB <span class="kw5">extends</span> SbA;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">state</span> SBase</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160; &#160; &#160; &#160; <span class="kw5">function</span> Test<span class="br0">(</span><span class="br0">)</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"B.Base"</span> @<span class="kw7">GetStateName</span><span class="br0">(</span><span class="br0">)</span> ,<span class="kw4">name</span><span class="br0">)</span>;</div>
+</li>
+<li class="li1">
+<div class="de1">&#160; &#160; &#160; &#160; <span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li2">
+<div class="de2">&#160;</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="kw5">state</span> SExtended</div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">{</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="br0">}</span></div>
+</li>
+<li class="li1">
+<div class="de1">&#160;</div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">/*</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">Log:</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbB: A SbB</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbB: B.Base SBase</span></div>
+</li>
+<li class="li1">
+<div class="de1"><span class="coMULTI">SbB: A.Base SExtended</span></div>
+</li>
+<li class="li2">
+<div class="de2"><span class="coMULTI">*/</span></div>
+</li>
+</ol>
+</div>
+</div>
+<p>Notice that in SExtended state SbB.SBase.Test() wasn't called.</p>
+<p><a name="Workarounds:" id="Workarounds:"></a></p>
+<h3><span class="mw-headline">Workarounds:</span></h3>
+<p>Duplicate the function so it's in SbB.SBase and SbB.SExtended?</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/s/t/a/Legacy%7EState_e093.html" title="Legacy:State">State</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a></p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – Revise tutorial fill in with uscript examples.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 29/1000000
+Post-expand include size: 530/2097152 bytes
+Template argument size: 453/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/x/t/Legacy%7EExtending_States_45d4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/x/t/Legacy_talk%7EExtending_States_09cd.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Extending_States">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:56, 24 April 2006 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

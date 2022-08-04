@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:BSP Tree - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:BSP Tree</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Introduction_and_Background" id="Introduction_and_Background"></a></p>
+<h2><span class="mw-headline">Introduction and Background</span></h2>
+<p><br /></p>
+<p>Binary Space Partioning (BSP)-trees were first described in 1969 by Shumacker et al., it was hardly meant to be an algorithm used to develop entertainment products, but since the beginning of the 1990’s BSP-trees have been used in the gaming industry to improve performance and make it possible to use more details in the maps . The first game ever to use the technology was Doom, created by John Carmack and John Romero, two legends in the gaming industry. Since then almost all First Person Shooting (FPS) games have been using that technique.</p>
+<p>BSP trees were first introduced to solve the hidden surface removal problem in real time. The original concept was developed for a static scene with a changing viewpoint; the classic computer game application, and it works as a two-phase process. In the first phase a BSP tree of the scene is constructed (once during the level build) and in the second phase the viewpoint is compared with this structure to determine visibility. BSP trees are not a graphic object representation, but a way of partitioning space so that we can solve certain rendering requirements in an efficient manner.</p>
+<p>The need of removing polygons that are not visible has always been extremely high in the gaming industry, even though graphic cards evolve at gigantic rates and things that were true a couple years ago are not even remotely true these days. When a game is created a goal frame rate is set. The lowest acceptable rate on a target system use to be around 30 frames/second. A couple of years ago this meant putting out over 5000 textured polygons per frame could be too much. These days there are graphic cards in the market with the ability to draw hundreds of million of polygons per second during optimal conditions. Still there is a need of removing hidden parts. Why? Each hidden polygon that is drawn could be replaced by a polygon that is visible, hence increasing the detail in the scenes, making the game visually more attractive. The question is how far one should go to remove hidden polygons. To remove a hidden part heavy computations are needed to be done, such as view frustum culling and portal rendering. The CPU-time used to do these computations could be used to enhance other effects in the game, such as AI and collision detection. Hence there is a lot to take in to consideration when developing algorithms for removal of hidden surfaces. There are almost no games that go so far as to remove each polygon that is hidden. Most games are satisfied with the removal of whole sets of polygons, such as nodes, objects etc. They do not consider individual polygons, so it seems like the correct way to go is to accept some overdraw to limit the computations when removing hidden surfaces.</p>
+<p>In reality, most computer graphics and three dimensional games applications are made up of scenes where the object compexity (number of polygons per object) is much greater than the scene complexity (number of objects per scene) and for the BSP Tree approach to be useful we have to deal with the polygons within objects rather than entire objects.</p>
+<p>BSP trees are an extension of the painter's algorithm; which works by drawing all the polygons in a scene in back-to-front order, so that polygons in the background are drawn first, and polygons in the foreground are drawn over them.</p>
+<p>A Binary Space Partition Tree (BSP Tree) is a very effective method to render scenes in a 3 dimensional game envoironment. A transversal of the BSP tree determines which objects in a scene are furthest from the camera. After which, the Game Engine will render the polygons in the order of furthest to closest, employing occlusion correctly, so that the player sees everything in a realistic manner.</p>
+<p><br />
+A BSP Tree sorts the polygons into a tree of nodes quickly and efficiently at loadup, so then we can easily know which</p>
+<p>polygons are furthest from the camera at run-time.</p>
+<p><br /></p>
+<p><a name="The_Unreal_Engine_Core_BSP_Build_Process" id="The_Unreal_Engine_Core_BSP_Build_Process"></a></p>
+<h2><span class="mw-headline">The Unreal Engine Core BSP Build Process</span></h2>
+<p>So, here's the explanation of the Unreal Engine BSP in a nutshell.</p>
+<p><br />
+An average Unreal Tournament Level consists of several thousand polygons and only about 200-400 are on screen in each frame. This is a small portion of the overall polycount and the engine has to determine which polys are visible and which are not. The Unreal engine uses a data structure, the <i>BSP</i> (<i>B</i>inary <i>S</i>pace <i>P</i>artition) for this process.</p>
+<p>When you rebuild the BSP the BSP compiler starts splitting up the level. First it splits it into two halves, then it bisects these two halves and the resulting ones as well and so on...until it gets a very small split where a threshold facecount is reached. (and preferably it's convex) The cut planes are determined by the <i>nodes</i> which are assigned during the BSP compiling based brush geometry.</p>
+<p>The parent child relation of the cuts shows a tree structure which can be used for the visibility checking of the polys. (-&gt; Z-Buffering)</p>
+<p>Example:</p>
+<p>You have a box which is split into four halves by bisecting the box and the resulting smaller boxes.</p>
+<ul>
+<li>Box
+<ul>
+<li>A
+<ul>
+<li>A1</li>
+<li>A2</li>
+</ul>
+</li>
+<li>B
+<ul>
+<li>B1</li>
+<li>B2</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>If you see only A1 then the whole B branch can be ignored. And the children of A2 as well. (If they existed) You can see that it's a fast process this way.</p>
+<p>Here's another example of a BSP tree in 2D:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_bsp_diagram.gif_1faf.html" class="image" title="numbers are &quot;nodes&quot;, letters are leaves.  Note that nodes 5 and 8 combine to form a single polygon edge."><img alt="numbers are &quot;nodes&quot;, letters are leaves.  Note that nodes 5 and 8 combine to form a single polygon edge." src="../../../../images/Legacy_bsp_diagram.gif" width="500" height="335" border="0" /></a></span></div>
+</div>
+<p>The BSP is also used for collision detection. See also <a href="../../../../articles/b/s/p/Legacy%7EBSP_Hole_c774.html" title="Legacy:BSP Hole">BSP Hole</a>.</p>
+<p>All solid and subtracted brushes use the BSP so they create BSP cuts and raise the nodecount. As you see the example I've shown you was really simple but if we are talking about thousands of polys then the amount of nodes is a very important influencing factor of the framerate. If you see more cuts the engine has to compute more to get the visible polys. In addition to this if the BSP is too complex you'll have greater chances for getting BSP holes.</p>
+<p>The position of the cuts is also important. If their placement gets unbalanced then the resulting BSP tree will be deeper but less nodes will be needed. This means that the overall nodecount will be lower but some places of your map will have high occlusion times thus low framerates. The over-balanced tree is the other side of the problem.</p>
+<p>You can control the cut balance through the Rebuild Options' first slider in UnrealEd, although it's generally not advisable to mess around with those settings because they are already set to the optimal values.</p>
+<p>The second slider controls the priority of Portals when choosing the cut planes. A high priority will solve zoning issues where the zone portal can separate the two zones properly but it will break the "natural balance" of the tree. If you lower the priority then the portals won't alter the tree that much but you will get leaky zones.</p>
+<p>Messing with these sliders, however, should be reserved for the High Wizards of UnrealEd. The default settings are almost always near-optimal and significant deviation from them can send your map into <a href="../../../../articles/b/s/p/Legacy%7EBSP_Hole_c774.html" title="Legacy:BSP Hole">BSP Hole</a> or performance hell.</p>
+<p><a href="../../../../articles/s/e/m/Legacy%7ESemisolid_6645.html" title="Legacy:Semisolid">Semisolid</a> and <a href="../../../../articles/n/o/n/Legacy%7ENonsolid_0ba9.html" title="Legacy:Nonsolid">nonsolid</a> brushes don't create cuts in the BSP so they can be used for decorations without the risk of getting high nodecounts. On the other hand they can't hide objects behind them through the BSP so their rendering can be slower than for large solid brushes. They can also create collision errors for the same reason.</p>
+<p>The BSP Tree is a static data structure, (it is pre-determined before the Level Map loads in Unreal Tournament), and stores information only about non-movable constructive solid geometry. Movers are not incorporated in the Level BSP Tree.</p>
+<p>That's it for now. If I made mistakes or you have additions edit it...:)</p>
+<p>I hope it's clear.</p>
+<p><b>inio:</b> seemed pretty clear, though there's a lot more going on for visibility determination than you talk about (it's actually a front-to-back process IIRC). Classically (pre-DOOM) BSPs were used only for depth sorting in early flat-shaded games and CAD apps as the sorting stage of a painter's algo, so you're correct to that extent.</p>
+<hr />
+<p><a name="BSP_Tree_Frequently_Asked_Questions" id="BSP_Tree_Frequently_Asked_Questions"></a></p>
+<h2><span class="mw-headline">BSP Tree Frequently Asked Questions</span></h2>
+<p>For more information on BSP Tree Methods, read this website page on: <a href="ftp://ftp.sgi.com/other/bspfaq/faq/bspfaq.html" class="external text" title="ftp://ftp.sgi.com/other/bspfaq/faq/bspfaq.html" rel="nofollow">BSP Frequently Asked Questions</a><br /></p>
+<hr />
+<p>An excellent technical paper on the BSP Tree process as used in 3D games can be found at:</p>
+<p><a href="http://www.flipcode.com/misc/SamuelRanta-Eskola_BSPTrees.pdf" class="external text" title="http://www.flipcode.com/misc/SamuelRanta-Eskola_BSPTrees.pdf" rel="nofollow">Binary Space Partitioning Trees and Polygon Removal in Real Time 3D Rendering</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 8/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/s/p/Legacy%7EBSP_Tree_1b61.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/s/p/Legacy_talk%7EBSP_Tree_9dd7.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:BSP_Tree">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:24, 14 August 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

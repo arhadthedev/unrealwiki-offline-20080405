@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:FortStandard - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:FortStandard</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> &gt;&gt; <a href="../../../../articles/s/t/a/Legacy%7EStationaryPawn_4f0d.html" title="Legacy:StationaryPawn">StationaryPawn</a> &gt;&gt; FortStandard</div>
+<p>This actor marks objectives in an Assault type map. See <a href="../../../../articles/m/a/p/Legacy%7EMapping_For_AS_%28UT%29_23c7.html" title="Legacy:Mapping For AS (UT)">Mapping For AS (UT)</a>.</p>
+<p>You need to make this in your assault levels to make them work.</p>
+<p>To make the time limit for your assault level you need to open the last FortStandard's properties and select defense time and put what ever you want the time limit to be for your level.</p>
+<p>You will need to plan and build your level before using this actor. Once you have built your level place a FortStandard VERY CLOSE to the objective, as there are two ways to trigger this actor: damage and touch. First a list of all the actor specific variables you will need to be familiar with:</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>bFinalFort&#160;</dt>
+<dd>When this objective has been triggered, the mission will end.</dd>
+<dt>bFlashing&#160;</dt>
+<dd>When damage is taken, the fort standard will flash. Not sure what the damage threshold for this is.</dd>
+<dt>bForceRadius&#160;</dt>
+<dd>If true, bots will charge when they are within a specified radius.</dd>
+<dt>bSayDestroyed&#160;</dt>
+<dd>Bots will use a voicepack recording if they have accomplished this objective.</dd>
+<dt>bSelfDisplayed&#160;</dt>
+<dd>If true, the fort standard will be visible as a small flag in game. Almost always set false.</dd>
+<dt>bTriggerOnly&#160;</dt>
+<dd>Set to true if you want the objective to be triggered by touch instead of damage.</dd>
+<dt>ChargeDist&#160;</dt>
+<dd>This is the distance from which bots will begin charging if bForceRadius is set true.</dd>
+<dt>DamageEvent&#160;</dt>
+<dd>This has several slots for calling multiple events. Similar to a <a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html" title="Legacy:Dispatcher">Dispatcher</a>.</dd>
+<dt>DmgEventThreshold&#160;</dt>
+<dd>The amount of damage that is needed to trigger DamageEvent. Different damage amounts can be set for different events.</dd>
+<dt>DefensePriority&#160;</dt>
+<dd>In which order bots should defend the objectives. The higher the number, the higher the Priority. I have no idea if there is a limit to the amount of objectives, or how big a number to put here. I do know that you can only place seven objectives in the <a href="../../../../articles/a/s/s/Legacy%7EAssaultInfo_06bf.html" title="Legacy:AssaultInfo">AssaultInfo</a> actor. (Explained later)</dd>
+<dt>DefenseTime&#160;</dt>
+<dd>Simply the amount of time in minutes that players have to complete the level. The default value is ten, meaning ten minutes. But I have found out by fiddling that if you have different values in this field for each FortStandard, the engine will take the highest value as the intended game time limit</dd>
+<dt>DestroyedMessage&#160;</dt>
+<dd>This is the message to be shown when objective is destroyed. Used in combination with the FortName value.</dd>
+<dt>EndCamTag&#160;</dt>
+<dd>Tag of the <a href="../../../../articles/s/p/e/Legacy%7ESpectatorCam_6c9a.html" title="Legacy:SpectatorCam">SpectatorCam</a> you are using as an end camera. I do not know if each standard needs this or if it is only the final.</dd>
+<dt>FallBackFort&#160;</dt>
+<dd>The tag of the fort which defenders should fall back to. I would recommend leaving this blank, and utilizing the DefensePriority property to indicate for the bots where to go.</dd>
+<dt>FortName&#160;</dt>
+<dd>Name of the objective. Will be shown with the destroyed message.</dd>
+<dt>NearestPathNodeTag&#160;</dt>
+<dd>The Tag of the nearest <a href="../../../../articles/p/a/t/Legacy%7EPathNode_ad03.html" title="Legacy:PathNode">PathNode</a> looking in the direction of the attackers (see <a href="../../../../articles/m/a/t/Legacy%7EMatch_These_Tags_2799.html" title="Legacy:Match These Tags">Match These Tags</a> for more information). Bots should reach this node <i>before</i> they reach the FortStandard.</dd>
+</dl>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><a href="../../../../articles/s/a/b/Legacy%7ESabbathCat_61e9.html" title="Legacy:SabbathCat">SabbathCat</a>&#160;: Hey Mango, nice work collating. Hope you stick around a while to add some more, definitely a pro already with WIKI mark-up. I added the pathnode tag thing. As observed from a fair few AS maps from Epic.&#160;:)</p>
+<p><b>Tarquin:</b> Nice stuff, but should maybe be moved to <a href="../../../../articles/m/a/p/Legacy%7EMapping_For_AS_%28UT%29_23c7.html" title="Legacy:Mapping For AS (UT)">Mapping For AS (UT)</a>?&#160;:)</p>
+<p><b>King Mango:</b> Yup will do. New here, but am getting the hang of the method. Thanks guys&#160;:D!!</p>
+<p><b>Tarquin:</b> the props list says set DefenseTime to the same value for each one, but the top paragraphs say you only need to set it for the final Standard. Which is true?</p>
+<p><b>MythOpus:</b> I believe you only have to set the time in the AssaultInfo... or at least, thats how I remember it. I'ts been so long O_o</p>
+<p><b>King Mango</b> I have found out by experimentation regarding the correct info for DefenseTime. Page reflects changes.</p>
+<p><b>SabbathKatze:</b> Do the Damage Events actually work? I've tried linking them to both a Movers Tag and Event, and neither seems to fire them off.&#160;:S?</p>
+<p><b>King Mango</b> My apologies, I misinformed as to defense priority. It has been fixed. Couldn't figure out why my bots kept trying to attack and defend from the second objective as I was playtesting. Then changed the values, and batta-boom, batta-bing, they are working fine.</p>
+<p><b>xX)(Xx</b></p>
+<p>Also, fortstandards in Assault maps are affected by ZEROPING weapons, the zeroping weapons just can't hit the fortstandards, it would be great to know why, see</p>
+<p><a href="http://wiki.beyondunreal.com/wiki/Lag_Compensation" class="external free" title="http://wiki.beyondunreal.com/wiki/Lag_Compensation" rel="nofollow">http://wiki.beyondunreal.com/wiki/Lag_Compensation</a></p>
+<p>for more info on ZeroPing</p>
+<p><b>tarnationsauce2</b> It seems FortStandards are hard coded at a maximum of 16 (0-15).</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 215/2097152 bytes
+Template argument size: 147/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">Legacy Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/o/r/Legacy%7EFortStandard_22fd.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/o/r/Legacy_talk%7EFortStandard_fd33.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:FortStandard">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:27, 22 December 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

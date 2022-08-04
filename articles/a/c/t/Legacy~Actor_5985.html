@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Actor - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Actor</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> &gt;&gt; Actor (Engine)</div>
+<p>This page is the technical specification for the Actor class. See <a href="../../../../articles/a/c/t/Legacy%7EActor_Overview_89eb.html" title="Legacy:Actor Overview">Actor Overview</a> for information on working with actors in UnrealEd.</p>
+<p>Objects that have a position in the world are subclassed from Actor. For example <a href="../../../../articles/b/r/u/Legacy%7EBrush_03bb.html" title="Legacy:Brush">brushes</a>, <a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">movers</a>, <a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">decorations</a>, <a href="../../../../articles/b/o/t/Legacy%7EBot_%28UT%29_6150.html" title="Legacy:Bot (UT)">Bot (UT)s</a>, <a href="../../../../articles/l/i/g/Legacy%7ELight_%28UT%29_ff70.html" title="Legacy:Light (UT)">Light (UT)s</a> and <a href="../../../../articles/t/r/i/Legacy%7ETriggers_%28UT2003%29_7d7a.html" title="Legacy:Triggers (UT2003)">Triggers (UT2003)</a>. This is an important class because it's the base class for all in-game objects (as in "object oriented programming"), so you'll find really a lot of very important functions and variables defined in this class. UnrealScript beginners ought to take a look at this class's source code.</p>
+<p>For this class in UT see <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Configurable_Properties"><span class="tocnumber">1</span> <span class="toctext">Configurable Properties</span></a></li>
+<li class="toclevel-1"><a href="#Other_Members_Of_The_Actor_Class"><span class="tocnumber">2</span> <span class="toctext">Other Members Of The Actor Class</span></a></li>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">3</span> <span class="toctext">Known Subclasses</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Placeable_Subclasses"><span class="tocnumber">3.1</span> <span class="toctext">Placeable Subclasses</span></a></li>
+<li class="toclevel-2"><a href="#Not_Placeable_Subclasses"><span class="tocnumber">3.2</span> <span class="toctext">Not Placeable Subclasses</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Configurable_Properties" id="Configurable_Properties"></a></p>
+<h2><span class="mw-headline">Configurable Properties</span></h2>
+<p>Actor properties sorted by group. These can be changed from UnrealEd's <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_Window_aeb0.html" title="Legacy:Actor Properties Window">actor properties window</a>.</p>
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Advanced_4d3a.html" title="Legacy:Actor/Advanced">Legacy:Actor/Advanced</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Collision_63f5.html" title="Legacy:Actor/Collision">Legacy:Actor/Collision</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Display_9b4b.html" title="Legacy:Actor/Display">Legacy:Actor/Display</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Events_98a4.html" title="Legacy:Actor/Events">Legacy:Actor/Events</a></li>
+<li>Legacy:Actor/Force</li>
+<li>Legacy:Actor/Karma see <a href="../../../../articles/k/a/r/Legacy%7EKarma_3d96.html" title="Legacy:Karma">Karma</a> for now</li>
+<li>LightColor and <a href="../../../../articles/a/c/t/Legacy%7EActor_Lighting_a74f.html" title="Legacy:Actor/Lighting">Legacy:Actor/Lighting</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Movement_fb8e.html" title="Legacy:Actor/Movement">Legacy:Actor/Movement</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Object_bb33.html" title="Legacy:Actor/Object">Legacy:Actor/Object</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Replication_2a6a.html" title="Legacy:Actor/Replication">Legacy:Actor/Replication</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Sound_25ae.html" title="Legacy:Actor/Sound">Legacy:Actor/Sound</a></li>
+</ul>
+<p><i>Note that not all property groups have been described yet. Please fill in if you have time.</i></p>
+<p><a name="Other_Members_Of_The_Actor_Class" id="Other_Members_Of_The_Actor_Class"></a></p>
+<h2><span class="mw-headline">Other Members Of The Actor Class</span></h2>
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_f261.html" title="Legacy:Actor/Properties">Legacy:Actor/Properties</a> that don't appear in UnrealEd's properties window</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Constants_4370.html" title="Legacy:Actor/Constants">Legacy:Actor/Constants</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Enums_e986.html" title="Legacy:Actor/Enums">Legacy:Actor/Enums</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Structs_fcb1.html" title="Legacy:Actor/Structs">Legacy:Actor/Structs</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Methods_da97.html" title="Legacy:Actor/Methods">Legacy:Actor/Methods</a></li>
+<li><a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">Iterators</a></li>
+<li><a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a> – The color operators.</li>
+<li>Properties and functions which are <a href="../../../../articles/a/c/t/Legacy%7EActor_New_In_UT2004_e015.html" title="Legacy:Actor/New In UT2004">Legacy:Actor/New In UT2004</a> or have changed from UT2003</li>
+</ul>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<p>See <a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_bff8.html" title="Legacy:Actor Class Hierarchy">Actor Class Hierarchy</a> for a full tree of subclasses.</p>
+<p><a name="Placeable_Subclasses" id="Placeable_Subclasses"></a></p>
+<h3><span class="mw-headline">Placeable Subclasses</span></h3>
+<p>(or notplaceable with placeable subclasses)</p>
+<ul>
+<li>AntiPortalActor (see <a href="../../../../articles/a/n/t/Legacy%7EAntiportal_c9ef.html" title="Legacy:Antiportal">Antiportal</a>)</li>
+<li><a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">Decoration</a></li>
+<li><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a></li>
+<li><a href="../../../../articles/f/l/u/Legacy%7EFluidSurfaceOscillator_4635.html" title="Legacy:FluidSurfaceOscillator">FluidSurfaceOscillator</a></li>
+<li><a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a></li>
+<li><a href="../../../../articles/i/o/n/Legacy%7EIonCannon_7f3c.html" title="Legacy:IonCannon">IonCannon</a></li>
+<li><a href="../../../../articles/k/a/c/Legacy%7EKActor_f82e.html" title="Legacy:KActor">KActor</a></li>
+<li><a href="../../../../articles/k/v/e/Legacy%7EKVehicleFactory_be32.html" title="Legacy:KVehicleFactory">KVehicleFactory</a></li>
+<li><a href="../../../../articles/k/e/y/Legacy%7EKeypoint_41ee.html" title="Legacy:Keypoint">Keypoint</a></li>
+<li><a href="../../../../articles/l/i/g/Legacy%7ELight_37a6.html" title="Legacy:Light">Light</a></li>
+<li>MeshEffect</li>
+<li><a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a></li>
+<li><a href="../../../../articles/n/o/t/Legacy%7ENote_a76a.html" title="Legacy:Note">Note</a></li>
+<li><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a></li>
+<li><a href="../../../../articles/p/i/c/Legacy%7EPickup_2a23.html" title="Legacy:Pickup">Pickup</a></li>
+<li>ProjectileSpawner</li>
+<li><a href="../../../../articles/p/r/o/Legacy%7EProjector_5913.html" title="Legacy:Projector">Projector</a></li>
+<li><a href="../../../../articles/s/t/a/Legacy%7EStaticMeshActor_e403.html" title="Legacy:StaticMeshActor">StaticMeshActor</a></li>
+<li><a href="../../../../articles/t/a/n/Legacy%7ETankVictim_1080.html" title="Legacy:TankVictim">TankVictim</a></li>
+<li><a href="../../../../articles/t/r/i/Legacy%7ETriggers_1cde.html" title="Legacy:Triggers">Triggers</a></li>
+<li>VehiclePart</li>
+<li>VMeshActor</li>
+<li><a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a></li>
+<li>xMaterialController</li>
+<li><a href="../../../../articles/x/p/i/Legacy%7EXPickUpBase_4761.html" title="Legacy:XPickUpBase">xPickUpBase</a></li>
+<li><a href="../../../../articles/x/p/r/Legacy%7EXProcMesh_4760.html" title="Legacy:XProcMesh">xProcMesh</a></li>
+<li><a href="../../../../articles/x/w/e/Legacy%7EXWeatherEffect_722d.html" title="Legacy:XWeatherEffect">xWeatherEffect</a></li>
+</ul>
+<p><a name="Not_Placeable_Subclasses" id="Not_Placeable_Subclasses"></a></p>
+<h3><span class="mw-headline">Not Placeable Subclasses</span></h3>
+<ul>
+<li>AimedAttachment</li>
+<li>AnimBrowserMesh</li>
+<li><a href="../../../../articles/b/r/u/Legacy%7EBrush_03bb.html" title="Legacy:Brush">Brush</a></li>
+<li><a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a></li>
+<li><a href="../../../../articles/d/a/m/Legacy%7EDamageType_c81e.html" title="Legacy:DamageType">DamageType</a></li>
+<li><a href="../../../../articles/d/e/c/Legacy%7EDecal_0867.html" title="Legacy:Decal">Decal</a> (deprecated)</li>
+<li>DecoVolumeObject</li>
+<li><a href="../../../../articles/e/f/f/Legacy%7EEffects_29f3.html" title="Legacy:Effects">Effects</a></li>
+<li>Gib</li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHUD_a5d3.html" title="Legacy:HUD">HUD</a></li>
+<li><a href="../../../../articles/h/u/d/Legacy%7EHudOverlay_580d.html" title="Legacy:HudOverlay">HudOverlay</a></li>
+<li><a href="../../../../articles/i/n/v/Legacy%7EInventory_cc1f.html" title="Legacy:Inventory">Inventory</a></li>
+<li><a href="../../../../articles/i/n/v/Legacy%7EInventoryAttachment_de7a.html" title="Legacy:InventoryAttachment">InventoryAttachment</a></li>
+<li>IonEffect</li>
+<li>MatDemoActor</li>
+<li><a href="../../../../articles/m/o/v/Legacy%7EMover_6aa5.html" title="Legacy:Mover">Mover</a></li>
+<li>PrecacheHack</li>
+<li><a href="../../../../articles/p/r/o/Legacy%7EProjectile_699a.html" title="Legacy:Projectile">Projectile</a></li>
+<li>ShieldEffect</li>
+<li>ShockCombo</li>
+<li>SpinnyWeap</li>
+<li>ShieldEffect</li>
+<li>TransDummyBeacon</li>
+<li><a href="../../../../articles/v/i/g/Legacy%7EVignette_2295.html" title="Legacy:Vignette">Vignette</a></li>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a></li>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_d9f7.html" title="Legacy:WeaponFire">WeaponFire</a></li>
+<li>xMaterialTrigger</li>
+<li>xMutatorList</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li>This class in other games:
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28DX%29_9c2e.html" title="Legacy:Actor (DX)">Actor (DX)</a></li>
+</ul>
+</li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">Creating Actors And Objects</a></li>
+<li><a href="../../../../articles/d/e/s/Legacy%7EDestroying_Objects_45cb.html" title="Legacy:Destroying Objects">Destroying Objects</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Class_Hierarchy_bff8.html" title="Legacy:Actor Class Hierarchy">Actor Class Hierarchy</a> – All descendants of this class</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Overview_89eb.html" title="Legacy:Actor Overview">Actor Overview</a> – more mapping- and UnrealEd-related information</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> – The <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> version of this class</li>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a> – All the evilness of network-related Actor functionality</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p>Great Actor Pages Debate on page names and organization: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_Talk_f26c.html" title="Legacy:Actor (UT)/Talk">Actor (UT)/Talk</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 50/1000000
+Post-expand include size: 324/2097152 bytes
+Template argument size: 71/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/c/t/Legacy_talk%7EActor_d63f.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Actor">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:46, 29 December 2005 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

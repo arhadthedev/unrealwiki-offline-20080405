@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Useful Mutator Functions - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Useful Mutator Functions</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Some useful <a href="../../../../articles/m/u/t/Legacy%7EMutator_%28UT%29_e55e.html" title="Legacy:Mutator (UT)">Mutator (UT)</a> functions. The code on this page probably doesn't work at all in UT2003.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#HUD_Mutators"><span class="tocnumber">1</span> <span class="toctext">HUD Mutators</span></a></li>
+<li class="toclevel-1"><a href="#Destructable_Mutators"><span class="tocnumber">2</span> <span class="toctext">Destructable Mutators</span></a></li>
+<li class="toclevel-1"><a href="#Replacing_Inventory_Items"><span class="tocnumber">3</span> <span class="toctext">Replacing Inventory Items</span></a></li>
+<li class="toclevel-1"><a href="#Giving_Weapons_To_Players"><span class="tocnumber">4</span> <span class="toctext">Giving Weapons To Players</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="HUD_Mutators" id="HUD_Mutators"></a></p>
+<h2><span class="mw-headline">HUD Mutators</span></h2>
+<blockquote class="legacyquote">
+<p>"How do I register a HUD mutator?" "Why doesn't my HUD mutator work in online/LAN games?"</p>
+</blockquote>
+<p>This is a sample HUD mutator which does nothing more that registering itself and showing how to get a reference to the local <a href="../../../../articles/p/l/a/Legacy%7EPlayerPawn_5d98.html" title="Legacy:PlayerPawn">PlayerPawn</a> and the <a href="../../../../articles/h/u/d/Legacy%7EHUD_%28UT%29_e73f.html" title="Legacy:HUD (UT)">HUD (UT)</a>.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyHUDMutator <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+<span class="kw5">var</span> PlayerPawn MyPlayer;
+<span class="kw5">var</span> HUD MyHUD;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> !bHUDMutator &amp;&amp; <span class="kw8">Level</span>.<span class="kw8">NetMode</span> != <span class="kw9">NM_DedicatedServer</span> <span class="br0">)</span>
+        RegisterHUDMutator<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostRender<span class="br0">(</span>canvas Canvas<span class="br0">)</span>
+<span class="br0">{</span>
+    MyPlayer = Canvas.<span class="me1">Viewport</span>.<a href="/Actor"><span class="kw10">Actor</span></a>;
+    <span class="kw1">if</span> <span class="br0">(</span> MyPlayer != <span class="kw9">None</span> <span class="br0">)</span>
+        MyHUD = MyPlayer.<span class="me1">myHUD</span>;
+ 
+    <span class="co1">// This is important! It allows the next HUD mutator to draw on the canvas.</span>
+    <span class="kw1">if</span> <span class="br0">(</span> NextHUDMutator != <span class="kw9">None</span> <span class="br0">)</span>
+        NextHUDMutator.<span class="me1">PostRender</span><span class="br0">(</span>Canvas<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     <span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+     bAlwaysRelevant=<span class="kw9">True</span>
+     bNetTemporary=<span class="kw9">True</span>  <span class="co1">// Set to false if you need to replicate data to the clients more than once per level</span>
+<span class="br0">}</span>
+</pre></div>
+<p><b>Note:</b> Don't use the code of the Team Beacon HUD mutator or the Relics. Team Beacon is far to complicated for this simple task and the RelicHUDMutator (apart from being incompatible to regular HUD mutators) calls its Destroy function without properly unregistering itself. (see Destructable Mutators below)</p>
+<p><b>Note:</b> If you want to execute code once client-side, but wish to do it after values have been replicated from the server to the client then used the <i>PostNetBeginPlay()</i> function.</p>
+<p>Also see <a href="../../../../articles/n/e/t/Legacy%7ENetcode_Idioms_42a0.html" title="Legacy:Netcode Idioms">Netcode Idioms</a>.</p>
+<p><a name="Destructable_Mutators" id="Destructable_Mutators"></a></p>
+<h2><span class="mw-headline">Destructable Mutators</span></h2>
+<p>Never destroy a <a href="../../../../articles/m/u/t/Legacy%7EMutator_%28UT%29_e55e.html" title="Legacy:Mutator (UT)">Mutator (UT)</a> while it still is in any of the mutator chains. This would effectively disconnect all mutators further down in the list. If you really need to destroy a mutator make sure it was unregistered before destroying it.</p>
+<p>The other possible solution is that the mutator unregisters itself:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// correctly unregister this mutator from all linked mutator chains</span>
+<span class="kw6">simulated</span> <span class="kw5">function</span> Destroyed<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> M;
+        <span class="kw5">local</span> HUD H;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span> != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span> = NextMutator;
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span> = NextDamageMutator;
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">MessageMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">MessageMutator</span> = NextMessageMutator;
+        <span class="br0">}</span>
+        <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Engine.HUD'</span>, H<span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span> H.<span class="me1">HUDMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        H.<span class="me1">HUDMutator</span> = NextHUDMutator;
+        <span class="kw1">ForEach</span> AllActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Engine.Mutator'</span>, M<span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> M.<span class="me1">NextMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        M.<span class="me1">NextMutator</span> = NextMutator;
+                <span class="kw1">if</span> <span class="br0">(</span> M.<span class="me1">NextHUDMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        M.<span class="me1">NextHUDMutator</span> = NextHUDMutator;
+                <span class="kw1">if</span> <span class="br0">(</span> M.<span class="me1">NextDamageMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        M.<span class="me1">NextDamageMutator</span> = NextDamageMutator;
+                <span class="kw1">if</span> <span class="br0">(</span> M.<span class="me1">NextMessageMutator</span> == <span class="kw8">Self</span> <span class="br0">)</span>
+                        M.<span class="me1">NextMessageMutator</span> = NextMessageMutator;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Replacing_Inventory_Items" id="Replacing_Inventory_Items"></a></p>
+<h2><span class="mw-headline">Replacing Inventory Items</span></h2>
+<p>The <tt>ReplaceWith</tt> function does its job in most cases, but not in all maps the items are placed with their default properties. Some have the rotation turned off (either <tt>bRotatingPicklup=False</tt>, which is the recommended way to do it, or <tt>RotationRate.Yaw=0</tt>) or float in mid-air though they normally fall down. (<tt>Physics=PHYS_None</tt> instead of <tt>PHYS_Falling</tt>)</p>
+<p>Also mutator sometimes want to further adjust the properties of the item after spawning it.</p>
+<p>The <tt>ReplaceWithItem</tt> function takes both into account: It modifies the new item's rotation and physics and returns it, so the mutator can modify its properties.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Modified version of the ReplaceWith function</span>
+<span class="co1">// Replaces an inventory Other with an inventory of class aClassName and</span>
+<span class="co1">// returns a reference to it</span>
+<span class="kw6">final</span> <span class="kw5">function</span> Inventory ReplaceWithItem<span class="br0">(</span>Inventory Other, <span class="kw6">coerce</span> <span class="kw4">string</span> aClassName<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Inventory A;
+        <span class="kw5">local</span> class&lt;Inventory&gt; aClass;
+        <span class="kw5">local</span> <span class="kw4">bool</span> bAllowItemFall, bForceItemFall;
+        <span class="kw5">local</span> <span class="kw4">bool</span> bAllowItemRotation, bForceItemRotation;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Location</span> == <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">None</span>;
+        aClass = class&lt;Inventory&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>aClassName, <span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> aClass != <span class="kw9">None</span> <span class="br0">)</span>
+                A = Spawn<span class="br0">(</span>aClass, Other.<span class="me1">Owner</span>, Other.<span class="me1">Tag</span>,
+                                Other.<span class="me1">Location</span> + <span class="br0">(</span>aClass.<span class="kw1">Default</span>.<span class="me1">CollisionHeight</span> - Other.<span class="me1">CollisionHeight</span><span class="br0">)</span> * <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>,
+                                Other.<span class="me1">Rotation</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">MyMarker</span> != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                Other.<span class="me1">MyMarker</span>.<span class="me1">markedItem</span> = A;
+                <span class="kw1">if</span> <span class="br0">(</span> A != <span class="kw9">None</span> <span class="br0">)</span>
+                        A.<span class="me1">MyMarker</span> = Other.<span class="me1">MyMarker</span>;
+                Other.<span class="me1">MyMarker</span> = <span class="kw9">None</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> A != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                A.<span class="me1">bHeldItem</span> = <span class="kw9">true</span>;
+                A.<span class="me1">Respawntime</span> = <span class="nu0">0.0</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> A != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Physics</span> != Other.<span class="kw5">Class</span>.<span class="kw1">Default</span>.<span class="me1">Physics</span> <span class="br0">)</span> <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="me1">Physics</span> == PHYS_Falling <span class="br0">)</span>
+                                bForceItemFall = <span class="kw9">True</span>;
+                        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Other.<span class="kw5">Class</span>.<span class="kw1">Default</span>.<span class="me1">Physics</span> == PHYS_Falling <span class="br0">)</span>
+                                bAllowItemFall = <span class="kw9">False</span>;
+                <span class="br0">}</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>!Other.<span class="me1">bRotatingPickup</span> || Other.<span class="me1">RotationRate</span> == rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>
+                                &amp;&amp; <span class="br0">(</span>Other.<span class="me1">Rotation</span>.<span class="me1">Pitch</span> != <span class="nu0">0</span> || Other.<span class="me1">Rotation</span>.<span class="me1">Roll</span> != <span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span>
+                        bAllowItemRotation = <span class="kw9">False</span>;
+                <span class="kw1">else</span>
+                        bAllowItemRotation = <span class="br0">(</span>Other.<span class="me1">RotationRate</span> != rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span> &amp;&amp; Other.<span class="me1">bRotatingPickup</span><span class="br0">)</span>
+                                        || !Other.<span class="kw1">default</span>.<span class="me1">bRotatingPickup</span> || Other.<span class="kw1">default</span>.<span class="me1">RotationRate</span> == rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+                bForceItemRotation = Other.<span class="me1">RotationRate</span> != rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span> &amp;&amp; Other.<span class="me1">bRotatingPickup</span>
+                                &amp;&amp; <span class="br0">(</span>!Other.<span class="kw1">default</span>.<span class="me1">bRotatingPickup</span> || Other.<span class="kw1">default</span>.<span class="me1">RotationRate</span> == rot<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> A.<span class="me1">Physics</span> == PHYS_Falling &amp;&amp; !bAllowItemFall <span class="br0">)</span>
+                        A.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_None<span class="br0">)</span>;
+                <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> A.<span class="me1">Physics</span> != PHYS_Falling &amp;&amp; bForceItemFall <span class="br0">)</span>
+                        A.<span class="me1">SetPhysics</span><span class="br0">(</span>PHYS_Falling<span class="br0">)</span>;
+                A.<span class="me1">bRotatingPickup</span> = bAllowItemRotation &amp;&amp; <span class="br0">(</span>A.<span class="me1">bRotatingPickup</span> || bForceItemRotation<span class="br0">)</span>;
+ 
+                A.<span class="kw5">Event</span> = Other.<span class="kw5">Event</span>;
+                A.<span class="me1">Tag</span> = Other.<span class="me1">Tag</span>;
+                <span class="kw1">return</span> A;
+        <span class="br0">}</span>
+        <span class="kw1">return</span> <span class="kw9">None</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Giving_Weapons_To_Players" id="Giving_Weapons_To_Players"></a></p>
+<h2><span class="mw-headline">Giving Weapons To Players</span></h2>
+<p>This function is a modified version of the <tt><a href="../../../../articles/d/e/a/Legacy%7EDeathMatchPlus_e967.html" title="Legacy:DeathMatchPlus">DeathMatchPlus</a>.GiveWeapon</tt> function. It adds the weapon to the player's inventory and optionally brings it up as the players selected weapon. The function returns the weapon.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Give a weapon to a player and optionally bring it up as current weapon.</span>
+<span class="kw5">function</span> Weapon GiveWeapon<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> PlayerPawn, <span class="kw4">string</span> aClassName, <span class="kw6">optional</span> <span class="kw4">bool</span> bBringUp<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> class&lt;Weapon&gt; WeaponClass;
+        <span class="kw5">local</span> Weapon NewWeapon;
+ 
+        WeaponClass = class&lt;Weapon&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>aClassName, <span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> PlayerPawn.<span class="me1">FindInventoryType</span><span class="br0">(</span>WeaponClass<span class="br0">)</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">None</span>;
+        newWeapon = Spawn<span class="br0">(</span>WeaponClass<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> newWeapon != <span class="kw9">None</span> <span class="br0">)</span> <span class="br0">{</span>
+                newWeapon.<span class="me1">RespawnTime</span> = <span class="nu0">0.0</span>;
+                newWeapon.<span class="me1">GiveTo</span><span class="br0">(</span>PlayerPawn<span class="br0">)</span>;
+                newWeapon.<span class="me1">bHeldItem</span> = <span class="kw9">true</span>;
+                newWeapon.<span class="me1">GiveAmmo</span><span class="br0">(</span>PlayerPawn<span class="br0">)</span>;
+                newWeapon.<span class="me1">SetSwitchPriority</span><span class="br0">(</span>PlayerPawn<span class="br0">)</span>;
+                newWeapon.<span class="me1">WeaponSet</span><span class="br0">(</span>PlayerPawn<span class="br0">)</span>;
+                newWeapon.<span class="me1">AmbientGlow</span> = <span class="nu0">0</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> PlayerPawn.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerPawn'</span><span class="br0">)</span> <span class="br0">)</span>
+                        newWeapon.<span class="me1">SetHand</span><span class="br0">(</span>PlayerPawn<span class="br0">(</span>PlayerPawn<span class="br0">)</span>.<span class="me1">Handedness</span><span class="br0">)</span>;
+                <span class="kw1">else</span>
+                        newWeapon.<span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Idle'</span><span class="br0">)</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> bBringUp <span class="br0">)</span> <span class="br0">{</span>
+                        PlayerPawn.<span class="me1">Weapon</span>.<span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'DownWeapon'</span><span class="br0">)</span>;
+                        PlayerPawn.<span class="me1">PendingWeapon</span> = <span class="kw9">None</span>;
+                        PlayerPawn.<span class="me1">Weapon</span> = newWeapon;
+                        PlayerPawn.<span class="me1">Weapon</span>.<span class="me1">BringUp</span><span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">return</span> newWeapon;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/o/p/e/Legacy%7EOpen_Source_43a1.html" title="Legacy:Open Source">Open Source</a></li>
+<li><a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a></li>
+<li><a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Kuhal:</b> I have a developed a way to allow a mutator to "appear" to handle Damage to players BEFORE Inventory.ReduceDamage is called. Shall I create a page for this and link to it from OpenSource or would it be better to create the page and link form my homepage until one of the guru's can comment on the content? I investigated this while helping someone on the forums who wanted it specifically for his SpawnProtection code.</p>
+<p><b>Mychaeel:</b> Would you describe that method in a few words? – By the way, I believe the sections on this page would be well worth individual pages; maybe subpages of this one.</p>
+<p><b>Kuhal:</b> Synopsis: Create an Inventory Item with Charge=0; ArmorAbsorption=0; AbsorptionPriority=1000; bIsAnArmor=true;. Override ArmorAbsorbDamage in new class to update member variables for use by the mutator. Make sure that the mutator deals out the damage accordingly because the REAL armor was not damaged in the hit. Has limited usefulness - Why oh why didn't EPIC give Inventory.ReduceDamage the Victim and InstigatedBy vars too? I'm interested in other ideas in this area so by all means hook me up. I have full working source for the SpawnProtection use if needed.</p>
+<p><b>Csimbi:</b> Could someone add an example of adding another mutator from a mutator that is already added? I want to have only one entry in the .int file for practical reasons (the one Mutator would add all the others), and I cannot figure out how to do it. I tried a couple of things, but none of those worked so far. Thank You in advance.</p>
+<p><b>Foxpaw:</b> Depending on what exactly you had in mind, that may be quite easy. Or it may be next to impossible. Do you mean, you only want the one entry in the mutator list and when play begins all the other mutators are added? Or do you mean you want all of them to show up in the mutator list, but only want one listed in the INT file?</p>
+<p><b>Wormbo:</b> Just Level.Game.BaseMutator.AddMutator(Spawn(theMutatorClass)) should do the trick, but why don't you just combine the mutators into a single class?</p>
+<p><b>Csimbi:</b></p>
+<p>Foxpaw, the idea is that one mutator adds all the others.</p>
+<p>Wormbo, in which function do You call this? Prebeginplay, PostBeginPlay, or&#160;?</p>
+<p><b>Wormbo:</b> Yes, call it from one of the *BeginPlay functions.</p>
+<p><b>Csimbi:</b> I do this in the Mutator's PostBeginplay: Level.Game.BaseMutator.AddMutator(Spawn(class'CustomTranslocator'));</p>
+<p>The error message I get is: "Error, Call to 'AddMutator': type mismatch in parameter 1"</p>
+<p>What am I doing wrong?</p>
+<p><b>Wormbo:</b> 'Type mismatch' <a href="../../../../articles/c/o/m/Legacy%7ECompiler_Errors_68c7.html" title="Legacy:Compiler Errors">compiler errors</a> tell you that the function expects a different variable type than you used. This CustomTranslocator class of yours, it's a mutator subclass, isn't it?</p>
+<p><b>Csimbi:</b> My mistake. It's a TournamentWeapon. Changed class name to the mutator's class, and it works like a charm. Thank You.</p>
+<p><b>Vindexus:</b> I tried to make an arena mut using the Replace function above. However, when i try to</p>
+<p>compile it with the ucc make command, it says I'm missing a ";" in "Class" on line 4 where the function is started. Anybody know what that means?</p>
+<p><b>EntropicLqd:</b> Check your class definition. It should be similar to the very first line of the HUD Mutator code snippet (first code snippet) on this page. If you class definition is correct then check that you don't mention the word <i>class</i> anywhere in a comment block before the class declaration line. e.g. the following code will give you an error at line 1:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// This class is a mutator that does some stuff</span>
+<span class="kw5">class</span> MyMutator <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+<span class="co1">// .. rest of class definition ...</span>
+</pre></div>
+<p><b>Vindexus:</b> For what it's worth, I'm using UT2004. Here's the line of code that has the error on it</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw5">function</span> Inventory ReplaceWithItem<span class="br0">(</span>Inventory Other, <span class="kw6">coerce</span> <span class="kw4">string</span> MyWeaponPickup<span class="br0">)</span>
+</pre></div>
+<p><b>EntropicLqd:</b> The line number the error is being reported on is bogus. Something that's pretty normal for compilers. Check your code for missing semi-colons and the like - especially after the class definition. It might be worth posting the whole code block rather than just a single line.</p>
+<p><b>Wormbo:</b> Vindexus, please read the top of this page again:</p>
+<blockquote class="legacyquote">
+<p>Some useful <a href="../../../../articles/m/u/t/Legacy%7EMutator_%28UT%29_e55e.html" title="Legacy:Mutator (UT)">Mutator (UT)</a> functions. The code on this page probably doesn't work at all in UT2003.</p>
+</blockquote>
+<p>These functions are not intended to be used in UT2003/4 because many aspects of Mutators and also the Pickup/Inventory system have changed.</p>
+<p><b>AJRAD:</b> I'm trying to use the weapon replacement mutator thingy, but you don't specify which bits to change!!! How the hell is a newbies such as me supposed to understand? Please tell me what needs to be changed.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 52/1000000
+Post-expand include size: 329/2097152 bytes
+Template argument size: 215/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/e/Legacy%7EUseful_Mutator_Functions_19f0.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/e/Legacy_talk%7EUseful_Mutator_Functions_ffd8.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Useful_Mutator_Functions">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:44, 7 January 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

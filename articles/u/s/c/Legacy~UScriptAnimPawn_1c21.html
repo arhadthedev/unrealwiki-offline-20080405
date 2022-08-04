@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UScriptAnimPawn - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UScriptAnimPawn</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="UScript_Controlled_Animation_Pawn" id="UScript_Controlled_Animation_Pawn"></a></p>
+<h3><span class="mw-headline">UScript Controlled Animation Pawn</span></h3>
+<p>For those interested in creating <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">pawns</a> whose animations are controlled through UScript instead of native code, the following code will provide a base from which you can edit. It is simply the native animation source code rewritten in UScript (c++ source available in the 3186 uscript source). The following code behaves almost exactly the same as the native code (slight difference in rotation yaw, will edit once tracked down). It would probably be beneficial to performance to place the call to UpdateMovementAnimation function in the AnimEnd event as it was back in original UT. -Meowcat</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> UScriptAnimPawn <span class="kw5">extends</span> SomeOtherPawnClass;<span class="co1">// SomeOtherPawnClass will typically be xPawn</span>
+ 
+<span class="co1">// added to get around the const values normally set by the native code</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bFootTurning; 
+<span class="kw5">var</span> <span class="kw4">bool</span> bFootStill;
+<span class="kw5">var</span> <span class="kw4">int</span>  iFootRot;
+<span class="kw5">var</span> <span class="kw4">int</span>  iTurnDir;
+<span class="kw5">var</span> <span class="kw4">int</span> SmoothViewPitch, SmoothViewYaw;<span class="co1">// These two are only needed if this code is for UT2003, UT2004 pawn code already has them</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+      <span class="kw1">if</span><span class="br0">(</span>!bPhysicsAnimUpdate<span class="br0">)</span> UpdateMovementAnimation<span class="br0">(</span>DeltaTime<span class="br0">)</span>;<span class="co1">//added to allow switching between native and scripted animation</span>
+      <span class="kw6">super</span>.<span class="kw8">tick</span><span class="br0">(</span>deltatime<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// Epic C++ animation code converted to uscript</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateMovementAnimation<span class="br0">(</span> <span class="kw4">FLOAT</span> DeltaSeconds <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="kw8">NetMode</span> == <span class="kw9">NM_DedicatedServer</span> <span class="br0">)</span>
+                <span class="kw1">return</span>;
+    <span class="kw1">if</span><span class="br0">(</span> bPlayedDeath <span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - LastRenderTime &gt; <span class="nu0">1.0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        iFootRot = Rotation.<span class="me1">Yaw</span>;
+        bFootTurning = <span class="kw9">false</span>;
+        bFootStill = <span class="kw9">false</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+ 
+    BaseEyeHeight = <span class="kw1">Default</span>.<span class="me1">BaseEyeHeight</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> bIsIdle &amp;&amp; Physics != OldPhysics <span class="br0">)</span>
+    <span class="br0">{</span>
+        bWaitForAnim = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> !bWaitForAnim <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> Physics == PHYS_Swimming <span class="br0">)</span>
+            <span class="br0">{</span>
+            BaseEyeHeight *= <span class="nu0">0</span>.7f;
+            UpdateSwimming<span class="br0">(</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Physics == PHYS_Falling || Physics == PHYS_Flying <span class="br0">)</span>
+        <span class="br0">{</span>
+            BaseEyeHeight *= <span class="nu0">0</span>.7f;
+            UpdateInAir<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Physics == PHYS_Walking || Physics == PHYS_Ladder <span class="br0">)</span>
+        <span class="br0">{</span>
+            UpdateOnGround<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> !IsAnimating<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span> <span class="br0">)</span>
+                bWaitForAnim = <span class="kw9">false</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> Physics != PHYS_Walking <span class="br0">)</span>
+        bIsIdle = <span class="kw9">false</span>;
+ 
+    OldPhysics = Physics;<span class="co1">// OldPhysics is not const and can be changed in UScript</span>
+    <span class="co1">//OldVelocity = Velocity;// is a const, may be used in the ModifyVelocity function!! </span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>bDoTorsoTwist<span class="br0">)</span>
+        UpdateTwistLook<span class="br0">(</span> DeltaSeconds <span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateSwimming<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Velocity.<span class="me1">X*Velocity</span>.<span class="me1">X</span> + Velocity.<span class="me1">Y*Velocity</span>.<span class="me1">Y</span><span class="br0">)</span> &lt; <span class="nu0">2500</span>.0f <span class="br0">)</span>
+        PlayAnim<span class="br0">(</span>IdleSwimAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+    <span class="kw1">else</span>
+            PlayAnim<span class="br0">(</span>SwimAnims<span class="br0">[</span>Get4WayDirection<span class="br0">(</span><span class="br0">)</span><span class="br0">]</span>, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="co1">//PlayAnim(0, SwimAnims[Get4WayDirection()], 1.0f, 0.1f, true);// native anim call</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateInAir<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+   <span class="kw5">local</span> <span class="kw4">Name</span> NewAnim;
+   <span class="kw5">local</span>  <span class="kw4">bool</span> bUp, bDodge;
+   <span class="kw5">local</span>  <span class="kw4">float</span> DodgeSpeedThresh;
+   <span class="kw5">local</span> <span class="kw4">int</span> Dir;
+   <span class="kw5">local</span>  <span class="kw4">float</span> XYVelocitySquared;
+ 
+    XYVelocitySquared = <span class="br0">(</span>Velocity.<span class="me1">X*Velocity</span>.<span class="me1">X</span><span class="br0">)</span>+<span class="br0">(</span>Velocity.<span class="me1">Y*Velocity</span>.<span class="me1">Y</span><span class="br0">)</span>;
+ 
+    bDodge = <span class="kw9">false</span>;
+    <span class="kw1">if</span> <span class="br0">(</span> OldPhysics == PHYS_Walking <span class="br0">)</span>
+    <span class="br0">{</span>
+        DodgeSpeedThresh = <span class="br0">(</span><span class="br0">(</span>GroundSpeed*DodgeSpeedFactor<span class="br0">)</span> + GroundSpeed<span class="br0">)</span> * <span class="nu0">0</span>.5f;
+        <span class="kw1">if</span> <span class="br0">(</span> XYVelocitySquared &gt; DodgeSpeedThresh*DodgeSpeedThresh <span class="br0">)</span>
+        <span class="br0">{</span>
+            bDodge = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    bUp = <span class="br0">(</span>Velocity.<span class="me1">Z</span> &gt;= <span class="nu0">0</span>.0f<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>XYVelocitySquared &gt;= <span class="nu0">20000</span>.0f<span class="br0">)</span>
+    <span class="br0">{</span>
+        Dir = Get4WayDirection<span class="br0">(</span><span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>bDodge<span class="br0">)</span>
+        <span class="br0">{</span>
+            NewAnim = DodgeAnims<span class="br0">[</span>Dir<span class="br0">]</span>;
+            bWaitForAnim = <span class="kw9">true</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>bUp<span class="br0">)</span>
+        <span class="br0">{</span>
+            NewAnim = TakeoffAnims<span class="br0">[</span>Dir<span class="br0">]</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            NewAnim = AirAnims<span class="br0">[</span>Dir<span class="br0">]</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>bUp<span class="br0">)</span>
+        <span class="br0">{</span>
+            NewAnim = TakeoffStillAnim;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+ 
+        <span class="br0">{</span>
+            NewAnim = AirStillAnim;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> NewAnim != GetAnimSequence<span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+    <span class="co1">// have not quite added this yet.  Will edit later -meowcat               </span>
+    <span class="co1">//if ( PhysicsVolume-&gt;Gravity.Z &gt; 0.8f * (Cast&lt;APhysicsVolume&gt;(PhysicsVolume-&gt;GetClass()-&gt;GetDefaultActor()))-&gt;Gravity.Z )</span>
+        <span class="co1">//    PlayAnim(0, NewAnim, 0.5f, 0.2f, false); // native anim call</span>
+                <span class="co1">//else</span>
+                LoopAnim<span class="br0">(</span>NewAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="co1">//PlayAnim(0, NewAnim, 1.0f, 0.1f, false); // native anim call</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateOnGround<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// just landed</span>
+    <span class="kw1">if</span> <span class="br0">(</span> OldPhysics == PHYS_Falling || OldPhysics == PHYS_Flying <span class="br0">)</span>
+    <span class="br0">{</span>
+        PlayLand<span class="br0">(</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="co1">// standing still</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Vsize<span class="br0">(</span>Velocity*Velocity<span class="br0">)</span> &lt; <span class="nu0">2500</span>.0f  <span class="br0">)</span>  <span class="coMULTI">/*&amp;&amp; Acceleration.SizeSquared() &lt; 0.01f*/</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!bIsIdle || bFootTurning || bIsCrouched != bWasCrouched<span class="br0">)</span>
+        <span class="br0">{</span>
+            IdleTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+            PlayIdle<span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        PlayIdle<span class="br0">(</span><span class="br0">)</span>;<span class="co1">// added this playIdle to force the code to update whatever animation was playing, otherwise the turning anim could potentially continue to loop</span>
+        bWasCrouched = bIsCrouched;
+        bIsIdle = <span class="kw9">true</span>;
+    <span class="br0">}</span>
+    <span class="co1">// running</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span> bIsIdle  <span class="br0">)</span>
+            bWaitForAnim = <span class="kw9">false</span>;
+ 
+        PlayRunning<span class="br0">(</span><span class="br0">)</span>;
+        bIsIdle = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayIdle<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>bFootTurning<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>iTurnDir == <span class="nu0">1</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>bIsCrouched<span class="br0">)</span>
+                LoopAnim<span class="br0">(</span>CrouchTurnRightAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="kw1">else</span>
+                    LoopAnim<span class="br0">(</span>TurnRightAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>bIsCrouched<span class="br0">)</span>
+                    LoopAnim<span class="br0">(</span>CrouchTurnLeftAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="kw1">else</span>
+                    LoopAnim<span class="br0">(</span>TurnLeftAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>bIsCrouched<span class="br0">)</span>
+        <span class="br0">{</span>
+            LoopAnim<span class="br0">(</span>IdleCrouchAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>PlayerController<span class="br0">(</span>controller<span class="br0">)</span>!=<span class="kw9">none</span> &amp;&amp;  PlayerController<span class="br0">(</span>controller<span class="br0">)</span>.<span class="me1">bIsTyping</span> <span class="br0">)</span>
+                    PlayAnim<span class="br0">(</span>IdleRestAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.2f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - IdleTime &lt; <span class="nu0">5</span>.0f<span class="br0">)</span> &amp;&amp; IdleWeaponAnim != <span class="st0">''</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                LoopAnim<span class="br0">(</span>IdleWeaponAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.25f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span>
+            <span class="br0">{</span>
+                    LoopAnim<span class="br0">(</span>IdleRestAnim, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.25f, <span class="nu0">0</span><span class="br0">)</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayRunning<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">Name</span> NewAnim;
+    <span class="kw5">local</span> <span class="kw4">int</span> NewAnimDir;
+    <span class="kw5">local</span> <span class="kw4">float</span> AnimSpeed;
+ 
+    NewAnimDir = Get4WayDirection<span class="br0">(</span><span class="br0">)</span>;
+ 
+    AnimSpeed = <span class="nu0">1</span>.1f * <span class="kw1">Default</span>.<span class="me1">GroundSpeed</span>;
+    <span class="kw1">if</span> <span class="br0">(</span>bIsCrouched<span class="br0">)</span>
+    <span class="br0">{</span>
+        NewAnim = CrouchAnims<span class="br0">[</span>NewAnimDir<span class="br0">]</span>;
+        AnimSpeed *= CrouchedPct;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>bIsWalking<span class="br0">)</span>
+    <span class="br0">{</span>
+        NewAnim = WalkAnims<span class="br0">[</span>NewAnimDir<span class="br0">]</span>;
+        AnimSpeed *= WalkingPct;
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        NewAnim = MovementAnims<span class="br0">[</span>NewAnimDir<span class="br0">]</span>;
+    <span class="br0">}</span>
+    LoopAnim<span class="br0">(</span>NewAnim, <span class="br0">(</span>Vsize<span class="br0">(</span>Velocity<span class="br0">)</span><span class="br0">)</span> / AnimSpeed, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+    <span class="co1">//PlayAnim(0, NewAnim, Velocity.Size() / AnimSpeed, 0.1f, true); // native anim call</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PlayLand<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>!bIsCrouched<span class="br0">)</span>
+    <span class="br0">{</span>
+        PlayAnim<span class="br0">(</span>LandAnims<span class="br0">[</span>Get4WayDirection<span class="br0">(</span><span class="br0">)</span><span class="br0">]</span>, <span class="nu0">1</span>.0f, <span class="nu0">0</span>.1f, <span class="nu0">0</span><span class="br0">)</span>;
+        bWaitForAnim = <span class="kw9">true</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateTwistLook<span class="br0">(</span> <span class="kw4">float</span> DeltaTime <span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> look, Update, UpdateB, PitchDiff, t, YawDiff;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> !bDoTorsoTwist || <span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - LastRenderTime &gt; <span class="nu0">0</span>.5f<span class="br0">)</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+                SmoothViewPitch = ViewPitch;
+                SmoothViewYaw = Rotation.<span class="me1">Yaw</span>;
+        iFootRot = Rotation.<span class="me1">Yaw</span>;
+        bFootTurning = <span class="kw9">false</span>;
+        bFootStill = <span class="kw9">false</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+                YawDiff = <span class="br0">(</span>Rotation.<span class="me1">Yaw</span> - SmoothViewYaw<span class="br0">)</span> &amp; <span class="nu0">65535</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> YawDiff != <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> YawDiff &gt; <span class="nu0">32768</span> <span class="br0">)</span>
+                                YawDiff -= <span class="nu0">65536</span>;
+ 
+                        Update = <span class="kw4">int</span><span class="br0">(</span>YawDiff * <span class="nu0">15</span>.<span class="me1">f</span> * DeltaTime<span class="br0">)</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span> Update == <span class="nu0">0</span> <span class="br0">)</span><span class="br0">{</span>
+                                <span class="co1">//Update = (YawDiff &gt; 0) ? 1 : -1;</span>
+                                <span class="kw1">if</span> <span class="br0">(</span>YawDiff&gt;<span class="nu0">0</span><span class="br0">)</span> Update=<span class="nu0">1</span>;
+                                <span class="kw1">else</span> Update= <span class="nu0">-1</span>;
+                        <span class="br0">}</span>
+                        SmoothViewYaw = <span class="br0">(</span>SmoothViewYaw + Update<span class="br0">)</span> &amp; <span class="nu0">65535</span>;
+                <span class="br0">}</span>
+                t = <span class="br0">(</span>SmoothViewYaw - iFootRot<span class="br0">)</span> &amp; <span class="nu0">65535</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>t &gt; <span class="nu0">32768</span><span class="br0">)</span>
+                        t -= <span class="nu0">65536</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>Velocity.<span class="me1">X</span> * Velocity.<span class="me1">X</span><span class="br0">)</span> + <span class="br0">(</span>Velocity.<span class="me1">Y</span> * Velocity.<span class="me1">Y</span><span class="br0">)</span><span class="br0">)</span> &lt; <span class="nu0">1000</span> &amp;&amp; Physics == PHYS_Walking<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>!bFootStill<span class="br0">)</span>
+            <span class="br0">{</span>
+                bFootStill = <span class="kw9">true</span>;
+                                SmoothViewYaw = Rotation.<span class="me1">Yaw</span>;
+                iFootRot = Rotation.<span class="me1">Yaw</span>;
+                                t = <span class="nu0">0</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>bFootStill<span class="br0">)</span>
+            <span class="br0">{</span>
+                bFootStill = <span class="kw9">false</span>;
+                bFootTurning = <span class="kw9">true</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>bFootTurning<span class="br0">)</span>
+        <span class="br0">{</span>
+           <span class="kw1">if</span> <span class="br0">(</span>t &gt; <span class="nu0">12000</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iFootRot = SmoothViewYaw - <span class="nu0">12000</span>;
+                t = <span class="nu0">12000</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>t &gt; <span class="nu0">2048</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iFootRot += <span class="nu0">16384</span>*DeltaTime;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>t &lt; <span class="nu0">-12000</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iFootRot = SmoothViewYaw + <span class="nu0">12000</span>;
+                t = <span class="nu0">-12000</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>t &lt; <span class="nu0">-2048</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iFootRot -= <span class="nu0">16384</span>*DeltaTime;
+            <span class="br0">}</span>
+            <span class="kw1">else</span>
+            <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>!bFootStill<span class="br0">)</span>
+                    t = <span class="nu0">0</span>;
+                bFootTurning = <span class="kw9">false</span>;
+            <span class="br0">}</span>
+            iFootRot = iFootRot &amp; <span class="nu0">65535</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>bFootStill<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span> <span class="br0">(</span>t &gt; <span class="nu0">10923</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iTurnDir = <span class="nu0">1</span>;
+                bFootTurning = <span class="kw9">true</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>t &lt; <span class="nu0">-10923</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                iTurnDir = <span class="nu0">-1</span>;
+                bFootTurning = <span class="kw9">true</span>;
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+            t = <span class="nu0">0</span>;
+        <span class="br0">}</span>
+                PitchDiff = <span class="br0">(</span><span class="nu0">256</span>*ViewPitch - SmoothViewPitch<span class="br0">)</span> &amp; <span class="nu0">65535</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> PitchDiff != <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">if</span> <span class="br0">(</span> PitchDiff &gt; <span class="nu0">32768</span> <span class="br0">)</span>
+                                PitchDiff -= <span class="nu0">65536</span>;
+ 
+                        UpdateB = <span class="kw4">int</span><span class="br0">(</span>PitchDiff * <span class="nu0">5</span>.<span class="me1">f</span> * DeltaTime<span class="br0">)</span>;
+                        <span class="kw1">if</span> <span class="br0">(</span> UpdateB == <span class="nu0">0</span> <span class="br0">)</span><span class="br0">{</span>
+                                <span class="co1">//Update = (PitchDiff &gt; 0) ? 1 : -1;</span>
+                                <span class="kw1">if</span> <span class="br0">(</span>PitchDiff&gt;<span class="nu0">0</span><span class="br0">)</span> UpdateB=<span class="nu0">1</span>;
+                                <span class="kw1">else</span> UpdateB= <span class="nu0">-1</span>;
+                        <span class="br0">}</span>
+                        SmoothViewPitch = <span class="br0">(</span>SmoothViewPitch + UpdateB<span class="br0">)</span> &amp; <span class="nu0">65535</span>;
+                <span class="br0">}</span>
+                look = SmoothViewPitch;
+        <span class="kw1">if</span> <span class="br0">(</span>look &gt; <span class="nu0">32768</span><span class="br0">)</span>
+                        look -= <span class="nu0">65536</span>;
+        <span class="co1">//call this native function to actually update the pawn's torso twist</span>
+        SetTwistLook<span class="br0">(</span>t, look<span class="br0">)</span>;
+        <span class="co1">//td_SetTwistLook(t, look);// or call an edited version of the settwistlook so that you can alter how the rotation is applied</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> td_SetTwistLook<span class="br0">(</span> <span class="kw4">int</span> twist, <span class="kw4">int</span> look<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">rotator</span> r;
+    <span class="kw1">if</span> <span class="br0">(</span>!bDoTorsoTwist<span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+        r.<span class="me1">Yaw</span>=-twist + SmoothViewYaw - Rotation.<span class="me1">Yaw</span>;
+    SetBoneRotation<span class="br0">(</span>RootBone, r, <span class="nu0">0</span>, <span class="nu0">1</span>.0f<span class="br0">)</span>;
+ 
+    r.<span class="me1">Yaw</span> = -twist / <span class="nu0">3</span>;
+    r.<span class="me1">Pitch</span> = <span class="nu0">0</span>;
+    r.<span class="me1">Roll</span> = look / <span class="nu0">4</span>;
+    SetBoneDirection<span class="br0">(</span>HeadBone, r, <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f<span class="br0">)</span>, <span class="nu0">1</span>.0f, <span class="nu0">0</span><span class="br0">)</span>;
+    SetBoneDirection<span class="br0">(</span>SpineBone1, r, <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f<span class="br0">)</span>, <span class="nu0">1</span>.0f, <span class="nu0">0</span><span class="br0">)</span>;
+    SetBoneDirection<span class="br0">(</span>SpineBone2, r, <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f,<span class="nu0">0</span>.0f<span class="br0">)</span>, <span class="nu0">1</span>.0f, <span class="nu0">0</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    bDoTorsoTwist=<span class="kw9">true</span>
+    bPhysicsAnimUpdate=<span class="kw9">false</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 5/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/c/Legacy%7EUScriptAnimPawn_1c21.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/c/Legacy_talk%7EUScriptAnimPawn_e48a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UScriptAnimPawn">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:39, 28 December 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Lightwave/UV Mapping - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Lightwave/UV Mapping</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/l/i/g/Legacy%7ELightwave_397f.html" title="Legacy:Lightwave">Legacy:Lightwave</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Applying_materials_or_skins_to_an_object"><span class="tocnumber">1.1</span> <span class="toctext">Applying materials or skins to an object</span></a></li>
+<li class="toclevel-2"><a href="#Creating_a_light_map_for_an_object"><span class="tocnumber">1.2</span> <span class="toctext">Creating a light map for an object</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#UV_skinning_tutorial"><span class="tocnumber">2</span> <span class="toctext">UV skinning tutorial</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Prerequisites"><span class="tocnumber">2.1</span> <span class="toctext">Prerequisites</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Model_Preparation"><span class="tocnumber">3</span> <span class="toctext">Model Preparation</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Grouping_the_Polygons"><span class="tocnumber">3.1</span> <span class="toctext">Grouping the Polygons</span></a></li>
+<li class="toclevel-2"><a href="#Disconnecting_the_Groups"><span class="tocnumber">3.2</span> <span class="toctext">Disconnecting the Groups</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Making_the_Template"><span class="tocnumber">4</span> <span class="toctext">Making the Template</span></a></li>
+<li class="toclevel-1"><a href="#Creating_the_Texture"><span class="tocnumber">5</span> <span class="toctext">Creating the Texture</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Supported_Image_Formats"><span class="tocnumber">5.1</span> <span class="toctext">Supported Image Formats</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Applying_the_Texture"><span class="tocnumber">6</span> <span class="toctext">Applying the Texture</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">8</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h2><span class="mw-headline">Overview</span></h2>
+<p>UV mapping is the process of applying a texture to an object. When creating static meshes for Unreal Tournament levels, UV maps are usually created (using the Map-&gt;New UV Map option) for one of two purposes:</p>
+<p><a name="Applying_materials_or_skins_to_an_object" id="Applying_materials_or_skins_to_an_object"></a></p>
+<h3><span class="mw-headline">Applying materials or skins to an object</span></h3>
+<p>A surface with the name of an existing Unreal Tournament material (such as the concrete texture 'bas02ha' from the Humanoid Architecture texture set, for example) is applied to various polygons in the object, and the texture scaling is adjusted by selecting particular parameters in the 'Make UV' property box, or by manually stretching the polygons in a UV view, for example, until the texture has the correct proportion and scaling. In this case polygons may overlap in the UV space/view, or may extend outside the unit UV coordinate space.</p>
+<p>Alternatively, the UV map may be created such that there are no overlapping polygons in the UV space (for example using the atlas projection of the 'Make UV' tool in Lightwave 8+), so that a 'skin' texture can be created and overlaid over the object. If the object is a human head, for example, the skin could be a hand-drawing of the eyes, mouth, nose, hair, which would be overlaid over the relevant parts of the object by careful manipulation of the UV mapping.</p>
+<p>Both types of mapping may be used within the same UV map, with the skinning approach used for one surface type, and the material stretching/alignment used for other surface types, for example.</p>
+<p>Global surface mapping properties can be set in the surface properties of a surface, but the Unreal Tournament editor ignores these in favour of explicitly defined UV maps (it uses the first-defined UV map?).</p>
+<p>The tutorial below explains how to create a simple skin for an object in the Lightwave modeller program.</p>
+<p><a name="Creating_a_light_map_for_an_object" id="Creating_a_light_map_for_an_object"></a></p>
+<h3><span class="mw-headline">Creating a light map for an object</span></h3>
+<p>A mapping of polygons to the UV space is chosen (usually via the atlas 'Make UV' option in Lightwave 8+) such that there are no overlapping polygons in the UV space, and all of the polygons are spaced uniformly within the unit (0,0,1,1) UV space. The UV mapping is independent of, and usually additional to, any UV maps which map on existing materials or skins. The light map UV map exists to allow light maps to be created by <a href="../../../../articles/r/e/n/Legacy%7ERendering_Lightmaps_In_Lightwave_8d02.html" title="Legacy:Rendering Lightmaps In Lightwave">Rendering lightmaps in Lightwave</a> and then applying the rendered lightmaps to static meshes within the Unreal Tournament editor. Light maps are normally overlaid on static meshes using the <a href="../../../../articles/u/v/2/Legacy%7EUV2Texture_5188.html" title="Legacy:UV2Texture">UV2Texture</a> display property; light map UV maps must normally be given the name 'UV2' (hence the name 'UV2Texture' and for reasons relating to compatibility with 3D Max).</p>
+<p>Often, an object is defined in Lightwave with both a material/skin texture mapping UV map (called, say, 'UV1') and a lightmap UV (called 'UV2', as discussed further in <a href="../../../../articles/u/v/2/Legacy%7EUV2Texture_5188.html" title="Legacy:UV2Texture">UV2Texture</a>), so that fine texture detail can be provided without requiring a correspondingly high resolution for the lightmap.</p>
+<p><a name="UV_skinning_tutorial" id="UV_skinning_tutorial"></a></p>
+<h2><span class="mw-headline">UV skinning tutorial</span></h2>
+<p><i>Work in Progress</i></p>
+<p>UV Mapping in Lightwave is a breeze thanks to the additions to Lightwave 7.0. The mapping tool tab contains most of the tools you'll need for all your UV mapping needs. In this tutorial, I'm using Photoshop however because Lightwave supports many different image formats, you can really use any image editor, even Windows Paint.</p>
+<p><a name="Prerequisites" id="Prerequisites"></a></p>
+<h3><span class="mw-headline">Prerequisites</span></h3>
+<ul>
+<li>Lightwave 7.0 (or greater)</li>
+<li>A Lightwave model (download mine)</li>
+<li>Image Editor (Photoshop Recommended)</li>
+</ul>
+<p><a name="Model_Preparation" id="Model_Preparation"></a></p>
+<h2><span class="mw-headline">Model Preparation</span></h2>
+<p>For this tutorial, I will be using a simple premade object. You can download this object here if you wish. In this tutorial, we will be using the Image Editor and the Surface Editor a lot so you may want to familiarize yourself with them. The buttons to access them are at the top left, however, by pressing CTRL+F3 you can get the surface editor and CTRL+F4 gives you the image editor.</p>
+<p>The first thing we want to do is create the templates for our model. The templates give us an area where we can tell where the face begins and ends. It is a 2 dimensional image of the wireframe underneath the face.</p>
+<p><a name="Grouping_the_Polygons" id="Grouping_the_Polygons"></a></p>
+<h3><span class="mw-headline">Grouping the Polygons</span></h3>
+<p><i>Coming Soon...</i></p>
+<p>After you've read this section, you should see something similar to this:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-Mine.jpeg_adb8.html" class="image" title="Legacy LW-UVMapping-Mine.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-Mine.jpeg" width="332" height="330" border="0" /></a></span></div>
+</div>
+<p>Although you can literally jam every polygon onto the UV Map it's sloppy and I don't recommend it. I'm going to create a UV map for every side. Since we're looking at this model from the top, I've color coded the different sides accordingly.</p>
+<table>
+<tr>
+<td>Top and Bottom Side Panels</td>
+<td>Z Axis</td>
+<td>Blue</td>
+</tr>
+<tr>
+<td>Left and Right Side Panels</td>
+<td>X Axis</td>
+<td>Green</td>
+</tr>
+</table>
+<p><a name="Disconnecting_the_Groups" id="Disconnecting_the_Groups"></a></p>
+<h3><span class="mw-headline">Disconnecting the Groups</span></h3>
+<p>Now the next thing we need to do, is separate these sections from the model. We need to do this so that we can line all of the faces up right. I'll explain why later.</p>
+<p>The best way to do this is to open up the polygon statistics window using the 'W' key. Scroll down to <i>Surface</i>. It should be the 3rd item from the bottom. Select Side_Side_Panels, and press the + sign. This should select all the polygons in that group. Now just quickly press 'X' then press 'V'. This cut's the selected polygons from the model and pastes them back in but it also disconnects them from the rest of the model, which is what we want. Do this for the Top/Bottom_Side_Panels group as well.</p>
+<p>Now we're ready to make our template.</p>
+<p><a name="Making_the_Template" id="Making_the_Template"></a></p>
+<h2><span class="mw-headline">Making the Template</span></h2>
+<p>Now that we have the model divided into sections, and those sections disconnected from the rest of the model, we can now safely create our templates. In the top left viewport, click on the 'View Angle' button and scroll down to 'UV Texture'.</p>
+<p>So what you want to do is select one of your groups, again you can use the polygon statistic window for this. Select the Side_Side_Panels group. Now click on the Map tool tab at the top, and then click on <i>New UV Map</i>. A dialog appears similar to the one below.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-NewMap.jpeg_4809.html" class="image" title="Legacy LW-UVMapping-NewMap.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-NewMap.jpeg" width="430" height="282" border="0" /></a></span></div>
+</div>
+<p>Because the right and left sides of our model are on the X axis, let's name this map XAxis_Map. And make sure that the X Axis button is press. If you choose either of the other buttons, it will render the mesh differently. Although you can still move and resize the mesh, setting it to X now, will eliminate most of the hassle. Now click ok.</p>
+<p>You should now see the selected polygons in the top left viewport. Since Lightwave tries to cover the entire area with the polygons, you'll see that they are quite out of shape:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-NewMap2.jpeg_c3b3.html" class="image" title="Legacy LW-UVMapping-NewMap2.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-NewMap2.jpeg" width="132" height="134" border="0" /></a></span></div>
+</div>
+<p>This is really easy to fix using simple mesh modify tools. First, go to the Modify tool tab and select the 'Stretch' tool (h). Then click and drag in the top left viewport until the mesh looks similar to your model. We do this so that it's easy to see how big the polygon faces are when we're coloring over the template.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-NewMap3.jpeg_1a33.html" class="image" title="Legacy LW-UVMapping-NewMap3.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-NewMap3.jpeg" width="132" height="134" border="0" /></a></span></div>
+</div>
+<p>It looks a litte better, but there's still something wrong. The top portion is begin overlapped by the bottom portion. We can't leave it like this because the texture on the top portion will be messed up so we have to move it. At the bottom, press the 'Polygons' selection tool. Deselect all the lower portion polygons and leave the top ones selected. Then using the move tool (t), move the selection up so that it doesn't touch the lower section at all:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-NewMap4.jpeg_567c.html" class="image" title="Legacy LW-UVMapping-NewMap4.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-NewMap4.jpeg" width="132" height="134" border="0" /></a></span></div>
+</div>
+<p>There. This should create a perfect template we can use to draw a texture. Next we'll copy this, and paste it into our image editor (Photoshop).</p>
+<p><a name="Creating_the_Texture" id="Creating_the_Texture"></a></p>
+<h2><span class="mw-headline">Creating the Texture</span></h2>
+<p>Now, to copy this into Photoshop, we're going to use the Print Screen button. It should be located near the top right corner of your keyboard. Press it once and it should copy everything you see onto the clipboard.</p>
+<p>Now open Photoshop (or whatever image editor your using). In Photoshop, you must create a new document, so do that now. Photoshop automatically detects the size of the image on the clipboard and sets the dimensions for you. Press CTRL+V to paste the image.</p>
+<p>Now there are several ways to go about getting what we want, and what we want is the smal grid in the top left layout view. It has our templates right there. You can either select it with the select tool (M) or move it to the top left corner and adjust the dimensions of the image. The easiest way is to select it, then copy it using CTRL+C.</p>
+<p>Now, create a new image, again Photoshop puts the dimensions in for the clipboard item. Paste it in using CTRL+V. Ok you now should have a template that looks exactly like the grid in Lightwave. Using thise template you can create a texture. Anything inside the mesh line is what is going to appear on that part of the mesh.</p>
+<p>Since this is just a tutorial, let's do some quick drawing:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-Texture1.jpeg_249d.html" class="image" title="Legacy LW-UVMapping-Texture1.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-Texture1.jpeg" width="345" height="365" border="0" /></a></span></div>
+</div>
+<p>It doesn't matter if you go over the lines, only what is inside the lines is going to appear on the model. And since I want to get this done and I'm lazy, I'm only going to paint the top portion of the mine. Ok so now you need to save this image as any of the formats listed below:</p>
+<p><a name="Supported_Image_Formats" id="Supported_Image_Formats"></a></p>
+<h4><span class="mw-headline">Supported Image Formats</span></h4>
+<table>
+<tr>
+<td>BMP</td>
+<td>Bitmap</td>
+</tr>
+<tr>
+<td>JPG/JPEG</td>
+<td>JPEG</td>
+</tr>
+<tr>
+<td>PSD</td>
+<td>Photoshop PSD</td>
+</tr>
+<tr>
+<td>TGA</td>
+<td>Targa</td>
+</tr>
+</table>
+<p><i>More coming...</i></p>
+<p>I like Bitmap because it is very portable between programs. So save it as something like XAxis_Panel.bmp.</p>
+<p><a name="Applying_the_Texture" id="Applying_the_Texture"></a></p>
+<h2><span class="mw-headline">Applying the Texture</span></h2>
+<p>Now we're ready to put the texture onto our mesh. Let's go back into Lightwave now. Click on the surface editor button or press CTRL+F3. On the left side, you should see the list of your groups. Select the Side_Side_Panels. Now making sure that you're in the basic tab, click on the <i>Texture</i> button beside the color. The Texture button is the button with a little T.</p>
+<p>This is the texture window. For projection choose UV, for UV Map choose XAxis_Sides, and for Image choose 'Load Image', and choose the image you just saved. Now go to the top left viewport, and change the angle to 'Perspective', and change the render type to 'Texture'. You should now see your texture applied to the right and left sides of the model!</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_LW-UVMapping-AppliedTexture.jpeg_f2b0.html" class="image" title="Legacy LW-UVMapping-AppliedTexture.jpeg"><img alt="" src="../../../../images/Legacy_LW-UVMapping-AppliedTexture.jpeg" width="362" height="329" border="0" /></a></span></div>
+</div>
+<p>This is all good but we still need to texture our top/bottom sides. Since we've already got everything setup, this should be a breeze. Using the Polygon Statistics (W), select the Top/Bottom_Side_Panels group. Make sure nothing else is selected and click the 'New UV Map' button.</p>
+<p>Call this one 'ZAxis_Map' and set it's axis to Z. Press ok and you should see your selected faces in the top left viewport. Now to make things really easy, click on the render options button (the one wiith just a down arrow) and choose the image you just saved.</p>
+<p>Scale your model using the modify tools until it fits the template. If you want find control, use the 'Drag' tool (CTRL+T). This allows you to move the points into perfect positions. Now you'll notice that even though the model is lined up, it still doesn't show on the model.</p>
+<p>Go back into the surface editor, and choose your Top/Bottom_Side_Panels group. Click the texture button next to color. Same thing as last time; Set Projection to UV, set UV Map to ZAxis_Map, and set image to your image. Press 'Use Texture', close the surface editor and all the sides of your model should now have the texture.</p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Amen:</b> Wouldn't lightwave's anchor UV Map type do this quicker?</p>
+<p><b>Mosquito[L5]:</b> Possibly... You have to remember that I'm not as good as some people, and this is what I know. If you have a suggestion that would be better, by all means, create a tutorial for it.</p>
+<p><b>Fat Marrow:</b>This is a bit of a placeholder revision – I'm hoping to add more (possibly to other pages) about rendering lightmaps in Lightwave and related topics (learnt the hard way).</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/t/o/p/Legacy%7ETopics_On_Modeling_0f33.html" title="Legacy:Topics On Modeling">Topics On Modeling</a></li>
+<li><a href="../../../../articles/l/i/g/Legacy%7ELightwave_397f.html" title="Legacy:Lightwave">Lightwave</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 20/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Modeling_2a21.html" title="Category:Legacy Modeling">Legacy Modeling</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/l/i/g/Legacy%7ELightwave_UV_Mapping_b949.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/l/i/g/Legacy_talk%7ELightwave_UV_Mapping_ce38.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Lightwave/UV_Mapping">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:47, 30 July 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

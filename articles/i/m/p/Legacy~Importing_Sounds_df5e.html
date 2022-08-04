@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Importing Sounds - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Importing Sounds</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Before_you_import_the_sound"><span class="tocnumber">1</span> <span class="toctext">Before you import the sound</span></a></li>
+<li class="toclevel-1"><a href="#Importing..."><span class="tocnumber">2</span> <span class="toctext">Importing...</span></a>
+<ul>
+<li class="toclevel-2"><a href="#...via_UnrealEd_.28to_.UAX_or_myLevel.29"><span class="tocnumber">2.1</span> <span class="toctext">...via UnrealEd (to .UAX or myLevel)</span></a></li>
+<li class="toclevel-2"><a href="#...via_console_commands_.28to_.U_or_via_UnrealEd_Console.29"><span class="tocnumber">2.2</span> <span class="toctext">...via console commands (to .U or via UnrealEd Console)</span></a></li>
+<li class="toclevel-2"><a href="#...via_UCC_Editor.BatchImport"><span class="tocnumber">2.3</span> <span class="toctext">...via UCC Editor.BatchImport</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Creating_Looping_Sounds_.28only_UT.29"><span class="tocnumber">3</span> <span class="toctext">Creating Looping Sounds (only UT)</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Before_you_import_the_sound" id="Before_you_import_the_sound"></a></p>
+<h2><span class="mw-headline">Before you import the sound</span></h2>
+<p>A short checklist of common problems:</p>
+<dl>
+<dt><a href="../../../../articles/d/o/_/Legacy%7EDo_Not_Alter_Default_Packages_4b29.html" title="Legacy:Do Not Alter Default Packages">Do Not Alter Default Packages</a>&#160;</dt>
+<dd>You have been warned!</dd>
+<dt>No spaces or other funny characters in the file or its directory tree&#160;</dt>
+<dd><i><b>UnrealEd will not import files with spaces in the directory or file name.</b></i> Move the file to a different directory, if necessary. (This is not a problem for #<a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">exec directives</a> though, as long as you enclose the file in double quotes.)</dd>
+<dt>No compression&#160;</dt>
+<dd>The engine only accepts uncompressed wave files. <b>No</b> ADPCM! <b>No</b> MP3 wave! <b>No</b> <i>&lt;insert other sound format&gt;</i>! Only plain old PCM wave audio files.</dd>
+<dt>No stereo&#160;</dt>
+<dd>...or other multi-channel formats. The engine can only handle mono files.</dd>
+<dt>Watch the format&#160;</dt>
+<dd>The engine wants a standard sampling rate at 8 or 16 bit per sample. For <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> you should stick to 11 or 22 kHz, newer games will definitely also handle 8, 16, 32, 44 and 48 kHz, but here you should find the lowest sampling rate that still sounds good. In most cases you will want to use 22 or 44 kHz at 16 bits/sample.</dd>
+</dl>
+<p><a name="Importing..." id="Importing..."></a></p>
+<h2><span class="mw-headline">Importing...</span></h2>
+<p>So you have your PCM Mono wave file without any spaces in its file name or directory name and want to get it into the game. You have three options for importing now:</p>
+<ul>
+<li>via UnrealEd's <a href="../../../../articles/s/o/u/Legacy%7ESound_Browser_823d.html" title="Legacy:Sound Browser">sound browser</a></li>
+<li>via an <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Console_a1ec.html" title="Legacy:UnrealEd Console">UnrealEd console</a> command #<a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">exec directive</a> or</li>
+<li>via UCC BatchImport.</li>
+</ul>
+<p><a name="...via_UnrealEd_.28to_.UAX_or_myLevel.29"></a></p>
+<h3><span class="mw-headline">...via UnrealEd (to .UAX or myLevel)</span></h3>
+<div class="floatright"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_interface-Ed3-soundbrowser-import.png_779d.html" class="image" title="The sound import dialog box."><img alt="The sound import dialog box." src="../../../../images/Legacy_interface-Ed3-soundbrowser-import.png" width="366" height="158" border="0" /></a></span></div>
+<ol>
+<li>Open the <a href="../../../../articles/s/o/u/Legacy%7ESound_Browser_823d.html" title="Legacy:Sound Browser">sound browser</a>.</li>
+<li>Click File -&gt; Import.</li>
+<li>Select your file(s) and click Open.</li>
+<li>A dialog box comes up for every file you selected asking you for the destination package, the group name and the sound name. Package and group name default to the currently selected package and group in the sound browser. Changes here will carry on to the next sound file's dialog box. The sound name defaults to the sound file name. Click 'OK' to import the sound. 'OK All' will import all sounds using their file names as their sound name into the package and group displayed in the dialog box. You can also 'Skip' over the current file and go to the next. 'Cancel' skips all remaining files.</li>
+<li>Your sound(s) should now show up in the sound browser. If you can't find them, chances are you did something wrong. Open the log window ("ShowLog" in the console) and check for errors. Also read over the first section of this page again to see whether you need to convert the sound file or rename/move it.</li>
+</ol>
+<p>Remember to use your sound in your map if you imported it to <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">myLevel</a> or save the sound package to a UAX file, otherwise the sound(s) will be lost when you close UnrealEd.</p>
+<p><a name="...via_console_commands_.28to_.U_or_via_UnrealEd_Console.29"></a></p>
+<h3><span class="mw-headline">...via console commands (to .U or via UnrealEd Console)</span></h3>
+<p>The console command for importing sounds looks like this:</p>
+<pre>
+<b>AUDIO IMPORT FILE</b>=<i>filename</i> [<b>NAME</b>=<i>soundname</i>] [<b>GROUP</b>=<i>groupname</i>] [<b>PACKAGE</b>=<i>packagename</i>]
+</pre>
+<p>Mostly this command is used for importing sounds into a code package at compile time. In this case the Package parameter should be left out, otherwise the sound will only be imported to a temporary package that is not saved.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> AUDIO <span class="kw6">IMPORT</span> FILE=<span class="st0">"Sounds<span class="es0">\T</span>azer<span class="es0">\T</span>SHOTA6.WAV"</span> <span class="kw4">NAME</span>=<span class="st0">"TazerFire"</span> GROUP=<span class="st0">"ASMD"</span>
+</pre></div>
+<p>You can also use the command (and some variations) in the <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_Console_a1ec.html" title="Legacy:UnrealEd Console">UnrealEd Console</a>:</p>
+<ul>
+<li>AUDIO IMPORT FILE="Sounds\Tazer\TSHOTA6.WAV" NAME="TazerFire" GROUP="ASMD" PACKAGE="TazerSounds"</li>
+<li>NEW SOUND FILE=Sounds\Tazer\TSHOTA6.WAV PACKAGE=MyLevel.ASMD NAME=TazerFire PACKAGE="TazerSounds"</li>
+<li>NEW SoundFactory FILE=Sounds\Tazer\TSHOTA6.WAV PACKAGE=MyLevel.ASMD NAME=TazerFire PACKAGE="TazerSounds"</li>
+</ul>
+<p>Don't forget to save the new or modified package afterwards.<br />
+<b>Note:</b> A new package created this way might not immediately show up in the sound browser.</p>
+<p><a name="...via_UCC_Editor.BatchImport"></a></p>
+<h3><span class="mw-headline">...via UCC Editor.BatchImport</span></h3>
+<p>You can use the BatchImport UCC commandlet to create a sound package without opening UnrealEd or compiling UnrealScript classes. See <a href="../../../../articles/b/a/t/Legacy%7EBatchImportCommandlet_cc07.html" title="Legacy:BatchImportCommandlet">BatchImportCommandlet</a> for details.</p>
+<p><a name="Creating_Looping_Sounds_.28only_UT.29" id="Creating_Looping_Sounds_.28only_UT.29"></a></p>
+<h2><span class="mw-headline">Creating Looping Sounds (only UT)</span></h2>
+<p>Ever wondered why your imported sounds wouldn't loop properly? I did too, and I found this:</p>
+<p>Taken from EpicGames' Audio Reference:</p>
+<blockquote class="legacyquote">
+<p>To create a looping sound effect in a .wav file, you need a sound editing program like SoundForge (<a href="http://www.sfoundry.com" class="external free" title="http://www.sfoundry.com" rel="nofollow">http://www.sfoundry.com</a>) which supports looping sound effects. In Sound Forge, follow these instructions:</p>
+<ol>
+<li>Run SoundForge.</li>
+<li>Load your .wav file (either 8-bit or 16-bit).</li>
+<li>Bring up the "Special/Edit Sample..." dialog.</li>
+<li>Click on the "Sustaining" choice (as opposed to "One shot").</li>
+<li>Select "File/Save As...".</li>
+<li>Make sure that the "Save Sampler Information in file" option is checked.</li>
+<li>Click on the "Save button".</li>
+</ol>
+</blockquote>
+<p>So that means the Looping property is set in the sound file itself, and not in UnrealEd. Dunno what other Programs are able to do this...</p>
+<p><b>Note:</b> UT2003 and other UnrealEngine2 games do not require this kind of special treatment to make sounds loop properly.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 19/1000000
+Post-expand include size: 596/2097152 bytes
+Template argument size: 519/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/i/m/p/Legacy%7EImporting_Sounds_df5e.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/i/m/p/Legacy_talk%7EImporting_Sounds_06a4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Importing_Sounds">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:47, 2 June 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

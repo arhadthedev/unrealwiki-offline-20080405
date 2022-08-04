@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:How UT2003 Weapons Work/Firing A Weapon - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:How UT2003 Weapons Work/Firing A Weapon</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_cfe8.html" title="Legacy:How UT2003 Weapons Work">Legacy:How UT2003 Weapons Work</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_cfe8.html" title="Legacy:How UT2003 Weapons Work">How UT2003 Weapons Work</a>: Firing A Weapon</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Intro"><span class="tocnumber">1</span> <span class="toctext">Intro</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Flow_of_control"><span class="tocnumber">1.1</span> <span class="toctext">Flow of control</span></a></li>
+<li class="toclevel-2"><a href="#In_English"><span class="tocnumber">1.2</span> <span class="toctext">In English</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">2</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Intro" id="Intro"></a></p>
+<h2><span class="mw-headline">Intro</span></h2>
+<p>While it's relatively easy to make a custom weapon by taking an existing one and monkeying about with the parameters, it's much harder to figure out the chain of events that cause a weapon to get fired. The reason for this is twofold: first, much of the actual flow of control is done natively, so is not visible to the person browsing the UnrealScript code; secondly, there is a visible chain of method calls which looks right, until the trail suddenly peters out.</p>
+<p>Trystan did excellent work deciphering this in the case of projectile weapons. Although not originally intended to show the general case, this diagram shows important steps missing from the visible UnrealScript code:</p>
+<p><a name="Flow_of_control" id="Flow_of_control"></a></p>
+<h3><span class="mw-headline">Flow of control</span></h3>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_projectilefireflow.jpeg_a8e2.html" class="image" title="Projectile Fire Flowchart"><img alt="Projectile Fire Flowchart" src="../../../../images/Legacy_projectilefireflow.jpeg" width="817" height="1057" border="0" /></a></span></div>
+</div>
+<p><b>Note:</b> There's a small error above. The ProcessTouch function isn't called by the engine. Instead the engine calls the Touch function which calculates the exact hitlocation and calls ProcessTouch.</p>
+<p><a name="In_English" id="In_English"></a></p>
+<h3><span class="mw-headline">In English</span></h3>
+<p>The player hits the Fire button. The engine then executes the alias attached to Fire. The alias fire is set to Button bFire, and the exec command Fire(). Check <a href="../../../../articles/b/i/n/Legacy%7EBinding_Keys_f7da.html" title="Legacy:Binding Keys">aliases</a> for more information on how this works but basically bFire is a boolean variable that is automatically set by the engine to true when the fire button is being held down, and false when the fire button is released. The engine has a native event set such that when bFire is held down the Pawn.Weapons.WeaponFire.ModeDoFire() is called. As well PlayerController.Fire() is called. It's important to note that these are two distinctly separate chains of events.</p>
+<p>See How Firing Doesn't Work for an explanation of the "decoy" chain of events.</p>
+<p>The flow of control is picked up at the <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a> class found in the weapon's array of fire modes.</p>
+<p><a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a> is responsible for creating the visual effects and applying damage. There are two main weapon fire types:</p>
+<ul>
+<li><a href="../../../../articles/p/r/o/Legacy%7EProjectileFire_4126.html" title="Legacy:ProjectileFire">ProjectileFire</a> - <a href="../../../../articles/f/i/r/Legacy%7EFiring_Projectile_Weapons_390c.html" title="Legacy:Firing Projectile Weapons">Firing Projectile weapons</a></li>
+<li><a href="../../../../articles/i/n/s/Legacy%7EInstantFire_f898.html" title="Legacy:InstantFire">InstantFire</a> - <a href="../../../../articles/f/i/r/Legacy%7EFiring_InstantFire_Weapons_3489.html" title="Legacy:Firing InstantFire Weapons">Firing InstantFire weapons</a></li>
+</ul>
+<p>We will go on with the instant fire weapons; So, click that link!&#160;:)</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>CDeath:</b> This is my first Wiki post. My appoligies for any improper formatting.</p>
+<p>I have been looking at the engine. I think I understand how the UT2K4 firing stuff works. Natively, what happens is that the engine calls the native TickAuthoritiative() function for every actor. For weapons, this native function is called AWeapon::TickAuthoritative().</p>
+<p>AWeapon::TickAuthoritative() does several test to make sure that the weapon should be ticked, is owned by a pawn, and stuff like that. If everything looks good, then the native AWeapon::eventWeaponTick() is called. eventWeaponTick() calls the uScript <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>.WeaponTick() function.</p>
+<p>Next, AWeapon::TickAuthoritative() loops through the weapon’s FireMode array (each FireMode is a <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a> object) and depending on a lot of flags will call some of the following functions:</p>
+<ul>
+<li>UWeaponFire::ModeTick() (a native function)</li>
+<li>AWeapon::eventServerStartFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>.ServerStartFire())</li>
+<li>AWeapon::eventServerStopFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>.ServerStopFire())</li>
+<li>AWeapon::eventClientStartFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>.ClientStartFire())</li>
+<li>AWeapon::eventClientStopFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>.ClientStopFire())</li>
+</ul>
+<p>The native UWeaponFire::ModeTick() function calls UWeaponFire::eventTimer() (which calls the uScript <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a>.Timer() function). Then based on a lot of flags it will call some of the following functions:</p>
+<ul>
+<li>UWeaponFire::eventModeTick() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a>.ModeTick())</li>
+<li>UWeaponFire::eventModeDoFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a>.ModeDoFire())</li>
+<li>UWeaponFire::eventModeHoldFire() (calls uScript <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a>.ModeHoldFire())</li>
+</ul>
+<p>So for a weapon, it looks like the sequence is:</p>
+<ul>
+<li>Weapon.WeaponTick();</li>
+<li>Weapon.FireMode[0].Timer()</li>
+<li>Weapon.FireMode[0].ModeTick()</li>
+<li>Weapon.FireMode[0].ModeDoFire()/ModeHoldFire()</li>
+<li>Weapon.FireMode[1].Timer()</li>
+<li>Weapon.FireMode[1].ModeTick()</li>
+<li>Weapon.FireMode[1].ModeDoFire()/ModeHoldFire()</li>
+<li>Weapon.ServerStartFire()/ServerStopFire()</li>
+<li>Weapon.ClientStartFire()/ClientStopFire()</li>
+</ul>
+<p>What exactly gets called depends upon all sorts of things like your Role, TimerInterval, NextTimerPop, TimeSeconds, bIsFiring, bInstantStop, bFireOnRelease, HoldTime, MaxHoldTime, NextFireTime…</p>
+<p><b>Wormbo:</b> Thanks for the insights. I'd like to add, that the native UWeaponFire class corresponds to the <a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html" title="Legacy:WeaponFire (UT2003)">WeaponFire (UT2003)</a> Unrealscript class and AWeapon corresponds to UnrealScript's <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a> class. It's kinda obvious, but just to prevent confusion...&#160;:)</p>
+<p><b>CDeath:</b> Good catch. I changed AWeapon to Weapon. Internally, the engine prepends most native objects with either an 'A' or a 'U'. The 'A' means that the object descends from <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>.</p>
+<p><b>Sweavo:</b> refactored some, it still has a way to go, but that diagram was the Holy Grail for me, and I agree with other contributors it needs to be front and center!</p>
+<p><b>Tarquin:</b> If you want to do an editable version of the diagram, tree markup might be useful:</p>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;">User fires weapon<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />this happens<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/empty.png" alt="&nbsp;&nbsp;&nbsp;" /><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />and then this<br /></div>
+<div style="font-family: monospace; white-space: preserve; line-height: 1em;"><img src="../../../../../extensions/TreeTag/16/leaf.png" alt="\-&nbsp;" />that happens too<br /></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 39/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/h/o/w/Legacy%7EHow_UT2003_Weapons_Work_Firing_A_Weapon_e7b1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/h/o/w/Legacy_talk%7EHow_UT2003_Weapons_Work_Firing_A_Weapon_cfbd.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:How_UT2003_Weapons_Work/Firing_A_Weapon">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:11, 10 August 2005 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

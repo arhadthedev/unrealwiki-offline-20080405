@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Dma/Developer Journal - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Dma/Developer Journal</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/d/m/a/Legacy%7EDma_adcc.html" title="Legacy:Dma">Legacy:Dma</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>During school assignments, I have been working on several projects.</p>
+<ul>
+<li><a href="../../../../articles/d/m/a/Legacy%7EDma_JetPack_ad51.html" title="Legacy:Dma/JetPack">dma/JetPack</a> - This will someday be a jet pack that works flawlessly in network play.</li>
+<li><a href="../../../../articles/d/m/a/Legacy%7EDma_MutMultiJump_b073.html" title="Legacy:Dma/MutMultiJump">dma/MutMultiJump</a> - This lets the server admin set the number of multijumps to allow.</li>
+<li>More to come if I get the time.</li>
+</ul>
+<p>If you want to find the superclass of a class at runtime, you can try this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw5">class</span> FindSuperClass<span class="br0">(</span><span class="kw5">class</span> C<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw5">State</span> obj;
+    <span class="kw5">local</span> <span class="kw5">Class</span> X;
+    <span class="kw5">local</span> array&lt; <span class="kw5">class</span> &gt; SuperClasses;
+    <span class="kw5">local</span> <span class="kw5">Class</span> BestClass;
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+    <span class="kw1">foreach</span> C.<span class="me1">AllObjects</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'State'</span>, obj<span class="br0">)</span> <span class="br0">{</span>
+        X = <span class="kw5">Class</span><span class="br0">(</span>obj<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>X != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>X != C<span class="br0">)</span> &amp;&amp; <span class="kw7">ClassIsChildOf</span><span class="br0">(</span>C, X<span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+            SuperClasses<span class="br0">[</span>SuperClasses.<span class="kw6">Length</span><span class="br0">]</span> = X;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+    BestClass = <span class="kw5">class</span><span class="st0">'Object'</span>;
+ 
+    <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;SuperClasses.<span class="kw6">Length</span>; i++<span class="br0">)</span> <span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span>SuperClasses<span class="br0">[</span>i<span class="br0">]</span>, BestClass<span class="br0">)</span><span class="br0">)</span> <span class="br0">{</span>
+            BestClass = SuperClasses<span class="br0">[</span>i<span class="br0">]</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw1">return</span> BestClass;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Foxpaw:</b> I'm curious, why does the first loop only look for things that are subclasses of "state?"</p>
+<p><b>Dma:</b> Because <b>class'Class'</b> results in a compiler error and Class is derived from State. This speeds it up a bit. The compiler does some special junk on the second argument of AllObjects which doesn't like class'Class' as a first argument. It does NOT use Object like the prototype says.</p>
+<p><b>Foxpaw:</b> Hmm, that's interesting. Where is the class file for class? Or for state? And then why does the engine report class variables as a "classproperty" (a primitive) instead of an "objectproperty," (a reference/pointer) if Class is indeed a class itself? I'm interested to learn more about this arrangement.</p>
+<p><b>Dma:</b> In Unrealed, you'll find it in the class browser if you turn off "actor classes only", etc. There is NO script source for these. You might be able to learn more by using the EDITOBJ console command in the game or editor.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 21/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/d/m/a/Legacy%7EDma_Developer_Journal_b9fb.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/d/m/a/Legacy_talk%7EDma_Developer_Journal_3830.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Dma/Developer_Journal">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:53, 25 January 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

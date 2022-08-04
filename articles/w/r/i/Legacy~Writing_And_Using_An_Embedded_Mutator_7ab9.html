@@ -1,0 +1,750 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Writing And Using An Embedded Mutator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Writing And Using An Embedded Mutator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <dl>
+<dd>Author: <a href="../../../../articles/d/a/w/Legacy%7EDawn_3f74.html" title="Legacy:Dawn">Dawn</a></dd>
+<dd>Date: 06/27/2002</dd>
+</dl>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Note"><span class="tocnumber">1</span> <span class="toctext">Note</span></a></li>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">2</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Elements_of_an_embedded_Mutator"><span class="tocnumber">3</span> <span class="toctext">Elements of an embedded Mutator</span></a></li>
+<li class="toclevel-1"><a href="#Registering_an_embedded_Mutator"><span class="tocnumber">4</span> <span class="toctext">Registering an embedded Mutator</span></a></li>
+<li class="toclevel-1"><a href="#Registering_Special_Mutator_Types"><span class="tocnumber">5</span> <span class="toctext">Registering Special Mutator Types</span></a></li>
+<li class="toclevel-1"><a href="#Checking_for_Multiple_Instances"><span class="tocnumber">6</span> <span class="toctext">Checking for Multiple Instances</span></a></li>
+<li class="toclevel-1"><a href="#Questions_and_Comments"><span class="tocnumber">7</span> <span class="toctext">Questions and Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Note" id="Note"></a></p>
+<h2><span class="mw-headline">Note</span></h2>
+<p>This page applies to <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Tournament_f7eb.html" title="Legacy:Unreal Tournament">Unreal Tournament</a> for an Embedded Mutator Tutorial for UT2003/04, see <a href="../../../../articles/e/m/b/Legacy%7EEmbedding_Code_735c.html" title="Legacy:Embedding Code">Embedding Code</a>.</p>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>Creating a <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> for Unreal Tournament has always been an easy way for anyone armed with a little programming experience or a couple of tutorials to modify or enhance gameplay in UT. Mutators can alter many elements of a game including weapon assortment, player characteristics, level parameters, scoring, messaging, and HUD displays, to mention a few.</p>
+<p>The conventional Mutator is a separately compiled code file that is linked at run time to a UT map when it is loaded and played. The benefits of this arrangement are that any map can be modified at run time by simply choosing different combinations of Mutators to load, and many Mutators can be used with virtually any map. The drawbacks of this arrangement are that some maps can be created specifically for a certain Mutator whose absence at run time makes playing the game nonsensical or undesirable, and running a server unattended with a maplist usually means running all the maps in the maplist with the same set of Mutators simply because no facility exists to switch Mutators in and out within the maplist.</p>
+<p>Another scenario arises from time to time in which a mapper may discover that his map needs the services of a Mutator, but he doesn't want to distribute the map and Mutator separately. Wouldn't it be nice in those situations if a Mutator could be designed to be embedded within a map, relieving server admins and mappers from the responsibility of keeping track of two or more separate, but essential files?</p>
+<p>This tutorial will explain the key elements of writing and using an embedded Mutator, and demonstrate their application in a working example.</p>
+<p><a name="Elements_of_an_embedded_Mutator" id="Elements_of_an_embedded_Mutator"></a></p>
+<h2><span class="mw-headline">Elements of an embedded Mutator</span></h2>
+<p>Without some additional code of its own, an embedded Mutator will not function properly. Some sections of code, such as a PreBeginPlay(), PostBeginPlay(), etc., will run, but because Mutators are normally linked together at run time by a device called a <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">Linked List</a>, the embedded Mutator will not be automatically linked and will therefore miss some of the function calls it needs to perform properly.</p>
+<p>So the first element of an embedded Mutator is some means to register, or link, itself into the Mutator Linked List.</p>
+<p>In addition to the Mutator Linked List which the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal engine</a> uses to send Mutator-specific function calls to each Mutator in the list, there are other types of Linked Lists that pertain to some Mutators: the DamageMutator, MessageMutator, and HUDMutator linked Lists. These special types of Mutators receive additional function calls if registered.</p>
+<p>Additional code elements will be required for these special types of Mutators if they apply.</p>
+<p>If the mapper can be content that after embedding his Mutator no other instance of the same Mutator will be accidentally loaded, either as another embedded instance in the map or an external copy loaded at runtime, no other elements may be required for the embedded Mutator. But strange things may happen including abrupt game crashes if two or more instances are loaded and run.</p>
+<p>A robust embedded Mutator needs to contain an element of code to check for multiple instances of itself and to allow only one instance to survive before gameplay begins.</p>
+<p>Because the first instance of an embedded Mutator can't know about any subsequent instances of itself (until it's too late), it will link itself and cause other effects that must be undone by the final instance of itself. The last instance loaded has the best opportunity to unlink previous instances from the Mutator Linked List and special Mutator Lists, so code must be provided to perform these functions.</p>
+<p>This ability to undo effects of previous instances of itself is the final element of a general purpose embedded Mutator.</p>
+<p>These various elements will be discussed in detail next.</p>
+<p><a name="Registering_an_embedded_Mutator" id="Registering_an_embedded_Mutator"></a></p>
+<h2><span class="mw-headline">Registering an embedded Mutator</span></h2>
+<p>Placing the code of a Mutator within a map bypasses the normal Mutator registration process that occurs in GameInfo.InitGame(). The relevant code looks like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">while</span> <span class="br0">(</span> InOpt != <span class="st0">""</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                pos = <span class="kw7">InStr</span><span class="br0">(</span>InOpt,<span class="st0">","</span><span class="br0">)</span>;
+ 
+                <span class="kw1">if</span> <span class="br0">(</span> pos &gt; <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        LeftOpt = <span class="kw7">Left</span><span class="br0">(</span>InOpt, pos<span class="br0">)</span>;
+ 
+                        InOpt = <span class="kw7">Right</span><span class="br0">(</span>InOpt, <span class="kw7">Len</span><span class="br0">(</span>InOpt<span class="br0">)</span> - pos - <span class="nu0">1</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+                <span class="kw1">else</span>
+                <span class="br0">{</span>
+                        LeftOpt = InOpt;
+ 
+                        InOpt = <span class="st0">""</span>;
+                <span class="br0">}</span>
+                <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Add mutator "</span>$LeftOpt<span class="br0">)</span>;
+ 
+                MClass = class&lt;Mutator&gt;<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>LeftOpt, <span class="kw5">class</span><span class="st0">'Class'</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+                BaseMutator.<span class="me1">AddMutator</span><span class="br0">(</span>Spawn<span class="br0">(</span>MClass<span class="br0">)</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+</pre></div>
+<p>The While loop parses a string containing a list of Mutators, if any, to be loaded and linked before the start of a game. Once MClass is set to the class of a particular Mutator, the last line Spawns an instance of the Mutator and then calls BaseMutator.AddMutator(), which registers the Mutator by linking it into the Mutator Linked List.</p>
+<p>An embedded Mutator will never receive this call since it's not in the InOpt string being parsed here, but fortunately, an alternative exists: any PreBeginPlay() or PostBeginPlay() function in the Mutator will be run automatically before the game begins and can be used to perform the necessary task. Here is sample code to accomplish this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">bool</span> bPreBPInitialized;
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> !bPreBPInitialized <span class="br0">)</span> <span class="co1">// older versions of UT call this function twice but we</span>
+                                         <span class="co1">// only want to run our code once!</span>
+    <span class="br0">{</span>
+        bPreBPInitialized = <span class="kw9">True</span>;
+ 
+        <span class="co1">// Add the mutator by linking it into the Mutator List ala Beppo.</span>
+        <span class="co1">// This Embedded Mutator makes sense to be 1st after the BaseMutator</span>
+        <span class="co1">// in the Mutator List...</span>
+ 
+        <span class="kw8">Self</span>.<span class="me1">NextMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span>; <span class="co1">// Make a place in the List</span>
+ 
+        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span> = <span class="kw8">Self</span>; <span class="co1">// place it 1st after BaseMutator</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The last two lines do all the work of inserting the embedded Mutator into the Mutator Linked List just after the built-in, or base, Mutator referred to as BaseMutator. Any other Mutators already linked into the list are shoved back to make room for the embedded Mutator. Adding this code to any Mutator will allow it to be embedded in a map and subsequently run and registered when the map is played.</p>
+<p><a name="Registering_Special_Mutator_Types" id="Registering_Special_Mutator_Types"></a></p>
+<h2><span class="mw-headline">Registering Special Mutator Types</span></h2>
+<p>Damage Mutators, MessageMutators, and HUDMutators are special types of Mutators that register themselves and get Linked into their additional respective Lists by a call to one of these functions:</p>
+<pre>
+   Level.Game.RegisterDamageMutator(Self);
+   Level.Game.RegisterMessageMutator(Self);
+   RegisterHUDMutator();
+</pre>
+<p>A Mutator of any of these types will already contain a call to one or more of these functions, so no additional effort is required for the embedded Mutator. However, a well-behaved embedded Mutator must be aware of these calls and deal with them later on.</p>
+<p><a name="Checking_for_Multiple_Instances" id="Checking_for_Multiple_Instances"></a></p>
+<h2><span class="mw-headline">Checking for Multiple Instances</span></h2>
+<p>If a mapper carelessly inserts multiple copies of a Mutator into his map, or if someone accidentally adds a copy of the same embedded Mutator at run time, the consequences may be unpleasant unless the Mutator checks for this condition and takes appropriate actions to ensure that only one copy survives when a game begins. A good place to perform this function is in the same PreBeginPlay() where the embedded Mutator already registered itself. An improved PreBeginPlay() looks like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> M, Previous, Temp;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> !bPreBPInitialized <span class="br0">)</span> <span class="co1">// older versions of UT call this function twice but we</span>
+                                       <span class="co1">// only want to run our code once!</span>
+  <span class="br0">{</span>
+    bPreBPInitialized = <span class="kw9">True</span>;
+ 
+    <span class="co1">// Add the mutator by linking it into the Mutator List ala Beppo.</span>
+    <span class="co1">// this Embedded Mutator makes sense to be 1st after the BaseMutator</span>
+    <span class="co1">// in the Mutator List...</span>
+    <span class="co1">// But first, check for and destroy an already loaded version</span>
+    <span class="kw1">for</span> <span class="br0">(</span>M = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>; M != <span class="kw9">None</span>; M = M.<span class="me1">NextMutator</span><span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>M.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span> == <span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw8">Self</span>.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">//Found Self or a copy?</span>
+      <span class="br0">{</span>
+        Previous.<span class="me1">NextMutator</span> = M.<span class="me1">NextMutator</span>; <span class="co1">// Unlink from the Mutator List</span>
+        <span class="kw1">if</span> <span class="br0">(</span>M != <span class="kw8">Self</span><span class="br0">)</span> <span class="co1">// Not Self - this is a copy!</span>
+        <span class="br0">{</span>
+          M.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+      <span class="br0">}</span>
+      <span class="kw1">else</span>  <span class="co1">// this will happen at least the 1st time thru the For Loop.</span>
+      <span class="br0">{</span>
+        Previous = M; <span class="co1">// So Previous can now be used as the Previous Mutator</span>
+                                <span class="co1">// in the next pass thru the for Loop.</span>
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw8">Self</span>.<span class="me1">NextMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span>; <span class="co1">// Make a place in the List</span>
+ 
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span> = <span class="kw8">Self</span>; <span class="co1">// place it 1st after BaseMutator</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The for loop steps through the current list of Mutators, looking for Mutators of the same class, and if any are found, a check is made to see if they are copies. GetItemName() is used to remove the Parent Class from the class name because copies of the same class can have different Parent Classes. If a copy is found, the Mutator Linked List is adjusted to unregister the copy and then the copy is destroyed with a call to Destroy(). Only the last instance of the Mutator that runs this code will survive and reregister itself.</p>
+<hr />
+<p>There is a situation where the Mutator's PreBeginPlay() will run and AddMutator() can be called on it. In that case, the Mutator would be registered by it's own PreBeginPlay() and then again by GameInfo.InitGame(). Although only one copy of the code exists, it will be registered twice and all Mutator function calls will get passed to this Mutator twice. The following function redefines AddMutator() and checks if the call is to this Mutator. If so, no registration is performed, otherwise super.AddMutator() performs the normal registration:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// We already added ourselves to the Mutator List in our PreBeginPlay, but</span>
+<span class="co1">// GameInfo.InitGame() will erroneously add us again unless we intercept the</span>
+<span class="co1">// call with our own AddMutator function and prevent it.</span>
+<span class="kw5">function</span> AddMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>M == <span class="kw8">Self</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">return</span>; <span class="co1">// Don't add us.</span>
+  <span class="br0">}</span>
+  <span class="kw6">super</span>.<span class="me1">AddMutator</span><span class="br0">(</span>M<span class="br0">)</span>;  <span class="co1">// keep the chain unbroken</span>
+<span class="br0">}</span>
+</pre></div>
+<p>–Unlinking Special Mutator Types –</p>
+<p>If the embedded Mutator is also registered as a special Mutator type such as a DamageMutator, it should have been noted already so that steps can be taken to unregister any copies before they are destroyed. The final version of this example PreBeginPlay() function contains a call to RegisterDamageMutator() so that a method can be shown to unlink any copies from the DamageMutator Linked List. A function called UnLinkDamageMutator() will be created to handle this task and called from PreBeginPlay():</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> M, Previous, Temp;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> !bPreBPInitialized <span class="br0">)</span> <span class="co1">// older versions of UT call this function twice but we</span>
+                                       <span class="co1">// only want to run our code once!</span>
+  <span class="br0">{</span>
+    bPreBPInitialized = <span class="kw9">True</span>;
+ 
+    <span class="co1">// Add the mutator by linking it into the Mutator List ala Beppo.</span>
+    <span class="co1">// this Embedded Mutator makes sense to be 1st after the BaseMutator</span>
+    <span class="co1">// in the Mutator List...</span>
+    <span class="co1">// But first, check for and destroy an already loaded version</span>
+    <span class="kw1">for</span> <span class="br0">(</span>M = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>; M != <span class="kw9">None</span>; M = M.<span class="me1">NextMutator</span><span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>M.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span> == <span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw8">Self</span>.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">//Found Self or a copy?</span>
+      <span class="br0">{</span>
+        Previous.<span class="me1">NextMutator</span> = M.<span class="me1">NextMutator</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>M != <span class="kw8">Self</span><span class="br0">)</span> <span class="co1">// Not Self - this is a copy!</span>
+        <span class="br0">{</span>
+          <span class="co1">// Unlink from DamageMutator List BEFORE destroying this version.  We</span>
+          <span class="co1">// would need to call a similar function to UnLink from MessageMutator</span>
+          <span class="co1">// and HUDMutator Lists if we were registered as them.</span>
+          UnLinkDamageMutator<span class="br0">(</span>M<span class="br0">)</span>; <span class="co1">// do this BEFORE M.Destroy()!</span>
+          M.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+      <span class="br0">}</span>
+      <span class="kw1">else</span>  <span class="co1">// this will happen at least the 1st time thru the For Loop.</span>
+      <span class="br0">{</span>
+        Previous = M; <span class="co1">// So Previous can now be used as the Previous Mutator</span>
+                                <span class="co1">// in the next pass thru the for Loop.  </span>
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+    <span class="kw8">Self</span>.<span class="me1">NextMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span>; <span class="co1">// Make a place in the List</span>
+ 
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span> = <span class="kw8">Self</span>; <span class="co1">// place it 1st after BaseMutator</span>
+ 
+    <span class="co1">// Here's an example that illustrates how a Mutator might also register itself as a</span>
+    <span class="co1">// special Mutator such as a DamageMutator:</span>
+    <span class="co1">// A similar call would be made to</span>
+    <span class="co1">// RegisterMessageMutator and RegisterHUDMutator if required.</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">RegisterDamageMutator</span><span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>  <span class="co1">// End PreBeginPlay.</span>
+ 
+<span class="co1">//=================================================================</span>
+<span class="co1">// Finding a copy of this Mutator and destroying it in our PreBeginPlay messes</span>
+<span class="co1">// up the DamageMutator Linked List since we're registered as a DamageMutator,</span>
+<span class="co1">// so this function removes our Mutator from the List.  We would need similar</span>
+<span class="co1">// functions for UnLinking from MessageMutator and HUDMutator Lists if we were</span>
+<span class="co1">// registered as them.</span>
+<span class="kw5">function</span> UnLinkDamageMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">bool</span> bNotFirst; 
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> C, Previous;
+ 
+  <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span>; C != <span class="kw9">none</span>; C = C.<span class="me1">NextDamageMutator</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>C == M<span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">break</span>;
+    <span class="br0">}</span>
+    bNotFirst = <span class="kw9">True</span>;
+    Previous = C;
+  <span class="br0">}</span>
+  <span class="kw1">if</span> <span class="br0">(</span>bNotFirst<span class="br0">)</span>
+  <span class="br0">{</span>
+    Previous.<span class="me1">NextDamageMutator</span> = C.<span class="me1">NextDamageMutator</span>;
+  <span class="br0">}</span>
+  <span class="kw1">else</span>
+  <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span>.<span class="me1">NextDamageMutator</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The call to the new function, UnLinkDamageMutator(), must be made before the Mutator copy is destroyed because a reference to M, the copy, is passed to the new function. The Linked Lists for Damage, Message, and HUD Mutators are linked in reverse order so there is no "Base" Mutator in these lists. In this example, Level.Game.DamageMutator points to the last DamageMutator to be linked to the list instead of the first, so it's rather dynamical and the new function contains code to deal with this. MessageMutators and HUDMutators would require similar new functions to handle their own types.</p>
+<hr />
+<p>–Embedding a Mutator in a Map –</p>
+<p>Once an embedded Mutator has been properly written, it can be compiled in the normal fashion to create a &lt;MutatorName&gt;.u file (replace &lt;MutatorName&gt; with actual file name) that can be added to a map in the following manner:</p>
+<ol>
+<li>Make sure this Mutator is NOT listed in the "EditPackages" section of your <a href="../../../../articles/u/n/r/Legacy%7EUnrealTournament.Ini_74a4.html" title="Legacy:UnrealTournament.Ini">UnrealTournament.ini</a> file!</li>
+<li>Make sure &lt;MutatorName&gt;.u IS located in your UnrealTournament/System Folder.</li>
+<li>Start a fresh UnrealEd session and open your Map for editing.</li>
+<li>&lt;wiki&gt;In the Command entry field at the bottom of the UED window type:</li>
+</ol>
+<pre>
+<i><b>obj load file= &lt;MutatorName&gt;.u package=MyLevel</b></i>&lt;/wiki&gt;
+</pre>
+<ol>
+<li>Locate your mutator in the <a href="../../../../articles/a/c/t/Legacy%7EActor_Classes_eb42.html" class="mw-redirect" title="Legacy:Actor Classes">Actor Classes</a> browser: Actor &gt;&gt; Info &gt;&gt; Mutator &gt;&gt; &lt;MutatorName&gt; and add it somewhere in your map. Place only ONE instance of this Mutator in your Map.</li>
+<li>Build and Save your map – the embedded Mutator code with your settings will be saved away in the map.</li>
+</ol>
+<p>If you subsequently delete the single instance of the Mutator from your map, then re-Build and re-Save, the Mutator code will be deleted from the map and you will have to repeat all these steps to embed it again. (See <a href="../../../../articles/m/y/l/Legacy%7EMyLevel_3b70.html" title="Legacy:MyLevel">MyLevel</a> and <a href="../../../../articles/e/m/b/Legacy%7EEmbedding_Code_735c.html" title="Legacy:Embedding Code">Embedding Code</a> for more on this)</p>
+<p><b>Note:</b> For UT2003 and UT2004, in order to complete step 5 and actually add the mutator actor into your map, you need to specify the mutator as placeable. This is easily achieved by adding the command word when you define the class as below:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MutEmbeddedTest <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> <span class="kw6">placeable</span>;
+</pre></div>
+<p>–Putting It All Together –</p>
+<p>The following, heavily commented, code is a complete embedded Mutator developed for a specific map. The map is a DeathMatch type that pits players against each other in long, narrow hallways with only the Chainsaw and the ImpactHammer to start out with. The player's normal Enforcers are replaced by Chainsaws whenever the players spawn. The map may contain other weapons including Enforcers lying around to be picked up, but the players get no Enforcers when they spawn. Additionally, the damage that Bots can inflict with Chainsaws and Hammers is reduced because they have a distinct advantage with those weapons in the narrow hallways. Therefore this Mutator is registered as a DamageMutator so that it can receive calls to MutatorTakeDamage().</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// EmbeddedMutator.</span>
+<span class="co1">// *** for use as an Embedded or Conventional Mutator ***</span>
+<span class="co1">// Replaces the Player's Enforcer with the Chainsaw or other weapon</span>
+<span class="co1">// An Embedded Mutator for placing INSIDE a UT Map or</span>
+<span class="co1">// can also be used in the conventional manner.</span>
+<span class="co1">// Author:  Dawn, with much assistance from Norbert Bogenrieder aka Beppo</span>
+<span class="co1">// Tested only on version 4.36</span>
+<span class="co1">// Version 1.0  06/24/2002 10:19:56 AM</span>
+<span class="co1">//=============================================================================</span>
+<span class="co1">// To embed this Mutator in a Map:</span>
+<span class="co1">// 1. Make sure this Mutator is NOT listed in the "EditPackages" section of your</span>
+<span class="co1">//    UnrealTournament.ini file!</span>
+<span class="co1">// 2. Make sure "EmbeddedMutator.u" IS located in your UnrealTournament/System</span>
+<span class="co1">//    Folder.</span>
+<span class="co1">// 3. Start a fresh UED session and open your Map for editing.</span>
+<span class="co1">// 4. In the Command entry field at the bottom of the UED window type:</span>
+<span class="co1">//</span>
+<span class="co1">//         obj load file=EmbeddedMutator.u package=MyLevel</span>
+<span class="co1">//</span>
+<span class="co1">// 5. Open the Actor class Browser and scroll down to find</span>
+<span class="co1">//</span>
+<span class="co1">//         Actor-&gt;Info-&gt;Mutator-&gt;EmbeddedMutator</span>
+<span class="co1">//</span>
+<span class="co1">// 6. Highlight "EmbeddedMutator" in the browser and then select a surface</span>
+<span class="co1">//    somewhere in your map, right-click on the surface, and in the pop-up</span>
+<span class="co1">//    menu that appears, choose "Add EmbeddedMutator Here".  Place only ONE</span>
+<span class="co1">//    instance of this Mutator in your Map.</span>
+<span class="co1">// 7. The resulting Actor that is placed in your map can be double-clicked on</span>
+<span class="co1">//    to bring up the "EmbeddedMutator Properties" browser where you can select</span>
+<span class="co1">//    the Enforcer Replacement weapon, the Bot Rating, and more.</span>
+<span class="co1">// 8. Build and Save your map - the embedded Mutator code with your settings</span>
+<span class="co1">//    will be saved away in the map.</span>
+<span class="co1">//</span>
+<span class="co1">// If you subsequently delete the single instance of the Mutator from your map,</span>
+<span class="co1">// and then reBuild and reSave, the Mutator code will be deleted from the map</span>
+<span class="co1">// and you will have to repeat all these steps to embed it again.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> EmbeddedMutator <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> <span class="kw6">config</span><span class="br0">(</span>EmbeddedMutator<span class="br0">)</span>;
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">bool</span> bPreBPInitialized, bPostBPInitialized;
+<span class="kw5">var</span> <span class="kw4">float</span> BotFactor;  <span class="co1">// Relative damage that Bots inflict compared to Players</span>
+<span class="kw5">var</span> <span class="kw4">string</span> TheReplacement;  <span class="co1">// Weapon that will replace Enforcer</span>
+<span class="kw5">var</span> DeathMatchPlus DM;
+ 
+<span class="kw4">enum</span> EBotRating  <span class="co1">// Damage that Bots give Players</span>
+<span class="br0">{</span>
+  Poor,  <span class="co1">// quarter damage</span>
+  Fair,  <span class="co1">// half the damage</span>
+  Good,  <span class="co1">//three quarter damage</span>
+  EqualToPlayers  <span class="co1">// full damage</span>
+<span class="br0">}</span>;
+ 
+<span class="kw4">enum</span> ERWeaponType <span class="co1">// Replacement Weapon type.</span>
+<span class="br0">{</span>
+  Chainsaw,
+  Enforcer,
+  DoubleEnforcer,
+  ImpactHammer,
+  Minigun2,
+  PulseGun,
+  Ripper,
+  ShockRifle,
+  SuperShockRifle,
+  SniperRifle,
+  UT_BioRifle,
+  UT_Eightball,
+  UT_FlakCannon,
+  Redeemer
+<span class="br0">}</span>;
+ 
+<span class="co1">// Variables which the Level designer can adjust:</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> <span class="kw4">bool</span> bDebug;  <span class="co1">// Enable some logging to the log file</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> ERWeaponType EnforcerReplacement; <span class="co1">// accessible to Level Designer</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> EBotRating BotRating; <span class="co1">// accessible to Level Designer</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">config</span> <span class="kw4">bool</span> bUseBotRatingOnMeleeWeapsOnly;  <span class="co1">// Which Weapons will Bots inflict less damage with</span>
+ 
+<span class="co1">// PreBeginPlay will be used mainly to Bootstrap load this Mutator by linking it</span>
+<span class="co1">// into the Mutator List as the 1st Mutator in a possible chain of Mutators.</span>
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> M, Previous, Temp;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Entered EmbeddedMutator PreBeginPlay"</span><span class="br0">)</span>;
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** And bPreBPInitialized is "</span>$string<span class="br0">(</span>bPreBPInitialized<span class="br0">)</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">if</span> <span class="br0">(</span> !bPreBPInitialized <span class="br0">)</span> <span class="co1">// older versions of UT call this function twice but we</span>
+                                       <span class="co1">// only want to run our code once!</span>
+  <span class="br0">{</span>
+    bPreBPInitialized = <span class="kw9">True</span>;
+ 
+    <span class="co1">// Add the mutator by linking it into the Mutator List ala Beppo.</span>
+    <span class="co1">// this Embedded Mutator makes sense to be 1st after the BaseMutator</span>
+    <span class="co1">// in the Mutator List...</span>
+    <span class="co1">// But first, check for and destroy an already loaded version</span>
+    <span class="kw1">for</span> <span class="br0">(</span>M = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>; M != <span class="kw9">None</span>; M = M.<span class="me1">NextMutator</span><span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>M.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span> == <span class="kw7">GetItemName</span><span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span><span class="kw8">Self</span>.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">// Found Self or a copy?</span>
+      <span class="br0">{</span>
+        Previous.<span class="me1">NextMutator</span> = M.<span class="me1">NextMutator</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>M != <span class="kw8">Self</span><span class="br0">)</span> <span class="co1">// This is the other version</span>
+        <span class="br0">{</span>
+          <span class="co1">// Unlink from DamageMutator List BEFORE destroying this version.  We</span>
+          <span class="co1">// would need to call a similar function to UnLink from MessageMutator</span>
+          <span class="co1">// and HUDMutator Lists if we were registered as them.</span>
+          UnLinkDamageMutator<span class="br0">(</span>M<span class="br0">)</span>; <span class="co1">// do this BEFORE M.Destroy()!</span>
+          M.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+      <span class="br0">}</span>
+      <span class="kw1">else</span>  <span class="co1">// this will happen at least the 1st time thru the For Loop.</span>
+      <span class="br0">{</span>
+        Previous = M; <span class="co1">// So Previous can now be used as the Previous Mutator</span>
+                                <span class="co1">// in the next pass thru the for Loop.</span>
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="co1">// We need to Bootstrap this instance into the List</span>
+    <span class="kw8">Self</span>.<span class="me1">NextMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span>; <span class="co1">// Make a place in the List</span>
+ 
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>.<span class="me1">NextMutator</span> = <span class="kw8">Self</span>; <span class="co1">// place it 1st after BaseMutator</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Mutator "</span>$string<span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>$<span class="st0">" is added to the list"</span><span class="br0">)</span>;
+ 
+    <span class="co1">// Now register our self as a DamageMutator. A similar call would be made to</span>
+    <span class="co1">// RegisterMessageMutator and RegisterHUDMutator if required.</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">RegisterDamageMutator</span><span class="br0">(</span><span class="kw8">Self</span><span class="br0">)</span>;
+ 
+    BotFactor = GetBotRating<span class="br0">(</span><span class="br0">)</span>; <span class="co1">// How much will we modify Bot-inflicted damage?</span>
+    TheReplacement = GetRWeaponType<span class="br0">(</span><span class="br0">)</span>; <span class="co1">//What's the Enforcer replacement weapon?</span>
+    DM = DeathMatchPlus<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span><span class="br0">)</span>;
+    <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span>
+ 
+    <span class="br0">{</span>
+      LogMutatorInfo<span class="br0">(</span><span class="br0">)</span>;
+      <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Leaving EmbeddedMutator PreBeginPlay"</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+<span class="br0">}</span>  <span class="co1">// End PreBeginPlay:  Our Mutator is linked into the Mutator List</span>
+ 
+<span class="co1">// Write some informative stuff to the log</span>
+<span class="kw5">function</span> LogMutatorInfo<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> M;
+ 
+  <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Current MutatorList:"</span><span class="br0">)</span>;
+  <span class="kw1">for</span> <span class="br0">(</span>M = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BaseMutator</span>; M != <span class="kw9">None</span>; M = M.<span class="me1">NextMutator</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"****     "</span>$string<span class="br0">(</span>M.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Current DamageMutatorList:"</span><span class="br0">)</span>;
+  <span class="kw1">for</span> <span class="br0">(</span>M = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span>; M != <span class="kw9">none</span>; M = M.<span class="me1">NextDamageMutator</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"****     "</span>$string<span class="br0">(</span>M.<span class="kw5">Class</span><span class="br0">)</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="co1">// Finding a copy of this Mutator and destroying it in our PreBeginPlay messes</span>
+<span class="co1">// up the DamageMutator Linked List since we're registered as a DamageMutator,</span>
+<span class="co1">// so this function removes our Mutator from the List.  We would need similar</span>
+<span class="co1">// functions for UnLinking from MessageMutator and HUDMutator Lists if we were</span>
+<span class="co1">// registered as them.</span>
+<span class="kw5">function</span> UnLinkDamageMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">bool</span> bNotFirst; 
+  <span class="kw5">local</span> <a href="/Mutator"><span class="kw10">Mutator</span></a> C, Previous;
+ 
+  <span class="kw1">for</span> <span class="br0">(</span>C = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span>; C != <span class="kw9">none</span>; C = C.<span class="me1">NextDamageMutator</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>C == M<span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">break</span>;
+    <span class="br0">}</span>
+    bNotFirst = <span class="kw9">True</span>;
+    Previous = C;
+  <span class="br0">}</span>
+  <span class="kw1">if</span> <span class="br0">(</span>bNotFirst<span class="br0">)</span>
+  <span class="br0">{</span>
+    Previous.<span class="me1">NextDamageMutator</span> = C.<span class="me1">NextDamageMutator</span>;
+  <span class="br0">}</span>
+  <span class="kw1">else</span>
+  <span class="br0">{</span>
+    <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span> = <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">DamageMutator</span>.<span class="me1">NextDamageMutator</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+<span class="co1">//==============================================================================</span>
+<span class="co1">// We already added ourselves to the Mutator List in our PreBeginPlay, but</span>
+<span class="co1">// GameInfo.InitGame() will erroneously add us again unless we intercept the</span>
+<span class="co1">// call with our own AddMutator function and prevent it.</span>
+<span class="kw5">function</span> AddMutator<span class="br0">(</span><a href="/Mutator"><span class="kw10">Mutator</span></a> M<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>M == <span class="kw8">Self</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">return</span>; <span class="co1">// Don't add us.</span>
+  <span class="br0">}</span>
+  <span class="kw6">super</span>.<span class="me1">AddMutator</span><span class="br0">(</span>M<span class="br0">)</span>;  <span class="co1">// keep the chain unbroken</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">float</span> GetBotRating<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">switch</span><span class="br0">(</span> BotRating <span class="br0">)</span>  <span class="co1">// accessible to Level Designer</span>
+  <span class="br0">{</span>
+    <span class="kw1">case</span> Poor:
+      <span class="kw1">return</span> <span class="nu0">0.25</span>;
+    <span class="kw1">case</span> Fair:
+      <span class="kw1">return</span> <span class="nu0">0.5</span>;
+    <span class="kw1">case</span> Good:
+      <span class="kw1">return</span> <span class="nu0">0.75</span>;
+    <span class="kw1">case</span> EqualToPlayers:
+      <span class="kw1">return</span> <span class="nu0">1.0</span>;
+    <span class="kw1">default</span>:
+      <span class="kw1">return</span> <span class="nu0">0.5</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">string</span> GetRWeaponType<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">switch</span><span class="br0">(</span> EnforcerReplacement <span class="br0">)</span>  <span class="co1">// accessible to Level Designer</span>
+  <span class="br0">{</span>
+    <span class="kw1">case</span> Chainsaw:
+      <span class="kw1">return</span> <span class="st0">"Botpack.Chainsaw"</span>;
+    <span class="kw1">case</span> Enforcer:
+      <span class="kw1">return</span> <span class="st0">"Botpack.Enforcer"</span>;
+    <span class="kw1">case</span> DoubleEnforcer:
+      <span class="kw1">return</span> <span class="st0">"Botpack.DoubleEnforcer"</span>;
+    <span class="kw1">case</span> ImpactHammer:
+      <span class="kw1">return</span> <span class="st0">"Botpack.ImpactHammer"</span>;
+    <span class="kw1">case</span> Minigun2:
+      <span class="kw1">return</span> <span class="st0">"Botpack.Minigun2"</span>;
+    <span class="kw1">case</span> PulseGun:
+      <span class="kw1">return</span> <span class="st0">"Botpack.PulseGun"</span>;
+    <span class="kw1">case</span> Ripper:
+      <span class="kw1">return</span> <span class="st0">"Botpack.Ripper"</span>;
+    <span class="kw1">case</span> ShockRifle:
+      <span class="kw1">return</span> <span class="st0">"Botpack.ShockRifle"</span>;
+    <span class="kw1">case</span> SuperShockRifle:
+      <span class="kw1">return</span> <span class="st0">"Botpack.SuperShockRifle"</span>;
+    <span class="kw1">case</span> SniperRifle:
+      <span class="kw1">return</span> <span class="st0">"Botpack.SniperRifle"</span>;
+    <span class="kw1">case</span> UT_BioRifle:
+      <span class="kw1">return</span> <span class="st0">"Botpack.UT_BioRifle"</span>;
+    <span class="kw1">case</span> UT_Eightball:
+      <span class="kw1">return</span> <span class="st0">"Botpack.UT_Eightball"</span>;
+    <span class="kw1">case</span> UT_FlakCannon:
+      <span class="kw1">return</span> <span class="st0">"Botpack.UT_FlakCannon"</span>;
+    <span class="kw1">case</span> Redeemer:
+      <span class="kw1">return</span> <span class="st0">"Botpack.WarheadLauncher"</span>;
+    <span class="kw1">default</span>:
+      <span class="kw1">return</span> <span class="st0">"Botpack.Chainsaw"</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="co1">// Called just before PlayerPawn is Spawned.  We use it to adjust a Player's</span>
+<span class="co1">// Inventory to our liking</span>
+<span class="kw5">function</span> ModifyPlayer<span class="br0">(</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> PlayerPawn <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> Inventory MyEnforcer;
+ 
+  MyEnforcer = PlayerPawn.<span class="me1">FindInventoryType</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'Enforcer'</span><span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span>MyEnforcer != <span class="kw9">None</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    MyEnforcer.<span class="me1">DropInventory</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Remove it from Player's Inventory</span>
+    MyEnforcer.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// Remove it from the game</span>
+  <span class="br0">}</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> DM == <span class="kw9">None</span> <span class="br0">)</span> <span class="co1">// Who knows, it might happen ...</span>
+    <span class="kw1">return</span>;
+ 
+  DM.<span class="me1">GiveWeapon</span><span class="br0">(</span>PlayerPawn,TheReplacement<span class="br0">)</span>;  <span class="co1">// Give Replacement for Enforcer</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> NextMutator != <span class="kw9">None</span> <span class="br0">)</span>
+    NextMutator.<span class="me1">ModifyPlayer</span><span class="br0">(</span>PlayerPawn<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// We call MutatorTakeDamage because we have found that Bots over-excel in</span>
+<span class="co1">// Melee-only  weapons maps.  We want to reduce the damage Bots inflict by a</span>
+<span class="co1">// controlled amount.</span>
+<span class="kw5">function</span> MutatorTakeDamage<span class="br0">(</span> <span class="kw6">out</span> <span class="kw4">int</span> ActualDamage, <a href="/Pawn"><span class="kw10">Pawn</span></a> Victim, <a href="/Pawn"><span class="kw10">Pawn</span></a> InstigatedBy, <span class="kw6">out</span> <span class="kw4">Vector</span> HitLocation,
+                                                <span class="kw6">out</span> <span class="kw4">Vector</span> Momentum, <span class="kw4">name</span> <a href="/DamageType"><span class="kw10">DamageType</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// Check that InstigatedBy is still a valid Bot - Bots can disappear between</span>
+  <span class="co1">// the time this function is called and the time it is run!</span>
+  <span class="kw1">if</span> <span class="br0">(</span> InstigatedBy != <span class="kw9">none</span> &amp;&amp; InstigatedBy.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Bot'</span><span class="br0">)</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>bUseBotRatingOnMeleeWeapsOnly<span class="br0">)</span>
+    <span class="br0">{</span>
+      <span class="kw1">if</span> <span class="br0">(</span>InstigatedBy.<span class="me1">Weapon</span> != <span class="kw9">None</span> &amp;&amp; InstigatedBy.<span class="me1">Weapon</span>.<span class="me1">bMeleeWeapon</span><span class="br0">)</span>
+      <span class="br0">{</span>
+        AlterDamage<span class="br0">(</span>ActualDamage<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Melee Only Damage adjusted for Bot's "</span>$GetItemName<span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>InstigatedBy.<span class="me1">Weapon</span>.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+      AlterDamage<span class="br0">(</span>ActualDamage<span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Damage adjusted for Bot's "</span>$GetItemName<span class="br0">(</span><span class="kw4">string</span><span class="br0">(</span>InstigatedBy.<span class="me1">Weapon</span>.<span class="kw5">class</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+  <span class="br0">}</span>
+  <span class="co1">// Give any other DamageMutators in the chain their chance at it</span>
+  <span class="kw1">if</span> <span class="br0">(</span> NextDamageMutator != <span class="kw9">None</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"**** Another DamageMutator is being called!"</span><span class="br0">)</span>;
+    NextDamageMutator.<span class="me1">MutatorTakeDamage</span><span class="br0">(</span> ActualDamage, Victim, InstigatedBy, HitLocation, Momentum, <a href="/DamageType"><span class="kw10">DamageType</span></a> <span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> AlterDamage<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> ActualDamage<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span> <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Potential Bot-inflicted Damage: "</span>$ActualDamage$<span class="st0">"  "</span>$BotFactor<span class="br0">)</span>;
+  ActualDamage*=BotFactor;  <span class="co1">// Adjust the Bot's Damage</span>
+  <span class="kw1">if</span> <span class="br0">(</span>bDebug<span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"***Actual Bot-inflicted Damage: "</span>$ActualDamage<span class="br0">)</span>;
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">""</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">return</span> <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// End:  Players get a Replacement for Enforcer when Spawning</span>
+<span class="co1">// and Bots inflict less Damage if desired.</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     bDebug=<span class="kw9">False</span>
+     BotRating=Fair  <span class="co1">// An empirically determined default for Chainsaw Matches</span>
+     bUseBotRatingOnMeleeWeapsOnly=<span class="kw9">True</span>
+     EnforcerReplacement=<span class="st0">"Botpack.Chainsaw"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>In the event that the above code is to be tested or used as a conventional, non-embedded Mutator, the following associated .int and .ini text is provided:</p>
+<p>–EmbeddedMutator.int –</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Public<span class="br0">]</span>
+<a href="/Object"><span class="kw10">Object</span></a>=<span class="br0">(</span><span class="kw4">Name</span>=EmbeddedMutator.<span class="me1">EmbeddedMutator</span>,<span class="kw5">Class</span>=<span class="kw5">Class</span>,MetaClass=Engine.<a href="/Mutator"><span class="kw10">Mutator</span></a>,
+Description=<span class="st0">"EmbeddedMutator,Replace Player's Enforcer with Chainsaw"</span><span class="br0">)</span>
+</pre></div>
+<p>–EmbeddedMutator.ini –</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>EmbeddedMutator.<span class="me1">EmbeddedMutator</span><span class="br0">]</span>
+bDebug=<span class="kw9">False</span>
+BotRating=Fair
+bUseBotRatingOnMeleeWeapsOnly=<span class="kw9">True</span>
+EnforcerReplacement=<span class="st0">"Botpack.Chainsaw"</span>
+</pre></div>
+<hr />
+<p>–Conclusion –</p>
+<p>A method for embedding a Mutator in a UT map has been described and sample code, including a fully debugged example, has been provided. This method is useful for mappers who want to permanently alter gameplay within a particular map without the burden of requiring a separate Mutator to be maintained, and for adventurous server admins who want to control which Mutators are used on a map-by-map basis in a map list.</p>
+<hr />
+<p>Dawn &lt;arkdesign@psln.com&gt;</p>
+<p><a name="Questions_and_Comments" id="Questions_and_Comments"></a></p>
+<h2><span class="mw-headline">Questions and Comments</span></h2>
+<p><b>Legal:</b> Great job! So, with this I can, say, double all damage then? Is something like it in there already, I'm not sure...&#160;:hmm:</p>
+<p><b>Mosquito:</b> Wow. This is so useful, thanks Dawn. You should post this up over at <a href="http://www.thewavelength.com" class="external text" title="http://www.thewavelength.com" rel="nofollow">The Wavelength</a>. More people can read it then.</p>
+<p><b>StrikeFerret:</b> Did I miss it, or didn't this cover, say, embedding it in a GameType instead of a Map?</p>
+<p><b>Wormbo:</b> To always use a mutator in your gametype just spawn and add it to the list somewhere in the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>'s initialization functions, preferably in <code>InitGame()</code>, where all other mutators are created, too. You could also extend <a href="../../../../articles/d/m/m/Legacy%7EDMMutator_c133.html" title="Legacy:DMMutator">DMMutator</a>, add your mutator's functionality there and use it as your gametype's base mutator class.</p>
+<p><b>Reaper_Monkey:</b> Okay how can i make a mutator only apply to a zone on a map? as this says i can only have one.. so i assume its global for all of the map? And i want to have a mutators affect only in an area.. any ideas?</p>
+<p><b>Sweavo:</b> Nice! Reading the first paragraph reminded me of <a href="http://mapmixer.oceaniaut.com/" class="external free" title="http://mapmixer.oceaniaut.com/" rel="nofollow">http://mapmixer.oceaniaut.com/</a> that StarWeaver told me about. I've not tried it, but it's worth checking out and possibly rolling into this page</p>
+<p><b>Xian:</b> Reaper_Monkey, try checking the Player zone, for example if you want to get double damage in a zone called "Battle Arena", just do something like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MutatorTakeDamage <span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> Damage, <a href="/Pawn"><span class="kw10">Pawn</span></a> Victim, <a href="/Pawn"><span class="kw10">Pawn</span></a> InstigatedBy, <span class="kw6">out</span> <span class="kw4">Vector</span> HitLocation,       
+                            <span class="kw6">out</span> <span class="kw4">Vector</span> Momentum, <span class="kw4">name</span> <a href="/DamageType"><span class="kw10">DamageType</span></a><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">Super</span>.<span class="me1">MutatorTakeDamage</span><span class="br0">(</span>Damage,Victim,InstigatedBy,HitLocation,Momentum,<a href="/DamageType"><span class="kw10">DamageType</span></a><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>InstigatedBy == <span class="kw9">None</span><span class="br0">)</span> || <span class="br0">(</span>InstigatedBy.<span class="me1">PlayerReplicationInfo</span> == <span class="kw9">None</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>InstigatedBy.<span class="me1">PlayerLocation</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>InstigatedBy.<span class="me1">PlayerLocation</span>.<span class="me1">LocationName</span> != <span class="st0">"Battle Arena"</span><span class="br0">)</span><span class="br0">)</span>
+    &amp;&amp; <span class="br0">(</span><span class="br0">(</span>InstigatedBy.<span class="me1">PlayerZone</span> != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>InstigatedBy.<span class="me1">PlayerZone</span>.<span class="me1">ZoneName</span> != <span class="st0">"Battle Arena"</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+    Damage *= <span class="nu0">2</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Not tested, but should be good. Note that it won't work if you call it "BaTTle ArENa" (as you have probably guessed)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 41/1000000
+Post-expand include size: 37/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/r/i/Legacy%7EWriting_And_Using_An_Embedded_Mutator_7ab9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/r/i/Legacy_talk%7EWriting_And_Using_An_Embedded_Mutator_7953.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Writing_And_Using_An_Embedded_Mutator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:31, 5 August 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

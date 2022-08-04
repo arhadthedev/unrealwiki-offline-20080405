@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VitalOverdose/SFXPainful - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VitalOverdose/SFXPainful</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">Legacy:VitalOverdose</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> &gt;&gt;SFXpainful (Package: custom)</div>
+<p>by <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">VitalOverdose</a></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a></li>
+<li class="toclevel-1"><a href="#Simulated_Function_PostBeginPlay.28.29"><span class="tocnumber">3</span> <span class="toctext">Simulated Function PostBeginPlay()</span></a></li>
+<li class="toclevel-1"><a href="#Simulated_Function_Timer.28.29"><span class="tocnumber">4</span> <span class="toctext">Simulated Function Timer()</span></a></li>
+<li class="toclevel-1"><a href="#Simulated_Function_ProcessCollision.28Pawn_CollidedWith.2C_Vector_ParticleMomentum.29"><span class="tocnumber">5</span> <span class="toctext">Simulated Function ProcessCollision(Pawn CollidedWith, Vector ParticleMomentum)</span></a></li>
+<li class="toclevel-1"><a href="#The_Complete_Script"><span class="tocnumber">6</span> <span class="toctext">The Complete Script</span></a></li>
+<li class="toclevel-1"><a href="#Optimization"><span class="tocnumber">7</span> <span class="toctext">Optimization</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topcs"><span class="tocnumber">8</span> <span class="toctext">Related Topcs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#More_custom_emitter_scripts"><span class="tocnumber">8.1</span> <span class="toctext">More custom emitter scripts</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">9</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h3><span class="mw-headline">Overview</span></h3>
+<p>This is a custom <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">emitter</a> actor that can track up to 20 particles from 1 of its emitters (ActiveEmitterNumb) and cause pain to any pawn they collide with. Using an iterator in this way to scan the particles locations is fairly stressful to the CPU so I've capped the particles to 20.</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h3><span class="mw-headline">Properties</span></h3>
+<p>Note any changes to the properties will have to be made in the default properties by the mapper. Although you could write a custom spawner that can set the properties as the emitters are spawned (you cant change MaxParticles this way as its a <b>constant</b>)</p>
+<pre>
+ActiveEmitterNumb        - number of the emitter that is to be tracked.   
+TimerFrequency           - Scanning frequency capped to 0.1 of a second max (10x Scans a second)                              
+ScanSize                 - scan radius for each particle.
+TheDamageType            - damagetype to apply on contact with a pawn.
+DamageToVec              - damage amount for vehicles.
+DamageToPawn             - damage amount for xpawns.
+DamageToMonster          - Damage Amount for monsters.
+VecCollisionFx           - Collision FX for vehicles.
+PawnCollisionFx          - Collision FX for xpawns.
+MonsterCollisionFx       - Collision FX for monsters.
+VecCollisionSound        - collision Sound For vehicles.
+PawnCollisionSound       - collision Sound For xpawns.
+MonsterCollisionSound    - collision Sound For monsters.
+</pre>
+<p><a name="Simulated_Function_PostBeginPlay.28.29" id="Simulated_Function_PostBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">Simulated Function PostBeginPlay()</span></h3>
+<p>OK here is where the capping takes place any value set outside the range of the programmer has set results in the value being set at its max for the scan size and for its min on the timerfrequency.</p>
+<p>The call to destroy the actor if set wrong may seem a little harsh but its not possible to alter the maxparticle count after game-play has started as its a constant variable;</p>
+<p>The timer is started at the end of this function. Set to run continuously being called every <b>timerFrequency</b> seconds. This could be called the <b>Scan Rate</b> for the tracked particles.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+ <span class="kw1">If</span> <span class="br0">(</span> Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">MaxParticles</span> &gt; <span class="nu0">20</span><span class="br0">)</span>
+     Destroyed<span class="br0">(</span><span class="br0">)</span>;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span>ScanSize &lt; <span class="nu0">64</span> <span class="br0">)</span>
+     ScanSize=<span class="nu0">64</span>;
+ 
+ <span class="kw1">if</span> <span class="br0">(</span>TimerFrequency &lt; <span class="nu0">0.1</span><span class="br0">)</span>
+     TimerFrequency = <span class="nu0">0.1</span>;
+ 
+ SetTimer<span class="br0">(</span> TimerFrequency , <span class="kw9">true</span> <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Simulated_Function_Timer.28.29" id="Simulated_Function_Timer.28.29"></a></p>
+<h3><span class="mw-headline">Simulated Function Timer()</span></h3>
+<p>Every time this function is called (once every Timerfrequency Seconds) the particles from the tracked emitter have their locations scanned with an iterator for any pawns. If one is found the valid ref for the pawn is bundled together with the velocity the particle was traveling at x 500 and set to the function <b>ProcessCollision()</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>           FoundPawn;
+ <span class="kw5">Local</span> <span class="kw4">Int</span>            Counter;
+ 
+ <span class="kw1">for</span> <span class="br0">(</span> Counter=<span class="nu0">0</span> ; Counter &lt; Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span>.<span class="kw6">Length</span> ; Counter++ <span class="br0">)</span>
+     <span class="br0">{</span>
+      <span class="kw1">foreach</span> visiblecollidingActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Pawn'</span>, FoundPawn , ScanSize , Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span><span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Location</span> <span class="br0">)</span>
+              <span class="br0">{</span>
+               ProcessCollision <span class="br0">(</span>FoundPawn ,Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span><span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Velocity*</span><span class="nu0">500</span><span class="br0">)</span>;
+              <span class="br0">}</span>
+     <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Simulated_Function_ProcessCollision.28Pawn_CollidedWith.2C_Vector_ParticleMomentum.29" id="Simulated_Function_ProcessCollision.28Pawn_CollidedWith.2C_Vector_ParticleMomentum.29"></a></p>
+<h3><span class="mw-headline">Simulated Function ProcessCollision(Pawn CollidedWith, Vector ParticleMomentum)</span></h3>
+<p>Here the valid ref of the pawn the particle came in contact with is received along with a slightly increased velocity which comes in the form of a vector. Here the ProcessCollision is really just dealing out the pain ,sound and FX to the unlucky pawn who came in contact with the particle. As there's 3 different possible sets of sounds ,pain amount and fx (one of each for xpawn , monster and vec) it results in 3 lots of code. Ive used local variables to store what has to be played , spawned and ..er applied for each eventuality and then just applied it to one set of actions. This is about the only thing i could come up with to make this function slightly more efficient the just writing out 3 lots of the same code. If you know of a more efficient way of doing it please let me know. CaseSwitch may be more efficient IDK i haven't got round to using it yet.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">Simulated</span> <span class="kw5">function</span> ProcessCollision<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> CollidedWith, <span class="kw4">vector</span> Particlemomentum<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw5">Local</span> <span class="kw4">Int</span>            ThePain;
+ 
+<span class="kw5">local</span> Emitter        SpawnedFX;
+ 
+<span class="kw5">local</span> <a href="/sound"><span class="kw10">Sound</span></a>          CollisionSound;
+ 
+<span class="kw5">local</span> Class&lt;emitter&gt; Collisionfxclass;
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Vehicle'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageTovec !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>     
+   <span class="br0">{</span>
+    ThePain = DamageTovec;
+    <span class="kw1">if</span> <span class="br0">(</span>VecCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+        CollisionSound=VecCollisionSound;
+    <span class="kw1">if</span> <span class="br0">(</span> VecCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+        Collisionfxclass = VecCollisionFx;
+   <span class="br0">}</span>
+ 
+<span class="kw1">else</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'monster'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageTomonster !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span> 
+   <span class="br0">{</span>
+    ThePain = DamageTomonster;
+    <span class="kw1">if</span> <span class="br0">(</span>MonsterCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+        CollisionSound=MonsterCollisionSound;
+    <span class="kw1">if</span> <span class="br0">(</span> VecCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+        Collisionfxclass = MonsterCollisionFx;
+   <span class="br0">}</span>
+ 
+<span class="kw1">else</span>
+ <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'xPawn'</span><span class="br0">)</span> <span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageToPawn !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>    
+    <span class="br0">{</span>
+     ThePain = DamageToPawn;
+     <span class="kw1">if</span> <span class="br0">(</span>VecCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+         CollisionSound=PawnCollisionSound;
+     <span class="kw1">if</span> <span class="br0">(</span> PawnCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+         Collisionfxclass = PawnCollisionFx;
+   <span class="br0">}</span>
+ 
+ <span class="kw1">if</span> <span class="br0">(</span> CollisionSound != <span class="kw9">none</span> <span class="br0">)</span>   <span class="co1">// dealing out the pain,the fx,and the sound</span>
+     CollidedWith.<span class="me1">PlaySound</span><span class="br0">(</span> CollisionSound <span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> Collisionfxclass != <span class="kw9">None</span> <span class="br0">)</span>
+     SpawnedFX = spawn<span class="br0">(</span>Collisionfxclass,CollidedWith,,CollidedWith.<span class="me1">location</span>,CollidedWith.<span class="me1">rotation</span><span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> ThePain != <span class="nu0">0</span> <span class="br0">)</span>
+     CollidedWith.<span class="me1">TakeDamage</span><span class="br0">(</span> DamageToPawn, Instigator, CollidedWith.<span class="me1">Location</span> , Particlemomentum, TheDamageType <span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="The_Complete_Script" id="The_Complete_Script"></a></p>
+<h3><span class="mw-headline">The Complete Script</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+ 
+<span class="co1">// SFXPainful. - creates particles that hurts players</span>
+ 
+<span class="co1">// By Vitaloverdose http://www.vitaloverdose.com</span>
+ 
+<span class="co1">// updated oct 2007</span>
+ 
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw5">class</span> SFXPainful <span class="kw5">extends</span> emitter
+ 
+<span class="kw6">Placeable</span>;
+ 
+<span class="kw5">var</span>    <span class="kw4">int</span>                    TotalParticles;      <span class="co1">// The mapper has no access to these</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                    ActiveEmitterNumb;   <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                    TimerFrequency;      <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                    DamageToPawn;        <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                    DamageToVec;         <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span>                    DamageToMonster;     <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">Var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>                  ScanSize;            <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> Class&lt;DamageType&gt;      TheDamageType;       <span class="co1">// The mapper has no access to this property</span>
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw5">class</span> &lt;emitter&gt;        MonsterCollisionFx;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw5">class</span> &lt;emitter&gt;        VecCollisionFx;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw5">class</span> &lt;emitter&gt;        PawnCollisionFx;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">sound</span></a>                  PawnCollisionSound;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a>                  VecCollisionSound;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a>                  MonsterCollisionSound;
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">MaxParticles</span> &gt; <span class="nu0">20</span><span class="br0">)</span>
+     Destroyed<span class="br0">(</span><span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span>ScanSize &lt; <span class="nu0">64</span> <span class="br0">)</span>
+     ScanSize=<span class="nu0">64</span>;
+ <span class="kw1">if</span> <span class="br0">(</span>TimerFrequency &lt; <span class="nu0">0.1</span><span class="br0">)</span>
+     TimerFrequency = <span class="nu0">0.1</span>;
+ 
+SetTimer<span class="br0">(</span> TimerFrequency , <span class="kw9">true</span> <span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">Function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ <span class="kw5">local</span> <a href="/Pawn"><span class="kw10">Pawn</span></a>           FoundPawn;
+ <span class="kw5">Local</span> <span class="kw4">Int</span>            Counter;
+ 
+ <span class="kw1">for</span> <span class="br0">(</span> Counter=<span class="nu0">0</span> ; Counter &lt; Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span>.<span class="kw6">Length</span> ; Counter++ <span class="br0">)</span>
+      <span class="kw1">foreach</span> visiblecollidingActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'Pawn'</span>, FoundPawn , ScanSize , Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span><span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Location</span> <span class="br0">)</span>
+               ProcessCollision <span class="br0">(</span>FoundPawn ,Emitters<span class="br0">[</span>ActiveEmitterNumb<span class="br0">]</span>.<span class="me1">Particles</span><span class="br0">[</span>Counter<span class="br0">]</span>.<span class="me1">Velocity*</span><span class="nu0">500</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw6">Simulated</span> <span class="kw5">function</span> ProcessCollision<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> CollidedWith, <span class="kw4">vector</span> Particlemomentum<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw5">Local</span> <span class="kw4">int</span>            ThePain;
+ 
+<span class="kw5">local</span> emitter        SpawnedFX;
+ 
+<span class="kw5">local</span> <a href="/sound"><span class="kw10">sound</span></a>          CollisionSound;
+ 
+<span class="kw5">local</span> class&lt;emitter&gt; Collisionfxclass;
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Vehicle'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageTovec    !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>
+   <span class="br0">{</span>
+    ThePain = DamageTovec;
+    <span class="kw1">if</span> <span class="br0">(</span>VecCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+        CollisionSound=VecCollisionSound;
+    <span class="kw1">if</span> <span class="br0">(</span> VecCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+        Collisionfxclass = VecCollisionFx;
+   <span class="br0">}</span>
+ 
+<span class="kw1">else</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'monster'</span><span class="br0">)</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageTomonster !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>
+   <span class="br0">{</span>
+    ThePain = DamageTomonster;
+    <span class="kw1">if</span> <span class="br0">(</span>MonsterCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+        CollisionSound=MonsterCollisionSound;
+    <span class="kw1">if</span> <span class="br0">(</span> VecCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+        Collisionfxclass = MonsterCollisionFx;
+   <span class="br0">}</span>
+ 
+<span class="kw1">else</span>
+ <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>CollidedWith.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'xPawn'</span><span class="br0">)</span> <span class="br0">)</span> &amp;&amp; <span class="br0">(</span>DamageToPawn !=<span class="nu0">0</span> <span class="br0">)</span><span class="br0">)</span>
+    <span class="br0">{</span>
+     ThePain = DamageToPawn;
+     <span class="kw1">if</span> <span class="br0">(</span>VecCollisionSound!=<span class="kw9">None</span><span class="br0">)</span>
+         CollisionSound=PawnCollisionSound;
+     <span class="kw1">if</span> <span class="br0">(</span> PawnCollisionFx != <span class="kw9">None</span> <span class="br0">)</span>
+         Collisionfxclass = PawnCollisionFx;
+   <span class="br0">}</span>
+ 
+                                               <span class="co1">// dealing out the pain,the fx,and the sound</span>
+ <span class="kw1">if</span> <span class="br0">(</span> CollisionSound != <span class="kw9">none</span> <span class="br0">)</span>
+     CollidedWith.<span class="me1">PlaySound</span><span class="br0">(</span> CollisionSound <span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> Collisionfxclass != <span class="kw9">None</span> <span class="br0">)</span>
+     SpawnedFX = spawn<span class="br0">(</span>Collisionfxclass,CollidedWith,,CollidedWith.<span class="me1">location</span>,CollidedWith.<span class="me1">rotation</span><span class="br0">)</span>;
+ <span class="kw1">if</span> <span class="br0">(</span> ThePain != <span class="nu0">0</span> <span class="br0">)</span>
+     CollidedWith.<span class="me1">TakeDamage</span><span class="br0">(</span> DamageToPawn, Instigator, CollidedWith.<span class="me1">Location</span> , Particlemomentum, TheDamageType <span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+ 
+bNoDelete=<span class="kw9">False</span>
+ 
+<span class="kw8">RemoteRole</span>=<span class="kw9">ROLE_SimulatedProxy</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>There may be some small alterations to this at a later date i have a few ideas of making it run more efficiently so more than 20 particles can be tracked. But its all going to need some fairly detailed testing before i make any serious changes to the way it works.</p>
+<p><a name="Optimization" id="Optimization"></a></p>
+<h2><span class="mw-headline">Optimization</span></h2>
+<p>Its totally untested as yet as to how many partials can be tracked without out any significant drop in game play speed. If anyone does get round to testing it please let me know.</p>
+<p><a name="Related_Topcs" id="Related_Topcs"></a></p>
+<h2><span class="mw-headline">Related Topcs</span></h2>
+<ul>
+<li><a href="../../../../articles/v/e/h/Legacy%7EVehicles_acc3.html" title="Legacy:Vehicles">Vehicles</a></li>
+<li><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticle_System_a2c3.html" title="Legacy:Particle System">Particle System</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_f021.html" title="Legacy:ParticleEmitter">ParticleEmitter</a></li>
+<li><a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_Cookbook_2a69.html" title="Legacy:ParticleEmitter Cookbook">ParticleEmitter Cookbook</a></li>
+<li><a href="http://udn.epicgames.com/Two/EmittersReference" class="extiw" title="udn2:EmittersReference">udn2:EmittersReference</a></li>
+<li><a href="http://udn.epicgames.com/Two/EmittersExamples" class="extiw" title="udn2:EmittersExamples">udn2:EmittersExamples</a></li>
+</ul>
+<p><a name="More_custom_emitter_scripts" id="More_custom_emitter_scripts"></a></p>
+<h3><span class="mw-headline">More custom emitter scripts</span></h3>
+<ul>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXPawnTeleporting_0aa2.html" title="Legacy:VitalOverdose/SFXPawnTeleporting">SFXPawnTeleporting</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXVehicleTeleporting_de36.html" title="Legacy:VitalOverdose/SFXVehicleTeleporting">SFXVehicleTeleporting</a></li>
+<li><strong class="selflink">SFXPainful</strong></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXTriggering_8ba0.html" title="Legacy:VitalOverdose/SFXTriggering">SFXTriggering</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXBoosting_8c8a.html" title="Legacy:VitalOverdose/SFXBoosting">SFXBoosting</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXMonsterSpawning_6532.html" title="Legacy:VitalOverdose/SFXMonsterSpawning">SFXMonsterSpawning</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXHealing_0e8a.html" title="Legacy:VitalOverdose/SFXHealing">SFXHealing</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitaloverdose_SFXUltraLight_3d35.html" title="Legacy:Vitaloverdose/SFXUltraLight">SFXUltraLight</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_InventoryFlare_0354.html" title="Legacy:VitalOverdose/InventoryFlare">InventoryFlare</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>DaWrecka:</b> Have you considered making the emitter work server-side? If you could guarantee running on the server (which is required for dealing damage anyway) you can easily use Level.ControllerList. Since it's a linked list of nothing but controllers, you can vastly reduce the number of actors iterated through, since you can be sure that if Controller.Pawn&#160;!= None, then the Pawn is a) a Pawn and not something else (obviously), b) Valid, and thus c) fair game. You're also not iterating through actors you wouldn't want damaged anyway like static meshes and brushes. The load will reduce vastly and consequently allow you to either use no cap or a much higher cap.</p>
+<p><b>Vitaloverdose</b> Sounds promising, ill look into it.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 30/1000000
+Post-expand include size: 192/2097152 bytes
+Template argument size: 112/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXPainful_ca54.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/i/t/Legacy_talk%7EVitalOverdose_SFXPainful_8f38.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VitalOverdose/SFXPainful">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:10, 8 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

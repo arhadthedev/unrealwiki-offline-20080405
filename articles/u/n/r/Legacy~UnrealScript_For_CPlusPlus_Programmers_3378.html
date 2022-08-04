@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UnrealScript For CPlusPlus Programmers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UnrealScript For CPlusPlus Programmers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> was expressly designed to give <a href="http://en.wikipedia.org/wiki/C_Plus_Plus" class="extiw" title="wikipedia:C_Plus_Plus">C++</a> and Java programmers a warm feeling of familiarity. If anything Unreal Script is more similar to Java than C++ (see <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_For_Java_Programmers_4d31.html" title="Legacy:UnrealScript For Java Programmers">UnrealScript For Java Programmers</a>). The main differences between C++ and UnrealScript are summarised below.</p>
+<p>Just like C++, Unreal Script is an object-oriented language. The notions of classes, inheritence, objects, and overriding (redefining in a subclass) methods apply. The main differences in the behaviour of objects are listed below.</p>
+<ul>
+<li>Multiple inheritance is not supported. A class may only have a single superclass.</li>
+<li>All methods are virtual.</li>
+<li>All objects are created on the heap and handled only via references. So every variable that points to an instance of an object is a pointer to that object (a reference if you perfer).</li>
+<li>There is no <i>delete</i> operator. Deleting objects is automatically handled by a <a href="../../../../articles/g/a/r/Legacy%7EGarbage_Collection_8122.html" title="Legacy:Garbage Collection">garbage collector</a>; objects of class <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">actor</a> and below must be manually removed from the <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Actor list</a> by calling their <a href="../../../../articles/d/e/s/Legacy%7EDestroying_Objects_45cb.html" title="Legacy:Destroying Objects">Destroy</a> method before they are discarded. Objects are only garbage collected when the total number of references to them reaches zero.</li>
+<li>Regular methods cannot be overloaded although operators can. However, it is possible to make any or all of the parameter(s) of a method <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">optional</a>.</li>
+<li>Unlike C++, UnrealScript is a case-insensitive language ("Function" equals "function", "LOG" equals "log", and so on).</li>
+</ul>
+<p>Other differences between UnrealScript and C++ are:</p>
+<ul>
+<li>Structures created with the <code>struct</code> keyword and classes are fundamentally different concepts in UnrealScript. Structures are always handled by value. Classes are always handled by reference.</li>
+<li>All variables in UnrealScript <i>must</i> be explicitly scoped:
+<ul>
+<li>Instance variables are available from anywhere within the object after their declaration (ie. object scope) and are declared with the <tt>var</tt> keyword</li>
+<li>Local variables are available from anywhere within the function in which they're declared, after their declaration, and are preceded with the <tt>local</tt> keyword</li>
+</ul>
+</li>
+<li>Templates do not exist.</li>
+<li>There's no main function that is automatically executed when your mod is started; instead, the engine instantiates a (specific) class from your mod package (a <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> subclass for mutators, or a <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_%28UT%29_9391.html" title="Legacy:GameInfo (UT)">GameInfo (UT)</a> subclass for game type mods, as specified by you in your mod's <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT File</a>) and executes its "event" methods as they apply.</li>
+<li>Related classes (and other resources) are stored in <a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">packages</a>. Classes contained in a package are dynamically bound to the class tree when the package is loaded.</li>
+</ul>
+<p>The <a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">operators</a> available in UnrealScript are similar to the ones of C++. <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a> available in all subclasses of <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> (that is, everywhere) provide generic functionality for handling UnrealScript's built-in <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">data types</a>.</p>
+<p>UnrealScript source code needs to be <a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">compiled</a> before it can be used in the game. The compiler takes source code and any other resources referenced from your source code (like textures and sounds) and creates a code package.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">1</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Note"><span class="tocnumber">2</span> <span class="toctext">Note</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics_2"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">4</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_cee2.html" title="Legacy:UnrealScript Language Reference">UnrealScript Language Reference</a></li>
+</ul>
+<p><a name="Note" id="Note"></a></p>
+<h2><span class="mw-headline">Note</span></h2>
+<p>The name of this page is a result of the limitations of the UseModWiki script. Both [[Legacy:UnrealScript For CPlusPlus Programmers|UnrealScript for CPlusPlus Programmers]] and [[Legacy:UnrealScript For C++ Programmers|UnrealScript for C++ Programmers]] are valid links to it.</p>
+<p><a name="Related_Topics_2" id="Related_Topics_2"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a></li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Mychaeel:</b> Just some notes so far. Feel free to rearrange and elaborate.</p>
+<p><b>Heinz57:</b> I edited the previous version of this page to elaborate on the scope of variables and functions. Correct me if I'm wrong, but, as far as I can tell it is possible to have variables and functions whose scope is <i>global</i> in UnrealScript. See the <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_cee2.html" title="Legacy:UnrealScript Language Reference">UnrealScript Language Reference</a> under Variables&#160;:-). Also, in terms of global scope, keep in mind that I used the term Object, rather than Class in describing scope, because a global variable can be declared within a <tt>struct</tt> that same as within a Class.</p>
+<p><b>Wormbo:</b> Actually you can declare functions and class variables as private or protected if you don't want them to be public.</p>
+<p><b>Heinz57:</b> My mistake. I was actually just editing this page to make the correction, and got a conflict, because of your edit. Thanks Wormbo! Also, another thing I shouldn't have spoke so soon about: The term <i>Global</i> can be interpreted a couple of ways (in general OO terms): a function or variable could be said to be Global to a particular Object (the one it was declared in), or to all objects. It appears that, according to the <a href="../../../../articles/g/l/o/Legacy%7EGlobal_Function_3800.html" title="Legacy:Global Function">Global Function</a> page, in UnrealScript Global is thought of as the latter. Mychaeel had previously hinted that functions and variables could not be global. Could you elaborate?</p>
+<p><b>Mychaeel:</b> On <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Introduction_1f85.html" title="Legacy:UnrealScript Language Reference/Introduction">UnrealScript Language Reference/Introduction</a> Tim Sweeney himself says "There are no system- wide global functions or variables." That is exactly what I am referring to – any variable you declare in UnrealScript is actually just a property of a certain object. The only way to "fake" global variables is instantiating an object and making it more or less globally known (like a map's <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> that's known to all actors via the "Level" reference declared in <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>).</p>
+<p>I don't understand the sentence "Variables must be declared for what they are" in the text above, by the way. I can only guess its meaning from the examples given directly following it (so it basically boils down to "Variables are explicitly scoped," but in fact the use of "local" or "var" in UnrealScript variable declarations is completely redundant with the <i>place</i> of a variable declaration).</p>
+<p><b>Foxpaw:</b> I believe in C++ is is possible to make a pointer that is just a pointer.. the type of thing is going to point to does not need to be declared and it can change if the programming dictates it. (I think that is the case. It has been YEARS since I've even looked at a program in C++, but I used to use it a lot.) PS: I also changed the bit about optional variables.. any parameter can be optional, not just the last ones. To opt out of an optional variable while setting the mandatory ones just put the two commas together, like AFunction( Other,, Instigator,,, X ) In this example, three total parameters have been skipped.</p>
+<p><b>Mychaeel:</b> So the following would compile?:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MyOptionalParamTest<span class="br0">(</span><span class="kw4">int</span> iFirst, <span class="kw6">optional</span> <span class="kw4">int</span> iSecond, <span class="kw4">int</span> iThird<span class="br0">)</span>;
+<span class="co1">//...</span>
+MyOptionalParamTest<span class="br0">(</span><span class="nu0">1</span>, , <span class="nu0">3</span><span class="br0">)</span>;
+</pre></div>
+<p>You're right that in C++ you can have an untyped pointer; but in UnrealScript you strictly speaking don't even have the notion of a pointer at all, merely object references (which certainly are implemented as pointers internally). The closest equivalent to an untyped pointer in UnrealScript would probably be an <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> reference since Object is among the ancestors of any UnrealScript class. (Then you can <a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">typecast</a> that reference to whatever you like, as you could with a C++ pointer.)</p>
+<p><b>Foxpaw:</b> I expected it would, after testing it under UT2003 it doesn't seem that it will. I could have sworn that I freely intermixed optional and regular variables in UT though.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 19/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_For_CPlusPlus_Programmers_3378.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnrealScript_For_CPlusPlus_Programmers_e149.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UnrealScript_For_CPlusPlus_Programmers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:06, 6 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

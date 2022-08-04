@@ -1,0 +1,508 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Scripting Operators - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Scripting Operators</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Using_Operators"><span class="tocnumber">1</span> <span class="toctext">Using Operators</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Operators_vs._Functions"><span class="tocnumber">1.1</span> <span class="toctext">Operators vs. Functions</span></a></li>
+<li class="toclevel-2"><a href="#Binary_operators"><span class="tocnumber">1.2</span> <span class="toctext">Binary operators</span></a></li>
+<li class="toclevel-2"><a href="#Unary_operators"><span class="tocnumber">1.3</span> <span class="toctext">Unary operators</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Examples_of_Operators"><span class="tocnumber">2</span> <span class="toctext">Examples of Operators</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Using_the_Out_Keyword"><span class="tocnumber">2.1</span> <span class="toctext">Using the Out Keyword</span></a></li>
+<li class="toclevel-2"><a href="#String_Multiplication"><span class="tocnumber">2.2</span> <span class="toctext">String Multiplication</span></a></li>
+<li class="toclevel-2"><a href="#Actor_Destruction"><span class="tocnumber">2.3</span> <span class="toctext">Actor Destruction</span></a></li>
+<li class="toclevel-2"><a href="#Implementing_a_crude_Logf"><span class="tocnumber">2.4</span> <span class="toctext">Implementing a crude Logf</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_topics"><span class="tocnumber">3</span> <span class="toctext">Related topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Using_Operators" id="Using_Operators"></a></p>
+<h2><span class="mw-headline">Using Operators</span></h2>
+<p><a name="Operators_vs._Functions" id="Operators_vs._Functions"></a></p>
+<h3><span class="mw-headline">Operators vs. Functions</span></h3>
+<p>In maths, the difference is simply one of notation. The following mean the same, but the first is written as an operator, the second and third as functions:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="nu0">4</span> + <span class="nu0">5</span>
+ +<span class="br0">(</span> <span class="nu0">4</span> , <span class="nu0">5</span> <span class="br0">)</span>
+ plus<span class="br0">(</span> <span class="nu0">4</span> , <span class="nu0">5</span> <span class="br0">)</span>
+</pre></div>
+<p>In <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> there is a similar distinction. Both functions and operators are represented by some sort of symbol or group of symbols, but operator's parameters are either side of the name instead of enclosed in brackets:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="nu0">4</span> + <span class="nu0">5</span> ;
+<span class="nu0">4</span> plus <span class="nu0">5</span> ;
+plus<span class="br0">(</span> <span class="nu0">4</span> , <span class="nu0">5</span> <span class="br0">)</span> ;
+</pre></div>
+<p>In UnrealScript, operators are limited to having one or two parameters. UnrealScript's built-in operators are defined in the <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> class.</p>
+<p><a name="Binary_operators" id="Binary_operators"></a></p>
+<h3><span class="mw-headline">Binary operators</span></h3>
+<p>Most operators are <i>binary</i> – they take two parameters, one on each side. Defining an operator is very similar to defining a function:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span>&lt;priority&gt;<span class="br0">)</span> &lt;type&gt; &lt;opname&gt; <span class="br0">(</span>&lt;param1&gt;, &lt;param2&gt;<span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+</pre></div>
+<p>Note that a return value is required for operators, even if they have <a href="../../../../articles/f/u/n/Legacy%7EFunction_Syntax_b3b7.html" title="Legacy:Function Syntax">'out' parameters</a>.</p>
+<p>Operators need to be declared as <i>final</i> (or the compiler will start bitching), but not necessarily as <i>static</i> – if you don't declare an operator as <i>static</i>, you can access object variables in its code. (Unlike non-<i>static</i> functions you can use a non-<i>static</i> operator in a <i>static</i> function; any object variables you access there yield their default properties in that case.) A function declared as static may execute faster, however note that although it may be static it cannot be referenced from outside of the class it was defined in and its subclasses. The following, for instance, is not valid:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ValueA <span class="kw5">class</span><span class="st0">'MathFunctions'</span>.<span class="kw6">static</span>.+ ValueB
+</pre></div>
+<p>The number in parenthesis after the keyword "operator" gives the evaluation priority; the lower this value, the earlier a term with this operator will be evaluated when a complete expression is executed. For example, the exponentiation operator's precedence is 12, multiplication is 16, and addition is 20. Consider the expression:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+A = B / <span class="nu0">2</span> MyOperator <span class="nu0">5</span>;
+</pre></div>
+<p>If MyOperator has a precedence of 10, it'll bind tighter than division (16), so the expression will be evaluated as:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+A = B / <span class="br0">(</span><span class="nu0">2</span> MyOperator <span class="nu0">5</span><span class="br0">)</span>;
+</pre></div>
+<p>On the other hand, if MyOperator has a precedence of 20, it would evaluate as:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+A = <span class="br0">(</span>B / <span class="nu0">2</span><span class="br0">)</span> MyOperator <span class="nu0">5</span>;
+</pre></div>
+<p>The valid range for precedence values is 0-255. Here's a list of the existing values used in the built in operators:</p>
+<table>
+<tr>
+<td><b>Precedence</b></td>
+<td><b>Operator</b></td>
+<td><b>Operation</b></td>
+</tr>
+<tr>
+<td style="text-align: right">12</td>
+<td style="text-align: center"><code>**</code></td>
+<td>Exponentiation</td>
+</tr>
+<tr>
+<td style="text-align: right">16</td>
+<td style="text-align: center"><code>*</code></td>
+<td>Multiplication</td>
+</tr>
+<tr>
+<td style="text-align: right">16</td>
+<td style="text-align: center"><code>/</code></td>
+<td>Division</td>
+</tr>
+<tr>
+<td style="text-align: right">16</td>
+<td style="text-align: center"><code>Dot</code></td>
+<td>Dot Product</td>
+</tr>
+<tr>
+<td style="text-align: right">16</td>
+<td style="text-align: center"><code>Cross</code></td>
+<td>Cross Product</td>
+</tr>
+<tr>
+<td style="text-align: right">18</td>
+<td style="text-align: center"><code>%</code></td>
+<td>Modulus</td>
+</tr>
+<tr>
+<td style="text-align: right">20</td>
+<td style="text-align: center"><code>+</code></td>
+<td>Addition</td>
+</tr>
+<tr>
+<td style="text-align: right">20</td>
+<td style="text-align: center"><code>-</code></td>
+<td>Subtraction</td>
+</tr>
+<tr>
+<td style="text-align: right">22</td>
+<td style="text-align: center"><code>&lt;&lt;</code></td>
+<td>Left Shift</td>
+</tr>
+<tr>
+<td style="text-align: right">22</td>
+<td style="text-align: center"><code>&gt;&gt;</code></td>
+<td>Right Shift</td>
+</tr>
+<tr>
+<td style="text-align: right">22</td>
+<td style="text-align: center"><code>&gt;&gt;&gt;</code></td>
+<td>Unsigned Right Shift</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>&lt;</code></td>
+<td>Less Than</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>&gt;</code></td>
+<td>Greater Than</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>&lt;=</code></td>
+<td>Less or Equal</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>&gt;=</code></td>
+<td>Greater or Equal</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>----</code></td>
+<td>Equality</td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td style="text-align: center"><code>~=</code></td>
+<td>Approximate Equality</td>
+</tr>
+<tr>
+<td style="text-align: right">26</td>
+<td style="text-align: center"><code>!=</code></td>
+<td>Not Equal</td>
+</tr>
+<tr>
+<td style="text-align: right">28</td>
+<td style="text-align: center"><code>&amp;</code></td>
+<td>Bitwise And</td>
+</tr>
+<tr>
+<td style="text-align: right">28</td>
+<td style="text-align: center"><code>{|</code></td>
+</tr>
+</table>
+<p>|Bitwise Or |- | style="text-align: right" |28 | style="text-align: center" |<code>^</code> |Bitwise Xor |- | style="text-align: right" |30 | style="text-align: center" |<code>&amp;&amp;</code> |And |- | style="text-align: right" |30 | style="text-align: center" |<code>{|</code></p>
+<p><code>|- | |}</code> |Or |- | style="text-align: right" |32 | style="text-align: center" |<code>^^</code> |Xor |}</p>
+<p>(Also see <a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a>.)</p>
+<p>Type is what type the operator will return, if any. This also works the same as a function.</p>
+<p>Opname is the name of the operator, similar to the name of a function. However, the name of an operator is more flexible. You can use any of the following as an operator name:</p>
+<p>The name/identifier of the operator. This can be:</p>
+<ul>
+<li>A string identifier, like a normal function.</li>
+<li>A symbol, like +,-,*,/,#,:,etc.</li>
+<li>A group of two symbols. The compiler limits you to the symbol groups already recognized by the parser: &lt;&lt;, &gt;&gt;,&#160;!=, &lt;=, &gt;=, ++, –, +=, -=, *=, /=, &amp;&amp;, ||, ^^, ==, **, ~=, @=</li>
+<li>The compiler also allows a special three-symbol operator, &gt;&gt;&gt;.</li>
+</ul>
+<p>The parameters of the operator work the same way as a function, but you must have two and only two parameters for a binary function. The first parameter is the value on the left side of the operator when it is used. The second parameter is the value on the right side of the operator when it is used. Like a function, you can use the out keyword if you want an operator to change the value of one of the values inputted to it.</p>
+<p>The code for your operator goes between the curly braces, the same way as a function. An operator is largely a function that is merely called using a different syntax, as as such can do most things that a function can. Use return as you would in a function to return the result of the operator, if any.</p>
+<p>The following example is an alternative to&#160;%, the built-in modulo operator. This is an extremely handy one to have, as the built-in&#160;% operator disagrees with the mathematical modulo function for negative numbers.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">18</span><span class="br0">)</span> <span class="kw4">float</span> mod <span class="br0">(</span><span class="kw4">float</span> A, <span class="kw4">float</span> B<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span> A % B &gt;= <span class="nu0">0</span> <span class="br0">)</span>
+        <span class="kw1">return</span> A % B ;
+    <span class="kw1">else</span>
+        <span class="kw1">return</span> <span class="br0">(</span> A % B <span class="br0">)</span> + B ;
+<span class="br0">}</span>
+</pre></div>
+<p>Note that the operator does not need to be represented by a single special character; it can also be a valid symbol name. With the above example, the new syntax would be:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">float</span> a, b, c;
+c = a mod b;
+</pre></div>
+<p>Here's another sample operator that will calculate the average of the left and right side:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">18</span><span class="br0">)</span> <span class="kw4">int</span> : <span class="br0">(</span> <span class="kw4">int</span> A, <span class="kw4">int</span> B <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> <span class="br0">(</span>A + B<span class="br0">)</span> / <span class="nu0">2</span>;
+<span class="br0">}</span>
+Middle = <span class="nu0">10</span> : <span class="nu0">2</span>; <span class="co1">// Middle = 6</span>
+ 
+Middle = <span class="nu0">10</span> + <span class="nu0">2</span> : <span class="nu0">4</span>; <span class="co1">// Middle = (10 + 2) : 4 = 8</span>
+</pre></div>
+<p><br />
+I made the priority for this operator 18, so the addition will be evaluated before the&#160;: operator in this case.</p>
+<p><a name="Unary_operators" id="Unary_operators"></a></p>
+<h3><span class="mw-headline">Unary operators</span></h3>
+<p>Unary operators are similar, just use "preoperator" or "postoperator" as the keyword. A preoperator and a postoperator has only one parameter, and is prepended or appended to the value to be processed, respectively. An example of a postoperator is <i>++</i> or <i>–</i>. In addition, there is no priority for unary operators, they will always be evaluated first. I am not certain what the result is if a preoperator and a postoperator are called on the same value simultaneously. An example of a unary operator, boolean negation is defined by this line in the <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> script:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">129</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">preoperator</span> <span class="kw4">bool</span> ! <span class="br0">(</span><span class="kw4">bool</span> A<span class="br0">)</span>;
+</pre></div>
+<p><a name="Examples_of_Operators" id="Examples_of_Operators"></a></p>
+<h2><span class="mw-headline">Examples of Operators</span></h2>
+<p>There are many useful examples on the following pages:</p>
+<ul>
+<li><a href="../../../../articles/u/s/e/Legacy%7EUseful_Maths_Functions_2388.html" title="Legacy:Useful Maths Functions">Useful Maths functions</a> – number functions, trig functions and vector operators</li>
+<li><a href="../../../../articles/c/o/l/Legacy%7EColor_Operators_3f5d.html" title="Legacy:Color Operators">Color Operators</a></li>
+<li><a href="../../../../articles/d/y/n/Legacy%7EDynamic_Array_dc99.html" title="Legacy:Dynamic Array">Dynamic Array</a> implementation (hack for <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>)</li>
+<li><a href="../../../../articles/a/s/s/Legacy%7EAssociativeArray_5544.html" title="Legacy:AssociativeArray">AssociativeArray</a></li>
+</ul>
+<p>More Examples of Operators are provided below.</p>
+<p><a name="Using_the_Out_Keyword" id="Using_the_Out_Keyword"></a></p>
+<h3><span class="mw-headline">Using the Out Keyword</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">final</span> <span class="kw6">postoperator</span> <span class="kw4">int</span> # <span class="br0">(</span> <span class="kw6">out</span> <span class="kw4">int</span> A <span class="br0">)</span>;
+<span class="br0">{</span>   <span class="kw1">return</span> A /= <span class="nu0">10</span>; <span class="co1">// Notice how A is modified here</span>
+<span class="br0">}</span>
+ 
+i = <span class="nu0">100</span>;
+ 
+b = i#; <span class="co1">// b = 10, i = 10 (i IS affected, because of the out keyword)</span>
+ 
+i#; <span class="co1">// i = 1</span>
+</pre></div>
+<p><a name="String_Multiplication" id="String_Multiplication"></a></p>
+<h3><span class="mw-headline">String Multiplication</span></h3>
+<p>Here's a simple operator that will take a string, and 'multiply' it by an integer, returning the string repeated that many times:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">28</span><span class="br0">)</span> <span class="kw4">string</span> * <span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> <span class="kw4">String</span>, <span class="kw4">int</span> nRepetitions <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">string</span> Result;
+ 
+  <span class="kw1">while</span><span class="br0">(</span>nRepetitions &gt; <span class="nu0">0</span><span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>nRepetitions &amp; <span class="nu0">1</span><span class="br0">)</span> == <span class="nu0">1</span><span class="br0">)</span>
+      Result = Result $ <span class="kw4">String</span>;
+    <span class="kw4">String</span> = <span class="kw4">String</span> $ <span class="kw4">String</span>;
+    nRepetitions = nRepetitions &gt;&gt; <span class="nu0">1</span>;
+  <span class="br0">}</span>
+ 
+  <span class="kw1">return</span> Result;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Actor_Destruction" id="Actor_Destruction"></a></p>
+<h3><span class="mw-headline">Actor Destruction</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw6">postoperator</span> <a href="/Actor"><span class="kw10">Actor</span></a> DIEDIEDIE <span class="br0">(</span> <span class="kw6">out</span> <a href="/Actor"><span class="kw10">Actor</span></a> NearlyDead <span class="br0">)</span>
+<span class="br0">{</span>
+  NearlyDead.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="kw1">return</span> NearlyDead;
+<span class="br0">}</span>
+SomeActor DIEDIEDIE; <span class="co1">// It is now dead.</span>
+</pre></div>
+<p><a name="Implementing_a_crude_Logf" id="Implementing_a_crude_Logf"></a></p>
+<h3><span class="mw-headline">Implementing a crude Logf</span></h3>
+<p>This is a simple formatted function that writes to the log file. You use the&#160;: operator to group together a bunch of strings and floats (or integers), and then pass the resulting struct into a function that willll parse the format and grab the needed strings/numbers out of the struct.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TestLogf <span class="kw5">extends</span> CommandLet;
+ 
+<span class="co1">// This will hold all of our parameters</span>
+<span class="kw4">struct</span> AnythingGlob
+<span class="br0">{</span>
+  <span class="kw5">var</span> <span class="kw4">string</span> StringGlob<span class="br0">[</span><span class="nu0">20</span><span class="br0">]</span>;
+  <span class="kw5">var</span> <span class="kw4">int</span> StringNum;
+  <span class="kw5">var</span> <span class="kw4">float</span> NumberGlob<span class="br0">[</span><span class="nu0">20</span><span class="br0">]</span>;
+  <span class="kw5">var</span> <span class="kw4">int</span> NumberNum;
+  <span class="kw5">var</span> <span class="kw4">int</span> num;
+<span class="br0">}</span>;
+ 
+<span class="co1">// Add a string to a glob</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">98</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> anythingglob B, <span class="kw4">string</span> A <span class="br0">)</span>
+<span class="br0">{</span>
+  B.<span class="me1">StringGlob</span><span class="br0">[</span>B.<span class="me1">StringNum</span>++<span class="br0">]</span> = A;
+  <span class="kw1">return</span> B;
+<span class="br0">}</span>
+ 
+<span class="co1">// Add a float to a glob</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">98</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> anythingglob B, <span class="kw4">float</span> A <span class="br0">)</span>
+<span class="br0">{</span>
+  B.<span class="me1">NumberGlob</span><span class="br0">[</span>B.<span class="me1">NumberNum</span>++<span class="br0">]</span> = A;
+  <span class="kw1">return</span> B;
+<span class="br0">}</span>
+ 
+<span class="co1">// Create the glob out of 2 strings</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">99</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> <span class="kw4">string</span> A, <span class="kw4">string</span> B <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> AnythingGlob C;
+  C.<span class="me1">StringGlob</span><span class="br0">[</span>C.<span class="me1">StringNum</span>++<span class="br0">]</span> = A;
+  C.<span class="me1">StringGlob</span><span class="br0">[</span>C.<span class="me1">StringNum</span>++<span class="br0">]</span> = B;
+  <span class="kw1">return</span> C;
+<span class="br0">}</span>
+ 
+<span class="co1">// Create the glob out of 2 floats</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">99</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> <span class="kw4">float</span> A, <span class="kw4">float</span> B <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> AnythingGlob C;
+  C.<span class="me1">NumberGlob</span><span class="br0">[</span>C.<span class="me1">NumberNum</span>++<span class="br0">]</span> = A;
+  C.<span class="me1">NumberGlob</span><span class="br0">[</span>C.<span class="me1">NumberNum</span>++<span class="br0">]</span> = B;
+  <span class="kw1">return</span> C;
+<span class="br0">}</span>
+ 
+<span class="co1">// Create the glob out of a string and a float</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">99</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> <span class="kw4">string</span> A, <span class="kw4">float</span> B <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> AnythingGlob C;
+ 
+  C.<span class="me1">StringGlob</span><span class="br0">[</span>C.<span class="me1">StringNum</span>++<span class="br0">]</span> = A;
+  C.<span class="me1">NumberGlob</span><span class="br0">[</span>C.<span class="me1">NumberNum</span>++<span class="br0">]</span> = B;
+  <span class="kw1">return</span> C;
+<span class="br0">}</span>
+ 
+<span class="co1">// Create the glob out of a float and a string</span>
+<span class="kw6">final</span> <span class="kw6">operator</span><span class="br0">(</span><span class="nu0">99</span><span class="br0">)</span> AnythingGlob : <span class="br0">(</span> <span class="kw4">float</span> B, <span class="kw4">string</span> A <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> AnythingGlob C;
+  C.<span class="me1">StringGlob</span><span class="br0">[</span>C.<span class="me1">StringNum</span>++<span class="br0">]</span> = A;
+  C.<span class="me1">NumberGlob</span><span class="br0">[</span>C.<span class="me1">NumberNum</span>++<span class="br0">]</span> = B;
+  <span class="kw1">return</span> C;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">int</span> main<span class="br0">(</span> <span class="kw4">string</span> parm <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> AnythingGlob Test;
+  Logf<span class="br0">(</span> <span class="st0">"Testing... with a string '%s', an int '%i', and a float %f"</span>: <span class="st0">"Test"</span>: <span class="nu0">6</span>: <span class="nu0">6.4</span> <span class="br0">)</span>;
+  Logf<span class="br0">(</span> <span class="st0">"This commandlet was passed '%s'"</span>: parm <span class="br0">)</span>;
+  Test = <span class="br0">(</span> <span class="st0">"Using prebuilt glob: %s %f %i %s"</span>: <span class="st0">"Hello"</span>: <span class="nu0">3.1415926</span>: <span class="nu0">4</span>: <span class="st0">"Bye"</span> <span class="br0">)</span>;
+  Logf<span class="br0">(</span> Test <span class="br0">)</span>;
+  <span class="kw1">return</span> <span class="nu0">1</span>;
+<span class="br0">}</span>
+ 
+<span class="co1">// The actual Logf... an anythingglob of parameters</span>
+<span class="kw5">function</span> Logf<span class="br0">(</span> AnythingGlob params <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw5">local</span> <span class="kw4">string</span> Format,FinalS, Flag;
+  <span class="kw5">local</span> <span class="kw4">int</span> sglbnum;
+  <span class="kw5">local</span> <span class="kw4">int</span> fglbnum;
+ 
+  Format = params.<span class="me1">StringGlob</span><span class="br0">[</span>sglbnum++<span class="br0">]</span>;
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;=<span class="kw7">Len</span><span class="br0">(</span>format<span class="br0">)</span>;i++<span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>format, i, <span class="nu0">1</span><span class="br0">)</span> == <span class="st0">"%"</span><span class="br0">)</span>
+  <span class="br0">{</span>
+      i++;
+      Flag = <span class="kw7">Mid</span><span class="br0">(</span>format,i,<span class="nu0">1</span><span class="br0">)</span>;
+      <span class="kw1">if</span> <span class="br0">(</span> Flag == <span class="st0">"s"</span> <span class="br0">)</span>
+        FinalS = FinalS $ params.<span class="me1">StringGlob</span><span class="br0">[</span>sglbnum++<span class="br0">]</span>;
+      <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Flag == <span class="st0">"i"</span> <span class="br0">)</span>
+        FinalS = FinalS $ <span class="kw4">string</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>params.<span class="me1">NumberGlob</span><span class="br0">[</span>fglbnum++<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>;
+      <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Flag == <span class="st0">"f"</span> <span class="br0">)</span>
+        FinalS = FinalS $ <span class="kw4">string</span><span class="br0">(</span>params.<span class="me1">NumberGlob</span><span class="br0">[</span>fglbnum++<span class="br0">]</span><span class="br0">)</span>;
+      <span class="kw1">else</span>
+      <span class="br0">{</span>
+        FinalS = FinalS $ <span class="st0">"%"</span>;
+        i--;
+      <span class="br0">}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span> FinalS = FinalS $ <span class="kw7">Mid</span><span class="br0">(</span>format, i, <span class="nu0">1</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw7">Log</span><span class="br0">(</span>FinalS<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_topics" id="Related_topics"></a></p>
+<h2><span class="mw-headline">Related topics</span></h2>
+<ul>
+<li>Main <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> topic page</li>
+<li><a href="../../../../articles/o/p/e/Legacy%7EOperators_0bc6.html" title="Legacy:Operators">Operators</a></li>
+</ul>
+<hr />
+<p><b>Mychaeel:</b> Very nice. &#160;:tup: But please use third- (or fourth-) level headings where they're due...</p>
+<p><b>Tarquin:</b> cool.&#160;:D Maybe split this into several pages of ready-made operators, to sit alongside <a href="../../../../articles/u/s/e/Legacy%7EUseful_Maths_Functions_2388.html" title="Legacy:Useful Maths Functions">Useful Maths functions</a></p>
+<p><b>Foxpaw:</b> This page had two separate explanations that were both complete so I merged them into one – I've tried to ensure no content was lost, but if anything was lost in the merger feel free to put it back. The original author was not credited on the original page, the second explanation was made by Yoda.</p>
+<p><b>Foxpaw:</b> It seems logical to assume that operators are "simulated" due to their nature - is this an accurate assumption?</p>
+<p><b>Mychaeel:</b> Usually operators are <i>static</i>, so the concept of <i>simulated</i> doesn't apply; however, if you make a non-<i>static</i> operator, it's your choice whether it is <i>simulated</i> (usable on clients) or not.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 104/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/c/r/Legacy%7EScripting_Operators_5be1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/c/r/Legacy_talk%7EScripting_Operators_a04c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Scripting_Operators">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 10:15, 8 September 2004 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

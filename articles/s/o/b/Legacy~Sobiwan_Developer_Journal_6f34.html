@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Sobiwan/Developer Journal - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Sobiwan/Developer Journal</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/s/o/b/Legacy%7ESobiwan_bf8d.html" title="Legacy:Sobiwan">Legacy:Sobiwan</a></span></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Laser_Glow"><span class="tocnumber">1</span> <span class="toctext">Laser Glow</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_idea"><span class="tocnumber">1.1</span> <span class="toctext">The idea</span></a></li>
+<li class="toclevel-2"><a href="#Using_particles"><span class="tocnumber">1.2</span> <span class="toctext">Using particles</span></a></li>
+<li class="toclevel-2"><a href="#Examples_of_a_glow"><span class="tocnumber">1.3</span> <span class="toctext">Examples of a glow</span></a></li>
+<li class="toclevel-2"><a href="#Variable_Type:_Object"><span class="tocnumber">1.4</span> <span class="toctext">Variable Type: Object</span></a></li>
+<li class="toclevel-2"><a href="#Shockbeam_may_be_The_Answer"><span class="tocnumber">1.5</span> <span class="toctext">Shockbeam may be The Answer</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Laser_Glow" id="Laser_Glow"></a></p>
+<h2><span class="mw-headline">Laser Glow</span></h2>
+<p>Brainstormed an idea to create a fake glow for a big laser in <a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT%29_523c.html" title="Category:Legacy Class (UT)">UT</a>.</p>
+<p><a name="The_idea" id="The_idea"></a></p>
+<h3><span class="mw-headline">The idea</span></h3>
+<ul>
+<li>This particular laser is a vertical tube.</li>
+<li>The glow should always be drawn on the left, right, top and bottom sides of the laser.</li>
+</ul>
+<p><a name="Using_particles" id="Using_particles"></a></p>
+<h3><span class="mw-headline">Using particles</span></h3>
+<ul>
+<li>create a particle system</li>
+<li>the particles traverse the edge of vertical tube laser</li>
+<li>the particles can animate positions and color</li>
+<li>this would look cool</li>
+<li>it would still need to always face the viewer</li>
+<li>perhaps position the particle</li>
+</ul>
+<p>I noticed shockbeam.uc uses particles.</p>
+<p><b>Foxpaw:</b> If you just make a big sprite, you should be able to get the effect you described with less overhead than the methods described above. Just place an actor, set itt's DrawType to DT_Sprite, and assign an appropriate texture to it's Texture variable. You can set the drawscale3d of it if you need to stretch it as well. I believe (but have not tested) that this would be compatible with all types of materials too, if you wanted to use some texpanners or something to make the glow a bit more dynamic.</p>
+<p><b>Sobiwan:</b> I failed to mention that I already tried that. &#160;:) A sprite <b>always</b> displays straight on (as it should), so as soon as I tilted my view, the perspective of the laser tube skewed (as it should) but the fake glow spite did not. I need the glow sheet to skew on Z but not on X and Y. This is only because its a vertical laser. If it were horizontal or angular, I would have to try something else.</p>
+<p><b>Foxpaw:</b> I'm not sure I'm visualizing the same thing. Is this laser the same width from every angle or is it like a flat type of laser? Can you upload an image of what it looks like and what effect you are trying to get?</p>
+<p><b>Sobiwan:</b> I can upload an image. I still havent figured out how to describe this easily even though its a simple thing. Its the typical laser effect in sci-fi films. I dont have an image, but for the moment, here is a top down ASCII art description of what I want to accomplish:</p>
+<p>-O-</p>
+<ul>
+<li>laser core (the white hot center) is a tube (the O)</li>
+<li>laser core is vertical (it originates from a machine)</li>
+<li>I'd like to add a glow fringe around the core, viewable from any angle</li>
+<li>Faking it in UT is tricky because:
+<ul>
+<li>there is no 'glow fringe' script</li>
+<li>particles surrounding the tube are implemented through an external uscript that I havent analyzed</li>
+<li>a single sheet works (the - above), but only from one angle</li>
+</ul>
+</li>
+<li>I'd like the sheet to always face the player so the fake glow effect is never lost</li>
+<li>I want to avoid using 'volumetric' sheets because volumetrics look tacky</li>
+</ul>
+<p><b>Foxpaw:</b> So you want the flat planar "glow" to always face the player? It sounds like a sprite would work but I'll take your word for it that it didn't.&#160;:P If you want to get all fancy about it you could make a flat mesh with the glow on it, and have it track the local players rotation. Alternatively, (this would use more processing power), you COULD surround the laser with zone portals and assign the zone some distance fog.</p>
+<p><b>Sobiwan:</b> Sprite didnt work even though it always faces the viewer. As you say, I want the flat mesh (sheet) to always face the player... except that performs perspective skewing. &#160;:)</p>
+<p><b>Sobiwan:</b> <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Vector_Maths_8a03.html" title="Legacy:UnrealScript Vector Maths">UnrealScript Vector Maths</a> has a ton of useful nuggets for player view positions, etc that relates here, so I'm sticking it in this journal for future reference.</p>
+<p>I also did a little test with <a href="http://www.planetunreal.com/slick" class="external text" title="http://www.planetunreal.com/slick" rel="nofollow">Slick Willy's</a> particle system found in Houroces' DM-Axxon. I shot a bunch of particles with the ADSR ball texture straight down really fast. It looked OK, but you could still tell it was a bunch of sprites, even with a white cylindrical nonsolid core in the middle. The stream isnt perfect either; there are some occasioanl gaps, so I guess the uscript is calling a random function. I'll eventually be able to dissect uscript, but at this point I dunno.</p>
+<p>One thing I couldnt figure out is why textureloop lighting emitting from the nonsolid worked in Ued2 but not in UT.</p>
+<p><b>Sobiwan:</b> Wait a sec.. you said flat <b>mesh</b>. Silly moi! Of course; that might behave differently than a brush. I'll look into that.</p>
+<p><b>Foxpaw:</b> You should be keep the mesh always facing you by something like SetRotation( Rotator( Location - Player.Location ) ); Player of course would have to point to the local playerpawn, but I don't remember how to go about finding which pawn is the local playerpawn in UT.</p>
+<p><b>Sobiwan:</b> Thanks FoxPaw! I was just <a href="http://planetunreal.com/wod/tutorials/vectors.htm" class="external text" title="http://planetunreal.com/wod/tutorials/vectors.htm" rel="nofollow">learning about rotators at WOD</a> and came to the same conclusion. In it, the author says:</p>
+<blockquote class="legacyquote">
+<p>Like vectors, (Rotators are) also structs with three float components: pitch, yaw, and roll. These three values are angles that can describe any rotational direction in 3D space. Pitch is up and down, yaw is side to side, and roll is...</p>
+</blockquote>
+<p>So if I control the Yaw to always be straight on to the viewer and the pivot point on the mesh is set in the center of the laser, it should always face the viewer. Only problem with my approach is it would only work for vertical lasers. It would be nice if it worked for lasers on any vector angle.</p>
+<p><b>Sobiwan:</b> Rather than draw the laser and its glow as a brush or mesh, what if I could define the start and end points of the laser with an actor and let the script draw the core and glow between the start and end points? For that matter, it would be similar to the pulse rifle in alt mode...</p>
+<p>Only problem with this approach is actors are slower than 3D BSP or meshes unless someone can tell me otherwise.</p>
+<p><b>Foxpaw:</b> Meshes are actors. In UT2003 there are "staticmeshactors" which are a stripped down version of actor so they don't use as much resources, but in UT meshes are just actors that don't do anything.</p>
+<p>Having said that, I don't believe that there is a feasable way to have an actor draw something like that. You can have actors draw onto the screen in PostRender, but it will be drawn over top of any BSP and whatnot that should be in front of it. That's why generally it's only good for things like the HUD which always overlaps the level. The pulse rifle in alt-fire mode is actually a beam-shaped volumetric mesh, which you've already indicated you don't want to use.&#160;:P</p>
+<p>Have you considered having a cylindrical brush around your laser that has it's faces flagged as transparent? I don't know if that would get the effect you were going for, but maybe it would.</p>
+<p>Alternatively, you could stick with the scripted actor idea like I mentioned. It is quite possible to have an actor pivot around only one axis to face you. There's three ways that you could feasably do that. 1 way would be to use <a href="../../../../articles/q/u/a/Legacy%7EQuaternion_eb92.html" title="Legacy:Quaternion">Quaternions</a>. Another way would be to set the actor's bRotateToDesired to true, set the actors rotationrate around one axis really high, and then set the desiredrotation to always face the player using the script I mentioned above. This will cause it to rotate around only one axis, but you will need to set that axis in the editor. You can set bDirectional to true on it as well to help you line up the axis. The third way is to use a coordinate rotation to strip off two of the axes, but I can't remember the script for that off the top of my head. My mod uses it to determine the direction that turrets should rotate, so I know it can be done that way. The other two methods should also work quite well. My personal recommendation would be to use #2, because it would be very low-impact on the processor (though all of these are miniscule compared to the amount of processing the graphics does, so you won't notice any drop in framerate either way.</p>
+<p><b>Sobiwan:</b> Didnt know pulse rifle was volumetric, so we'll toss that out. &#160;:)</p>
+<p>I tried a transparent cylinder for the glow around the core cylinder. I also made it fog. Problem with both of those is the edge of the cylinder is a hard line and I want a soft gradient outward from the core cylinder. No mesh can do that... except for the the mesh sheet you mentioned.</p>
+<p>I'll read up on how the items in your previous paragraph works because they are currently beyond my understanding. I do appreciate your sharing knowledge; its giving me a direction to go in.</p>
+<p><b>Sobiwan:</b> Graphics demonstration time:</p>
+<p>@left@laser.glow1 2 mesh vertical laser glow</p>
+<p>This shows a white 'laser core' cylinder in the center with 2 non-collidable meshes on each side with a glow texture. Problems with this is the top and bottom need to glow too. It would look tacky with objects colluding the top and bottom, let alone residing in open space.</p>
+<p>@left@laser.glow2 4 mesh vertical laser glow</p>
+<p>The glow on the top and bottom are desirable. Only way I can figure is to add 2 more meshes with glow textures on them.</p>
+<p>@left@laser.glow3 2 mesh skewed laser glow</p>
+<p>Again, the top and bottom are missing, but note that the mesh sheets skew with the laser cylinder.</p>
+<p>@left@laser.glow4 4 mesh skewed laser glow</p>
+<p>With the top and bottom added and skewed, it looks great!</p>
+<p>@left@laser.glow5 4 mesh skewed laser glow colluded</p>
+<p>But wait! As soon as an object is drawn in front of it, the bottom glow is colluded! Arrrg!</p>
+<p>@left@laser.glow6 4 mesh skewed laser glow correct</p>
+<p>The holy grail: making the meshes drawn in front of colluding objects. Dont tell me this can only be done internally in 3D cards with Transform &amp; Lighting! There <i>must</i> be a way to do this in Unreal!</p>
+<p><b>Foxpaw:</b> So does that mean that you want the glow to be visible as long as the beam is? Kind of like how coronas in UT2003 can be overlapped partially by geometry and still be shown?</p>
+<p><b>Mychaeel:</b> Use Canvas.DrawActor in PostRender.</p>
+<p><b>Foxpaw:</b> I don't think it's quite that simple, I doubt he wants the whole square glow to be shown if you can only see a sliver of the beam. I think you'd probrably have to compute what parts of the beam are visible, then trace out that shape on the canvas.</p>
+<p><b>Sobiwan:</b> Thanks! Yes, it would be similar to corona. I didnt consider what would happen if an object were to partially collude the left or right side, in which case Foxpaw would be right: the overlap glow would have to extend partially past the occluding object's top and bottom edge. Another sheet, methinks.</p>
+<p><b>Foxpaw:</b> Hmm, if I'm thinking what you're thinking, there may be a way to do it ut it would be fairly expensive in terms of processor cycles. You COULD make a scripted raytracing thingy for the beam, but that would involve numerous traces every frame, which might have an impact on framerate.</p>
+<p><b>Sobiwan:</b> I dont want to use a trace for the glow edge if I can help it. The glow is really a 2D effect on the camera lens after the 3D scene has been rendered. Maybe this is what PostRender does? Im still learning it.</p>
+<p><a name="Examples_of_a_glow" id="Examples_of_a_glow"></a></p>
+<h3><span class="mw-headline">Examples of a glow</span></h3>
+<p>Found a website that shows images of what I want to accomplish:</p>
+<p><a href="http://graphics.stanford.edu/courses/cs348b-competition/cs348b-03/glare/" class="external free" title="http://graphics.stanford.edu/courses/cs348b-competition/cs348b-03/glare/" rel="nofollow">http://graphics.stanford.edu/courses/cs348b-competition/cs348b-03/glare/</a></p>
+<p>Notice the glow doesnt clip away; rather its transparency (and color?) fades around an object as the object occludes the glow and light source. This is the effect I want.</p>
+<p>If the glow actor was tagged with the name of the geometry object (the laser), the engine could handle occlusion, leaving the glow actor' function to make a larger outline of the object and render the effect from the outline to the object. Only problem with this is how to handle faded glow from objects occluding the light source.</p>
+<p><b>Foxpaw:</b> What if you just used actual coronas? Would that work?</p>
+<p><b>Sobiwan:</b> I dont think it would because a corona is just drawing a sprite; sprites dont skew perspective; it has to be a mesh or an outline rendered after the scene. Incidentally, someone said the Tesla laser in Operation Na Pali does what I want, so I am checking that.</p>
+<p><b>Foxpaw:</b> I just finished playing it actually, I don't believe that's what you're looking for. What I was thinking about the corona is instead of having a single corona, you could put a bunch of lights at small intervals along the laser, each with it's own circular corona. The coronas could then blend together to form a bar-ish shape. Not sure if you could get that to work like you want it to or not.</p>
+<p><b>Sobiwan:</b> You are right; Na Pali does not have the laser I want. It uses the pulse laser rifle method: volumetric brush. &#160;:( However, its code could be useful, so I'll keep it around. Stacking coronas is a good idea; its similar to the particle sprayer emitting sprites method I tried earlier... except the coronas wouldn't move.</p>
+<p><b>Sobiwan:</b> I've tracked down the function drawactor in <a href="../../../../articles/c/a/n/Legacy%7ECanvas_%28UT%29_f2ed.html" title="Legacy:Canvas (UT)">Canvas (UT)</a>, but postrender is not a subclass of canvas, so I dont understand how that is supposed to work. I've scoured through the WIKI, all the script subsites at planetunreal, the forums... I just dont get it. Please help.</p>
+<p><b>Wormbo:</b> PostRender() is a function in several classes, e.g. HUD. That function's parameter is a Canvas object you can use to draw stuff on the screen.</p>
+<p><b>Sobiwan:</b> I see that PostRender() is in Console, Weapon, Pawn, HUD, and Mutator, but I dont think thats where this effect belongs. Its an actor, but there is no PostRender function in Actor; I can only guess its not in any actor subclasses either. This must be so easy that I dont understand. &#160;:(</p>
+<p>BTW, thanks for defining the params on Drawactor. ClearZ sounds like it will override occlusion nicely.</p>
+<p><b>Sobiwan:</b> Knowing that both the glow and laser core must be non solids, I have to make it one object if they are to touch edges. So how can I make the glow width to be independently user configurable, but the laser core to automatically determine its length when it hits a solid or semi-solid?</p>
+<p><b>Foxpaw:</b> Unfortunately, you can't scale meshes non-uniformly in UT, so if you make the beam longer dynamically like that, it will get proportionally wider too. Also, if one or both is going to be an actor, the non-solid thing doesn't apply. Actors don't use CSG geometry so the concept of solid/non-solid/semi-solid does not apply to them.</p>
+<p><b>Sobiwan:</b> Krikes, I shoulda known meshes dont have the same CSG rules applied.</p>
+<p><a name="Variable_Type:_Object" id="Variable_Type:_Object"></a></p>
+<h3><span class="mw-headline">Variable Type: Object</span></h3>
+<p>I've been dissecting laserbeam.uc from Operation Na Pali as it is similar to what I want and I hit a brick wall. even after conferring with WIKI. The class flow for this is: Actor -&gt; Projectile -&gt; TeslaBolt -&gt; LaserBeam.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> PlasmaCap BackWallEffect;  <span class="co1">//defined in laserbeam </span>
+<span class="kw5">var</span> PlasmaCap WallEffect;      <span class="co1">//defined in Teslabeam</span>
+</pre></div>
+<p>If I'm reading this right, BackWallEffect and WallEffect are object variables of PlasmaCap, but I dont see where PlasmaCap is defined. Can anyone help clarify? I can post all the code if necessary.</p>
+<p><a name="Shockbeam_may_be_The_Answer" id="Shockbeam_may_be_The_Answer"></a></p>
+<h3><span class="mw-headline">Shockbeam may be The Answer</span></h3>
+<p>Upon looking at Shockbeam, I found it is a mesh that appears to use a texture on vertex as a particle. It looks good, it has a glow edge, it can even animate. Only problem is objects in front occlude it, preventing the glow to spill in front (per the image). Arrgg!</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 309/2097152 bytes
+Template argument size: 239/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/o/b/Legacy%7ESobiwan_Developer_Journal_6f34.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/o/b/Legacy_talk%7ESobiwan_Developer_Journal_feda.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Sobiwan/Developer_Journal">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:35, 9 October 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

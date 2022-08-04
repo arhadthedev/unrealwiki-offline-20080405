@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Modifying Vehicle Weapons/Discussion - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Modifying Vehicle Weapons/Discussion</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EModifying_Vehicle_Weapons_a8e7.html" title="Legacy:Modifying Vehicle Weapons">Legacy:Modifying Vehicle Weapons</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><b>LionsPhil:</b> Wouldn't subclassing the vehicle be a much better approach? I've now tested it, and you can do it with a very minimalist class – here's a trivial one which defines a Scorpion with a Goliath's main gun (!):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ONSRVArmouredCar <span class="kw5">extends</span> ONSRV;
+<span class="kw1">defaultproperties</span> <span class="br0">{</span>
+  DriverWeapons<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>WeaponClass=<span class="kw5">class</span><span class="st0">'Onslaught.ONSHoverTankCannon'</span>,WeaponBone=ChainGunAttachment<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Not only is this less work, it's the Right Thing from an OO perspective, and will continue to track any changes (bugfixes!) or additions Epic make to ONSRV.</p>
+<p><b>Blip2:</b> I agree, for small changes but bigger changes (and ones where you take out code) you would need to create a completely new vehicle - I will build it in later</p>
+<p><b>Swifty:</b> The above code didn't work when I tried it. Having been unable to summon it ingame, I tried placing it straight into a map in UnrealEd. It appeared fine in all views of UnrealEd, yet when I ran the map, it simply wasn't there. No collision, no shadow, no nothing. Any ideas why? Pretty sure I haven't mistyped the code or anythign dumb like that&#160;:P</p>
+<p><b>Blip2:</b> what were you typing to try to summon it? and how would you just place it - its code and is not placeable? or did you write an onsfactory for it too?</p>
+<p><b>AlexKotsch:</b> I'm new to the Wiki and Programming, but I still have a suggestion. You can make any primary vehicle weapon into a secondary (pawn), to do this, make a new file (eg. ONSHoverTankCannonPawn) copy this code and replace HoverTankCannon with the weapon name of your choice, and change the strings if you want.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> ONSHoverTankCannonPawn <span class="kw5">extends</span> ONSWeaponPawn;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     GunClass=<span class="kw5">Class</span><span class="st0">'MyPackage.ONSHoverTankCannon'</span>
+     CameraBone=<span class="st0">"TankTurret"</span>
+     bDrawDriverInTP=<span class="kw9">False</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span>Y=<span class="nu0">-365.000000</span>,Z=<span class="nu0">200.000000</span><span class="br0">)</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span>Y=<span class="nu0">365.000000</span>,Z=<span class="nu0">200.000000</span><span class="br0">)</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span>Y=<span class="nu0">-365.000000</span>,Z=<span class="nu0">-100.000000</span><span class="br0">)</span>
+     ExitPositions<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="br0">(</span>Y=<span class="nu0">365.000000</span>,Z=<span class="nu0">-100.000000</span><span class="br0">)</span>
+     EntryPosition=<span class="br0">(</span>Z=<span class="nu0">-150.000000</span><span class="br0">)</span>
+     EntryRadius=<span class="nu0">130.000000</span>
+     FPCamViewOffset=<span class="br0">(</span>X=<span class="nu0">5.000000</span>,Z=<span class="nu0">35.000000</span><span class="br0">)</span>
+     TPCamDistance=<span class="nu0">100.000000</span>
+     TPCamLookat=<span class="br0">(</span>X=<span class="nu0">0.000000</span>,Z=<span class="nu0">110.000000</span><span class="br0">)</span>
+     DriverDamageMult=<span class="nu0">0.100000</span>
+     VehiclePositionString=<span class="st0">"in a Tank Turret"</span>
+     VehicleNameString=<span class="st0">"Tank Turret"</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Also make the camera bone the same as the GunnerAttachmentBone in the ONSWeapon code (eg. ONSHoverTankCannon), which you have to add. The bone is the same as the YawBone and goes under default properties.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     YawBone=<span class="st0">"TankTurret"</span>
+     PitchBone=<span class="st0">"TankBarrel"</span>
+     PitchUpLimit=<span class="nu0">6000</span>
+     PitchDownLimit=<span class="nu0">61500</span>
+     WeaponFireAttachmentBone=<span class="st0">"TankBarrel"</span>
+     GunnerAttachmentBone=<span class="st0">"TankTurret"</span>          <span class="co1">//make this one.</span>
+     WeaponFireOffset=<span class="nu0">200.000000</span>
+</pre></div>
+<p>Dont forget to save the edited ONSWeapon in a different file (eg. MyPackage/Classes).</p>
+<p>It worked for me, I made a Hummer H5 Mad Max Version, it has a Goliath Cannon Turret on the top of it.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EModifying_Vehicle_Weapons_Discussion_dea4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EModifying_Vehicle_Weapons_Discussion_01d0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Modifying_Vehicle_Weapons/Discussion">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:42, 22 January 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

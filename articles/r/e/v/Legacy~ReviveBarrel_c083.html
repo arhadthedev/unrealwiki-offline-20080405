@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:ReviveBarrel - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:ReviveBarrel</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Extending" id="Extending"></a></p>
+<h2><span class="mw-headline">Extending</span></h2>
+<p>A respawning barrel.</p>
+<p>Remaining problems:</p>
+<ul>
+<li>no effect of any kind when the barrel reappears. You might want some sort of swishy wizz or something</li>
+<li>you can be standing where the barrel really is when it reappears, and then you're sort of inside it</li>
+</ul>
+<p>To use this script in your map: <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create A Subclass</a>.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// ReviveBarrel.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> ReviveBarrel <span class="kw5">extends</span> Barrel;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> TimeToRespawn;
+<span class="kw5">var</span> <span class="kw4">int</span> InitialHealth;
+ 
+<span class="kw5">function</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw6">super</span>.<span class="me1">PreBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+  InitialHealth = Health;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Vanish<span class="br0">(</span><span class="kw4">bool</span> bVanish<span class="br0">)</span>
+<span class="br0">{</span>
+  bHidden = bVanish;
+  bBlockActors = !bVanish;
+  bBlockPlayers = !bVanish;
+  bProjTarget = !bVanish;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Frag<span class="br0">(</span>class&lt;fragment&gt; FragType, <span class="kw4">vector</span> Momentum, <span class="kw4">float</span> DSize, <span class="kw4">int</span> NumFrags<span class="br0">)</span> 
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> A, Toucher;
+  <span class="kw5">local</span> Fragment s;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> bOnlyTriggerable <span class="br0">)</span>
+    <span class="kw1">return</span>; 
+  <span class="kw1">if</span> <span class="br0">(</span><span class="kw5">Event</span>!=<span class="st0">''</span><span class="br0">)</span>
+    <span class="kw1">foreach</span> AllActors<span class="br0">(</span> <span class="kw5">class</span> <span class="st0">'Actor'</span>, A, <span class="kw5">Event</span> <span class="br0">)</span>
+      A.<span class="me1">Trigger</span><span class="br0">(</span> Toucher, <a href="/Pawn"><span class="kw10">pawn</span></a><span class="br0">(</span>Toucher<span class="br0">)</span> <span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> Region.<span class="me1">Zone</span>.<span class="me1">bDestructive</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    Destroy<span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw1">return</span>;
+  <span class="br0">}</span>
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span> ; i&lt;NumFrags ; i++<span class="br0">)</span> 
+  <span class="br0">{</span>
+    s = Spawn<span class="br0">(</span> FragType, Owner<span class="br0">)</span>;
+    s.<span class="me1">CalcVelocity</span><span class="br0">(</span>Momentum,<span class="nu0">0</span><span class="br0">)</span>;
+    s.<span class="me1">DrawScale</span> = DSize*<span class="nu0">0.5</span><span class="nu0">+0.7</span>*DSize*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+ 
+  <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Absent'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Absent 
+<span class="br0">{</span>
+Begin:
+  Health = InitialHealth; <span class="co1">// restore health</span>
+  Vanish<span class="br0">(</span><span class="kw9">true</span><span class="br0">)</span>;
+ 
+  Sleep<span class="br0">(</span> TimeToRespawn <span class="br0">)</span>;
+ 
+  Vanish<span class="br0">(</span><span class="kw9">false</span><span class="br0">)</span>;
+ 
+  <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Animate'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><b>Wormbo:</b> You should toggle bHidden instead of changing the DrawType.</p>
+<p><b>Tarquin:</b> Thanks&#160;:) Had to sort out blocking as well. Mych will not like me calling that function Vanish() but I can't think of a better name&#160;:(</p>
+<p><b>Wormbo:</b> What about "SetVisibility" or "SetHidden"?</p>
+<p><b>Tarquin:</b> Great! Thanks&#160;:)</p>
+<p><b>Foxpaw:</b> It might not hurt to have both, sort of. It's a little bit of overhead at the interpreter level, but not that big of a deal. In my GUI classes I use a SetHidden function, then a Show and Hide function that are just one-line functions that call SetHidden( false ) and SetHidden( true ) respectively. Effectively it's the same, but I guess it kind of helps the readability. If you're into that sort of thing.&#160;:D</p>
+<p><b>Tarquin:</b> I was thinking this could make a tutorial about subclassing and states, but it's not very neat what with inheriting one state from Barrel and a load of code from Decoration. So I guess for SetHidden it's a case of what's clearest for people to read. Your idea of Show() just being a call to setHidden is neat, but I don't know how easy to grasp it would be.</p>
+<p><b>Dirk Fist:</b> I call that a wrapper function, and it can greatly increase the readability of complex code. Although its impact here is minimal. If you put the definition of Hide() and Show() immediately above SetHidden() the relationship is clear to anyone that looks.</p>
+<p><b>xX)(Xx:</b> Doesnt appear to work for some reason</p>
+<p><b>MythOpus:</b> I do believe this script can be used only for Unreal 1 and MAYBE Unreal Tournament. Anything higher than those games wouldn't have the class 'Barrel'.</p>
+<p><b>Bullet:</b> And what about replication here? Don't we need to replicate the two new variables?</p>
+<p><b>Wormbo:</b> No, damage and respawning is handled on the serverside.</p>
+<p><b>LionsPhil:</b> Pedantically, unless UT's interpreter does automatic inlining of functions (and maybe it does – it's got to be fairly optimised, and possibly optimising), the Hide()/Show() wrappers will add an extra stack frame when calling and cause a <i>tiny</i> performance hit. This is probably not measurable, however.</p>
+<p><b>Foxpaw:</b> It doesn't automatically make functions inline - doing so would prevent polymorphism from working properly. An eye toward polymorphism is possibly why it was implemented that way, plus it looks a bit cleaner, I guess. Technically if you did put those functions inline you could replace the variable lookups with constant values and then eliminate the inversion operations too. However, in this instance we are looking at something a function that will get called at most once in a few seconds, and the runtime of it as-is is in the nanoseconds.</p>
+<p>Personally I would probrably optimize it, but for this page, I think that readability to novice coders is more important than the speed gain.</p>
+<p><b>AlexKotsch</b> I made a respawning barrel and it doesn't have the problem of being inside the barrel</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">//</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> DECO_Barrel <span class="kw5">extends</span> DECO_Smashable;
+ 
+<span class="kw2">#exec</span> OBJ LOAD FILE=..\StaticMeshes\ONS-BPJW1.<span class="me1">usx</span>
+ 
+<span class="co1">//=============================================================================</span>
+<span class="co1">// defaultproperties</span>
+<span class="co1">//=============================================================================</span>
+ 
+<span class="kw5">var</span>   <span class="kw4">float</span>    Damage;
+<span class="kw5">var</span>      <span class="kw4">float</span>           DamageRadius;
+<span class="kw5">var</span>   <span class="kw4">float</span>      MomentumTransfer;
+<span class="kw5">var</span>   class&lt;DamageType&gt;     MyDamageType;
+<span class="kw5">var</span> <span class="kw4">int</span> Ted;
+<span class="kw5">var</span> <span class="kw4">int</span> MaxTed;
+<span class="kw5">var</span> <span class="kw4">float</span> TedRate;
+ 
+  <span class="kw5">function</span> BreakApart<span class="br0">(</span><span class="kw4">vector</span> HitLocation, <span class="kw4">vector</span> momentum<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">// If we are single player or on a listen server, just spawn the actor, otherwise</span>
+        <span class="co1">// bHidden will trigger the effect</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Level</span>.<span class="kw8">NetMode</span> == <span class="kw9">NM_ListenServer</span> || <span class="kw8">Level</span>.<span class="kw8">NetMode</span> == <span class="kw9">NM_StandAlone</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>EffectWhenDestroyed!=<span class="kw9">None</span> <span class="br0">)</span> &amp;&amp; EffectIsRelevant<span class="br0">(</span>location,<span class="kw9">false</span><span class="br0">)</span> <span class="br0">)</span>
+                        Spawn<span class="br0">(</span> EffectWhenDestroyed, Owner,, Location <span class="br0">)</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw7">gotostate</span><span class="br0">(</span><span class="st0">'Exploding'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">state</span> Exploding
+<span class="br0">{</span>
+        <span class="kw5">function</span> <span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw6">super</span>.<span class="kw7">BeginState</span><span class="br0">(</span><span class="br0">)</span>;
+                PlaySound<span class="br0">(</span><a href="/sound"><span class="kw10">sound</span></a><span class="st0">'WeaponSounds.BExplosion3'</span>,,<span class="nu0">2.5</span>*TransientSoundVolume<span class="br0">)</span>;
+                Ted = <span class="nu0">1</span>;
+                   SetTimer<span class="br0">(</span>TedRate, <span class="kw9">true</span><span class="br0">)</span>;
+                   Timer<span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+ 
+                        <span class="br0">}</span>
+ 
+ <span class="kw6">simulated</span> <span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                Ted = Ted++;
+                <span class="kw1">if</span> <span class="br0">(</span>Ted == MaxTed<span class="br0">)</span>
+                <span class="br0">{</span>
+                        SetTimer<span class="br0">(</span><span class="nu0">0.0</span>, <span class="kw9">false</span><span class="br0">)</span>;
+                                BlowUp<span class="br0">(</span>Location<span class="br0">)</span>;
+                <span class="br0">}</span>
+                  <span class="br0">}</span>
+ 
+<span class="kw5">function</span> BlowUp<span class="br0">(</span><span class="kw4">vector</span> Location<span class="br0">)</span>
+<span class="br0">{</span>
+        HurtRadius<span class="br0">(</span>Damage, DamageRadius, MyDamageType, MomentumTransfer, Location <span class="br0">)</span>;
+                <span class="kw7">gotostate</span><span class="br0">(</span><span class="st0">'Broken'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     MaxTed=<span class="nu0">15</span>
+     TedRate=.<span class="nu0">025</span>
+     bImperviusToPlayer=<span class="kw9">False</span>
+     EffectWhenDestroyed=<span class="kw5">Class</span><span class="st0">'UT2k4Assault.FX_ExplodingBarrel'</span>
+     Health=<span class="nu0">50</span>
+     DrawType=DT_StaticMesh
+     StaticMesh=StaticMesh<span class="st0">'AS_Decos.ExplodingBarrel'</span>
+     DamageRadius=<span class="nu0">90.000000</span>
+     Damage=<span class="nu0">90.000000</span>
+     MomentumTransfer=<span class="nu0">50000.000000</span>
+     MyDamageType=<span class="kw5">Class</span><span class="st0">'XWeapons.DamTypeRocket'</span>
+     PrePivot=<span class="br0">(</span>Z=<span class="nu0">40.000000</span><span class="br0">)</span>
+     AmbientGlow=<span class="nu0">48</span>
+     CollisionRadius=<span class="nu0">25.000000</span>
+     CollisionHeight=<span class="nu0">32.000000</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 24/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/v/Legacy%7EReviveBarrel_c083.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/v/Legacy_talk%7EReviveBarrel_0da4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:ReviveBarrel">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 16:51, 18 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

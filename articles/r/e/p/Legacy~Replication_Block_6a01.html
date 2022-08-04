@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Replication Block - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Replication Block</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>In <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a> <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class Syntax</a>, the <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">replication</a> block specifies which of the variables and/or functions declared in a class are replicated. It is optional and only variables and functions mentioned in this block are actually replicated. Variables of a class that aren't mentined are initialized with their default values on clients.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Syntax"><span class="tocnumber">1</span> <span class="toctext">Syntax</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Replication_condition"><span class="tocnumber">1.1</span> <span class="toctext">Replication condition</span></a></li>
+<li class="toclevel-2"><a href="#Identifiers"><span class="tocnumber">1.2</span> <span class="toctext">Identifiers</span></a></li>
+<li class="toclevel-2"><a href="#Reliable_and_Unreliable"><span class="tocnumber">1.3</span> <span class="toctext">Reliable and Unreliable</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Examples"><span class="tocnumber">2</span> <span class="toctext">Examples</span></a></li>
+<li class="toclevel-1"><a href="#Useful_Replication_Properties"><span class="tocnumber">3</span> <span class="toctext">Useful Replication Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Variables_only_valid_during_replication"><span class="tocnumber">3.1</span> <span class="toctext">Variables only valid during replication</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Only_UT"><span class="tocnumber">3.1.1</span> <span class="toctext">Only UT</span></a></li>
+<li class="toclevel-3"><a href="#Only_UT2003"><span class="tocnumber">3.1.2</span> <span class="toctext">Only UT2003</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Other_Useful_Variables"><span class="tocnumber">3.2</span> <span class="toctext">Other Useful Variables</span></a>
+<ul>
+<li class="toclevel-3"><a href="#In_UT"><span class="tocnumber">3.2.1</span> <span class="toctext">In UT</span></a></li>
+<li class="toclevel-3"><a href="#In_UT2003"><span class="tocnumber">3.2.2</span> <span class="toctext">In UT2003</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Syntax" id="Syntax"></a></p>
+<h2><span class="mw-headline">Syntax</span></h2>
+<pre>
+<b>replication</b>
+<b>{</b>
+  <i>reliable/unreliable</i> <b>if (</b> <i>replication condition</i> <b>)</b>
+    <i>identifiers</i>;
+<b>}</b>
+</pre>
+<p><a name="Replication_condition" id="Replication_condition"></a></p>
+<h3><span class="mw-headline">Replication condition</span></h3>
+<p>The replication condition is a boolean expression which tells the engine when something should be replicated to a remote machine. You can use functions in this expression, but it really isn't recommended because it will slow things down and can cause undesireable results. Usually the expressions are simple and based around the replication properties listed below.</p>
+<p><a name="Identifiers" id="Identifiers"></a></p>
+<h3><span class="mw-headline">Identifiers</span></h3>
+<p>The <i>identifiers</i> part is a comma-separated list of variables or functions for replication. An identifier can appear only once in the whole replication block, so cannot have different replication properties based on some condition. You cannot override replication conditions like you can functions and states. This also applies to functions and properties that don't appear in the replication block and thus have an empty replication condition.</p>
+<p><a name="Reliable_and_Unreliable" id="Reliable_and_Unreliable"></a></p>
+<h3><span class="mw-headline">Reliable and Unreliable</span></h3>
+<p>Understanding this lets you optimize your network usage.</p>
+<p>All replicated <i>variables</i> are reliable: They are all guaranteed to reach the client, even if they may arrive in the wrong order.</p>
+<p><b>Note:</b> Pawns have code that prevent them from appearing jumpy, although the effects of this can still be seen at times when the player bounces back and forth in a somewhat laggy game.....location updates are being received out of order.</p>
+<p>Replicated <i>functions</i> exist in both reliable and unreliable forms:</p>
+<p>A reliable function is guaranteed to reach the client. A reliable function is repeatedly sent over the network until the client acknowledges it. This can lead to a one second delay or more if it has to resend the message. Functions that are not called very frequently, and which will cause the user's experience to be unsatisfactory if missed, should be replicated reliably. BroadcastMessage and BroadcastLocalizedMessage, for example, are reliable to ensure that the user gets the message.</p>
+<p>An unreliable function simply results in a network message being sent, then the server is done. This is a lot lighter on network and server resources but if the network is heavily loaded the call might not take place on the client. The client's update to the server about its position is replicated unreliably: Since the client sends these updates to the server every single tick (in ServerMove, if you're wondering), it does not matter if some of them never reach the server. Since each update is timestamped, the server knows which ones to discard if they are out of order due to lag. In this scenario, the server can be assured of getting updates from the client, while not requiring that they ALL be sent.</p>
+<p>Since you don't want to bog down the network connection with reliable updates about where the client is looking or moving, unreliable is best in this situation. The server only needs to get <i>most</i> of them to work great.</p>
+<p><a name="Examples" id="Examples"></a></p>
+<h2><span class="mw-headline">Examples</span></h2>
+<p>Let's have a look at a typical replication block:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+  <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span> <span class="br0">)</span>
+    RemainingMinute, bStopCountDown, GameEndedComments,
+    NumPlayers;
+ 
+  <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span> bNetInitial &amp;&amp; <span class="br0">(</span><span class="kw8">Role</span>==<span class="kw9">ROLE_Authority</span><span class="br0">)</span> <span class="br0">)</span>
+    GameName, GameClass, bTeamGame, ServerName, ShortName, AdminName,
+    AdminEmail, Region, MOTDLine1, MOTDLine2, 
+    MOTDLine3, MOTDLine4,RemainingTime, ElapsedTime;
+<span class="br0">}</span>
+</pre></div>
+<p>This one defines two groups of replicated variables in the <a href="../../../../articles/g/a/m/Legacy%7EGameReplicationInfo_%28UT%29_b4b8.html" title="Legacy:GameReplicationInfo (UT)">GameReplicationInfo (UT)</a> class. Here you can already see the most important part of a replication condition, the actor's <a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a>. Either the Role or the RemoteRole is always present in a replication condition.</p>
+<p>Variables can only be replicated from the authorative version of an actor (i.e. from the server) to the clients. These replication conditions can become quite complex if it helps saving bandwidth, as this example from the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> (UT2003) class shows:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">unreliable</span> <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>!bSkipActorPropertyReplication || bNetInitial<span class="br0">)</span> &amp;&amp; bReplicateMovement
+      &amp;&amp; <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span><span class="kw8">RemoteRole</span> == <span class="kw9">ROLE_AutonomousProxy</span><span class="br0">)</span> &amp;&amp; bNetInitial<span class="br0">)</span>
+          || <span class="br0">(</span><span class="br0">(</span><span class="kw8">RemoteRole</span> == <span class="kw9">ROLE_SimulatedProxy</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>bNetInitial || bUpdateSimulatedPosition<span class="br0">)</span>
+              &amp;&amp; <span class="br0">(</span><span class="br0">(</span>Base == <span class="kw9">None</span><span class="br0">)</span> || Base.<span class="me1">bWorldGeometry</span><span class="br0">)</span><span class="br0">)</span>
+          || <span class="br0">(</span><span class="br0">(</span><span class="kw8">RemoteRole</span> == <span class="kw9">ROLE_DumbProxy</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span><span class="br0">(</span>Base == <span class="kw9">None</span><span class="br0">)</span> || Base.<span class="me1">bWorldGeometry</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span> <span class="br0">)</span>
+    Location;
+</pre></div>
+<p>So whether the location of an actor is replicated depends on the actor's <a href="../../../../articles/r/e/m/Legacy%7ERemoteRole_3565.html" class="mw-redirect" title="Legacy:RemoteRole">RemoteRole</a> and whether bReplicateMovement is True. The bSkipActorPropertyReplication can be used to cut down replication of actor class variables to only the initial replication.</p>
+<p><a name="Useful_Replication_Properties" id="Useful_Replication_Properties"></a></p>
+<h2><span class="mw-headline">Useful Replication Properties</span></h2>
+<p><a name="Variables_only_valid_during_replication" id="Variables_only_valid_during_replication"></a></p>
+<h3><span class="mw-headline">Variables only valid during replication</span></h3>
+<dl>
+<dt>bClientDemoNetFunc&#160;</dt>
+<dd>True if we're client-side demo recording and this call originated from the remote.</dd>
+<dt>bClientDemoRecording&#160;</dt>
+<dd>This machine is currently recording a clientside demo.</dd>
+<dt>bDemoRecording&#160;</dt>
+<dd>This machine is currently recording a demo.</dd>
+<dt>bNetInitial&#160;</dt>
+<dd>True during the first time all variables are replicated for this actor.</dd>
+<dt>bNetOwner&#160;</dt>
+<dd>True when the replication target is this actor's Owner.</dd>
+</dl>
+<p><a name="Only_UT" id="Only_UT"></a></p>
+<h4><span class="mw-headline">Only UT</span></h4>
+<dl>
+<dt>bNetFeel&#160;</dt>
+<dd>Player collides with/feels it in network play.</dd>
+<dt>bNetHear&#160;</dt>
+<dd>Player hears it in network play.</dd>
+<dt>bNetSee&#160;</dt>
+<dd>Player sees it in network play.</dd>
+<dt>bSimulatedPawn&#160;</dt>
+<dd>True if this is a <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> and simulated proxy.</dd>
+</dl>
+<p><a name="Only_UT2003" id="Only_UT2003"></a></p>
+<h4><span class="mw-headline">Only UT2003</span></h4>
+<dl>
+<dt>bDemoOwner&#160;</dt>
+<dd>Demo recording driver owns this actor.</dd>
+<dt>bNetDirty&#160;</dt>
+<dd>True when a property was changes since the last time it was replicated.</dd>
+<dt>bNetRelevant&#160;</dt>
+<dd>Actor is currently relevant. Only valid server side and only when replicating variables.</dd>
+<dt>bRepClientDemo&#160;</dt>
+<dd>The remote machine is currently recording a demo.</dd>
+<dt>Level.ReplicationViewer&#160;</dt>
+<dd>during replication, set to the playercontroller to which actors are currently being replicated</dd>
+<dt>Level.ReplicationViewTarget&#160;</dt>
+<dd>during replication, set to the viewtarget to which actors are currently being replicated</dd>
+</dl>
+<p><a name="Other_Useful_Variables" id="Other_Useful_Variables"></a></p>
+<h3><span class="mw-headline">Other Useful Variables</span></h3>
+<p><a name="In_UT" id="In_UT"></a></p>
+<h4><span class="mw-headline">In UT</span></h4>
+<dl>
+<dt>bClientAnim&#160;</dt>
+<dd>If True, AmbientSound and animations are replicated also to the owning client.</dd>
+</dl>
+<p><a name="In_UT2003" id="In_UT2003"></a></p>
+<h4><span class="mw-headline">In UT2003</span></h4>
+<p>These properties are used in the Actor class replication block.</p>
+<dl>
+<dt>bNoRepMesh&#160;</dt>
+<dd>Don't replicate the Mesh.</dd>
+<dt>bReplicateAnimations&#160;</dt>
+<dd>Whether SimAnim should be replicated.</dd>
+<dt>bReplicateInstigator&#160;</dt>
+<dd>Whether the Instigator should be replicated.</dd>
+<dt>bReplicateMovement&#160;</dt>
+<dd>Whether properties relevant for movement like Location, Rotation, Velocity, etc. should be replicated. Unlike bSkipActorPropertyReplication this also affects the initial replication.</dd>
+<dt>bSkipActorPropertyReplication&#160;</dt>
+<dd>Used by <a href="../../../../articles/r/e/p/Legacy%7EReplicationInfo_5a4c.html" title="Legacy:ReplicationInfo">ReplicationInfo</a> classes that don't need to know all the Actor class properties on the clients. When set to True only the initial replication replicates the Actor class properties.</dd>
+<dt>bUpdateSimulatedPosition&#160;</dt>
+<dd>Whether the actor's Location, Rotation and Velocity should be updated for Simulated Proxies.</dd>
+</dl>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/i/n/t/Legacy%7EIntroduction_To_Replication_fb0d.html" title="Legacy:Introduction To Replication">Introduction to Replication</a></li>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a></li>
+<li><a href="../../../../articles/r/o/l/Legacy%7ERole_a287.html" title="Legacy:Role">Role</a> and RemoteRole, and <a href="../../../../articles/n/e/t/Legacy%7ENetMode_2d06.html" title="Legacy:NetMode">NetMode</a>.</li>
+<li><a href="../../../../articles/n/e/t/Legacy%7ENetcode_Idioms_42a0.html" title="Legacy:Netcode Idioms">Netcode Idioms</a></li>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplicated_Function_d4c6.html" title="Legacy:Replicated Function">Replicated Function</a></li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>VitalOverdose</b> So are the first set of variables in the list only valid for ut2004?</p>
+<p><b>EricBlade:</b> I think lack of specific version means that they are valid for all versions..</p>
+<p><b>Wormbo:</b> You could have answered that question with a short search through the source code.</p>
+<p><b>Vitaloverdose</b> I thought it might need labling so the next person wouldnt have to.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 22/1000000
+Post-expand include size: 17/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/p/Legacy%7EReplication_Block_6a01.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/p/Legacy_talk%7EReplication_Block_9a01.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Replication_Block">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 04:57, 21 September 2007 by Anonymous user(s) of Unreal Wiki. Based on work by Unreal Wiki user(s) <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

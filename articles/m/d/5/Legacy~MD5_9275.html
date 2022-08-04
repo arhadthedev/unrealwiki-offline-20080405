@@ -1,0 +1,442 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:MD5 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:MD5</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>MD5 was developed by <a href="http://theory.lcs.mit.edu/~rivest/homepage.html" class="external text" title="http://theory.lcs.mit.edu/~rivest/homepage.html" rel="nofollow">Professor Ronald L. Rivest of MIT</a></p>
+<p>The MD5 algorithm takes as input a message of arbitrary length and produces as output a 128-bit "fingerprint" or "message digest" of the input. It is conjectured that it is computationally infeasible to produce two messages having the same message digest, or to produce any message having a given prespecified target message digest. The MD5 algorithm is intended for digital signature applications, where a large file must be "compressed" in a secure manner before being encrypted with a private (secret) key under a public-key cryptosystem such as <a href="../../../../articles/r/s/a/Legacy%7ERSA_5919.html" title="Legacy:RSA">RSA</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Code"><span class="tocnumber">1</span> <span class="toctext">Code</span></a></li>
+<li class="toclevel-1"><a href="#License"><span class="tocnumber">2</span> <span class="toctext">License</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">3</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Related_Articles"><span class="tocnumber">4</span> <span class="toctext">Related Articles</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Code" id="Code"></a></p>
+<h2><span class="mw-headline">Code</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="coMULTI">/** MD5 context */</span>
+<span class="kw4">struct</span> MD5_CTX
+<span class="br0">{</span>
+        <span class="coMULTI">/** state (ABCD) */</span>
+        <span class="kw5">var</span> array&lt;int&gt; <span class="kw5">state</span>;
+        <span class="coMULTI">/** number of bits, modulo 2^64 (lsb first) */</span>
+        <span class="kw5">var</span> array&lt;int&gt; count;
+        <span class="coMULTI">/** input buffer */</span>
+        <span class="kw5">var</span> array&lt;byte&gt; buffer;
+<span class="br0">}</span>;
+ 
+<span class="coMULTI">/** return the MD5 of the input string */</span>
+<span class="kw6">static</span> <span class="kw5">function</span> <span class="kw4">string</span> MD5String <span class="br0">(</span><span class="kw4">string</span> str<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> MD5_CTX context;
+        <span class="kw5">local</span> array&lt;byte&gt; digest;
+        <span class="kw5">local</span> <span class="kw4">string</span> Hex;
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        MD5Init <span class="br0">(</span>context<span class="br0">)</span>;
+        MD5Update <span class="br0">(</span>context, str, <span class="kw7">Len</span><span class="br0">(</span>str<span class="br0">)</span><span class="br0">)</span>;
+        digest.<span class="kw6">Length</span> = <span class="nu0">16</span>;
+        MD5Final <span class="br0">(</span>digest, context<span class="br0">)</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; <span class="nu0">16</span>; i++<span class="br0">)</span>
+                Hex = Hex $ DecToHex<span class="br0">(</span>digest<span class="br0">[</span>i<span class="br0">]</span>, <span class="nu0">1</span><span class="br0">)</span>;
+ 
+        <span class="kw1">return</span> Hex;
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/** initialize the MD5 context */</span>
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> MD5Init<span class="br0">(</span><span class="kw6">out</span> MD5_CTX context<span class="br0">)</span>
+<span class="br0">{</span>
+        context.<span class="me1">count</span>.<span class="kw6">Length</span> = <span class="nu0">2</span>;
+        context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="nu0">0</span>;
+        context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span> = <span class="nu0">0</span>;
+        context.<span class="kw5">state</span>.<span class="kw6">Length</span> = <span class="nu0">4</span>;
+        context.<span class="kw5">state</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = 0x67452301;
+        context.<span class="kw5">state</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span> = 0xefcdab89;
+        context.<span class="kw5">state</span><span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span> = 0x98badcfe;
+        context.<span class="kw5">state</span><span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span> = 0x10325476;
+        context.<span class="me1">buffer</span>.<span class="kw6">Length</span> = <span class="nu0">64</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> MD5Transform<span class="br0">(</span><span class="kw6">out</span> array&lt;int&gt; Buf, array&lt;byte&gt; block<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> A,B,C,D;
+        <span class="kw5">local</span> array&lt;int&gt; x;
+ 
+        A = Buf<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+        B = Buf<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>;
+        C = Buf<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>;
+        D = Buf<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>;
+ 
+        x.<span class="kw6">Length</span> = <span class="nu0">16</span>;
+ 
+        Decode <span class="br0">(</span>x, block, <span class="nu0">64</span><span class="br0">)</span>;
+ 
+        <span class="coMULTI">/* Round 1 */</span>
+        FF <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span>,  <span class="nu0">7</span>, 0xd76aa478<span class="br0">)</span>; <span class="coMULTI">/* 1 */</span>
+        FF <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span>, <span class="nu0">12</span>, 0xe8c7b756<span class="br0">)</span>; <span class="coMULTI">/* 2 */</span>
+        FF <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span>, <span class="nu0">17</span>, 0x242070db<span class="br0">)</span>; <span class="coMULTI">/* 3 */</span>
+        FF <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span>, <span class="nu0">22</span>, 0xc1bdceee<span class="br0">)</span>; <span class="coMULTI">/* 4 */</span>
+        FF <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span>,  <span class="nu0">7</span>, 0xf57c0faf<span class="br0">)</span>; <span class="coMULTI">/* 5 */</span>
+        FF <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span>, <span class="nu0">12</span>, 0x4787c62a<span class="br0">)</span>; <span class="coMULTI">/* 6 */</span>
+        FF <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span>, <span class="nu0">17</span>, 0xa8304613<span class="br0">)</span>; <span class="coMULTI">/* 7 */</span>
+        FF <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span>, <span class="nu0">22</span>, 0xfd469501<span class="br0">)</span>; <span class="coMULTI">/* 8 */</span>
+        FF <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span>,  <span class="nu0">7</span>, 0x698098d8<span class="br0">)</span>; <span class="coMULTI">/* 9 */</span>
+        FF <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span>, <span class="nu0">12</span>, 0x8b44f7af<span class="br0">)</span>; <span class="coMULTI">/* 10 */</span>
+        FF <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>, <span class="nu0">17</span>, 0xffff5bb1<span class="br0">)</span>; <span class="coMULTI">/* 11 */</span>
+        FF <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span>, <span class="nu0">22</span>, 0x895cd7be<span class="br0">)</span>; <span class="coMULTI">/* 12 */</span>
+        FF <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span>,  <span class="nu0">7</span>, 0x6b901122<span class="br0">)</span>; <span class="coMULTI">/* 13 */</span>
+        FF <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span>, <span class="nu0">12</span>, 0xfd987193<span class="br0">)</span>; <span class="coMULTI">/* 14 */</span>
+        FF <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span>, <span class="nu0">17</span>, 0xa679438e<span class="br0">)</span>; <span class="coMULTI">/* 15 */</span>
+        FF <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span>, <span class="nu0">22</span>, 0x49b40821<span class="br0">)</span>; <span class="coMULTI">/* 16 */</span>
+ 
+        <span class="coMULTI">/* Round 2 */</span>
+        GG <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span>,  <span class="nu0">5</span>, 0xf61e2562<span class="br0">)</span>; <span class="coMULTI">/* 17 */</span>
+        GG <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span>,  <span class="nu0">9</span>, 0xc040b340<span class="br0">)</span>; <span class="coMULTI">/* 18 */</span>
+        GG <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span>, <span class="nu0">14</span>, 0x265e5a51<span class="br0">)</span>; <span class="coMULTI">/* 19 */</span>
+        GG <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span>, <span class="nu0">20</span>, 0xe9b6c7aa<span class="br0">)</span>; <span class="coMULTI">/* 20 */</span>
+        GG <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span>,  <span class="nu0">5</span>, 0xd62f105d<span class="br0">)</span>; <span class="coMULTI">/* 21 */</span>
+        GG <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>,  <span class="nu0">9</span>,  0x2441453<span class="br0">)</span>; <span class="coMULTI">/* 22 */</span>
+        GG <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span>, <span class="nu0">14</span>, 0xd8a1e681<span class="br0">)</span>; <span class="coMULTI">/* 23 */</span>
+        GG <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span>, <span class="nu0">20</span>, 0xe7d3fbc8<span class="br0">)</span>; <span class="coMULTI">/* 24 */</span>
+        GG <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span>,  <span class="nu0">5</span>, 0x21e1cde6<span class="br0">)</span>; <span class="coMULTI">/* 25 */</span>
+        GG <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span>,  <span class="nu0">9</span>, 0xc33707d6<span class="br0">)</span>; <span class="coMULTI">/* 26 */</span>
+        GG <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span>, <span class="nu0">14</span>, 0xf4d50d87<span class="br0">)</span>; <span class="coMULTI">/* 27 */</span>
+        GG <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span>, <span class="nu0">20</span>, 0x455a14ed<span class="br0">)</span>; <span class="coMULTI">/* 28 */</span>
+        GG <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span>,  <span class="nu0">5</span>, 0xa9e3e905<span class="br0">)</span>; <span class="coMULTI">/* 29 */</span>
+        GG <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span>,  <span class="nu0">9</span>, 0xfcefa3f8<span class="br0">)</span>; <span class="coMULTI">/* 30 */</span>
+        GG <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span>, <span class="nu0">14</span>, 0x676f02d9<span class="br0">)</span>; <span class="coMULTI">/* 31 */</span>
+        GG <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span>, <span class="nu0">20</span>, 0x8d2a4c8a<span class="br0">)</span>; <span class="coMULTI">/* 32 */</span>
+ 
+        <span class="coMULTI">/* Round 3 */</span>
+        HH <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span>,  <span class="nu0">4</span>, 0xfffa3942<span class="br0">)</span>; <span class="coMULTI">/* 33 */</span>
+        HH <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span>, <span class="nu0">11</span>, 0x8771f681<span class="br0">)</span>; <span class="coMULTI">/* 34 */</span>
+        HH <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span>, <span class="nu0">16</span>, 0x6d9d6122<span class="br0">)</span>; <span class="coMULTI">/* 35 */</span>
+        HH <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span>, <span class="nu0">23</span>, 0xfde5380c<span class="br0">)</span>; <span class="coMULTI">/* 36 */</span>
+        HH <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span>,  <span class="nu0">4</span>, 0xa4beea44<span class="br0">)</span>; <span class="coMULTI">/* 37 */</span>
+        HH <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span>, <span class="nu0">11</span>, 0x4bdecfa9<span class="br0">)</span>; <span class="coMULTI">/* 38 */</span>
+        HH <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span>, <span class="nu0">16</span>, 0xf6bb4b60<span class="br0">)</span>; <span class="coMULTI">/* 39 */</span>
+        HH <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>, <span class="nu0">23</span>, 0xbebfbc70<span class="br0">)</span>; <span class="coMULTI">/* 40 */</span>
+        HH <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span>,  <span class="nu0">4</span>, 0x289b7ec6<span class="br0">)</span>; <span class="coMULTI">/* 41 */</span>
+        HH <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span>, <span class="nu0">11</span>, 0xeaa127fa<span class="br0">)</span>; <span class="coMULTI">/* 42 */</span>
+        HH <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span>, <span class="nu0">16</span>, 0xd4ef3085<span class="br0">)</span>; <span class="coMULTI">/* 43 */</span>
+        HH <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span>, <span class="nu0">23</span>,  0x4881d05<span class="br0">)</span>; <span class="coMULTI">/* 44 */</span>
+        HH <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span>,  <span class="nu0">4</span>, 0xd9d4d039<span class="br0">)</span>; <span class="coMULTI">/* 45 */</span>
+        HH <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span>, <span class="nu0">11</span>, 0xe6db99e5<span class="br0">)</span>; <span class="coMULTI">/* 46 */</span>
+        HH <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span>, <span class="nu0">16</span>, 0x1fa27cf8<span class="br0">)</span>; <span class="coMULTI">/* 47 */</span>
+        HH <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span>, <span class="nu0">23</span>, 0xc4ac5665<span class="br0">)</span>; <span class="coMULTI">/* 48 */</span>
+ 
+        <span class="coMULTI">/* Round 4 */</span>
+        II <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">0</span><span class="br0">]</span>,  <span class="nu0">6</span>, 0xf4292244<span class="br0">)</span>; <span class="coMULTI">/* 49 */</span>
+        II <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">7</span><span class="br0">]</span>, <span class="nu0">10</span>, 0x432aff97<span class="br0">)</span>; <span class="coMULTI">/* 50 */</span>
+        II <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">14</span><span class="br0">]</span>, <span class="nu0">15</span>, 0xab9423a7<span class="br0">)</span>; <span class="coMULTI">/* 51 */</span>
+        II <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">5</span><span class="br0">]</span>, <span class="nu0">21</span>, 0xfc93a039<span class="br0">)</span>; <span class="coMULTI">/* 52 */</span>
+        II <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span><span class="nu0">12</span><span class="br0">]</span>,  <span class="nu0">6</span>, 0x655b59c3<span class="br0">)</span>; <span class="coMULTI">/* 53 */</span>
+        II <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span> <span class="nu0">3</span><span class="br0">]</span>, <span class="nu0">10</span>, 0x8f0ccc92<span class="br0">)</span>; <span class="coMULTI">/* 54 */</span>
+        II <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span><span class="nu0">10</span><span class="br0">]</span>, <span class="nu0">15</span>, 0xffeff47d<span class="br0">)</span>; <span class="coMULTI">/* 55 */</span>
+        II <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">1</span><span class="br0">]</span>, <span class="nu0">21</span>, 0x85845dd1<span class="br0">)</span>; <span class="coMULTI">/* 56 */</span>
+        II <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">8</span><span class="br0">]</span>,  <span class="nu0">6</span>, 0x6fa87e4f<span class="br0">)</span>; <span class="coMULTI">/* 57 */</span>
+        II <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">15</span><span class="br0">]</span>, <span class="nu0">10</span>, 0xfe2ce6e0<span class="br0">)</span>; <span class="coMULTI">/* 58 */</span>
+        II <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">6</span><span class="br0">]</span>, <span class="nu0">15</span>, 0xa3014314<span class="br0">)</span>; <span class="coMULTI">/* 59 */</span>
+        II <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span><span class="nu0">13</span><span class="br0">]</span>, <span class="nu0">21</span>, 0x4e0811a1<span class="br0">)</span>; <span class="coMULTI">/* 60 */</span>
+        II <span class="br0">(</span>a, b, c, d, x<span class="br0">[</span> <span class="nu0">4</span><span class="br0">]</span>,  <span class="nu0">6</span>, 0xf7537e82<span class="br0">)</span>; <span class="coMULTI">/* 61 */</span>
+        II <span class="br0">(</span>d, a, b, c, x<span class="br0">[</span><span class="nu0">11</span><span class="br0">]</span>, <span class="nu0">10</span>, 0xbd3af235<span class="br0">)</span>; <span class="coMULTI">/* 62 */</span>
+        II <span class="br0">(</span>c, d, a, b, x<span class="br0">[</span> <span class="nu0">2</span><span class="br0">]</span>, <span class="nu0">15</span>, 0x2ad7d2bb<span class="br0">)</span>; <span class="coMULTI">/* 63 */</span>
+        II <span class="br0">(</span>b, c, d, a, x<span class="br0">[</span> <span class="nu0">9</span><span class="br0">]</span>, <span class="nu0">21</span>, 0xeb86d391<span class="br0">)</span>; <span class="coMULTI">/* 64 */</span>
+ 
+        Buf<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> += A;
+        Buf<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span> += B;
+        Buf<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span> += C;
+        Buf<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span> += D;
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/** update MD5 context */</span>
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> MD5Update<span class="br0">(</span><span class="kw6">out</span> MD5_CTX Context, <span class="kw4">string</span> Data, <span class="kw4">int</span> inputLen<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i, index, partlen;
+        <span class="kw5">local</span> array&lt;byte&gt; tmpbuf;
+ 
+        tmpbuf.<span class="kw6">Length</span> = <span class="nu0">64</span>;
+        index = <span class="br0">(</span><span class="br0">(</span>context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> &gt;&gt;&gt; <span class="nu0">3</span><span class="br0">)</span> &amp; 0x3F<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span>context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> += <span class="br0">(</span>inputLen &lt;&lt; <span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span> &lt; <span class="br0">(</span>inputLen &lt;&lt; <span class="nu0">3</span><span class="br0">)</span><span class="br0">)</span>
+                context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>++;
+        context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span> += <span class="br0">(</span>inputLen &gt;&gt;&gt; <span class="nu0">29</span><span class="br0">)</span>;
+        partLen = <span class="nu0">64</span> - index;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>inputLen &gt;= partLen<span class="br0">)</span>
+        <span class="br0">{</span>
+                MD5Move<span class="br0">(</span>Data, <span class="nu0">0</span>, context.<span class="me1">buffer</span>, index, partLen<span class="br0">)</span>;
+                MD5Transform <span class="br0">(</span>context.<span class="kw5">state</span>, context.<span class="me1">buffer</span><span class="br0">)</span>;
+                <span class="kw1">for</span> <span class="br0">(</span>i = partLen; i + <span class="nu0">63</span> &lt; inputLen; i += <span class="nu0">64</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                        MD5Move<span class="br0">(</span>Data, i, tmpbuf, <span class="nu0">0</span>, <span class="nu0">64</span><span class="br0">)</span>;
+                        MD5Transform <span class="br0">(</span>context.<span class="kw5">state</span>, tmpbuf<span class="br0">)</span>;
+                <span class="br0">}</span>
+                index = <span class="nu0">0</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+                i = <span class="nu0">0</span>;
+ 
+        MD5Move<span class="br0">(</span>Data, i, context.<span class="me1">buffer</span>, index, inputLen-i<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="coMULTI">/** finalize the MD5 context */</span>
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> MD5Final <span class="br0">(</span><span class="kw6">out</span> array&lt;byte&gt; digest, <span class="kw6">out</span> MD5_CTX context<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> array&lt;byte&gt; bits;
+        <span class="kw5">local</span> <span class="kw4">int</span> i, index, padLen;
+        <span class="kw5">local</span> <span class="kw4">string</span> strbits;
+        <span class="kw5">local</span> <span class="kw4">string</span> PADDING;
+ 
+        PADDING = <span class="kw7">chr</span><span class="br0">(</span>0x80<span class="br0">)</span>;
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">1</span>; i &lt; <span class="nu0">64</span>; i++<span class="br0">)</span>
+                PADDING = PADDING$chr<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>;
+ 
+        Encode <span class="br0">(</span>bits, context.<span class="me1">count</span>, <span class="nu0">8</span><span class="br0">)</span>;
+ 
+        index = <span class="br0">(</span><span class="br0">(</span>context.<span class="me1">count</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> &gt;&gt;&gt; <span class="nu0">3</span><span class="br0">)</span> &amp; 0x3f<span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span>index &lt; <span class="nu0">56</span><span class="br0">)</span>
+                padLen = <span class="br0">(</span><span class="nu0">56</span> - index<span class="br0">)</span>;
+        <span class="kw1">else</span>
+                padLen = <span class="br0">(</span><span class="nu0">120</span> - index<span class="br0">)</span>;
+        MD5Update <span class="br0">(</span>context, PADDING, padLen<span class="br0">)</span>;
+        strbits = <span class="st0">""</span>;
+        <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;<span class="nu0">8</span>;i++<span class="br0">)</span>
+                strbits = strbits$Chr<span class="br0">(</span>bits<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span>;
+        MD5Update <span class="br0">(</span>context, strbits, <span class="nu0">8</span><span class="br0">)</span>;
+        Encode <span class="br0">(</span>digest, context.<span class="kw5">state</span>, <span class="nu0">16</span><span class="br0">)</span>;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; <span class="nu0">64</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+                context.<span class="me1">buffer</span><span class="br0">[</span>i<span class="br0">]</span> = <span class="nu0">0</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> Encode <span class="br0">(</span><span class="kw6">out</span> array&lt;byte&gt; output, array&lt;int&gt; <span class="kw6">input</span>, <span class="kw4">int</span> <span class="kw7">len</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+        i = <span class="nu0">0</span>;
+        <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; <span class="kw7">len</span>; j += <span class="nu0">4</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                output<span class="br0">[</span>j<span class="br0">]</span> = <span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>i<span class="br0">]</span> &amp; 0xff<span class="br0">)</span>;
+                output<span class="br0">[</span>j<span class="nu0">+1</span><span class="br0">]</span> = <span class="br0">(</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>i<span class="br0">]</span> &gt;&gt; <span class="nu0">8</span><span class="br0">)</span> &amp; 0xff<span class="br0">)</span>;
+                output<span class="br0">[</span>j<span class="nu0">+2</span><span class="br0">]</span> = <span class="br0">(</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>i<span class="br0">]</span> &gt;&gt; <span class="nu0">16</span><span class="br0">)</span> &amp; 0xff<span class="br0">)</span>;
+                output<span class="br0">[</span>j<span class="nu0">+3</span><span class="br0">]</span> = <span class="br0">(</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>i<span class="br0">]</span> &gt;&gt; <span class="nu0">24</span><span class="br0">)</span> &amp; 0xff<span class="br0">)</span>;
+                i++;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> Decode<span class="br0">(</span><span class="kw6">out</span> array&lt;int&gt; output, array&lt;byte&gt; <span class="kw6">input</span>, <span class="kw4">int</span> <span class="kw7">len</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i, j;
+ 
+        i = <span class="nu0">0</span>;
+        <span class="kw1">for</span> <span class="br0">(</span>j = <span class="nu0">0</span>; j &lt; <span class="kw7">len</span>; j += <span class="nu0">4</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                output<span class="br0">[</span>i<span class="br0">]</span> = <span class="br0">(</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>j<span class="br0">]</span><span class="br0">)</span> | <span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>j<span class="nu0">+1</span><span class="br0">]</span><span class="br0">)</span> &lt;&lt; <span class="nu0">8</span><span class="br0">)</span> | <span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>j<span class="nu0">+2</span><span class="br0">]</span><span class="br0">)</span> &lt;&lt; <span class="nu0">16</span><span class="br0">)</span> | <span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span><span class="kw6">input</span><span class="br0">[</span>j<span class="nu0">+3</span><span class="br0">]</span><span class="br0">)</span> &lt;&lt; <span class="nu0">24</span><span class="br0">)</span><span class="br0">)</span>;
+                i++;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> MD5Move<span class="br0">(</span><span class="kw4">string</span> src, <span class="kw4">int</span> srcindex, <span class="kw6">out</span> array&lt;byte&gt; buffer, <span class="kw4">int</span> bufindex, <span class="kw4">int</span> <span class="kw7">len</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">int</span> i,j;
+ 
+        j = bufindex;
+        <span class="kw1">for</span> <span class="br0">(</span>i = srcindex; i &lt; srcindex+<span class="kw7">len</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+                buffer<span class="br0">[</span>j<span class="br0">]</span> = <span class="kw7">Asc</span><span class="br0">(</span><span class="kw7">Mid</span><span class="br0">(</span>src, i, <span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+                j++;
+                <span class="kw1">if</span> <span class="br0">(</span>j == <span class="nu0">64</span><span class="br0">)</span>
+                        <span class="kw1">break</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> ROTATE_LEFT <span class="br0">(</span><span class="kw4">int</span> x, <span class="kw4">int</span> n<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>x<span class="br0">)</span> &lt;&lt; <span class="br0">(</span>n<span class="br0">)</span><span class="br0">)</span> | <span class="br0">(</span><span class="br0">(</span>x<span class="br0">)</span> &gt;&gt;&gt; <span class="br0">(</span><span class="nu0">32</span>-<span class="br0">(</span>n<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> F <span class="br0">(</span><span class="kw4">int</span> x, <span class="kw4">int</span> y, <span class="kw4">int</span> z<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>x<span class="br0">)</span> &amp; <span class="br0">(</span>y<span class="br0">)</span><span class="br0">)</span> | <span class="br0">(</span><span class="br0">(</span>~x<span class="br0">)</span> &amp; <span class="br0">(</span>z<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> G <span class="br0">(</span><span class="kw4">int</span> x, <span class="kw4">int</span> y, <span class="kw4">int</span> z<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="br0">(</span><span class="br0">(</span>x &amp; z<span class="br0">)</span> | <span class="br0">(</span>y &amp; <span class="br0">(</span>~z<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> H <span class="br0">(</span><span class="kw4">int</span> x, <span class="kw4">int</span> y, <span class="kw4">int</span> z<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="br0">(</span>x ^ y ^ z<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">int</span> I <span class="br0">(</span><span class="kw4">int</span> x, <span class="kw4">int</span> y, <span class="kw4">int</span> z<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="br0">(</span>y ^ <span class="br0">(</span>x | <span class="br0">(</span>~z<span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> FF<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> a, <span class="kw4">int</span> b, <span class="kw4">int</span> c, <span class="kw4">int</span> d, <span class="kw4">int</span> x, <span class="kw4">int</span> s, <span class="kw4">int</span> ac<span class="br0">)</span>
+<span class="br0">{</span>
+        a += F<span class="br0">(</span>b, c, d<span class="br0">)</span> + x + ac;
+        a = ROTATE_LEFT <span class="br0">(</span>a, s<span class="br0">)</span>;
+        a += b;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> GG<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> a, <span class="kw4">int</span> b, <span class="kw4">int</span> c, <span class="kw4">int</span> d, <span class="kw4">int</span> x, <span class="kw4">int</span> s, <span class="kw4">int</span> ac<span class="br0">)</span>
+<span class="br0">{</span>
+        a += G<span class="br0">(</span>b, c, d<span class="br0">)</span> + x + ac;
+        a = rotate_left <span class="br0">(</span>a, s<span class="br0">)</span> +b;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> HH<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> a, <span class="kw4">int</span> b, <span class="kw4">int</span> c, <span class="kw4">int</span> d, <span class="kw4">int</span> x, <span class="kw4">int</span> s, <span class="kw4">int</span> ac<span class="br0">)</span>
+<span class="br0">{</span>
+        a += H<span class="br0">(</span>b, c, d<span class="br0">)</span> + x + ac;
+        a = rotate_left <span class="br0">(</span>a, s<span class="br0">)</span> +b;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> II<span class="br0">(</span><span class="kw6">out</span> <span class="kw4">int</span> a, <span class="kw4">int</span> b, <span class="kw4">int</span> c, <span class="kw4">int</span> d, <span class="kw4">int</span> x, <span class="kw4">int</span> s, <span class="kw4">int</span> ac<span class="br0">)</span>
+<span class="br0">{</span>
+        a += I<span class="br0">(</span>b, c, d<span class="br0">)</span> + x + ac;
+        a = rotate_left <span class="br0">(</span>a, s<span class="br0">)</span> +b;
+<span class="br0">}</span>
+ 
+<span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">string</span> DecToHex<span class="br0">(</span><span class="kw4">int</span> dec, <span class="kw4">int</span> size<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">const</span> hex = <span class="st0">"0123456789ABCDEF"</span>;
+        <span class="kw5">local</span> <span class="kw4">string</span> s;
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        <span class="kw1">for</span> <span class="br0">(</span>i = <span class="nu0">0</span>; i &lt; size*<span class="nu0">2</span>; i++<span class="br0">)</span>
+        <span class="br0">{</span>
+                s = <span class="kw7">mid</span><span class="br0">(</span>hex, dec &amp; 0xf, <span class="nu0">1</span><span class="br0">)</span> $ s;
+                dec = dec &gt;&gt;&gt; <span class="nu0">4</span>;
+        <span class="br0">}</span>
+ 
+        <span class="kw1">return</span> s;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="License" id="License"></a></p>
+<h2><span class="mw-headline">License</span></h2>
+<p>Copyright 2004 (c) Petr Jelinek</p>
+<p>Released under the <a href="../../../../articles/l/e/s/Legacy%7ELesserOpenUnrealModLicense_2924.html" title="Legacy:LesserOpenUnrealModLicense">LesserOpenUnrealModLicense</a></p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Wormbo:</b> This implementation is suboptimal due to the way UnrealScript's handles parameters and function calls. It probably spends 30-50% of the execution time only passing parameters and calling functions – two things UnrealScript isn't particularly good at (especially with large parameters like the MD5 context here) because it involves assigning values to variables.<br />
+I'm currently working on implementations of <a href="../../../../articles/m/d/5/Legacy%7EMD5Hash_9302.html" title="Legacy:MD5Hash">MD5Hash</a> and <a href="../../../../articles/s/h/a/Legacy%7ESHA1Hash_3c71.html" title="Legacy:SHA1Hash">SHA1Hash</a> for UnrealScript and the MD5 algorithm generally out-performs this one by 30-40%.</p>
+<p><a name="Related_Articles" id="Related_Articles"></a></p>
+<h2><span class="mw-headline">Related Articles</span></h2>
+<ul>
+<li><a href="../../../../articles/c/r/c/Legacy%7ECRC32_85ea.html" title="Legacy:CRC32">CRC32</a></li>
+<li><a href="../../../../articles/s/h/a/Legacy%7ESHA1_9e0a.html" class="mw-redirect" title="Legacy:SHA1">SHA1</a></li>
+<li><a href="http://en.wikipedia.org/wiki/MD5" class="extiw" title="wikipedia:MD5">Wikipedia:MD5</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 3/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Algorithm_8f6a.html" title="Category:Legacy Algorithm">Legacy Algorithm</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/d/5/Legacy%7EMD5_9275.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/d/5/Legacy_talk%7EMD5_559e.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:MD5">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:19, 6 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

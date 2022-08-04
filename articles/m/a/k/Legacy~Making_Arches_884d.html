@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Making Arches - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Making Arches</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Method"><span class="tocnumber">2</span> <span class="toctext">Method</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Preparing_your_level_for_an_arch"><span class="tocnumber">2.1</span> <span class="toctext">Preparing your level for an arch</span></a></li>
+<li class="toclevel-2"><a href="#Making_the_Arch_using_2D-editor"><span class="tocnumber">2.2</span> <span class="toctext">Making the Arch using 2D-editor</span></a></li>
+<li class="toclevel-2"><a href="#Tips_on_matching_up_to_an_Arch_texture"><span class="tocnumber">2.3</span> <span class="toctext">Tips on matching up to an Arch texture</span></a></li>
+<li class="toclevel-2"><a href="#Adding_the_arch_as_a_semisolid_in_your_level"><span class="tocnumber">2.4</span> <span class="toctext">Adding the arch as a semisolid in your level</span></a></li>
+<li class="toclevel-2"><a href="#Merging_the_polys_of_the_arch"><span class="tocnumber">2.5</span> <span class="toctext">Merging the polys of the arch</span></a></li>
+<li class="toclevel-2"><a href="#Texturing_your_arch"><span class="tocnumber">2.6</span> <span class="toctext">Texturing your arch</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Arch_textures_in_Standard_UT_texture_packs"><span class="tocnumber">3</span> <span class="toctext">Arch textures in Standard UT texture packs</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>It's entirely possible to make an arch by just subtracting a nicely-shaped brush between two rooms. However, it's more efficient from the point of view of the game engine to use a slightly different strategy: a square hole is made first with a subtractive brush, and this is then filled up again with a <a href="../../../../articles/s/e/m/Legacy%7ESemisolid_6645.html" title="Legacy:Semisolid">semisolid</a> brush.</p>
+<p>Using a semisolid ensures that the diagonal lines of the arch's curvature only cause <a href="../../../../articles/b/s/p/Legacy%7EBSP_220f.html" title="Legacy:BSP">BSP</a> cuts locally. The arch textures found in many UT packages are designed to be used in this way, applied on both sides of the semisolid brush.</p>
+<p>Picture of the overall strategy:</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_archconstruction.gif_9efc.html" class="image" title="Legacy archconstruction.gif"><img alt="" src="../../../../images/Legacy_archconstruction.gif" width="400" height="182" border="0" /></a></span></div>
+</div>
+<p><a name="Method" id="Method"></a></p>
+<h2><span class="mw-headline">Method</span></h2>
+<p><a name="Preparing_your_level_for_an_arch" id="Preparing_your_level_for_an_arch"></a></p>
+<h3><span class="mw-headline">Preparing your level for an arch</span></h3>
+<p>Depending on how big your arch is going to be, you'll need to substract a hole big enough to fit the arch.</p>
+<p>Mostly it will be 128-256 width, 128-256 high and 16-32 deep.</p>
+<p><a name="Making_the_Arch_using_2D-editor" id="Making_the_Arch_using_2D-editor"></a></p>
+<h3><span class="mw-headline">Making the Arch using 2D-editor</span></h3>
+<p>You now need a brush shape that will fill most of this hole back in, leaving just the arch. This can be easily created in the <a href="../../../../articles/2/d/_/Legacy%7E2D_Shape_Editor_c905.html" title="Legacy:2D Shape Editor">2D Shape Editor</a>.</p>
+<p>We've made a start on gathering up 2D shape files for the arch textures that come with UT, so eventually this step may not be needed...</p>
+<p>In the meantime: starting with the basic square, select the bottom side by selecting the bottom right vertex. Split this, move the new point up, then split the sides that have just become diagonal. Continue splitting and moving points into place until the shape covers the solid wall part of the arch texture: picture below. The <a href="../../../../articles/m/a/k/Legacy%7EMaking_A_2D_Shape_5b6f.html" title="Legacy:Making A 2D Shape">Making a 2D shape</a> page has more details on this step.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_2D-arch.gif_465a.html" class="image" title="Legacy 2D-arch.gif"><img alt="" src="../../../../images/Legacy_2D-arch.gif" width="297" height="296" border="0" /></a></span></div>
+</div>
+<p><a name="Tips_on_matching_up_to_an_Arch_texture" id="Tips_on_matching_up_to_an_Arch_texture"></a></p>
+<h3><span class="mw-headline">Tips on matching up to an Arch texture</span></h3>
+<ul>
+<li>The easiest way is to import the texture into the 2D-Editor. <b>Warning</b>: this can sometimes crash UnrealEd. This is for the fearless.</li>
+<li>Subtract a cube brush with the same dimensions as the texture, so that the floor has the texture exactly lines up. Now start drawing your shape. To check how you're doing:
+<ol>
+<li>Extrude the shape</li>
+<li>Line up the <a href="../../../../articles/r/e/d/Legacy%7ERed_Builder_Brush_1934.html" title="Legacy:Red Builder Brush">red builder brush</a> to your texture testing room in top view</li>
+<li>in side or front view, place the top of the RBB just touching the floor of the texture testing room.</li>
+<li>Compare the edges of the RBB with the texture.</li>
+</ol>
+</li>
+</ul>
+<p><a name="Adding_the_arch_as_a_semisolid_in_your_level" id="Adding_the_arch_as_a_semisolid_in_your_level"></a></p>
+<h3><span class="mw-headline">Adding the arch as a semisolid in your level</span></h3>
+<p>Once the arch is finished in 2D-editor you still need to turn it into a real brush for use in your level.</p>
+<ol>
+<li>Hit the extrude button</li>
+<li>Type in how long you want the arch to be. I found 16 or 32 to be rather good. It really depends on the level though.</li>
+<li>The red builder brush in UED should now get the shape of your arch.</li>
+<li>Rotate it. If it doesn't rotate correctly, you'll have to <a href="../../../../articles/t/r/a/Legacy%7ETransform_Permanently_0001.html" title="Legacy:Transform Permanently">Transform Permanently</a>) and move it in place. See <a href="../../../../articles/b/r/u/Legacy%7EBrush_Rotate_5421.html" title="Legacy:Brush Rotate">Brush Rotate</a> for info on dealing with rotation problems.</li>
+<li>Now you can do two things:
+<ol>
+<li>Add it as a regular brush, right-click it and goto Solidity-&gt;Semi-Solid</li>
+<li>Click Add Special in the <a href="../../../../articles/t/o/o/Legacy%7EToolbox_b14b.html" title="Legacy:Toolbox">toolbox</a> and select Semi-Solid Decoration from the presets list.</li>
+</ol>
+</li>
+</ol>
+<p><a name="Merging_the_polys_of_the_arch" id="Merging_the_polys_of_the_arch"></a></p>
+<h3><span class="mw-headline">Merging the polys of the arch</span></h3>
+<p>It's always good to merge polys on arches, because the 2D-editor will create the arch of a whole bunch of polys and aligning an arch-texture can be a pain. Also merging polys should improve performance&#160;;)</p>
+<p>So you should definetely merge polys on your arch. For instructions on how to do this, go here: <a href="../../../../articles/m/e/r/Legacy%7EMerge_Polygons_4fad.html" title="Legacy:Merge Polygons">Merge Polygons</a>.</p>
+<p><a name="Texturing_your_arch" id="Texturing_your_arch"></a></p>
+<h3><span class="mw-headline">Texturing your arch</span></h3>
+<p>Since by this time the arch should have merged polys, texturing it will be rather easy. Just select the arch texture you want it to have and apply it to the arch. Move it in place and your set ,)</p>
+<p><i>Question</i>: What needs to be said about texturing the inside of the arch??<br /></p>
+<p><i>To Do</i>:</p>
+<ul>
+<li>texturing: choosing textures that match for the arch surround &amp; the wall beyond.
+<ul>
+<li>Strategies for dealing with arch textures that don't have a seamless match to a wall texture (sinking the arch into the wall or protruding it for example, or adding trim around it)</li>
+</ul>
+</li>
+</ul>
+<p><a name="Arch_textures_in_Standard_UT_texture_packs" id="Arch_textures_in_Standard_UT_texture_packs"></a></p>
+<h2><span class="mw-headline">Arch textures in Standard UT texture packs</span></h2>
+<p>Add your name to the list item if you have the corresponding 2DS file or intend to make it.</p>
+<ul>
+<li>Ancient (3, indentical shape) – Tarquin</li>
+<li>Castle1 (1 texture)</li>
+<li>Crypt2
+<ul>
+<li>cInoxDra, cInoxDrf,</li>
+<li>ClifRch1, rch1trch</li>
+<li>ClifRch2, rch2trch</li>
+<li>ClifRch3</li>
+</ul>
+</li>
+<li>DecayedS (some door textures only)</li>
+<li>...</li>
+<li>PlayrShip
+<ul>
+<li>vDoor2, Door2_30 – Tarquin</li>
+<li>Door1BK &amp; friends</li>
+</ul>
+</li>
+<li>Indus2 (Frame1C == the arch from Castle1)</li>
+<li>Indus3: one arch &amp; door texture</li>
+<li>Mine
+<ul>
+<li>3 arches</li>
+<li>MDoors series – Tarquin has the door shape only, not the outer part</li>
+<li>MMdoor1</li>
+</ul>
+</li>
+<li>SkyCity
+<ul>
+<li>Arches: many diffrent arches, matching walltextures included</li>
+</ul>
+</li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 26/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/a/k/Legacy%7EMaking_Arches_884d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/a/k/Legacy_talk%7EMaking_Arches_b87c.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Making_Arches">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 01:25, 25 August 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

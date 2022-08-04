@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:RotatingMover - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:RotatingMover</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_b661.html" title="Legacy:Actor (UT)">Actor (UT)</a> &gt;&gt; <a href="../../../../articles/b/r/u/Legacy%7EBrush_03bb.html" title="Legacy:Brush">Brush</a> &gt;&gt; <a href="../../../../articles/m/o/v/Legacy%7EMover_%28UT%29_83ce.html" title="Legacy:Mover (UT)">Mover (UT)</a> &gt;&gt; RotatingMover</div>
+<p>A <b>RotatingMover</b> continuously revolves with its set RotationRate. Start the rotation by triggering it, stop it by untriggering it. (In other words, when a player starts touching a <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>, the RotatingMover starts moving, and stops when the player leaves the trigger's radius.) Unfortunately, this kind of mover <b>doesn't work online.</b></p>
+<p>If you're trying to create a simple, constantly spinning object, you do not need to set the mover to "RotatingMover" at all. Rather, you can set Object -&gt; InitialState to None, and then under Movement, set bFixedRotationDir to true, Physics to PHYS_Rotating, and then configure your desired rotation values under RotationRate.</p>
+<p>If you want to use a mover that changes its rotation along its normal movement, just use a normal mover instead.</p>
+<p><a name="Network_Fix" id="Network_Fix"></a></p>
+<h2><span class="mw-headline">Network Fix</span></h2>
+<p>Unfortunately the RotatingMover class doesn't work in online games; on clients, the mover stands still. The following subclass fixes that. See <a href="../../../../articles/e/m/b/Legacy%7EEmbedding_Code_735c.html" title="Legacy:Embedding Code">Embedding Code</a> for how to get it into your maps.</p>
+<p>This class also adds a new bEnabled property in the RotatingMover section of the property sheet. Use it to determine whether the mover starts automatically when the game is started or has to be triggered to start.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// ============================================================================</span>
+<span class="co1">// FixedRotatingMover</span>
+<span class="co1">// Created 2002 by Mychaeel &lt;mychaeel@beyondunreal.com&gt;</span>
+<span class="co1">//</span>
+<span class="co1">// Fixed incompatibility of RotatingMover in network games.</span>
+<span class="co1">// ============================================================================</span>
+ 
+ 
+<span class="kw5">class</span> FixedRotatingMover <span class="kw5">extends</span> RotatingMover;
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Replication</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw1">replication</span> <span class="br0">{</span>
+ 
+  <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+    bEnabled;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Variables</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span>RotatingMover<span class="br0">)</span> <span class="kw4">bool</span> bEnabled;
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// BeginPlay</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> BeginPlay<span class="br0">(</span><span class="br0">)</span>;
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Tick</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> TimeDelta<span class="br0">)</span> <span class="br0">{</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>bEnabled<span class="br0">)</span>
+    SetRotation<span class="br0">(</span>Rotation + RotateRate * TimeDelta<span class="br0">)</span>;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Trigger</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> Trigger<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> ActorOther, <a href="/Pawn"><span class="kw10">Pawn</span></a> PawnInstigator<span class="br0">)</span> <span class="br0">{</span>
+ 
+  bEnabled = <span class="kw9">true</span>;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// UnTrigger</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> UnTrigger<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> ActorOther, <a href="/Pawn"><span class="kw10">Pawn</span></a> PawnInstigator<span class="br0">)</span> <span class="br0">{</span>
+ 
+  bEnabled = <span class="kw9">false</span>;
+  <span class="br0">}</span>
+</pre></div>
+<p>In UnrealEd 2.0, the above will not appear when you right-click the Add Mover button. Instead, create a subclass of Mover and use the code below. The right-click of the Add Mover button only seems to gather the subclass of Mover, but not subsequent subclasses thereof. See <a href="../../../../articles/e/m/b/Legacy%7EEmbedding_Code_735c.html" title="Legacy:Embedding Code">Embedding Code</a> for how to get it into your maps.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// FixedRotatingMover.</span>
+<span class="co1">// Created 2002 by Mychaeel &lt;mychaeel@beyondunreal.com&gt;</span>
+<span class="co1">// Modified 2002 by Occam &lt;sm_zero@hotmail.com&gt;</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> FixedRotatingMover <span class="kw5">extends</span> Mover;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">rotator</span> RotateRate;
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Replication</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw1">replication</span> <span class="br0">{</span>
+ 
+  <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+    bEnabled;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Variables</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">var</span><span class="br0">(</span>FixedRotatingMover<span class="br0">)</span> <span class="kw4">bool</span> bEnabled;
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// BeginPlay</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> BeginPlay<span class="br0">(</span><span class="br0">)</span>;
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Tick</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> TimeDelta<span class="br0">)</span> <span class="br0">{</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span>bEnabled<span class="br0">)</span>
+    SetRotation<span class="br0">(</span>Rotation + RotateRate * TimeDelta<span class="br0">)</span>;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// Trigger</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> Trigger<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> ActorOther, <a href="/Pawn"><span class="kw10">Pawn</span></a> PawnInstigator<span class="br0">)</span> <span class="br0">{</span>
+ 
+  bEnabled = <span class="kw9">true</span>;
+  <span class="br0">}</span>
+ 
+ 
+<span class="co1">// ============================================================================</span>
+<span class="co1">// UnTrigger</span>
+<span class="co1">// ============================================================================</span>
+ 
+<span class="kw5">function</span> UnTrigger<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> ActorOther, <a href="/Pawn"><span class="kw10">Pawn</span></a> PawnInstigator<span class="br0">)</span> <span class="br0">{</span>
+ 
+  bEnabled = <span class="kw9">false</span>;
+  <span class="br0">}</span>
+</pre></div>
+<p>Please note the mover's <code>InitialState</code> must be set to <i>None</i> in order for the Triggering function to work properly. Any other setting will mean the mover can not be triggered <b>on</b> in-game. Having the mover's <code>InitialState</code> set to <i>None</i> gives a "TriggerControl" effect (While the trigger is activated, the mover is enabled).</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 19/1000000
+Post-expand include size: 201/2097152 bytes
+Template argument size: 132/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT%29_64d2.html" title="Category:Legacy Custom Class (UT)">Legacy Custom Class (UT)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/o/t/Legacy%7ERotatingMover_f234.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/o/t/Legacy_talk%7ERotatingMover_53c5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:RotatingMover">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:38, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

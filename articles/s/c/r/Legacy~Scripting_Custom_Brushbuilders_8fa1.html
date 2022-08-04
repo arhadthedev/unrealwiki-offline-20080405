@@ -1,0 +1,519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Scripting Custom Brushbuilders - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Scripting Custom Brushbuilders</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Preliminaries"><span class="tocnumber">1</span> <span class="toctext">Preliminaries</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Prerequisites"><span class="tocnumber">1.1</span> <span class="toctext">Prerequisites</span></a></li>
+<li class="toclevel-2"><a href="#Code_style"><span class="tocnumber">1.2</span> <span class="toctext">Code style</span></a></li>
+<li class="toclevel-2"><a href="#Terms_used"><span class="tocnumber">1.3</span> <span class="toctext">Terms used</span></a></li>
+<li class="toclevel-2"><a href="#Caveat"><span class="tocnumber">1.4</span> <span class="toctext">Caveat</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_maths_bit"><span class="tocnumber">2</span> <span class="toctext">The maths bit</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Getting_started"><span class="tocnumber">2.1</span> <span class="toctext">Getting started</span></a></li>
+<li class="toclevel-2"><a href="#Making_a_new_class"><span class="tocnumber">2.2</span> <span class="toctext">Making a new class</span></a></li>
+<li class="toclevel-2"><a href="#Modifying_an_existing_class"><span class="tocnumber">2.3</span> <span class="toctext">Modifying an existing class</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Anatomy_of_a_builder"><span class="tocnumber">2.3.1</span> <span class="toctext">Anatomy of a builder</span></a></li>
+<li class="toclevel-3"><a href="#Functions"><span class="tocnumber">2.3.2</span> <span class="toctext">Functions</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#A_little_example_.28ued2.29"><span class="tocnumber">3</span> <span class="toctext">A little example (ued2)</span></a>
+<ul>
+<li class="toclevel-2"><a href="#.27Half_cube.27_brush_builder"><span class="tocnumber">3.1</span> <span class="toctext">'Half cube' brush builder</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Tips_And_Tricks"><span class="tocnumber">4</span> <span class="toctext">Tips And Tricks</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Naming_polys"><span class="tocnumber">4.1</span> <span class="toctext">Naming polys</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Running_Unrealscript_in_the_Editor"><span class="tocnumber">5</span> <span class="toctext">Running Unrealscript in the Editor</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Obtaining_actor_reference"><span class="tocnumber">5.1</span> <span class="toctext">Obtaining actor reference</span></a></li>
+<li class="toclevel-2"><a href="#User_Input"><span class="tocnumber">5.2</span> <span class="toctext">User Input</span></a></li>
+<li class="toclevel-2"><a href="#Actor_modification_notes"><span class="tocnumber">5.3</span> <span class="toctext">Actor modification notes</span></a></li>
+<li class="toclevel-2"><a href="#Obtaining_viewport_camera_reference"><span class="tocnumber">5.4</span> <span class="toctext">Obtaining viewport camera reference</span></a></li>
+<li class="toclevel-2"><a href="#BrushBuilder_object_persistence"><span class="tocnumber">5.5</span> <span class="toctext">BrushBuilder object persistence</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">6</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Preliminaries" id="Preliminaries"></a></p>
+<h2><span class="mw-headline">Preliminaries</span></h2>
+<p><a name="Prerequisites" id="Prerequisites"></a></p>
+<h3><span class="mw-headline">Prerequisites</span></h3>
+<ul>
+<li>vague knowledge of <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>.</li>
+<li>In particular a passing familiarity with functions, variables and flow control statements and a basic knowledge of the Unreal class structure.</li>
+<li>A little bit of mathematics: geometry, vectors and trigonometry. For more advanced stuff, matrix transformations.</li>
+<li><a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">Compiling With UCC</a>, or <a href="../../../../articles/u/m/a/Legacy%7EUMake_c884.html" title="Legacy:UMake">UMake</a></li>
+<li>read up on <a href="../../../../articles/b/r/u/Legacy%7EBrushBuilder_1a86.html" title="Legacy:BrushBuilder">BrushBuilder</a>, the parent class</li>
+</ul>
+<p>(I knew only JavaScript when I started and fumbled my way with the help of tutorials: I recommend <a href="http://www.unrealscript.com/" class="external text" title="http://www.unrealscript.com/" rel="nofollow">Chimeric</a>'s excellent site.)</p>
+<p><a name="Code_style" id="Code_style"></a></p>
+<h3><span class="mw-headline">Code style</span></h3>
+<p>Bear in mind that streamlined code isn't necessary here. The user won't mind a few extra clock cycles – she's not having rockets fired at her! Aim for code legibility rather than efficiency.</p>
+<p><a name="Terms_used" id="Terms_used"></a></p>
+<h3><span class="mw-headline">Terms used</span></h3>
+<ul>
+<li><i>builder brush</i> means the <a href="../../../../articles/r/e/d/Legacy%7ERed_Builder_Brush_1934.html" title="Legacy:Red Builder Brush">red builder brush</a>, the red dotted-line brush seen in the editor.</li>
+<li>[UT] refers to your base UnrealTournament directory.</li>
+<li>Names such as MyPackage, MyBuilder, etc are used as examples. If you follow this tutorial feel free to use more sensible names.</li>
+</ul>
+<p><a name="Caveat" id="Caveat"></a></p>
+<h3><span class="mw-headline">Caveat</span></h3>
+<p>I don't claim to know or understand the inner workings of UnrealEd. Some of what is presented here is based on observation of UnrealEd's behaviour and experimentation.</p>
+<p><a name="The_maths_bit" id="The_maths_bit"></a></p>
+<h2><span class="mw-headline">The maths bit</span></h2>
+<p>A simple brush in UEd is basically a polyhedron of some sort, which need not necessarily be convex. Other types of brush are sheet brushes and compound brushes (by that I mean made from intersecting the builder with several simple brushes).<br /></p>
+<p>Whatever the brush looks like, UEd stores it in two parts (see also <a href="../../../../articles/t/3/d/Legacy%7ET3D_File_2c91.html" title="Legacy:T3D File">T3D file</a>):</p>
+<ul>
+<li>A list of vertices: these are simply points in 3D space, stored as co-ordinates or vectors, it's the same thing.</li>
+<li>A list of faces: these are the polygons that make the sides of the brush. A poly is described by a list of the vertices that make up its corners.</li>
+</ul>
+<p>What this means is that brushes are made by defining some dots, and then joining them up to make shapes. (The dots part is geometry, or vector algebra depending on how you look at it. The shapes part is topology.)</p>
+<ul>
+<li><i>Order of the vertex list:</i> They must be in sequence, or the poly will show diagonals, and essentially will be 'folded up' → think of making the poly's outline out of a piece of wire, following the order of the vertices. The engine draws the poly inside that wire like a soap bubble.<br /></li>
+<li><i>Direction:</i> The direction in which the list travels round the poly determines which way the poly will face. More on how this works below.</li>
+<li><i>Starting vertex</i>: I believe that UEd treats the side formed by the first two vertices in the list as that poly's vertical – this sets the orientation of the poly's texture.</li>
+</ul>
+<p>While the brushes may be concave, the individual polys must be convex. The Unreal engine currently has a maximum of 16 vertices per poly, and if you try to make one with more than this UEd will automatically split it.<br />
+The Unreal engine uses a <b>left-handed co-ordinate system</b>. This just means that the y-axis goes the opposite way to how it did at school!</p>
+<p><a name="Getting_started" id="Getting_started"></a></p>
+<h4><span class="mw-headline">Getting started</span></h4>
+<p>There are two ways to go about writing a new buidler: you can write a new class, or you can modify an existing one. The demonstration portion of this tutorial will work with either approach.</p>
+<p><a name="Making_a_new_class" id="Making_a_new_class"></a></p>
+<h3><span class="mw-headline">Making a new class</span></h3>
+<p>UnrealEd is designed to be modular. When it loads, it looks for subclasses of object.brushbuilder, and whatever it finds, it displays in the interface. You can see the native builders (and mine, if you've installed the Tarquin Brush Builder pack) in the actor browser if you un-check the 'actor classes only' box.<br />
+What this means is that all you need to do is write the class, compile it, and add the package to the list in UnrealTournament.ini — UEd will handle displaying the icon and making the property dialog box.<br />
+Make a new directory tree [UT]\MyPackage\Classes. The package name can be anything you like. Create a new text file named MyBuilder.uc in the Classes directory, and paste into it the code below:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// A blank builder</span>
+<span class="kw5">class</span> MyBuilder
+        <span class="kw5">extends</span> BrushBuilder;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Sides;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> AlignToSide;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">name</span> GroupName;
+<span class="kw5">function</span> <span class="kw4">bool</span> Build<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span> Sides &lt; <span class="nu0">3</span> <span class="br0">)</span>
+                <span class="kw1">return</span> BadParameters<span class="br0">(</span><span class="st0">"Bad input."</span><span class="br0">)</span>;
+        BeginBrush<span class="br0">(</span> <span class="kw9">false</span>, GroupName <span class="br0">)</span>;
+        <span class="kw1">return</span> EndBrush<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+Radius=<span class="nu0">0.000000</span>
+Sides=<span class="nu0">4</span>
+AlignToSide=<span class="kw9">True</span>
+GroupName=AName
+BitmapFilename=<span class="st0">"AFilename"</span>
+ToolTip=<span class="st0">"A blank builder."</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Add or change variables as you see fit, duplicating changes in the declaration and the <code>defaultproperties</code> section. The name declared by the <code>class</code> statement must match the filename so change that too if you've renamed the file.<br /></p>
+<p>The value of GroupName makes very little difference as far as I can tell, but you may as well put something that describes the builder.<br />
+UEd looks in [UT]\system\editorres for a file named <code>AFilename.BMP</code>. If UEd can't find a file of this name, or if the value is blank or the line deleted, UEd simply displays a grey button for the builder in the toolbox. Change this value to the name of a bitmap file in that directory to see an icon in the interface. If you want to make an icon yourself, they are 30 by 30, with a background of 50% grey.<br />
+Lastly, change the tooltip to whatever you like.</p>
+<p>Compile your package with ucc, and add the following line unrealtournament.ini at the end of the [Editor.EditorEngine] section, after the other 'EditPackages' lines:</p>
+<pre>
+EditPackages=MyPackage
+</pre>
+<p>Run UEd, and the button for new builder should be in the toolbox. Open the actor browser, uncheck the 'actor classes only' box and look for your builder under object.brushbuilder. Rather than work in a text editor and have to compile to see changes, it's easier to make changes in UEd and see how they work straight away. It's now an existing class, so move on to the next section!</p>
+<p><a name="Modifying_an_existing_class" id="Modifying_an_existing_class"></a></p>
+<h3><span class="mw-headline">Modifying an existing class</span></h3>
+<p>You can modify the script of an existing brush builder, recompile in UEd, use the builder and save your map, and as long as you don't save the package the next time you run UEd the builder you changed will be back to its old self. However, changing, adding or removing input variables to the builder code will upset UEd to the point of crashing!<br />
+This approach can be useful if you want to try an idea quickly, or you want to script a complex brush for a specific purpose.</p>
+<p>If you've built your own class and are now modifying it within UEd, you should have added all the input variables the builder will need. Keep a text editor running, and paste your updated script into a different file (say MyBuilder.txt) for backup. When you are happy with the changes, quit UEd, open MyBuilder.uc and copy the script across from MyBuilder.txt. Remember that the version pasted from UEd won't have a <code>defaultproperties</code> section, so keep the one from MyBuilder.uc.</p>
+<p>It's at this stage you can add or change input variables' names, type and default value.<br />
+Rebuild MyPackage.u with ucc (remember you have to delete the original, ucc won't overwrite files), and run UEd to see the new version.<br />
+I found the easiest way to script a builder was to edit its script in UEd, recompile from UEd and see the results straight away.</p>
+<p><a name="Anatomy_of_a_builder" id="Anatomy_of_a_builder"></a></p>
+<h4><span class="mw-headline">Anatomy of a builder</span></h4>
+<dl>
+<dt>Class declaration&#160;</dt>
+<dd>Defines the class name. The class must be a subclass of brushbuilder. See <a href="../../../../articles/c/l/a/Legacy%7EClass_Syntax_ec69.html" title="Legacy:Class Syntax">Class Syntax</a>.</dd>
+</dl>
+<dl>
+<dt>Input parameters&#160;</dt>
+<dd>Variables that the user will set in the parameter dialog box, such as Height, Sides, AlignToSide, IWantFriesWithThis. These are declared as class variables thus:</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span> Height, OuterRadius, InnerRadius;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Sides;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">bool</span> AlignToSide;
+</pre></div>
+<p>You can define and use enumeration type variables (out of this tutorial's scope). Variables defined here should be matched in the <code>defaultproperties</code> section, or they will hold peculiar values when first seen in the parameter dialog. See <a href="../../../../articles/v/a/r/Legacy%7EVariable_Syntax_b9c7.html" title="Legacy:Variable Syntax">Variable Syntax</a> and <a href="../../../../articles/d/i/s/Legacy%7EDisplaying_Variables_In_UnrealEd_b452.html" title="Legacy:Displaying Variables In UnrealEd">Displaying Variables in UnrealEd</a> for details about how different <a href="../../../../articles/v/a/r/Legacy%7EVariable_Type_ce04.html" title="Legacy:Variable Type">variable types</a> show up in the editor.</p>
+<dl>
+<dt>Procedural functions&#160;</dt>
+<dd>Any actions your builder may need to do repeatedly can be called in a function from the build function. For example, the cylinder builder's build function calls a function to build a cylinder, may call it again to build an inner cylinder if the overal brush should be hollow, and then builds polys for the two ends.</dd>
+</dl>
+<dl>
+<dt>Build function&#160;</dt>
+<dd>This function is called by UEd when you left-click the builder icon, or press 'Build' in the parameter dialog box. Essentially, it's the main body of the builder script.<br /></dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> <span class="kw4">bool</span> Build<span class="br0">(</span><span class="br0">)</span>
+</pre></div>
+<p><br /></p>
+<p>Some of the Epic builders use the following, which is identical to UnrealScript:<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> <span class="kw4">bool</span> Build<span class="br0">(</span><span class="br0">)</span>
+</pre></div>
+<p><br /></p>
+<dl>
+<dt>Default properties&#160;</dt>
+<dd>This section goes at the end of the builder script, and contains default values for the input parameters, the tooltip text, and the filename for the icon bitmap.</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+          <span class="br0">{</span>
+          <span class="br0">[</span>parametername<span class="br0">]</span>=<span class="br0">[</span>parametervalue<span class="br0">]</span>
+          BitmapFilename=<span class="st0">"[filename]"</span>
+          ToolTip=<span class="st0">"[tooltiptext]"</span>
+          <span class="br0">}</span>
+</pre></div>
+<p>UEd looks in {BaseDirectory}\System\Editorres for a file named [filename].BMP. If the value is blank, or UEd can't find the file, the button will be grey with no picture.</p>
+<p><a name="Functions" id="Functions"></a></p>
+<h4><span class="mw-headline">Functions</span></h4>
+<p>The functions are used to build the brush are native functions of the <a href="../../../../articles/b/r/u/Legacy%7EBrushBuilder_1a86.html" title="Legacy:BrushBuilder">BrushBuilder</a> class that the current builder has inherited.</p>
+<p><a name="A_little_example_.28ued2.29" id="A_little_example_.28ued2.29"></a></p>
+<h2><span class="mw-headline">A little example (ued2)</span></h2>
+<p><a name=".27Half_cube.27_brush_builder"></a></p>
+<h3><span class="mw-headline">'Half cube' brush builder</span></h3>
+<p>[[Image:Legacy_Halfcubediagram.png|]]</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">//Half cube</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> Halfcube <span class="kw5">extends</span> BrushBuilder;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">name</span> GroupName;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Size;
+ 
+<span class="kw5">event</span> <span class="kw4">bool</span> build<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+BeginBrush<span class="br0">(</span> <span class="kw9">false</span>, GroupName <span class="br0">)</span>;
+ 
+<span class="co1">//So each time we call the vertex3f function, the created vertex is given a number,</span>
+<span class="co1">//it's the number we use in the poly functions..</span>
+<span class="co1">//First vertex is number 0, and so on</span>
+ 
+vertex3f<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//0</span>
+vertex3f<span class="br0">(</span>Size,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//1</span>
+vertex3f<span class="br0">(</span><span class="nu0">0</span>,Size,<span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//2</span>
+poly3i<span class="br0">(</span><span class="nu0">-1</span>,<span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">2</span><span class="br0">)</span>; <span class="co1">// the base poly - the first parameter indicates the "front" of the face</span>
+vertex3f<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,Size<span class="br0">)</span>; <span class="co1">//3</span>
+vertex3f<span class="br0">(</span>Size,<span class="nu0">0</span>,Size<span class="br0">)</span>; <span class="co1">//4</span>
+vertex3f<span class="br0">(</span><span class="nu0">0</span>,Size,Size<span class="br0">)</span>; <span class="co1">//5</span>
+poly3i<span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">3</span>,<span class="nu0">4</span>,<span class="nu0">5</span><span class="br0">)</span>; <span class="co1">// the top poly</span>
+<span class="co1">//</span>
+poly4i<span class="br0">(</span><span class="nu0">-1</span>,<span class="nu0">3</span>,<span class="nu0">0</span>,<span class="nu0">2</span>,<span class="nu0">5</span><span class="br0">)</span>; <span class="co1">// the three sides.</span>
+poly4i<span class="br0">(</span><span class="nu0">-1</span>,<span class="nu0">3</span>,<span class="nu0">4</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//</span>
+poly4i<span class="br0">(</span><span class="nu0">-1</span>,<span class="nu0">2</span>,<span class="nu0">1</span>,<span class="nu0">4</span>,<span class="nu0">5</span><span class="br0">)</span>; <span class="co1">//</span>
+ 
+<span class="kw1">return</span> endbrush<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+Size=<span class="nu0">128</span>
+GroupName=Halfcube
+BitmapFilename=<span class="st0">"BBHalfCube"</span>
+ToolTip=<span class="st0">"half a cube"</span>
+<span class="br0">}</span>
+</pre></div>
+<p><br /></p>
+<p><a name="Tips_And_Tricks" id="Tips_And_Tricks"></a></p>
+<h2><span class="mw-headline">Tips And Tricks</span></h2>
+<p><a name="Naming_polys" id="Naming_polys"></a></p>
+<h3><span class="mw-headline">Naming polys</span></h3>
+<p><a href="../../../../articles/m/y/c/Legacy%7EMychaeel_0406.html" title="Legacy:Mychaeel">Mychaeel</a> came up with a way to use an expression to set the ItemName parameter in the poly building functions. First declare a <i>name</i> variable in your BrushBuilder subclass; then use <i>SetPropertyText</i> to set it using an arbitarily constructed <i>string</i> value; then take the <i>name</i> value from the variable you declared.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// declare a name variable:</span>
+<span class="kw5">var</span> <span class="kw4">name</span> DynItemName;  
+ 
+<span class="co1">// set it as needed:</span>
+<span class="kw7">SetPropertyText</span><span class="br0">(</span> <span class="st0">"DynItemName"</span> , <span class="kw4">string</span><span class="br0">(</span>i<span class="br0">)</span> <span class="br0">)</span>;
+ 
+<span class="co1">// use the DynItemName variable in the poly call:</span>
+Poly4i<span class="br0">(</span> sgn , Va2 , Vb2 , Vb1 , Va1 , DynItemName , PolyFlags <span class="br0">)</span>;
+</pre></div>
+<p><a name="Running_Unrealscript_in_the_Editor" id="Running_Unrealscript_in_the_Editor"></a></p>
+<h2><span class="mw-headline">Running Unrealscript in the Editor</span></h2>
+<p>A brushbuilder is an Object, and is one of the few (very few) classes in which you can run UnrealScript within the editor. The editor calls the Build() function of a brushbuilder to cause it to create a brush. You are not required to use this function to make a brush, however, and can do virtually anything you like with it! Remember that UnrealEd and the actual game run using mostly the same engine - as a result you can essentially treat your brushbuilder as any Object. Basically, anything you can do in the game, you can do with the brushbuilder.</p>
+<p><a name="Obtaining_actor_reference" id="Obtaining_actor_reference"></a></p>
+<h3><span class="mw-headline">Obtaining actor reference</span></h3>
+<p>Generally the first thing you will want to do in the Build script is to find an actor to do your dirty work. Objects can't use Spawn or a myriad of other things. It is quite simple to do so:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// A base class you can extend to call code within the editor.</span>
+<span class="kw5">class</span> EditorScript <span class="kw5">extends</span> BrushBuilder;
+ 
+<span class="kw5">function</span> <a href="/Actor"><span class="kw10">actor</span></a> LocateActor<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <a href="/Actor"><span class="kw10">actor</span></a> I;
+  <span class="kw1">foreach</span> AllObjects<span class="br0">(</span> <span class="kw5">class</span><span class="st0">'Actor'</span>, I <span class="br0">)</span> <span class="kw1">return</span> I;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> <span class="kw4">bool</span> Build<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  ExecuteScript<span class="br0">(</span> LocateActor<span class="br0">(</span><span class="br0">)</span> <span class="br0">)</span>;
+  <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> ExecuteScript<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> A <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// Do whatever you want here, or ideally subclass this to make your own custom functionality.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Instead of AllObjects iterator, you can use the FindObject(). Use SetPropertyText() and a temp variable if you know name of the actor you're looking for. Don't forget to clear the temp variable after calling SetPropertyText(), leaving actor references in objects most likely <a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">will cause crashes</a> on save or exit.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">struct</span> SEditorActor
+<span class="br0">{</span>
+        <span class="kw5">var</span> <span class="kw4">string</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+        <span class="kw5">var</span> <span class="kw4">int</span> MaxId;
+<span class="br0">}</span>;
+ 
+<span class="kw5">var</span> array&lt;SEditorActor&gt; EditorActors;
+<span class="kw5">var</span> <a href="/Actor"><span class="kw10">Actor</span></a> TempEditorActor;
+ 
+<span class="kw5">event</span> <span class="kw4">bool</span> Build<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+ 
+        <span class="co1">// Find actor reference</span>
+        A = FindAnyActor<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> A == <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+        <span class="co1">//...</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <a href="/Actor"><span class="kw10">Actor</span></a> FindAnyActor<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> SEditorActor E;
+        <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> A;
+        <span class="kw5">local</span> <span class="kw4">int</span> i,j;
+ 
+        <span class="kw1">for</span><span class="br0">(</span> i=<span class="nu0">0</span>; i!=EditorActors.<span class="kw6">Length</span>; ++i <span class="br0">)</span>
+        <span class="br0">{</span>
+                E = EditorActors<span class="br0">[</span>i<span class="br0">]</span>;
+                <span class="kw1">for</span><span class="br0">(</span> j=<span class="nu0">0</span>; j!=E.<span class="me1">MaxId</span>; ++j <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw7">SetPropertyText</span><span class="br0">(</span><span class="st0">"TempEditorActor"</span>,E.<a href="/Actor"><span class="kw10">Actor</span></a>$j<span class="br0">)</span>;
+                        <span class="kw1">if</span><span class="br0">(</span> TempEditorActor != <span class="kw9">None</span> <span class="br0">)</span>
+                        <span class="br0">{</span>
+                                A = TempEditorActor;
+                                TempEditorActor = <span class="kw9">None</span>;
+                                <span class="kw7">Log</span><span class="br0">(</span> <span class="st0">"Actor Ref:"</span> @ A, <span class="kw5">class</span>.<span class="kw4">name</span> <span class="br0">)</span>;
+                                <span class="kw1">return</span> A;
+                        <span class="br0">}</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span> 
+        BadParameters<span class="br0">(</span> <span class="st0">"Could not find any actors in the level."</span> <span class="br0">)</span>;
+        <span class="kw1">return</span> <span class="kw9">None</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+        <span class="co1">// MyLevel.LevelInfo0 should exist in every level, empty or not.</span>
+        EditorActors<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>=<span class="st0">"MyLevel.LevelInfo"</span>,MaxId=<span class="nu0">8</span><span class="br0">)</span>
+        EditorActors<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>=<span class="st0">"MyLevel.Camera"</span>,MaxId=<span class="nu0">64</span><span class="br0">)</span>
+        EditorActors<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a>=<span class="st0">"MyLevel.Brush"</span>,MaxId=<span class="nu0">128</span><span class="br0">)</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now that you have an actor, you can call functions from it to do whatever you like. If you have need of more complex functionality, you can create your own actor class, then use the actor class you found using LocateActor() to spawn your own actor, which can then be instructed to do whatever you like. <b>Note that actors spawned in this manner will not have some functions such as tick executed on them in the editor.</b></p>
+<p><a name="User_Input" id="User_Input"></a></p>
+<h3><span class="mw-headline">User Input</span></h3>
+<p>You can accept parameters simply by defining variables like you would in any other Unrealscript. However, you cannot specify a group name.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// These will not show up as parameters, but can still be used within the script.</span>
+<span class="kw5">var</span> <span class="kw4">float</span> Counter;
+<span class="kw5">var</span><span class="br0">(</span>Stuff<span class="br0">)</span> <span class="kw4">string</span> Names;
+ 
+<span class="co1">// These variables will show up as parameters</span>
+<span class="co1">// UnrealEd will intelligently create the appropriate form of text box/whatever as appropriate for the type of variable.</span>
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">int</span> Count;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> array&lt;vector&gt; Offsets;
+</pre></div>
+<p>The default BrushBuilder parameters window is very small and not resizable. Keep the parameters names short so there can be more space for parameter values.</p>
+<p><a name="Actor_modification_notes" id="Actor_modification_notes"></a></p>
+<h3><span class="mw-headline">Actor modification notes</span></h3>
+<p><b>Note that changes made by your function or by the indirect consequences of your functions will actually affect actors in the level! If you save the level, those changes will be</b> <i>permanent</i><b>, and Undo will</b> <i>not</i> <b>work reliably against these changes. Sometimes it will, sometimes it won't, depending on your code. You can still recover things by loading from your last save, however. Save really often, and be extremely careful with calling the destroy function on things.</b></p>
+<p>As a side-note, calling destroy on things also tends to cause General Protection Faults, but it will not always do this. Sometimes it will also refuse to save your level after you have destroyed something through script. I believe that this is due to the lack of the Tick function. As you may know, Destroy() is a special type of latent function and the actor is not actually destroyed until the end of the tick, though it is flagged as bDeleteMe and as a result many operations refuse to touch it, knowing that it has already been declared 'dead.'</p>
+<p><a name="Obtaining_viewport_camera_reference" id="Obtaining_viewport_camera_reference"></a></p>
+<h3><span class="mw-headline">Obtaining viewport camera reference</span></h3>
+<p>Find viewport reference and camera will be in its Actor variable. To find all viewport names use console command <b>obj list class=viewport</b></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> Viewport TempViewport;
+<span class="kw5">function</span> Camera GetCamera<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> Camera C;
+        <span class="kw7">SetPropertyText</span><span class="br0">(</span><span class="st0">"TempViewport"</span>,<span class="st0">"U2Viewport0"</span><span class="br0">)</span>;
+        C = Camera<span class="br0">(</span>TempViewport.<a href="/Actor"><span class="kw10">Actor</span></a><span class="br0">)</span>;
+        TempViewport = <span class="kw9">None</span>;
+        <span class="kw1">return</span> C;      
+<span class="br0">}</span>
+</pre></div>
+<p>UnrealEd 3.0 viewports:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+TerrainHeightmap
+        TerrainLayers
+        TerrainDecoLayers
+        MatineeScenes
+        MatineeActions
+        MatineeSubActions
+        U2Viewport0
+        U2Viewport1
+        U2Viewport2
+        U2Viewport3
+        MeshViewer
+        AnimationViewer
+        PrefabBrowser
+        LIPSinc
+        StaticMeshBrowser
+        TextureBrowser
+        TextureBrowserUsed
+        TextureBrowserMRU
+</pre></div>
+<p><a name="BrushBuilder_object_persistence" id="BrushBuilder_object_persistence"></a></p>
+<h3><span class="mw-headline">BrushBuilder object persistence</span></h3>
+<p>BrushBuilders are destroyed and created when new level is loaded. When UnrealEd starts up there may be more that one copy of each BrushBuilder.</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Foxpaw:</b> I refactored the bit about brushbuilders being used for custom editor functions, and I added what I've learned about them, but I think this topic deserves it's own page. It is technically a custom brushbuilder, but I don't think that people will find it here. I already had the idea and decided to read up about the brushbuilder stuff to see if anyone else had tried it, but otherwise I doubt a person looking to run unrealscript in the editor would look here for the answer.</p>
+<p><b>Switch:</b> Keeping this in one place is so far ok. The page is linked on <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>.</p>
+<p><b>Dushnok:</b> I'm very newbish at uscript but I added the little example (halfcube) . Just for newbies like me&#160;:) Do you think it's ok&#160;?</p>
+<p><b>EntropicLqd:</b> Nice example. I'd be inclined to define all the points first and then the polygons afterwards. Question though - The first parameter indicates the "front" of the face by specifying the direction the vertices should be traversed. Presumably the sign is reversed if the vertices are specified in reverse order. e.g. The following are equivalent:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+poly3i<span class="br0">(</span><span class="nu0">-1</span>,<span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">2</span><span class="br0">)</span>;
+poly3i<span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">2</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>;
+</pre></div>
+<p>Is there a "best way" to specify the order of the vertices?</p>
+<p><b>Tarquin:</b> the vector made by the first two vertices appears to give the orientation of the texture, but I've not managed to pin this down exactly.</p>
+<p><b>OlympusMons:</b> Changed category to refactor me.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Category:Legacy Refactor Me</a> – Badly needs a more "user-friendly" format, with some pictures.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 88/1000000
+Post-expand include size: 30/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Refactor_Me_699c.html" title="Category:Legacy Refactor Me">Legacy Refactor Me</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/c/r/Legacy%7EScripting_Custom_Brushbuilders_8fa1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/c/r/Legacy_talk%7EScripting_Custom_Brushbuilders_c2c4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Scripting_Custom_Brushbuilders">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:22, 23 January 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

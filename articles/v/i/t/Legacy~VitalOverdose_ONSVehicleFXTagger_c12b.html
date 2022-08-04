@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VitalOverdose/ONSVehicleFXTagger - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VitalOverdose/ONSVehicleFXTagger</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">Legacy:VitalOverdose</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">Decoration</a> &gt;&gt; ONSVehicleFXTagger (Package: custom)</div>
+<p>by <a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_8095.html" title="Legacy:VitalOverdose">VitalOverdose</a></p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#game_use"><span class="tocnumber">2</span> <span class="toctext">game use</span></a></li>
+<li class="toclevel-1"><a href="#The_script"><span class="tocnumber">3</span> <span class="toctext">The script</span></a>
+<ul>
+<li class="toclevel-2"><a href="#SFX_Emitters"><span class="tocnumber">3.1</span> <span class="toctext">SFX Emitters</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">5</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Overview" id="Overview"></a></p>
+<h3><span class="mw-headline">Overview</span></h3>
+<p>A is a modified <a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">Decoration</a> that reacts when hit by a <a href="../../../../articles/v/e/h/Legacy%7EVehicle_6bd9.html" title="Legacy:Vehicle">vehicle</a>. There is no static mesh for this actor and it wont block the vehicle in any way . When the ONSVehicleFXTagger is triggered it will spawn an emitter and hard attach it to the actor that initiated the event (the vehicle) and any other vehicles inside a radius that can be set by the mapper&#160;: TagRadius.</p>
+<p><a name="game_use" id="game_use"></a></p>
+<h3><span class="mw-headline">game use</span></h3>
+<p>This is great for adding realism when a vehicle drives though fire or across lava etc.</p>
+<p><a name="The_script" id="The_script"></a></p>
+<h2><span class="mw-headline">The script</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//================================================================================</span>
+ 
+<span class="co1">//Class ONSVehicleFXTagger by vitaloverdose Oct2007 http://www.vitaloverdose.com</span>
+ 
+<span class="co1">//A modified decoration actor used to attach emitters to vehicles</span>
+ 
+<span class="co1">//================================================================================</span>
+ 
+<span class="kw5">class</span> ONSVehicleFXTagger <span class="kw5">extends</span> Decoration
+ 
+<span class="kw6">Placeable</span>;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> class&lt;Actor&gt;               EmitterType;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>                      TagRadius;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <span class="kw4">float</span>                      ResetTime;
+ 
+<span class="kw5">var</span> <span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">sound</span></a>                      ResetSoundFX;
+ 
+<span class="kw5">var</span>    <a href="/Actor"><span class="kw10">Actor</span></a>                      SpawnedActor;
+ 
+<span class="kw5">function</span> Landed<span class="br0">(</span><span class="kw4">vector</span> HitNormal<span class="br0">)</span>;
+ 
+<span class="kw5">function</span> HitWall <span class="br0">(</span><span class="kw4">vector</span> HitNormal, <a href="/Actor"><span class="kw10">actor</span></a> Wall<span class="br0">)</span>;
+ 
+<span class="kw6">singular</span> <span class="kw5">function</span> PhysicsVolumeChange<span class="br0">(</span> PhysicsVolume NewVolume <span class="br0">)</span>;
+ 
+<span class="kw6">singular</span> <span class="kw5">function</span> BaseChange<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> ResetTime &lt;<span class="nu0">5</span> &amp;&amp; ResetTime &gt; <span class="nu0">0</span> <span class="br0">)</span>
+     <span class="kw1">return</span>;
+ 
+ResetTime = <span class="nu0">5</span>;
+ 
+<span class="kw7">log</span><span class="br0">(</span><span class="st0">"the min time allowed for a reset is 5 seconds. -1 shuts the reset off"</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> TakeDamage<span class="br0">(</span> <span class="kw4">int</span> NDamage, <a href="/Pawn"><span class="kw10">Pawn</span></a> instigatedBy, <span class="kw4">Vector</span> hitlocation,<span class="kw4">Vector</span> momentum, class&lt;DamageType&gt; <a href="/DamageType"><span class="kw10">damageType</span></a><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw5">local</span> ONSVehicle FoundONSVehicle;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> !bDamageable <span class="br0">)</span>
+     <span class="kw1">return</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> <a href="/DamageType"><span class="kw10">damagetype</span></a> == <span class="kw9">None</span> <span class="br0">)</span>
+     <a href="/DamageType"><span class="kw10">DamageType</span></a> = <span class="kw5">class</span><span class="st0">'DamageType'</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> InstigatedBy != <span class="kw9">None</span> <span class="br0">)</span>
+     Instigator = InstigatedBy;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Instigator != <span class="kw9">None</span> <span class="br0">)</span>
+     MakeNoise<span class="br0">(</span><span class="nu0">1.0</span><span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> EffectWhenDestroyed != <span class="kw9">None</span> <span class="br0">)</span>
+   <span class="br0">{</span>
+     <span class="kw1">foreach</span> RadiusActors<span class="br0">(</span><span class="kw5">Class</span><span class="st0">'ONSVehicle'</span>,FoundONSVehicle,TagRadius,location<span class="br0">)</span>
+             <span class="br0">{</span>
+              NetUpdateTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - <span class="nu0">1</span>;
+              Spawn<span class="br0">(</span> EffectWhenDestroyed, Owner,, FoundONSVehicle.<span class="me1">Location</span> <span class="br0">)</span>;
+              SpawnedActor = Spawn<span class="br0">(</span> EmitterType, Owner,, FoundONSVehicle.<span class="me1">Location</span> <span class="br0">)</span>;
+ 
+              <span class="kw1">if</span> <span class="br0">(</span>SpawnedActor != <span class="kw9">none</span><span class="br0">)</span>
+                  SpawnedActor.<span class="me1">SetBase</span><span class="br0">(</span> FoundONSVehicle <span class="br0">)</span>;
+              <span class="br0">}</span>
+     <span class="br0">}</span>
+ 
+setcollision<span class="br0">(</span><span class="kw9">false</span>,<span class="kw9">false</span>,<span class="kw9">false</span><span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span>ResetTime &gt; <span class="nu0">0</span> <span class="br0">)</span>
+    setTimer<span class="br0">(</span>ResetTime,<span class="kw9">false</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> timer<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+Reset<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Reset<span class="br0">(</span><span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw6">super</span>.<span class="me1">Reset</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+NetUpdateTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - <span class="nu0">1</span>;
+ 
+setcollision<span class="br0">(</span><span class="kw9">true</span>,<span class="kw9">true</span>,<span class="kw9">true</span><span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span>resetSoundFX != <span class="kw9">none</span><span class="br0">)</span>
+    playsound<span class="br0">(</span>ResetSoundFX<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Bump<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span> Mover<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; Mover<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">bResetting</span> <span class="br0">)</span> || Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'ONSVehicle'</span><span class="br0">)</span> == <span class="kw9">false</span> || <span class="br0">(</span> 
+ 
+VSize<span class="br0">(</span>Other.<span class="me1">Velocity</span><span class="br0">)</span> &lt; <span class="nu0">50</span> <span class="br0">)</span> <span class="br0">)</span>
+      <span class="kw1">return</span>;
+ 
+Instigator = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Instigator != <span class="kw9">None</span> &amp;&amp; Instigator.<span class="me1">Controller</span> != <span class="kw9">None</span> <span class="br0">)</span>
+     TakeDamage<span class="br0">(</span> VSize<span class="br0">(</span>Other.<span class="me1">Velocity</span><span class="br0">)</span>*<span class="nu0">0.03</span>, Instigator, Location, <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>, <span class="kw5">class</span><span class="st0">'Crushed'</span><span class="br0">)</span>;
+ 
+<span class="kw6">super</span>.<span class="me1">Bump</span><span class="br0">(</span>other<span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> EncroachedBy<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Mover<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; Mover<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">bResetting</span> <span class="br0">)</span>
+     <span class="kw1">return</span>;
+ 
+Instigator = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Instigator != <span class="kw9">None</span> &amp;&amp; Instigator.<span class="me1">Controller</span> != <span class="kw9">None</span> <span class="br0">)</span>
+     TakeDamage<span class="br0">(</span> <span class="nu0">1000</span>, Instigator, Location, <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>, <span class="kw5">class</span><span class="st0">'Crushed'</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> EncroachingOn<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+ 
+<span class="br0">{</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Mover<span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">None</span> &amp;&amp; Mover<span class="br0">(</span>Other<span class="br0">)</span>.<span class="me1">bResetting</span> <span class="br0">)</span>
+     <span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+Instigator = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span> Instigator != <span class="kw9">None</span> &amp;&amp; Instigator.<span class="me1">Controller</span> != <span class="kw9">None</span> <span class="br0">)</span>
+     TakeDamage<span class="br0">(</span> <span class="nu0">1000</span>, Instigator, Location, <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>, <span class="kw5">class</span><span class="st0">'Crushed'</span><span class="br0">)</span>;
+ 
+<span class="kw1">return</span> <span class="kw9">false</span>;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+ 
+<span class="br0">{</span>
+     TagRadius=<span class="nu0">200.000000</span>
+     ResetTime=<span class="nu0">10.000000</span>
+     bDamageable=<span class="kw9">True</span>
+     bStatic=<span class="kw9">False</span>
+     NetUpdateFrequency=<span class="nu0">1.000000</span>
+     AmbientGlow=<span class="nu0">48</span>
+     bMovable=<span class="kw9">False</span>
+     CollisionHeight=<span class="nu0">50.000000</span>
+     bCollideActors=<span class="kw9">True</span>
+     bCollideWorld=<span class="kw9">True</span>
+     bUseCylinderCollision=<span class="kw9">True</span>
+     bEdShouldSnap=<span class="kw9">True</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<p><a name="SFX_Emitters" id="SFX_Emitters"></a></p>
+<h3><span class="mw-headline">SFX Emitters</span></h3>
+<p>The ONSVehicleFXTagger can be used as a 'spawner' for any of the SFX emitter scripts which where designed to reduce the workload on this actor for complicated special FX by getting the emitter actor to act as a kind of <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">controller</a> of the vehicle its attached to for the duration of its life.</p>
+<ul>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXSelfScaling_0b90.html" title="Legacy:VitalOverdose/SFXSelfScaling">SFXSelfScaling</a> Particles that automatically scale to the actor they are attached to.</li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_SFXUltraLight_f9bf.html" title="Legacy:VitalOverdose/SFXUltraLight">SFXUltraLight</a> Particles that can change the weight of an ONSVehicle for a set amount of time allowing it to be boosted over longer distances.</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/v/e/h/Legacy%7EVehicle_6bd9.html" title="Legacy:Vehicle">Vehicle</a></li>
+<li><a href="../../../../articles/o/n/s/Legacy%7EONSVehicle_101f.html" title="Legacy:ONSVehicle">ONSVehicle</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_Wormhole_3621.html" title="Legacy:VitalOverdose/Wormhole">WormHole</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleBooster_4aeb.html" title="Legacy:VitalOverdose/ONSVehicleBooster">ONSVehicleBooster</a></li>
+<li><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleTeleporter_c44f.html" title="Legacy:VitalOverdose/ONSVehicleTeleporter">ONSVehicleTeleporter</a></li>
+</ul>
+<hr />
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 17/1000000
+Post-expand include size: 215/2097152 bytes
+Template argument size: 127/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/i/t/Legacy%7EVitalOverdose_ONSVehicleFXTagger_c12b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/i/t/Legacy_talk%7EVitalOverdose_ONSVehicleFXTagger_090d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VitalOverdose/ONSVehicleFXTagger">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:28, 8 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

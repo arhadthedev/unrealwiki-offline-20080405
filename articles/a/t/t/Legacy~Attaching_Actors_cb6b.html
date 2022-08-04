@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Attaching Actors - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Attaching Actors</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial discusses attaching actors to a mover and assumes you already know about:</p>
+<ul>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_Overview_89eb.html" title="Legacy:Actor Overview">Actor Overview</a>: adding actors, setting properties</li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Mover_eb2c.html" title="Legacy:Create A Mover">Create A Mover</a></li>
+<li><a href="../../../../articles/k/e/y/Legacy%7EKeyframe_b7a3.html" title="Legacy:Keyframe">Keyframe</a></li>
+</ul>
+<p>Any actors attached to a mover will follow the mover. You can attach smoke generators to leave a trail of smoke or attach a fighter jet decoration to fly around your map.</p>
+<p>Attached actors can be anywhere in the map; they don't have to touch the mover or even be anywhere near it. The mover can be hidden (in solid space) and the actors will appear to move independently. Attached actors will always move relative to the movement of the mover; if the mover moves 64 units to the left, so will the attached actor.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Method_1:_Attach_Tag"><span class="tocnumber">1</span> <span class="toctext">Method 1: Attach Tag</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Non-unique_Tag"><span class="tocnumber">1.1</span> <span class="toctext">Non-unique Tag</span></a></li>
+<li class="toclevel-2"><a href="#bStatic"><span class="tocnumber">1.2</span> <span class="toctext">bStatic</span></a></li>
+<li class="toclevel-2"><a href="#bCollideActors"><span class="tocnumber">1.3</span> <span class="toctext">bCollideActors</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Method_2:_AttachMovers_.28UT_only.29"><span class="tocnumber">2</span> <span class="toctext">Method 2: AttachMovers (UT only)</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Attaching_Actors"><span class="tocnumber">2.1</span> <span class="toctext">Attaching Actors</span></a></li>
+<li class="toclevel-2"><a href="#Warnings"><span class="tocnumber">2.2</span> <span class="toctext">Warnings</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Ideas"><span class="tocnumber">3</span> <span class="toctext">Ideas</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Triggered_Kicker"><span class="tocnumber">3.1</span> <span class="toctext">Triggered Kicker</span></a></li>
+<li class="toclevel-2"><a href="#Moving_Skybox"><span class="tocnumber">3.2</span> <span class="toctext">Moving Skybox</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Method_1:_Attach_Tag" id="Method_1:_Attach_Tag"></a></p>
+<h2><span class="mw-headline">Method 1: Attach Tag</span></h2>
+<p>To attach any actor to a mover, <a href="../../../../articles/m/a/t/Legacy%7EMatch_These_Tags_2799.html" title="Legacy:Match These Tags">match these tags</a>:</p>
+<ul>
+<li>The Mover's Events -&gt; Tag</li>
+<li>The Actor's Movement -&gt; AttachTag</li>
+</ul>
+<p>Most actors can be attached in this way. There are three possible pitfalls however.</p>
+<p><a name="Non-unique_Tag" id="Non-unique_Tag"></a></p>
+<h3><span class="mw-headline">Non-unique Tag</span></h3>
+<p>In order for this to work there must be <i>only one</i> actor (mover or otherwise) in the game with the same Tag as the actor's AttachTag. If the same tag is used by your mover and another object, the attached actor will not know which object to follow, and will not move. You will have to give your mover a unique tag before you can successfully attach other things to it in this way.</p>
+<p><a name="bStatic" id="bStatic"></a></p>
+<h3><span class="mw-headline">bStatic</span></h3>
+<p>Most actors can be attached in this way. The principal cause of an actor not moving with the mover is that it has the property <b>bStatic</b> set to true by default (for example <a href="../../../../articles/p/l/a/Legacy%7EPlayerStart_0952.html" title="Legacy:PlayerStart">PlayerStarts</a> and <a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">Volumes</a>).</p>
+<p>You will need to change this property for the actor you want to attach: see <a href="../../../../articles/a/c/t/Legacy%7EActor_Properties_Window_aeb0.html" title="Legacy:Actor Properties Window">Actor Properties Window</a> for how to edit hidden properties. However, this may cause problems in netplay. Another solution is to <a href="../../../../articles/c/r/e/Legacy%7ECreate_A_Subclass_2675.html" title="Legacy:Create A Subclass">Create a subclass</a> for the item you want to attach, and change the default value of bStatic for the new custom class.</p>
+<p><a name="bCollideActors" id="bCollideActors"></a></p>
+<h3><span class="mw-headline">bCollideActors</span></h3>
+<p>Bizzarely, Collision.bCollideActors must be true for attachment to work, or the attached item may just drift off casually into the void in a straight line. (This was observed when attaching a rotating mover to the arm of another rotating mover. No other Collision flags appear to be needed.)</p>
+<p><a name="Method_2:_AttachMovers_.28UT_only.29" id="Method_2:_AttachMovers_.28UT_only.29"></a></p>
+<h2><span class="mw-headline">Method 2: AttachMovers (UT only)</span></h2>
+<p>This method is an alternative, available in <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a> and other games of that generation which have the <a href="../../../../articles/a/t/t/Legacy%7EAttachMover_0840.html" title="Legacy:AttachMover">AttachMover</a> class. To add special movers, right-click the <i>Add Mover</i> <a href="../../../../articles/t/o/o/Legacy%7EToolbox_b14b.html" title="Legacy:Toolbox">toolbox</a> button instead of just clicking it: choose "AttachMover" from the small pop-up menu.</p>
+<p>An AttachMover has the same properties as a normal mover, you can have it BumpOpenTimed so it will open when you touch it, TriggerOpenTimed so you can trigger it (see <a href="../../../../articles/a/c/t/Legacy%7EActivating_A_Mover_2f87.html" title="Legacy:Activating A Mover">Activating a mover</a> for more on this). The only difference is that in the properties of the mover there is now a new option.</p>
+<p><a name="Attaching_Actors" id="Attaching_Actors"></a></p>
+<h3><span class="mw-headline">Attaching Actors</span></h3>
+<p>Unreal uses tags to tie actors to the AttachMover, the same way <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Triggers</a> work. The same name must be present in two different places. It doesn't matter what the text is, but something descriptive may help later. 'Blah' will do, as will 'Attach' or 'AttachedBarrel'. The following properties must match:</p>
+<ul>
+<li>The AttachMover's AttachMover -&gt; AttachTag</li>
+<li>The Actor's Events -&gt; Tag</li>
+</ul>
+<p>Now you may have to set a few other properties on the actor to get this to work. Check the actors have the following properties set:</p>
+<ul>
+<li>Advanced -&gt; bMovable = True</li>
+<li>Advanced -&gt; bStatic = False</li>
+</ul>
+<p>Also, it is a good idea to turn the attached actor's collision <i>off</i>. If the actor has it's collision properties set to True, it can cause all sorts of problems (i.e. your actor may not move properly). If you need collision, try using an invisible mover to create the illusion of collision. Alternatively, in the case of Karma-simulated actors, collision can be manually disabled between two actors without affecting those object's collision with the remainder of objects in the world.</p>
+<p>Now test your map. When the mover moves, the actor should move with it.</p>
+<p><a name="Warnings" id="Warnings"></a></p>
+<h3><span class="mw-headline">Warnings</span></h3>
+<ul>
+<li>If your actor does not move with the mover, check the bMovable and bStatic properties of the actor. Lights are one example.</li>
+</ul>
+<ul>
+<li>Do not attach any NavigationPoint or any actor that alters the bot's pathing to a mover.</li>
+</ul>
+<ul>
+<li>Do not attach an actor to more than one mover.</li>
+</ul>
+<p>Actors that are attached to a mover follow its location, but only the yaw of its rotation. If you need to have your actors follow rotational movement around the other axes as well, check the <a href="../../../../articles/a/c/t/Legacy%7EActorAttacher_9a19.html" title="Legacy:ActorAttacher">ActorAttacher</a> component.</p>
+<p><a name="Ideas" id="Ideas"></a></p>
+<h2><span class="mw-headline">Ideas</span></h2>
+<p><a name="Triggered_Kicker" id="Triggered_Kicker"></a></p>
+<h3><span class="mw-headline">Triggered Kicker</span></h3>
+<p>You can try attaching a <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> to a mover to make a triggered jump pad. Just add the kicker somewhere below the kicker where it won't effect players, then attach it to a mover which will move it up enough so that it kicks people. This can be quite fun for things like Human Cannons &lt;insert evil laugh here&gt;.</p>
+<dl>
+<dd>Alternatively, see the <a href="../../../../articles/k/i/c/Legacy%7EKicker_71ef.html" title="Legacy:Kicker">Kicker</a> actor page for a subclass which does this.</dd>
+</dl>
+<p><a name="Moving_Skybox" id="Moving_Skybox"></a></p>
+<h3><span class="mw-headline">Moving Skybox</span></h3>
+<p>You can also attach a <a href="../../../../articles/s/k/y/Legacy%7ESkyZoneInfo_7810.html" title="Legacy:SkyZoneInfo">SkyZoneInfo</a> to movers. I've tried this one and it's pretty cool. Try creating a circular <a href="../../../../articles/s/k/y/Legacy%7ESkyBox_f388.html" title="Legacy:SkyBox">SkyBox</a>, then add a mover in the very center of it that rotates constantly. You will want to make sure that you can't see it at any point though&#160;:) After that, add your SkyZoneInfo somewhere near the perimeter of the skybox and attach it to the mover.</p>
+<p>You will want to check that <i>bDirectional = True</i> in the advanced properties of it so that it is facing the correct way (say you are doing a flying ship or something&#160;:) ) Also, you can try tilting it sideways in towards the center of the skybox so that the entire map is sloped inwards as you would on a moterbike (This can make you feel sick after a while&#160;:) )</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/m/o/v/Legacy%7EMover_Topics_947d.html" title="Legacy:Mover Topics">Mover Topics</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_Advanced_e577.html" title="Legacy:Actor (UT)/Advanced">Actor (UT)/Advanced</a> properties</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_Events_e4d0.html" title="Legacy:Actor (UT)/Events">Actor (UT)/Events</a> properties</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_Movement_eb17.html" title="Legacy:Actor (UT)/Movement">Actor (UT)/Movement</a> properties</li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActorAttacher_9a19.html" title="Legacy:ActorAttacher">ActorAttacher</a> component for UT</li>
+<li><a href="../../../../articles/m/o/v/Legacy%7EMovable_Lights_99de.html" class="mw-redirect" title="Legacy:Movable Lights">Movable Lights</a> making lights move</li>
+</ul>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Foxpaw:</b> Can this be renamed, since it deals only with attaching things to movers, and not attaching things to bones, or just using plain old attach or setbase?</p>
+<p><b>Tarquin:</b> "Attaching to movers"?</p>
+<p><b>Foxpaw:</b> That could work. Alternatively we could add stuff on those other topics here, though admittedly I've never had any success with the "Attach" function and only sporadic results with Setbase.</p>
+<p><b>MythOpus:</b> I suggest making a base page called Attaching or something and have subpages for attaching actors to movers and bones etc...</p>
+<p>~~ Sounds good&#160;:)</p>
+<p>~~ Thanks&#160;:) I think I'll get right no it then. Can you rename this page to Attaching_To_Movers or something? And do you want it to be a sub-page of " Attaching_Stuff " or just a page on it's own?</p>
+<p><b>GTD-Carthage:</b> I've done everything correctly but no matter what happens, BlockPlayer actors don't move with the attachmover. I've tied up everything correctly and even investigated twice. Are BlockPlayer actors really just static actors?</p>
+<p><b>Ragdoll:</b> I dont know about other games, but in <a href="../../../../articles/d/e/v/Legacy%7EDevastation_74db.html" title="Legacy:Devastation">Devastation</a> if you try to change bStatic to false to attach an actor you will get a violent crash when played online. You even get a message in the map check errors box saying "actor X is bStatic=False, but is bStatic by default, map will fail in netplay".</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Category:Legacy Mapping</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> <i>this tute has only been partially freshed up for UT2003.</i></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 32/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/t/t/Legacy%7EAttaching_Actors_cb6b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/t/t/Legacy_talk%7EAttaching_Actors_041e.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Attaching_Actors">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 07:58, 7 April 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

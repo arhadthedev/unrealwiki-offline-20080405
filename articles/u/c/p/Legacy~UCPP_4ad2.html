@@ -1,0 +1,616 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UCPP - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UCPP</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>UnrealScript Class PreProcessor (UCPP) is a commandline utility intended to be executed before <code>ucc make</code>. It adds some preprocessor features that are not possible with <a href="../../../../articles/u/c/c/Legacy%7EUcc_e245.html" title="Legacy:Ucc">Ucc</a>. UCPP takes special class files with a <code>.puc</code> extention, processes them and generates a <code>.uc</code>.</p>
+<p><a href="../../../../articles/e/l/_/Legacy%7EEl_Muerte_4874.html" class="mw-redirect" title="Legacy:El Muerte">El Muerte</a> started on this tool to add some more magic to an upcoming UnrealScript unit testing framework (<a href="../../../../articles/u/s/u/Legacy%7EUsUnit_00b7.html" title="Legacy:UsUnit">UsUnit</a>). This tool is currently in development; any help (like testing) would be greatly appreciated.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Features"><span class="tocnumber">1</span> <span class="toctext">Features</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Directives"><span class="tocnumber">1.1</span> <span class="toctext">Directives</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Expression_syntax"><span class="tocnumber">1.1.1</span> <span class="toctext">Expression syntax</span></a></li>
+<li class="toclevel-3"><a href="#Examples:_defined.28name.29"><span class="tocnumber">1.1.2</span> <span class="toctext">Examples: defined(name)</span></a></li>
+<li class="toclevel-3"><a href="#Examples:_strcmp.28arg1.2C_arg2.29"><span class="tocnumber">1.1.3</span> <span class="toctext">Examples: strcmp(arg1, arg2)</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Macros.5CIdentifiers"><span class="tocnumber">1.2</span> <span class="toctext">Macros\Identifiers</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Pre-defined_macros"><span class="tocnumber">1.2.1</span> <span class="toctext">Pre-defined macros</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Function_Defines"><span class="tocnumber">1.3</span> <span class="toctext">Function Defines</span></a></li>
+<li class="toclevel-2"><a href="#Commandline_options"><span class="tocnumber">1.4</span> <span class="toctext">Commandline options</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Configuration"><span class="tocnumber">2</span> <span class="toctext">Configuration</span></a></li>
+<li class="toclevel-1"><a href="#UnrealEngine_Licensee_Notice"><span class="tocnumber">3</span> <span class="toctext">UnrealEngine Licensee Notice</span></a></li>
+<li class="toclevel-1"><a href="#Downloads"><span class="tocnumber">4</span> <span class="toctext">Downloads</span></a></li>
+<li class="toclevel-1"><a href="#Known_bugs.5Cissues"><span class="tocnumber">5</span> <span class="toctext">Known bugs\issues</span></a></li>
+<li class="toclevel-1"><a href="#Feature_requests"><span class="tocnumber">6</span> <span class="toctext">Feature requests</span></a></li>
+<li class="toclevel-1"><a href="#Tips_and_Tricks"><span class="tocnumber">7</span> <span class="toctext">Tips and Tricks</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Mixing_defines_and_actual_functions"><span class="tocnumber">7.1</span> <span class="toctext">Mixing defines and actual functions</span></a></li>
+<li class="toclevel-2"><a href="#Using_the_current_working_directory"><span class="tocnumber">7.2</span> <span class="toctext">Using the current working directory</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">8</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Features" id="Features"></a></p>
+<h2><span class="mw-headline">Features</span></h2>
+<p><a name="Directives" id="Directives"></a></p>
+<h3><span class="mw-headline">Directives</span></h3>
+<table class="wikitable">
+<tr>
+<td colspan="2" style="text-align: center"><b>directive</b></td>
+<td style="text-align: center"><b>description</b></td>
+</tr>
+<tr>
+<td colspan="2"><tt>#define&#160;<i>name</i>&#160;<i>something&#160;...</i></tt></td>
+<td>adds\overrides an definition <i>name</i> (case insensitive) with the value <i>something ...</i> (till the end of the line)</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#undef <i>name</i></tt></td>
+<td>removed <i>name</i> from the definition list (for this file only)</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#if <i>expresion</i></tt><br />
+...<br />
+<tt>#elif <i>expresion</i></tt><br />
+...<br />
+<tt>#else</tt><br />
+...<br />
+<tt>#endif</tt></td>
+<td><i>expression</i> contains an expression constructed from numbers or defined names. The <code>#else</code> is optional. <tt>#elif</tt> (since version 009) is short of "else if", you can have as many of these as you want. You can nest these.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#ifdef <i>name</i></tt></td>
+<td>evaluates to true if <i>name</i> is defined. Can also be used to check if function definitions have been made: <tt>#ifdef MYFUNC/2</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#ifndef <i>name</i></tt></td>
+<td>the opposite of <tt>#ifdef</tt></td>
+</tr>
+<tr>
+<td colspan="2"><tt>#include <i>filename</i></tt></td>
+<td>include the file in the output file, this does the same as the #include directive in UE2. By default this directive is disabled, you can enable it in the config file.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#ucpp <i>command</i></tt></td>
+<td>various UCPP related items; usually these will be replaced with comments. The following commands are accepted.</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>notice</tt></td>
+<td>this will add a notice that the <i>uc</i> file was generated by UCPP, everything after this command is ignored.</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>version</tt></td>
+<td>this will add a comment with the UCPP version info and homepage link.</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>include <i>filename</i></tt></td>
+<td>include <i>filename</i> to be processed for macros, nothing else will be done with the file. It has the same effect as using the command argument <i>-imacros filename</i>. The filename is relative to the currently being processed file.</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>error <i>message</i></tt></td>
+<td>produces a preprocessor error.</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>warning <i>message</i></tt></td>
+<td>produces a preprocessor warning. If the message is <i>off</i> warning reporting will be turned off, and on again if it is <i>on</i> (and nothing more),</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>rename <i>filename</i></tt></td>
+<td>renames the resulting file to <i>filename</i>. This can be useful to use UCPP to create include files to be used with the UnrealEngine's <tt>#include</tt> directive</td>
+</tr>
+<tr>
+<td></td>
+<td><tt>config <i>variable value</i></tt></td>
+<td>this will override certain configuration variables for <i>this</i> file only. Variable can be one of the following: <i>supportIf</i>, <i>supportDefine</i>, <i>supportPreDefine</i>, <i>supportInclude</i>, <i>stripCode</i>. Value can be <i>true</i>, <i>false</i>, <i>0</i>, <i>1</i> or empty to reset to the default value.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>#pragma ucpp <i>command</i></tt></td>
+<td>Accepts the same commands as the normal <tt>#ucpp</tt> directive except that using <tt>#pragma ucpp</tt> is more portable (in case you ever switch preprocessors).</td>
+</tr>
+</table>
+<p>All macros that UCPP processed will simply be commented out.</p>
+<p>Most macros allow comments on the same line; everything after the comment start token (<code>//</code> or <code>/*</code>) will be removed. The macro <code>#define</code> <b>does not</b> support comments. For example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#if</span> <span class="nu0">1</span> <span class="co1">// always evaluates to 'true'</span>
+<span class="kw2">#endif</span> <span class="coMULTI">/* this comment is also ignored */</span>
+ 
+<span class="kw2">#define</span> INC_COMMENT <span class="kw7">log</span><span class="br0">(</span><span class="st0">"Bogus"</span><span class="br0">)</span>; <span class="co1">// this comment is included with the definition</span>
+ 
+<span class="kw2">#ifdef</span> <span class="nu0">1</span> <span class="coMULTI">/* always evaluates to false */</span> &amp;&amp; <span class="nu0">0</span>
+</pre></div>
+<p><b>Note:</b> in UCPP version 1.3 and earlier you could not have spaces between <tt>#</tt> and the directive. Also block everything was removed from the start of a block comment.</p>
+<p><b>Note 2:</b> Do not start a block comment in a macro and end it on an other line. This will break your code even tho UCPP accepts it. For example, the following is <i><b>bad</b></i>:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#if</span> <span class="nu0">1</span> <span class="coMULTI">/*
+    a block comment
+*/</span>
+<span class="kw2">#endif</span>
+</pre></div>
+<p><a name="Expression_syntax" id="Expression_syntax"></a></p>
+<h4><span class="mw-headline">Expression syntax</span></h4>
+<p>Grammar:</p>
+<pre>
+ EXPR      ::= CMPX
+ CMPX      ::= ORX ( CMPOP CMPX )*
+ ORX       ::= ACCUM ( '||' ORX )*
+ ACCUMX    ::= ANDX ( '+'|'-' ACCUM )*
+ ANDX      ::= MULTX ( '&amp;&amp;' ANDX )*
+ MULTX     ::= UNARYX ( '*'|'/' MULTX )*
+ UNARYX    ::= ( '!' )? OPERAND
+ OPERAND   ::= LVALUE | '(' EXPR ')'
+ LVALUE    ::= integer | BUILTIN '(' EXPR ')' | IDENTIFIER
+</pre>
+<pre>
+ CMPOP     ::= '&lt;' | '&lt;=' | '=&lt;' | '=&gt;' | '&gt;=' | '&gt;' | '==' | '!='
+ BUILTIN   ::= 'defined' | 'strcmp' | 'stricmp' | ... 
+</pre>
+<table class="wikitable">
+<tr>
+<td style="text-align: center"><b>Operator precedence – from top to bottom</b></td>
+</tr>
+<tr>
+<td>!</td>
+</tr>
+<tr>
+<td>/, *</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+</tr>
+<caption>, -</caption>
+<tr>
+<td>{| |- | |}</td>
+</tr>
+<tr>
+<td>&lt;, &lt;=, =&lt;, =&gt;, &gt;=, &gt;, ==,&#160;!=</td>
+</tr>
+</table>
+<p><b>Note:</b> <tt>&lt;=</tt> and <tt>=&lt;=</tt> are the same, and so are <tt>&gt;=</tt> and <tt>=&gt;=</tt></p>
+<p><code>IDENTIFIER</code> is resolved in the definition table. If it is not defined, the entire expression will fail (e.g. the result is false). An empty definition (<code>#define DEBUG</code>) will evaluate to <code>1</code>.</p>
+<p>The following examples are valid expressions:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#if</span> DEBUG &amp;&amp; UNSTABLE_CODE
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#if</span> !DEBUG || <span class="br0">(</span>STABLE_TEST_CODE &amp;&amp; COOKIES<span class="br0">)</span>
+<span class="kw2">#endif</span>
+</pre></div>
+<p>There are a couple of functions that can be used in an expression:</p>
+<table class="wikitable">
+<tr>
+<td style="text-align: center"><b>function</b></td>
+<td style="text-align: center"><b>description</b></td>
+</tr>
+<tr>
+<td><tt>defined(<i>name</i>)</tt></td>
+<td>Returns 1 if <i>name</i> is defined, 0 otherwise</td>
+</tr>
+<tr>
+<td><tt>strcmp(<i>name or string</i>, <i>name or string</i>)</tt></td>
+<td>Returns 0 if both strings are equal, you can use an identifier or a string constant. (v103 and up)</td>
+</tr>
+<tr>
+<td><tt>stricmp(<i>name or string</i>, <i>name or string</i>)</tt></td>
+<td>Identical as <tt>strcmp</tt> but case insensitive. (v103 and up)</td>
+</tr>
+</table>
+<p><a name="Examples:_defined.28name.29" id="Examples:_defined.28name.29"></a></p>
+<h4><span class="mw-headline">Examples: defined(<i>name</i>)</span></h4>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#undef</span> DEBUG
+ 
+<span class="kw2">#if</span> defined<span class="br0">(</span>DEBUG<span class="br0">)</span>
+  <span class="co1">// this is accepted</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#if</span> DEBUG
+  <span class="co1">// this will produce a preprocessor error</span>
+<span class="kw2">#endif</span>
+</pre></div>
+<p><a name="Examples:_strcmp.28arg1.2C_arg2.29" id="Examples:_strcmp.28arg1.2C_arg2.29"></a></p>
+<h4><span class="mw-headline">Examples: strcmp(<i>arg1</i>, <i>arg2</i>)</span></h4>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#define</span> TEST1 <span class="st0">"This is a test"</span>
+<span class="kw2">#define</span> TEST2 <span class="st0">"This is a test"</span>
+ 
+<span class="kw2">#if</span> <span class="kw7">strcmp</span><span class="br0">(</span>TEST1, TEST2<span class="br0">)</span> == <span class="nu0">0</span>
+  evaluates to <span class="kw9">true</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#if</span> <span class="kw7">strcmp</span><span class="br0">(</span>TEST1, TEST2<span class="br0">)</span>
+  result is <span class="nu0">0</span> so it evaluates to <span class="kw9">false</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#if</span> stricmp<span class="br0">(</span>TEST1, <span class="st0">"This Is A Test"</span><span class="br0">)</span> == <span class="nu0">0</span>
+  evaluates to <span class="kw9">true</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#define</span> TEST4 <span class="nu0">12345</span>
+<span class="kw2">#if</span> <span class="kw7">strcmp</span><span class="br0">(</span>TEST4, <span class="nu0">12345</span><span class="br0">)</span> == <span class="nu0">0</span>
+  because of a side effect this also evaluates to <span class="kw9">true</span>
+<span class="kw2">#endif</span>
+ 
+<span class="kw2">#define</span> TEST5 thisIsATest
+<span class="kw2">#if</span> <span class="kw7">strcmp</span><span class="br0">(</span>TEST5, <span class="st0">"thisIsATest"</span><span class="br0">)</span> == <span class="nu0">0</span>
+  not the same, one is a <span class="kw4">string</span>, the other isn<span class="st0">'t, so -&gt; false
+#endif</span>
+</pre></div>
+<p><a name="Macros.5CIdentifiers" id="Macros.5CIdentifiers"></a></p>
+<h3><span class="mw-headline">Macros\Identifiers</span></h3>
+<p>All source code will be parsed for uppercase identifiers (like <code>SOMETHING</code> or <code>SOMETHING_ELSE</code>). These will then be replaced by their definition (if defined) AS IS. This means that <code>"this is a value of a definition"</code> will be inserted into the code like that.</p>
+<p>You can add new definitions via the macro <code>#define</code> on the commandline or in the config file.</p>
+<p><a name="Pre-defined_macros" id="Pre-defined_macros"></a></p>
+<h4><span class="mw-headline">Pre-defined macros</span></h4>
+<p>The following names are always defined; some have some additional magic (with the name <tt>__<i>NAME</i>__</tt>). You can never override these magic definitions, however you can disable them by using the <code>-undef-</code> commandline argument.</p>
+<table>
+<tr>
+<td><tt>__FILE__</tt></td>
+<td>The full filename of the current file surrounded by double quotes (the generated <code>.uc</code> files).</td>
+</tr>
+<tr>
+<td><tt>__FILE_BASE__</tt></td>
+<td>Just the filename without the directory name, also surrounded by double quotes.</td>
+</tr>
+<tr>
+<td><tt>__CLASS__</tt></td>
+<td>The filename without an extention, should be equal to the class name. This isn't quoted. (006 and up)</td>
+</tr>
+<tr>
+<td><tt>__LINE__</tt></td>
+<td>The current line in the code, starting from 1.</td>
+</tr>
+<tr>
+<td><tt>__DATE__</tt></td>
+<td>Returns the current date in the long format (as a string), as defined by the current locale settings.</td>
+</tr>
+<tr>
+<td><tt>__TIME__</tt></td>
+<td>Returns the current time in the long format (as a string), as defined by the current locale settings.</td>
+</tr>
+<tr>
+<td><tt>UCPP_VERSION</tt></td>
+<td>The UCPP version number.</td>
+</tr>
+<tr>
+<td><tt>UCPP_HOMEPAGE</tt></td>
+<td>The UCPP homepage, the URL of this page.</td>
+</tr>
+<tr>
+<td><tt>CLASS_<i>classname</i></tt></td>
+<td>Where <i>classname</i> is the name of the current class. This is an <i>empty</i> define, it can be useful in include files. (007 and up)</td>
+</tr>
+</table>
+<p><a name="Function_Defines" id="Function_Defines"></a></p>
+<h3><span class="mw-headline">Function Defines</span></h3>
+<p>As of version 006 beta it is possible to define macro functions.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#define</span> FUNC<span class="br0">(</span>a,b,c<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span>a$__FILE__, c<span class="br0">)</span>; a = b;
+<span class="co1">//      ^           ^- implementation</span>
+<span class="co1">//      \- definition</span>
+</pre></div>
+<p>The above is a definition of the function <code>FUNC/3</code> Note that this is the so called footprint of the function, the number reflects the number of arguments. It's a function with the name <code>FUNC</code> that accepts 3 arguments. The definition part may not contain any spaces, since the space defines where the implementation part starts.</p>
+<p>Function arguments must be seperated by commas. Each argument must have an unique name. The implementation part is an unrealscript code snippet that contains the function arguments or anything else (except preprocessor commands). The resulting implementation is parsed again to process all defines used in the implementation.</p>
+<p>Function definitions are unique by their number of arguments. <code>FUNC/2</code> does not replace <code>FUNC/3</code>. In this way you will be able to overload functions. The following definitions have the same footprint, thus the last one will be come effective:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#define</span> FUNC<span class="br0">(</span>a,b,c<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span>a$__FILE__, c<span class="br0">)</span>; a = b;
+<span class="kw2">#define</span> FUNC<span class="br0">(</span>foo,bar,quux<span class="br0">)</span> <span class="co1">// every call will be replaced by this comment</span>
+</pre></div>
+<p>There are two special tokens you can use in the implementation part:</p>
+<table class="wikitable">
+<tr>
+<td style="text-align: center"><b>token</b></td>
+<td style="text-align: center"><b>meaning</b></td>
+</tr>
+<tr>
+<td><code>#</code></td>
+<td>Quote the next function argument (make it an valid unrealscript string): <code># a -&gt; "a"</code>. This only affects function arguments, if the next token isn't a argument it will not be quoted: <code># NotAnArgument -&gt; # NotAnArgument</code> (no substitution at all).</td>
+</tr>
+<tr>
+<td><code>##</code></td>
+<td>This will concat the previous argument with the next part: <code>a ## b -&gt; ab</code> and <code>a ## NotAnArgument -&gt; aNotAnArgument</code>, but also <code>NotAnArgument ## a -&gt; NotAnArgumenta</code>. <i>Note:</i> in 006 beta this doesn't work as it should, it is fixed in version 007.</td>
+</tr>
+</table>
+<p>In order to check if a certain function is defined use the footprint:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#ifndef</span> FUNC/<span class="nu0">3</span>
+  <span class="kw2">#define</span> FUNC<span class="br0">(</span>a,b,c<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span>a$__FILE__, c<span class="br0">)</span>; a = b;
+<span class="kw2">#endif</span>
+</pre></div>
+<p>You can not use these functions in an <code>#if</code> expression.</p>
+<p><a name="Commandline_options" id="Commandline_options"></a></p>
+<h3><span class="mw-headline">Commandline options</span></h3>
+<pre>
+Usage:
+  ucpp.exe [switches] [settings] &lt;name&gt; &lt;name&gt; ...
+
+  &lt;name&gt; is the name of a file or package, depeding on the mode.
+
+Switches (case sensitive):
+  -?    This message
+  -D&lt;name&gt;=&lt;value&gt;
+        Define a &lt;name&gt; with a &lt;value&gt;. This overrides the standards as
+        defined in the configuration file
+  -env  Import environment variables as declarations
+  -imacros &lt;filename&gt;
+        Process &lt;filename&gt; for macros. This will be done for every file
+        that needs to be processed
+  -include &lt;filename&gt;
+        Alias for -imacros
+  -L    Print the program's license
+  -undef
+        Do not use predefinitions (like __FILE__)
+  -P    Enable package mode. The provided names are package names.
+        In package mode the base directory must be defined using
+        either the SYSTEM or BASE setting
+  -pipe
+        Read from the stdin and write to the stdout. Only works for
+        single files and not in package mode.
+  -q    Be quite, only show errors\warnings
+  -stdout
+        Similar to -pipe except that the file is not read from the
+        standard in, but from the file provided on the commandline.
+        So it will just write to the standard output.
+  -strip
+        Strip the code instead of commenting it out
+  -U&lt;name&gt;
+        Undefine &lt;name&gt;. Note: this has a lower precedence than
+        definitions made in the file
+  -V    Show the program version
+  -wait Pause at the end of executiong when there where errors
+  -WAIT Always pause at the end of processing
+
+Settings are always in the format "&lt;Key&gt;=&lt;Value&gt;". The following
+keys are accepted:
+  BASE          The base directory of the game. Required in
+                Package Mode, unless SYSTEM is already given.
+  CONFIG        Alternate configuration file to use.
+  MOD           The mod name, as used in the enhanced mod
+                architecture.
+  SYSTEM        The "System" directory of the game. Required in
+                Package Mode, unless BASE is already given.
+</pre>
+<p>If an error was produced the exit value will be not zero.</p>
+<p>It's easy to configure <a href="../../../../articles/w/o/t/Legacy%7EWOTgreal_7bba.html" title="Legacy:WOTgreal">WOTgreal</a> to execute the preprocessor before compiling the selected packages. The commandline you should use is:</p>
+<pre>
+ucpp.exe SYSTEM=%SYSTEMDIR% MOD=%CURRENTMOD% -DDEBUG=%DEBUGCOMPILE% -P %SELECTEDPACKAGES%
+</pre>
+<p>This will automatically define the identifier DEBUG either set to 0 or 1 depending on if you made a debug compile in WOTgreal. Note: with this <code>DEBUG</code> is always defined, use it with <code>#if</code> not with <code>#ifdef</code>.</p>
+<p><a name="Configuration" id="Configuration"></a></p>
+<h2><span class="mw-headline">Configuration</span></h2>
+<p>UCPP has a few configurable options. Unless <tt>CONFIG=<i>filename</i></tt> is specified the program will load <tt>ucpp.ini</tt> in the same directory as the location oc <tt>ucpp.exe</tt>. You can set the following items:</p>
+<pre>
+[Options]
+supportIf=1
+supportDefine=1
+supportPreDefine=1
+supportInclude=0
+stripCode=0
+stripMessage=// UCPP: code stripped
+noticeMessage=// NOTICE: This file was automatically generated by UCPP; do not edit this file manualy.
+</pre>
+<dl>
+<dt>supportIf (<b>*</b>)</dt>
+<dd>toggles the support for <tt>#if ... #elif ... #else ... #endif</tt> and <tt>#ifdef</tt> directives. This way the original compiler should take care of these directives (Only useful for the games of Irrational: Tribes: Vengeance and SWAT4).</dd>
+<dt>supportDefine (<b>*</b>)</dt>
+<dd>toggles support for <tt>#define</tt> and <tt>#undef</tt></dd>
+<dt>supportPreDefine (<b>*</b>)</dt>
+<dd>when turned off it has the same effect as <tt>-undef-</tt> on the commandline (commandline will override this)</dd>
+<dt>supportInclude (<b>*</b>)</dt>
+<dd>enable support for the <tt>#include</tt> macro.</dd>
+<dt>stripCode (<b>*</b>)</dt>
+<dd>instead of commenting out the code it will be removed, works the same as the <tt>-strip-</tt> commandline options (commandline will override this)</dd>
+<dt>stripMessage</dt>
+<dd>the message to use when stripping the code, if you leave it blank it only the whitespace will remain.</dd>
+<dt>noticeMessage</dt>
+<dd>the message to use when the <tt>#ucpp notice</tt> directive is used.</dd>
+</dl>
+<p>(<b>*</b>): these settings can be changed through the <tt>#pragma ucpp config</tt> directive.</p>
+<pre>
+[Defines]
+NAME=Value
+</pre>
+<p>The same as <tt>#define NAME Value</tt>. You can use this for global definitions, although using an include file has more possibilities.</p>
+<p><a name="UnrealEngine_Licensee_Notice" id="UnrealEngine_Licensee_Notice"></a></p>
+<h2><span class="mw-headline">UnrealEngine Licensee Notice</span></h2>
+<p>Since version 1.4 there is a new feature that allows you to pipe the source file through UCPP. With this feature it is possible to hook up UCPP with the UnrealScript compiler. This way you don't need special <tt>.puc</tt> files, when the engine imports the code from the <tt>.uc</tt> file it can pipe it through UCPP. This way the preprocessing will be done on the fly.</p>
+<p>For more information on how to add external preprocessor support to the UnrealEngine you can contact me through the <a href="https://udn.epicgames.com/Two/UnDevIRC" class="external text" title="https://udn.epicgames.com/Two/UnDevIRC" rel="nofollow">UDN IRC Server</a>, my nickname is <i>elmuerte</i> (obviously).</p>
+<p><a name="Downloads" id="Downloads"></a></p>
+<h2><span class="mw-headline">Downloads</span></h2>
+<ul>
+<li><b><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.6.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.6.zip" rel="nofollow">Version 1.6</a></b> - <a href="http://sourceforge.net/project/shownotes.php?release_id=366364" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=366364" rel="nofollow">release notes</a></li>
+</ul>
+<ul>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.5.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.5.zip" rel="nofollow">Version 1.5</a> - <a href="http://sourceforge.net/project/shownotes.php?release_id=364785" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=364785" rel="nofollow">release notes</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.4.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.4.zip" rel="nofollow">Version 1.4</a> - <a href="http://sourceforge.net/project/shownotes.php?release_id=350093" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=350093" rel="nofollow">release notes</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.3.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.3.zip" rel="nofollow">Version 1.3</a> - <a href="http://sourceforge.net/project/shownotes.php?release_id=346922" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=346922" rel="nofollow">release notes</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.2.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.2.zip" rel="nofollow">Version 1.2</a> - <a href="http://sourceforge.net/project/shownotes.php?release_id=346648" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=346648" rel="nofollow">release notes</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.1.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.1.zip" rel="nofollow">Version 1.1</a> - <a href="http://sourceforge.net/project/shownotes.php?release_id=345429" class="external text" title="http://sourceforge.net/project/shownotes.php?release_id=345429" rel="nofollow">release notes</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.0.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-v1.0.zip" rel="nofollow">Version 1.0</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-008beta.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-008beta.zip" rel="nofollow">Version 008 beta</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-007beta.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-007beta.zip" rel="nofollow">Version 007 beta</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-006beta.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-006beta.zip" rel="nofollow">Version 006 beta</a></li>
+<li><a href="http://prdownloads.sourceforge.net/uncodex/ucpp-005beta.zip" class="external text" title="http://prdownloads.sourceforge.net/uncodex/ucpp-005beta.zip" rel="nofollow">Version 005 beta</a></li>
+</ul>
+<p>Since UCPP uses some parts of <a href="../../../../articles/u/n/c/Legacy%7EUnCodeX_3158.html" title="Legacy:UnCodeX">UnCodeX</a> it is included with the UnCodeX project on <a href="http://sourceforge.net/projects/uncodex/" class="external text" title="http://sourceforge.net/projects/uncodex/" rel="nofollow">SourceForge</a>. UCPP's source code is available in the UnCodeX source in the directory <code>src\ucpp</code>.</p>
+<p><a name="Known_bugs.5Cissues" id="Known_bugs.5Cissues"></a></p>
+<h2><span class="mw-headline">Known bugs\issues</span></h2>
+<dl>
+<dt>Newlines are not supported&#160;</dt>
+<dd>There is no way to insert a newline via definitions or macros. The reason for this is simple: the line numbers of the <i>puc</i> and <i>uc</i> file won't be skewed. This way it's easier to find compiler errors.</dd>
+</dl>
+<dl>
+<dt>#include files not processed&#160;</dt>
+<dd>Files included via the UnrealEngine built-in #include macro are not processed for macros. Use <tt>#ucpp include <i>filename</i></tt> to include preprocessor directives. It is possible to enable support for include directives, in this case the <tt>#include</tt> line is replaced with the actual file during rewriting. So the actual unrealscript compiler won't have to include it.</dd>
+</dl>
+<dl>
+<dt>Code obliviousness&#160;</dt>
+<dd>the preprocessor is completely oblivious about the actual unrealscript source code it preprocesses. This means definitions made in super classes do not exist in subclasses. For global definitions you should use other means like the configuration file, the commandline or an include file (<tt>#ucpp include <i>file</i></tt>).</dd>
+</dl>
+<dl>
+<dt>Recursive defines will break&#160;</dt>
+<dd><code>#define A(x) B(x) #define B(x) A(x)</code> will break. In 007 and later an error will be generated.</dd>
+</dl>
+<dl>
+<dt>Function defines can not be used in expressions&#160;</dt>
+<dd>You can not use function defines in <code>#if</code> expressions, however you can use them in <code>#ifdef</code>, but you will need to reference them by their footprint: <code>FUNC(a,b,c)</code> has the footprint <code>FUNC/3</code></dd>
+</dl>
+<p><a name="Feature_requests" id="Feature_requests"></a></p>
+<h2><span class="mw-headline">Feature requests</span></h2>
+<p><i>Please add your feature requests here, or on the <a href="http://sourceforge.net/projects/uncodex/" class="external text" title="http://sourceforge.net/projects/uncodex/" rel="nofollow">SourceForge</a> project page</i></p>
+<p><b>Xian:</b> Maybe add __USER__ and __PROJECT__, them being config-ed in the INI. Maybe if user is empty, use the current windows user, if the project macro is empty, use the Folder we're working in (not the package foler, i.e. C:\MyMod\MyPkg\Classes, it will use "MyMod"). Perhaps some code support too, such as checking if a var/func is replicated and/or if a var name/function are defined in the .uc file (unless #ifdef MYFUNC/2 does this and I misunderstood). And last but not least, an option to comment out only parts (and remove the other code if stripping is enabled) with some possible custom comment macros.</p>
+<p><b>El Muerte:</b> if you need a __USER__ and __PROJECT__ then use the standard define functionality already provided. Additionally you can import all evironment variables as defines using the -env commandline argument. In that case USERNAME will expand to the current username. PreProcessors are oblivious to the actual code, it doesn't know about anything related to replication. The #ifdef MYFUNC/2 tests if there is a macro defined with that signature, it has nothing to do with the unrealscript code.</p>
+<p><b>Xian:</b> Thanks for the reply. I see, I'll check the environ define. Ah, so it's basically just generation occurring, not parsing at all (of the UScript code, that is). Well, not so bad me thinks sine that might complicate things due to inheritance... Thanks for the tool, though, it's amazing&#160;:)</p>
+<p><a name="Tips_and_Tricks" id="Tips_and_Tricks"></a></p>
+<h2><span class="mw-headline">Tips and Tricks</span></h2>
+<p><a name="Mixing_defines_and_actual_functions" id="Mixing_defines_and_actual_functions"></a></p>
+<h3><span class="mw-headline">Mixing defines and actual functions</span></h3>
+<p>Since only uppercase identifiers will be replaced and because unrealscript is case insensitive you can mix them to add extra functionality.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#define</span> <span class="kw7">LOG</span><span class="br0">(</span>a,b<span class="br0">)</span> <span class="kw7">log</span><span class="br0">(</span>a$chr<span class="br0">(</span><span class="nu0">10</span><span class="br0">)</span>$__FILE__$<span class="st0">":"</span>$string<span class="br0">(</span>__LINE__<span class="br0">)</span>, b<span class="br0">)</span>
+<span class="kw2">#define</span> <span class="kw7">LOG</span><span class="br0">(</span>a<span class="br0">)</span> <span class="kw7">LOG</span><span class="br0">(</span>a, <span class="kw4">name</span><span class="br0">)</span>
+</pre></div>
+<p>Now if you use the <code>LOG</code> (in uppercase) function it will append the source file and the line number. If the file isn't processed by UCPP it will still work (taking into account that the above macros where defined somewhere else than in the source file).</p>
+<p><a name="Using_the_current_working_directory" id="Using_the_current_working_directory"></a></p>
+<h3><span class="mw-headline">Using the current working directory</span></h3>
+<p>If you want to use the current working directory as BASE or SYSTEM just use a ".". BASE and SYSTEM take relative paths, and "." means the current directory. So for example:</p>
+<pre>
+c:\UT2004\System&gt;ucpp -P SYSTEM=. MyPackage
+</pre>
+<p>The following does the same</p>
+<pre>
+c:\UT2004\System&gt;ucpp -P BASE=.. MyPackage
+</pre>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Tarquin:</b> Sounds interesting!</p>
+<p><b>El Muerte:</b> Aargh, about 30 minutes after I released 007 I found a minor yet stupid bug. Backslashes are not properly escaped. Not a major thing, but just annoying.</p>
+<p><b>El Muerte:</b> There, another release. Implemented pretty much every feature I wanted. Still have to document how to use the config file. But for the rest if this release holds up I think a stable release is close.</p>
+<p><b>El Muerte:</b> ok, here's version 1.0, did quite some testing a found a few minor bugs, also new in the release is support for <code>#elif</code>. I'm delaying the press release a bit, just in case of an serious bug.</p>
+<p><b>Guest:</b> Featured on BU's news page.&#160;:) <a href="http://www.beyondunreal.com/daedalus/singlepost.php?id=8449" class="external free" title="http://www.beyondunreal.com/daedalus/singlepost.php?id=8449" rel="nofollow">http://www.beyondunreal.com/daedalus/singlepost.php?id=8449</a></p>
+<p><b>razialx:</b> El Muerte, you are amazing. Now I feel like starting up coding in UScript again.</p>
+<p><b>Devi:</b> We've just started using this on the game my company is working on (I'm under an NDA, so I can say no more I'm afraid) and I'd just like to say: "Thankyouthankyouthankyouthankthankyou, you have made our lives SO much easier"&#160;:)</p>
+<p><b>Jon:</b> Soon you'll be speaking in binary code and taking over all our satellites.&#160;:)</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 259/1000000
+Post-expand include size: 4/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Application_99db.html" title="Category:Legacy Application">Legacy Application</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/c/p/Legacy%7EUCPP_4ad2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/c/p/Legacy_talk%7EUCPP_97e7.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UCPP">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 10:13, 27 January 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

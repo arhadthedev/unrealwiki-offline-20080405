@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Basic Weapon Class - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Basic Weapon Class</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><b>PLEASE NOTE:</b> This page is finished, at least, <a href="../../../../articles/c/o/m/Legacy%7EComputergod666_57a1.html" title="Legacy:Computergod666">computergod666</a> thinks so. You are free to add content at any time if you find something's missing.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Creating_Unreal_Weapons"><span class="tocnumber">1</span> <span class="toctext">Creating Unreal Weapons</span></a></li>
+<li class="toclevel-1"><a href="#Creating_a_new_TournamentWeapon"><span class="tocnumber">2</span> <span class="toctext">Creating a new TournamentWeapon</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_firing_routines"><span class="tocnumber">2.1</span> <span class="toctext">The firing routines</span></a></li>
+<li class="toclevel-2"><a href="#Ammo"><span class="tocnumber">2.2</span> <span class="toctext">Ammo</span></a></li>
+<li class="toclevel-2"><a href="#Adding_meshes"><span class="tocnumber">2.3</span> <span class="toctext">Adding meshes</span></a></li>
+<li class="toclevel-2"><a href="#Animations"><span class="tocnumber">2.4</span> <span class="toctext">Animations</span></a></li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Creating_Unreal_Weapons" id="Creating_Unreal_Weapons"></a></p>
+<h2><span class="mw-headline">Creating Unreal Weapons</span></h2>
+<p>As far as I know, everything is the same for Weapons as TournamentWeapons (except for a few things like replication.)</p>
+<p><a name="Creating_a_new_TournamentWeapon" id="Creating_a_new_TournamentWeapon"></a></p>
+<h2><span class="mw-headline">Creating a new TournamentWeapon</span></h2>
+<p><a name="The_firing_routines" id="The_firing_routines"></a></p>
+<h3><span class="mw-headline">The firing routines</span></h3>
+<p>Every weapon needs at least two firing modes. These are covered by two functions in the TournamentWeapon class:</p>
+<pre>
+function Fire(float Value)
+</pre>
+<p>and</p>
+<pre>
+function AltFire(float Value)
+</pre>
+<p>. These functions are set up so that you can simply specify whether the weapon is an instant hit weapon or if it fires projectiles, and what the class for Projectile and Alt Projectile are. These three values are specified by the variables "bInstantHit", "ProjectileClass", and "AltProjectileClass". You can choose to use these functions and finish your weapon as is, but that's never as interesting as writing these routines yourself.</p>
+<p>Fire looks something like this in TournamentWeapon:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Fire<span class="br0">(</span> <span class="kw4">float</span> Value <span class="br0">)</span>
+<span class="br0">{</span>
+ <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>AmmoType == <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>AmmoName != <span class="kw9">None</span><span class="br0">)</span> <span class="br0">)</span>
+ <span class="br0">{</span>
+  <span class="co1">// ammocheck</span>
+  GiveAmmo<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Owner<span class="br0">)</span><span class="br0">)</span>;
+ <span class="br0">}</span>
+ <span class="kw1">if</span> <span class="br0">(</span>AmmoType.<span class="me1">UseAmmo</span><span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>
+ <span class="br0">{</span>
+  <span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'NormalFire'</span><span class="br0">)</span>;
+  bPointing=<span class="kw9">True</span>;
+  bCanClientFire = <span class="kw9">true</span>;
+  ClientFire<span class="br0">(</span>Value<span class="br0">)</span>;
+  <span class="kw1">if</span> <span class="br0">(</span>bInstantHit == <span class="kw9">true</span><span class="br0">)</span>
+   TraceFire<span class="br0">(</span><span class="nu0">0.0</span><span class="br0">)</span>;
+  <span class="kw1">else</span>
+   ProjectileFire<span class="br0">(</span>ProjectileClass, ProjSpeed, <span class="kw9">false</span><span class="br0">)</span>;
+ <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The ammocheck code is not really important right now. However, you can use it for a weapon that is not supposed to run out of ammo, to give the player more ammo.</p>
+<p>The line that says "(if AmmoType.UseAmmo(1))" attempts to use 1 unit of ammunition. If you are out of ammo, this fails and the weapon doesn't fire.</p>
+<p>The line that begins with GoToState('NormalFire'); tells the weapon to activate that state. In TournamentWeapon, this state temporarily disables forcing bots or players to fire, and allows the user to add handling for things that need to happen before, during, or after firing. See Chainguns and Shotguns for more on using firing states.</p>
+<p>The next three lines starting after GoToState('NormalFire') are for client/server interaction. We don't need to worry about them right now.</p>
+<p>The TournamentWeapon class allows you to simply pick a projectile class to fire. If your weapon is a projectile weapon, make sure you set bInstantHit to False, and specify the ProjectileClass. Use of TraceFire will be covered in <a href="../../../../articles/h/i/t/Legacy%7EHitscan_Weapons_1787.html" title="Legacy:Hitscan Weapons">Hitscan weapons</a>. Alternatively, you can simply delete the code for the TraceFire() call.</p>
+<p>Please note that setting the ProjSpeed value for ProjectileFire will not change the speed of the projectile. This parameter is just for bots to adjust their aim to compensate for moving targets.</p>
+<p>The same things are true for AltFire.</p>
+<p><a name="Ammo" id="Ammo"></a></p>
+<h3><span class="mw-headline">Ammo</span></h3>
+<p>So we made the weapon use 1 unit of ammo per shot. That ammo has to come from somewhere! The AmmoName property is a class name that specifies what ammo class to use. The maximum amount of ammo you can carry is determined by the ammo class itself, but you can specify how much ammo you want to be in the gun when you pick it up. That is set by the PickupAmmoCount property. This can be any positive integer value, but if you try to pick up more than you can carry, your ammo just tops off.</p>
+<p>So now, you can make a functioning weapon. Create a subclass of TournamentWeapon. All you need to put in the file are these lines:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyWeapon <span class="kw5">extends</span> TournamentWeapon;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ ProjectileClass=<span class="kw5">Class</span><span class="st0">'Botpack.ShockProj'</span>
+ AltProjectileClass=<span class="kw5">Class</span><span class="st0">'Botpack.WarShell'</span>
+ bInstantHit=<span class="kw9">false</span>
+ AmmoName=<span class="kw5">Class</span><span class="st0">'Botpack.miniammo'</span>
+ PickupAmmoCount=<span class="nu0">150</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Hehe. That is an extremely overpowered weapon with way too much ammunition. Please don't do that: overpowered weapons get boring way too quickly. So pick some slightly more sensible values, then compile.</p>
+<p>So now you should have a functioning projectile weapon. However, if you put it in a map, you will notice that you can't see it. Even if you do manage to pick it up, you will not be able to see the first-person model. It will also be completely silent when it fires. Now, we need to give it a mesh, then some routines to animate it and play firing sounds.</p>
+<p><a name="Adding_meshes" id="Adding_meshes"></a></p>
+<h3><span class="mw-headline">Adding meshes</span></h3>
+<p>There are three meshes for every weapon in Unreal Tournament:</p>
+<ol>
+<li>The first-person mesh. This mesh is what you see when you are using the weapon. It is usually the most detailed version, and should include an animation for everything it does.</li>
+<li>The third-person mesh. This is what everyone else sees when you are using the weapon. This version is usually not as detailed as the first-person mesh, and it includes only the animations that you would be able to see well from a distance, like firing.</li>
+<li>The pickup mesh. This is what you see on the ground. It has no animations because at the most, it is meant to revolve slowly.</li>
+</ol>
+<p>These three meshes are specified by three default variables: PlayerViewMesh, PickupMesh, and ThirdPersonMesh. You would specify them like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ <span class="co1">//...</span>
+ PlayerViewMesh=LODMesh<span class="st0">'UnrealI.QuadShotHeld'</span>
+ PickupMesh=LODMesh<span class="st0">'UnrealI.QuadShotPickup'</span>
+ ThirdPersonMesh=LODMesh<span class="st0">'UnrealI.flakm'</span>
+ <span class="co1">//...</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Next, you need to specify the distance the first-person mesh is from the center of the screen. This is specified by a vector called PlayerViewOffset. For the vector's components, positive X is vertical, toward the top of the screen (!), positive Y is horizontal toward the right of the screen, and positive Z is toward yourself. You may want to check the mesh itself, and this part usually requires some trial-and-error unless you made the mesh yourself. In the example above, I was trying to give the Quad Shot some code (It wasn't used in Unreal), but there weren't any values for PlayerViewOffset, so I had to figure it out myself. Now you can add this line to defaultproperties:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ <span class="co1">//...</span>
+ PlayerViewMesh=LODMesh<span class="st0">'UnrealI.QuadShotHeld'</span>
+ PickupMesh=LODMesh<span class="st0">'UnrealI.QuadShotPickup'</span>
+ ThirdPersonMesh=LODMesh<span class="st0">'UnrealI.flakm'</span>
+ PlayerViewOffset=<span class="br0">(</span>X=<span class="nu0">-15.000</span>,Y=<span class="nu0">15.000</span>,Z=<span class="nu0">-30.000</span><span class="br0">)</span>
+ <span class="co1">//...</span>
+<span class="br0">}</span>
+</pre></div>
+<p>One other thing you may want to change is a vector called FireOffset. This vector specifies where the projectile (or trace) should show up relative to the center of your screen, in first-person view. You may have to experiment with this, because it will have to match up reasonably well with the muzzle of your weapon.</p>
+<p>Now, you have some meshes for your weapon! Let's make them do something...</p>
+<p><a name="Animations" id="Animations"></a></p>
+<h3><span class="mw-headline">Animations</span></h3>
+<p>Animation allows you to see the weapon in action. Your weapon will need at least two functions to handle animation: PlayFiring() and PlayAltFiring(). For most weapons, they contain code that plays an animation and a sound. Here is a very generic set of routines:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> PlayFiring<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ PlayAnim<span class="br0">(</span><span class="st0">'Fire'</span>, <span class="nu0">1.0</span>, <span class="nu0">0.05</span><span class="br0">)</span>;
+ PlayOwnedSound<span class="br0">(</span>FireSound, SLOT_Misc, <span class="nu0">1.0</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PlayAltFiring<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ PlayAnim<span class="br0">(</span><span class="st0">'AltFire'</span>, <span class="nu0">1.0</span>, <span class="nu0">0.05</span><span class="br0">)</span>;
+ PlayOwnedSound<span class="br0">(</span>AltFireSound, SLOT_Misc, <span class="nu0">1.0</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>PlayAnim plays an animation from the mesh you have selected. The first parameter is the name of the animation. You can figure this out in the UnrealEd mesh browser if you are using an existing mesh, or you should know it if you created the mesh yourself. The second parameter is the relative playback speed of the animation. A value of 1.0 plays it at 'normal speed', 2.0 plays it twice as fast, 0.5 plays it half as fast, etc. The third parameter is the amount of time to tween from the previous animation to this one.</p>
+<p>See <a href="../../../../articles/a/c/t/Legacy%7EActor_Methods_da97.html" title="Legacy:Actor/Methods">Actor/Methods</a> for more information on PlayAnim and PlayOwnedSound.</p>
+<p><b>A note about animation</b></p>
+<p>As I said earlier, there is a first-person and a third-person mesh. Playing an animation will animate both meshes: you don't have to make one call for each mesh. All you will need is these routines. Of course, you can also write your own. The Flak Cannon has a PlayReloading() function which it uses after it fires. This type of animation will be discussed in Chainguns and shotguns.</p>
+<p>FireSound and AltFireSound are defined for every TournamentWeapon. You can set these to a sound resource in the defaultproperties section, like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ <span class="co1">//...</span>
+ PlayerViewMesh=LODMesh<span class="st0">'UnrealI.QuadShotHeld'</span>
+ PickupMesh=LODMesh<span class="st0">'UnrealI.QuadShotPickup'</span>
+ ThirdPersonMesh=LODMesh<span class="st0">'UnrealI.flakm'</span>
+ PlayerViewOffset=<span class="br0">(</span>X=<span class="nu0">-15.000</span>,Y=<span class="nu0">15.000</span>,Z=<span class="nu0">-30.000</span><span class="br0">)</span>
+ <span class="co1">//...</span>
+ FireSound=<a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'Botpack.AMSD.ImpactAltFireRelease'</span>
+ AltFireSound=<a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'MyPackage.Group1.altfire1'</span>
+ <span class="co1">//...</span>
+<span class="br0">}</span>
+</pre></div>
+<p>You can also define your own sounds by adding a line at the top of the file like this:</p>
+<pre>
+var Sound OverheatSound;
+</pre>
+<p>Now, you should have a functioning, firing weapon that you can see and pick up ammo for. This is only a projectile weapon. To make an instant-hit weapon, read <a href="../../../../articles/h/i/t/Legacy%7EHitscan_Weapons_1787.html" title="Legacy:Hitscan Weapons">Hitscan weapons</a>.</p>
+<p><b>TkoDark</b> I need help fixing this i put this weapon in my map and now i cant fix it or get rid of it. can you e mail or im me computergod666? When i play the map i can pick the weapon up and change to it but it doesnt shoot or do anything, i messed up somewhere. I don't know how to fix it. In the editor (ued2.0) it is in the search for actors and i can go to it, but i cant see it so i cant click on it and delete it. thanks TKO</p>
+<p>Ps where do i get your grenade launcher and vehicles? very cool! Email-tkodark@yahoo.com</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 31/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/a/s/Legacy%7EBasic_Weapon_Class_7f8b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/a/s/Legacy_talk%7EBasic_Weapon_Class_40e5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Basic_Weapon_Class">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 05:33, 25 March 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

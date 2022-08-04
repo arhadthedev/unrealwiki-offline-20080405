@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Kiff - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Kiff</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Under_Construction..."><span class="tocnumber">1</span> <span class="toctext">Under Construction...</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Replication_Example:_The_ESTransport.27s_compartment."><span class="tocnumber">1.1</span> <span class="toctext">Replication Example: The ESTransport's compartment.</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Animating_the_compartment"><span class="tocnumber">2</span> <span class="toctext">Animating the compartment</span></a></li>
+<li class="toclevel-1"><a href="#Triggering_the_animation"><span class="tocnumber">3</span> <span class="toctext">Triggering the animation</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Under_Construction..." id="Under_Construction..."></a></p>
+<h2><span class="mw-headline">Under Construction...</span></h2>
+<p><a name="Replication_Example:_The_ESTransport.27s_compartment." id="Replication_Example:_The_ESTransport.27s_compartment."></a></p>
+<h3><span class="mw-headline">Replication Example: The ESTransport's compartment.</span></h3>
+<p>I'm still pretty new to unreal coding (and modding), but I think I finally understand replication well enough to accomplish what I needed to do here and pass on what I've learned. That said, I'm still learning so please give feedback.</p>
+<p>I have a custom transport vehicle (thanks to showNOmercy for the model) that has an "animated" storage compartment. The compartment is a box that can be lowered and then open its door. Currently the animation is done purely in code. This isn't the best way, but I opted to take this aproach since I simply wanted to know how to do this and I also didn't want to bug the modeler with creating the animations. What does this have to do with replication? Keep reading...</p>
+<p><a name="Animating_the_compartment" id="Animating_the_compartment"></a></p>
+<h2><span class="mw-headline">Animating the compartment</span></h2>
+<p>The compartment's animation sequence is broken into six (0 - 5) parts or "states" in code (not unreal script states).</p>
+<ul>
+<li>0: Fully closed state: The box is in its up position and the door is closed</li>
+<li>1: Lowering: The box is going from its up position to its low position. The door is still closed.</li>
+<li>2: Low position, opening the door.</li>
+<li>3: Low position, door is fully opened. This is a stopping point for the animation.</li>
+<li>4: Low position, closing the door</li>
+<li>5: Raising: The door has been closed and now the box is returning to its up position.</li>
+</ul>
+<p>If this sounds complicated it's really not. Don't worry too much about all of the states. Just keep in mind that the box can be open, closed or in a transition from one to the other.</p>
+<p>Here is an ingame <a href="http://s63.photobucket.com/albums/h131/kiff–/?action=view&amp;current=EsTRanspo-1.flv" class="external text" title="http://s63.photobucket.com/albums/h131/kiff–/?action=view&amp;current=EsTRanspo-1.flv" rel="nofollow">video</a></p>
+<p>A struct is used to represent the current state and for replicating it when it has changed</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw4">struct</span> BoxState
+<span class="br0">{</span>
+        <span class="kw5">var</span> <span class="kw4">float</span>     DoorRotation;
+        <span class="kw5">var</span> <span class="kw4">float</span>     BoxHeight;
+        <span class="kw5">var</span> <span class="kw4">int</span>               Mode;
+<span class="br0">}</span>;
+</pre></div>
+<p>Keep in mind that we want the client and server to animate their own copies of the compartment. The struct "CurrentBoxState" could just be set as reliable, but then the server would be doing all of the animating and would spam all of the small incremental position updates over the network.</p>
+<p><a name="Triggering_the_animation" id="Triggering_the_animation"></a></p>
+<h2><span class="mw-headline">Triggering the animation</span></h2>
+<p>The driver opens or closes the compartment by right-clicking. If the door is currently open, then clicking again will start closing it. Also, if the door is in motion, clicking will cause it to reverse and "go back".</p>
+<p>The driver's right-click causes "VehicleFire" to get called <u>on the server</u> with bWasAltFire set to true. Now the code will check the current state and change it accordingly:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> VehicleFire<span class="br0">(</span><span class="kw4">bool</span> bWasAltFire<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span> <span class="br0">(</span>!bWasAltFire<span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        <span class="co1">// to initiate opening the box, we must be "parked"</span>
+        <span class="kw1">if</span> <span class="br0">(</span><span class="nu0">0</span> == CurrentBoxState.<span class="me1">Mode</span><span class="br0">)</span>
+                <span class="kw1">if</span> <span class="br0">(</span>VSize<span class="br0">(</span>Velocity<span class="br0">)</span> &gt; <span class="nu0">1.5</span><span class="br0">)</span>
+                <span class="br0">{</span>  
+                        <span class="kw1">if</span> <span class="br0">(</span>PlayerController<span class="br0">(</span>Controller<span class="br0">)</span> != <span class="kw9">None</span><span class="br0">)</span>
+                                PlayerController<span class="br0">(</span>Controller<span class="br0">)</span>.<span class="me1">ClientPlaySound</span><span class="br0">(</span>CantOpenDoorSound<span class="br0">)</span>;
+ 
+                        <span class="kw1">return</span>;
+                <span class="br0">}</span>
+ 
+        <span class="kw1">switch</span><span class="br0">(</span>CurrentBoxState.<span class="me1">Mode</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">case</span> <span class="nu0">0</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">1</span>;
+                                PlaySound<span class="br0">(</span>LowerBoxSound,,<span class="nu0">2.5</span>*TransientSoundVolume<span class="br0">)</span>;
+                                <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">1</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">5</span>;
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">2</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">4</span>;
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">3</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">4</span>;
+                                PlaySound<span class="br0">(</span>OpenDoorSound,,<span class="nu0">3</span>*TransientSoundVolume,,,<span class="nu0">0.5</span><span class="br0">)</span>;
+                                <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">4</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">2</span>;
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">5</span>:       CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">1</span>;
+                                <span class="kw1">break</span>;
+ 
+        <span class="br0">}</span>
+ 
+        NewBoxState = CurrentBoxState;
+        NewBoxState.<span class="me1">Mode</span>  = CurrentBoxState.<span class="me1">Mode</span>; <span class="co1">// struct replication quirk</span>
+        BoxUpdateTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+        NetUpdateTime = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span> - <span class="nu0">1</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+<p>The last four lines are where replication comes into play. When the state changes on the server, it "tells" the clients by changing the replicated variables NewBoxState and BoxUpdateTime. BoxUpdateTime is used as a counter of sorts to inform the client when it happened and gives the client a way to know that it's a new event. The very last line is a commonly used method to tell the server to start replicating as soon as possible, but note that NetUpdateTime is not a variable defined in my code.</p>
+<p><b>Kiff:</b> I think that "BoxUpdateTime" might need to be added to the struct to make sure it arrives at the same time.</p>
+<p><b>Kiff:</b> Now that I think about it, I don't even think the update time is needed. It was needed for an older method I was using, but I'm pretty sure that now just the state (.Mode) can just be checked for a change.</p>
+<p>Here is the replication block:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">replication</span>
+<span class="br0">{</span>
+    <span class="kw6">reliable</span> <span class="kw1">if</span> <span class="br0">(</span><span class="kw8">Role</span> == <span class="kw9">ROLE_Authority</span><span class="br0">)</span>
+        BoxUpdateTime, NewBoxState;
+<span class="br0">}</span>
+</pre></div>
+<p>When a client receives new values for replicated variables (and bNetNotify=True) the PostNetReceive event is fired.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">event</span> PostNetReceive<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>BoxUpdateTime &gt; LastBoxUpdateTime<span class="br0">)</span>
+        <span class="br0">{</span>
+                LastBoxUpdateTime = BoxUpdateTime;
+                CurrentBoxState =  NewBoxState;
+                <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>If the variable BoxUpdateTime is newer (greater) than the last one we saved (with LastBoxUpdateTime), we then know the NewBoxState struct has fresh data. Now we can update our local CurrentBoxState with the newly replicated NewBoxState and then start the animation.</p>
+<p>Now we're able to use PostNetReceive as a remote function call. Unlike replicated functions that only reach a single (owner) client, this will reach all clients. Any number of function calls can be carried out this way as long as we have unique replicated variables to inspect for each one.</p>
+<p>To wrap things up, here's the function that does the "animation". It takes a time delta as an arguement when called from the Tick event.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdateBoxPosition<span class="br0">(</span><span class="kw4">float</span> DT<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> <span class="kw4">vector</span> disp;
+        <span class="kw5">local</span> <span class="kw4">rotator</span> doorRot;
+ 
+        <span class="kw1">switch</span><span class="br0">(</span>CurrentBoxState.<span class="me1">Mode</span><span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">case</span> <span class="nu0">0</span>:       <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>; <span class="co1">// nothing moves in this state</span>
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">1</span>:       CurrentBoxState.<span class="me1">BoxHeight</span> -= BoxMoveRate * DT;
+                                <span class="kw1">if</span> <span class="br0">(</span>CurrentBoxState.<span class="me1">BoxHeight</span> &lt; LoweredBoxHeight<span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        CurrentBoxState.<span class="me1">BoxHeight</span> = LoweredBoxHeight;
+                                        CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">2</span>;
+                                        PlaySound<span class="br0">(</span>OpenDoorSound,,<span class="nu0">3</span>*TransientSoundVolume,,,<span class="nu0">0.5</span><span class="br0">)</span>;
+                                <span class="br0">}</span>
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">2</span>:       CurrentBoxState.<span class="me1">DoorRotation</span> -= DoorRotRate * DT;
+                                <span class="kw1">if</span> <span class="br0">(</span>CurrentBoxState.<span class="me1">DoorRotation</span> &lt;= LoweredDoorRot<span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        CurrentBoxState.<span class="me1">DoorRotation</span> = LoweredDoorRot;
+                                        CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">3</span>;
+                                <span class="br0">}</span>
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">3</span>:       <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>; <span class="co1">// this is a "stopped" state </span>
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">4</span>:       CurrentBoxState.<span class="me1">DoorRotation</span> += DoorRotRate * DT;
+                                <span class="kw1">if</span> <span class="br0">(</span>CurrentBoxState.<span class="me1">DoorRotation</span> &gt;= <span class="nu0">0</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        CurrentBoxState.<span class="me1">DoorRotation</span> = <span class="nu0">0</span>;
+                                        CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">5</span>;
+                                        PlaySound<span class="br0">(</span>LowerBoxSound,,<span class="nu0">2.5</span>*TransientSoundVolume<span class="br0">)</span>;
+                                <span class="br0">}</span>
+                                <span class="kw1">break</span>;
+ 
+                <span class="kw1">case</span> <span class="nu0">5</span>:       CurrentBoxState.<span class="me1">BoxHeight</span> += BoxMoveRate * DT;
+                                <span class="kw1">if</span> <span class="br0">(</span>CurrentBoxState.<span class="me1">BoxHeight</span> &gt;= <span class="nu0">0.0</span><span class="br0">)</span>
+                                <span class="br0">{</span>
+                                        CurrentBoxState.<span class="me1">BoxHeight</span> = <span class="nu0">0.0</span>;
+                                        CurrentBoxState.<span class="me1">Mode</span> = <span class="nu0">0</span>;
+                                <span class="br0">}</span>
+        <span class="br0">}</span>
+ 
+        <span class="kw1">if</span> <span class="br0">(</span><span class="nu0">0</span> == CurrentBoxState.<span class="me1">Mode</span><span class="br0">)</span>
+                SetPhysics<span class="br0">(</span>PHYS_Karma<span class="br0">)</span>; <span class="co1">// we can resume normal driving now</span>
+        <span class="kw1">else</span>
+            SetPhysics<span class="br0">(</span>PHYS_None<span class="br0">)</span>; <span class="co1">// temporary hack to "park" the vehicle</span>
+ 
+        disp.<span class="me1">Z</span> = CurrentBoxState.<span class="me1">BoxHeight</span>;
+        SetBoneLocation<span class="br0">(</span><span class="st0">'LiftForks'</span>, disp,<span class="nu0">1.0</span><span class="br0">)</span>;
+        SetBoneLocation<span class="br0">(</span><span class="st0">'StorageBox'</span>, disp,<span class="nu0">1.0</span><span class="br0">)</span>;
+        SetBoneLocation<span class="br0">(</span><span class="st0">'StorageBox_Door'</span>, disp,<span class="nu0">1.0</span><span class="br0">)</span>;
+        doorRot.<span class="me1">Pitch</span> = CurrentBoxState.<span class="me1">DoorRotation</span>;
+        SetBoneRotation<span class="br0">(</span><span class="st0">'StorageBox_Door'</span>, doorRot,<span class="nu0">0</span>, <span class="nu0">1.0</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 23/1000000
+Post-expand include size: 4/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Personal_Page_0f2d.html" title="Category:Legacy Personal Page">Legacy Personal Page</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/k/i/f/Legacy%7EKiff_e8d6.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/k/i/f/Legacy_talk%7EKiff_4c59.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Kiff">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:06, 6 October 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Semisolid Errors - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Semisolid Errors</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Common errors that happen around <a href="../../../../articles/s/e/m/Legacy%7ESemisolid_6645.html" title="Legacy:Semisolid">semisolid</a> <a href="../../../../articles/b/r/u/Legacy%7EBrush_03bb.html" title="Legacy:Brush">brushes</a> and ways to fix them.</p>
+<p><a name="BSP_holes" id="BSP_holes"></a></p>
+<h2><span class="mw-headline">BSP holes</span></h2>
+<p>Effect: player dies horribly for no apparent reason in an area of the map. See <a href="../../../../articles/b/s/p/Legacy%7EBSP_Hole_c774.html" title="Legacy:BSP Hole">BSP hole</a>.</p>
+<p><a name="Semisolid_Face_Vanish" id="Semisolid_Face_Vanish"></a></p>
+<h2><span class="mw-headline">Semisolid Face Vanish</span></h2>
+<p>Effect: Some semisolid faces are invisible.</p>
+<p>Solutions:</p>
+<ol>
+<li>often a full BSP rebuild (as opposed to just Geometry) will fix this.</li>
+<li>A snip from <a href="../../../../articles/s/u/r/Legacy%7ESurface_Flags_%28UT%29_922d.html" title="Legacy:Surface Flags (UT)">Surface Flags (UT)</a>:<br />
+During the zone mapping process, polys will sometimes be flagged as part of Zone 0, causing them to be invisible when the player is within the level. Level designers can detect this class of hole by moving "into geometry" (i.e., outside the level) while viewing the level from an editor window set to "Zone/Portal View." If the hole is replaced by a polygon colored unlike the rest of the polygons in the zone (usually dark gray), the "hole" can usually be patched by setting the PF_ForceViewZone flag. The patch can immediately be verified by moving inside the level.</li>
+</ol>
+<p><a name="Strange_Bot_Behaviour" id="Strange_Bot_Behaviour"></a></p>
+<h2><span class="mw-headline">Strange Bot Behaviour</span></h2>
+<p>Effect: Bots try to run through or shoot through semisolid brushes.</p>
+<ul>
+<li>Solution: <i>Always</i> create your brushes in places that the player (bot or otherwise) cannot touch. The reason the bot's try to run through the wall is because a semisolid is not actually part of the world like a solid brush, so the bot thinks it isn't there so it tries to run through the brush.</li>
+</ul>
+<p><b>Sobiwan:</b> I thought semisolids had their own collision hull, but if not, one could place a collusion hull or cylinder to surround the semisolid, forcing the bots to take notice that the area is off-limits, no?</p>
+<p><b>Tarquin:</b> A <a href="../../../../articles/c/o/l/Legacy%7ECollision_Cylinder_d450.html" title="Legacy:Collision Cylinder">collision cylinder</a> is an actor thing, not a brush thing. Semisolids <i>should</i> provide collision, but sometimes fail. In the case of a pillar, like it says above, put a <a href="../../../../articles/b/l/o/Legacy%7EBlockAll_60d8.html" title="Legacy:BlockAll">BlockAll</a> in case. I've not seen bots walk into semisolids myself.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 32/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Troubleshooting_ddf5.html" title="Category:Legacy Troubleshooting">Legacy Troubleshooting</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/e/m/Legacy%7ESemisolid_Errors_4d9d.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/e/m/Legacy_talk%7ESemisolid_Errors_a244.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Semisolid_Errors">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 21:57, 26 October 2003 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

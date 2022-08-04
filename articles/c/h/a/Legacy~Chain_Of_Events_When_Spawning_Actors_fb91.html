@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Chain Of Events When Spawning Actors - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Chain Of Events When Spawning Actors</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page describes what happens when an actor is created via the Spawn() method on a server or client or replicated to a client in a network game. It lists the engine events and the UnrealScript functions subsequently called by those events and gives a short description how these events and functions could be used.</p>
+<p><i>This page is based on a snipped of native UT2004 code posted on the UT2003Mods mailing list. Most parts will be similar in older engine versions, but there might be important differences in the functions called by these events.</i></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Spawn<span class="br0">(</span> 
+  SpawnClass,      <span class="co1">// class of actor to spawn</span>
+  SpawnOwner,      <span class="co1">// what to set the new actor's Owner to</span>
+  SpawnTag,        <span class="co1">// what to set its Tag to</span>
+  SpawnLocation,   <span class="co1">// new actor's Location</span>
+  SpawnRotation    <span class="co1">// new actor's Rotation </span>
+<span class="br0">)</span>;
+</pre></div>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Before_The_Actor_Is_Created"><span class="tocnumber">1</span> <span class="toctext">Before The Actor Is Created</span></a></li>
+<li class="toclevel-1"><a href="#Chain_Of_Events"><span class="tocnumber">2</span> <span class="toctext">Chain Of Events</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Initial_Properties"><span class="tocnumber">2.1</span> <span class="toctext">Initial Properties</span></a></li>
+<li class="toclevel-2"><a href="#Actor_Owner"><span class="tocnumber">2.2</span> <span class="toctext">Actor Owner</span></a></li>
+<li class="toclevel-2"><a href="#Karma_Physics_Initialization_.28UT2003.29"><span class="tocnumber">2.3</span> <span class="toctext">Karma Physics Initialization (UT2003)</span></a></li>
+<li class="toclevel-2"><a href="#Actor.Spawned.28.29_.28UT.29"><span class="tocnumber">2.4</span> <span class="toctext">Actor.Spawned() (UT)</span></a></li>
+<li class="toclevel-2"><a href="#Actor.PreBeginPlay.28.29"><span class="tocnumber">2.5</span> <span class="toctext">Actor.PreBeginPlay()</span></a>
+<ul>
+<li class="toclevel-3"><a href="#...in_UT2003"><span class="tocnumber">2.5.1</span> <span class="toctext">...in UT2003</span></a></li>
+<li class="toclevel-3"><a href="#...in_UT"><span class="tocnumber">2.5.2</span> <span class="toctext">...in UT</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Actor.BeginPlay.28.29"><span class="tocnumber">2.6</span> <span class="toctext">Actor.BeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#Actor_Zone_and_PhysicsVolume"><span class="tocnumber">2.7</span> <span class="toctext">Actor Zone and PhysicsVolume</span></a></li>
+<li class="toclevel-2"><a href="#Encroachment_Check"><span class="tocnumber">2.8</span> <span class="toctext">Encroachment Check</span></a></li>
+<li class="toclevel-2"><a href="#Actor.PostBeginPlay.28.29"><span class="tocnumber">2.9</span> <span class="toctext">Actor.PostBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#Actor.SetInitialState.28.29"><span class="tocnumber">2.10</span> <span class="toctext">Actor.SetInitialState()</span></a></li>
+<li class="toclevel-2"><a href="#Actor_Base"><span class="tocnumber">2.11</span> <span class="toctext">Actor Base</span></a></li>
+<li class="toclevel-2"><a href="#Actor.PostNetBeginPlay.28.29"><span class="tocnumber">2.12</span> <span class="toctext">Actor.PostNetBeginPlay()</span></a></li>
+<li class="toclevel-2"><a href="#SpawnNotify.SpawnNotification.28.29_.28UT.29"><span class="tocnumber">2.13</span> <span class="toctext">SpawnNotify.SpawnNotification() (UT)</span></a></li>
+<li class="toclevel-2"><a href="#Actor.Tag"><span class="tocnumber">2.14</span> <span class="toctext">Actor.Tag</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Before_The_Actor_Is_Created" id="Before_The_Actor_Is_Created"></a></p>
+<h2><span class="mw-headline">Before The Actor Is Created</span></h2>
+<p>Before an actual <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> object is created the native ULevel::SpawnActor() function checks that a class was passed to it and that the class is not abstract and a subclass of actor. Also this class may neither have <tt>bStatic</tt> nor <tt>bNoDelete</tt> set to True. The class also won't be spawned when its <tt>bHighDetail</tt> property is set to True and the <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a>'s <tt>DetailMode</tt> is set to <tt>DM_Low</tt> or the LevelInfo indicates a low framerate with <tt>bDropDetail</tt> or the actor is spawned on a dedicated server.</p>
+<p>The final check before creating the actor makes sure the actor fits in the location it should be spawned at. This check will be run for actor classes that collide with the world and for actors spawned on the server with <tt>bCollideWhenPlacing=True</tt>.</p>
+<p><a name="Chain_Of_Events" id="Chain_Of_Events"></a></p>
+<h2><span class="mw-headline">Chain Of Events</span></h2>
+<p>These are the events directly called from native code after the actor has been created. See the sections below for more details about functions called by these events. For actors created with the Spawn() function on this machine (i.e. not actors created because they were received on a client) all these events are executed from the Spawn() function.</p>
+<ol>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s initial properties are set:
+<ul>
+<li>the actor's Tag is initialized with the actor's class name</li>
+<li>the actor's Region property (especially its Zone) is initialized with the level's <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> PointRegion</li>
+<li>the actor's Level property is set to the level's <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a></li>
+<li>the actor's XLevel property is set to the Level object itself</li>
+<li>if this actor was replicated to a client, the actor's Role and RemoteRole are exchanged</li>
+<li>the actor's Brush property is set to None if it has one, "because moving brushes are not duplicatable"</li>
+<li>the actor's Location and Rotation are set from the Spawn parameters</li>
+<li>the actor is added to the collision hash if its <tt>bCollideActors</tt> is set to True (used e.g. by the CollidingActors and VisibleCollidingActors <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a> functions) If the actor is touching anything, its Touch() event is called</li>
+<li>the actor's PhysicsVolume is set to the <a href="../../../../articles/d/e/f/Legacy%7EDefaultPhysicsVolume_752c.html" title="Legacy:DefaultPhysicsVolume">DefaultPhysicsVolume</a></li>
+</ul>
+</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s Owner is set from the Spawn parameters</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s Instigator is set to the spawning actor's Instigator</li>
+<li>Karma physics are initialized for the actor</li>
+<li>(in UT the actor's Spawned() event is called, in later engine versions this event is no longer available in UnrealScript)</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s PreBeginPlay() event is called</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s BeginPlay() event is called</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s actual zone and PhysicsVolume are set</li>
+<li>encroachment (overlapping with other actors' collision cylinders) is checked for the actor</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s PostBeginPlay() event is called</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s SetInitialState() event is called</li>
+<li>the actor's base is set if it's None and the actor has <tt>bCollideActors</tt> and <tt>bShouldBaseAtStartup</tt> set to True and its Physics are set to either PHYS_None or PHYS_Rotating</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s PostNetBeginPlay() event is called if this isn't a replicated actor (i.e. it was created on this machine with the Spawn() function)</li>
+<li>(in UT now all <a href="../../../../articles/s/p/a/Legacy%7ESpawnNotify_42d9.html" title="Legacy:SpawnNotify">SpawnNotify</a> actors receive a SpawnNotification() event if this actor's class is a subclass of the class specified in their ActorClass property, in later engine versions SpawnNotifies are no longer available)</li>
+<li>the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>'s actual Tag property is set</li>
+</ol>
+<p>The chain of events is halted if the actor's <tt>bDeleteMe</tt> property becomes True during the initialization, i.e. when any of the events or subsequently called functions destroys the actor.</p>
+<p><a name="Initial_Properties" id="Initial_Properties"></a></p>
+<h3><span class="mw-headline">Initial Properties</span></h3>
+<p>The actor properties Tag, Region, Level, XLevel, Brush, Location, Rotation and PhysicsVolume are set before any UnrealScript is executed. Note that Region.Zone is set to the <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a>, PhysicsVolume is set to the <a href="../../../../articles/d/e/f/Legacy%7EDefaultPhysicsVolume_752c.html" title="Legacy:DefaultPhysicsVolume">DefaultPhysicsVolume</a> and Tag is set to the actor's class name.</p>
+<p><a name="Actor_Owner" id="Actor_Owner"></a></p>
+<h3><span class="mw-headline">Actor Owner</span></h3>
+<p>Before the spawned actor can execute any UnrealScript code its Owner is set. This will call the new owner's GainedChild() event which is the first piece of UnrealScript code executed after the actor was created. At this point the actor's Owner is still None and also its GetStateName() method returns 'None'.</p>
+<p>After GainedChild() returns the spawned actor's Instigator is set to the spawning actor's Instigator. (Not the new Owner's Instigator!)</p>
+<p><a name="Karma_Physics_Initialization_.28UT2003.29" id="Karma_Physics_Initialization_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">Karma Physics Initialization <i>(UT2003)</i></span></h3>
+<p><i>Does this call any UnrealScript events?</i></p>
+<p><a name="Actor.Spawned.28.29_.28UT.29" id="Actor.Spawned.28.29_.28UT.29"></a></p>
+<h3><span class="mw-headline">Actor.Spawned() <i>(UT)</i></span></h3>
+<p>In UT there is the Spawned() event which is called only for actors created via the Spawn() function, not for actors placed by mappers. This is the first UnrealScript event called for the newly spawned actor and allows to execute code before the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a> and the mutators can modify the actor.</p>
+<p><a name="Actor.PreBeginPlay.28.29" id="Actor.PreBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">Actor.PreBeginPlay()</span></h3>
+<p>At this point the Owner is properly set, but the actor's GetStateName() method will return the actor's class name.</p>
+<p><a name="...in_UT2003"></a></p>
+<h4><span class="mw-headline">...in UT2003</span></h4>
+<p>If the actor has <tt>bGameRelevant == False</tt> and this event is not executed on a client, the game's base <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a>'s CheckRelevance() function is called.</p>
+<p>CheckRelevance() first calls the base mutator's AlwaysRelevant() function which recursively calls the other mutators' AlwaysRelevant() functions. If this function returns True the actor is concidered game relevant and CheckRelevance() returns True resulting in the Actor continuing to exist.</p>
+<p>If AlwaysRelevant() returns False, the base mutator's IsRelevant() function is called. This function calls the mutator's CheckReplacement() function and returns its result if it's False. Otherwise IsRelevant() returns the result of the next mutator's IsRelevant() function.</p>
+<p>Finally the result of the base mutator's IsRelevant() function is returned by CheckRelevance() and again, if that result is True the actor will continue to exist, otherwise it will destroy itself.</p>
+<p><a name="...in_UT"></a></p>
+<h4><span class="mw-headline">...in UT</span></h4>
+<p>If the actor has <tt>bGameRelevant == False</tt> and this event is not executed on a client, the <a href="../../../../articles/g/a/m/Legacy%7EGameInfo_4922.html" title="Legacy:GameInfo">GameInfo</a>'s IsRelevant() function is called.</p>
+<p>IsRelevant() first calls the base mutator's AlwaysRelevant() function which recursively calls the other mutators' AlwaysRelevant() functions. If this function returns True the actor is concidered game relevant and GameInfo.IsRelevant() returns True resulting in the Actor continuing to exist.</p>
+<p>If AlwaysRelevant() returns False, the base <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">mutator</a>'s IsRelevant() function is called. This function calls the mutator's CheckReplacement() function and returns its result if it's False. Otherwise IsRelevant() returns the result of the next mutator's IsRelevant() function.</p>
+<p>If the base mutator's IsRelevant() function returns False the GameInfo's IsRelevant() function also returns False and the actor destroys itself. Otherwise if the bSuperRelevant property is set to 1 GameInfo.IsRelevant() returns True resulting in the Actor continuing to exist.</p>
+<p>If the base mutator's IsRelevant() function returns True but the bSuperRelevant property is not set to 1 the GameInfo's IsRelevant() function checks whether the actor may appear in the current difficulty level, if it's a "monster" (a non-player <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a>) and if there's a random chance for the actor to not appear in the game (<tt>OddsOfAppearing</tt>). The GameInfo.IsRelevant() function will also update the number of secret goals, item goals and kill goals before returning True and allowing the actor to exist.</p>
+<p><a name="Actor.BeginPlay.28.29" id="Actor.BeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">Actor.BeginPlay()</span></h3>
+<p>This event is called after an Actor is concidered "relevant" for this game, i.e. no <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> wanted to get rid of it.</p>
+<p>Most actors don't use this event, but if you're looking for an event that is called before the actor is initialized, but after the mutator checks are done, then this is the place for you.</p>
+<p><a name="Actor_Zone_and_PhysicsVolume" id="Actor_Zone_and_PhysicsVolume"></a></p>
+<h3><span class="mw-headline">Actor Zone and PhysicsVolume</span></h3>
+<p>At this point the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>.Region.Zone value becomes valid. This event also causes the ZoneChange() event to be called, which sees Region.Zone still as the <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> and the actual zone is passed as the NewZone parameter.</p>
+<p>After the zone the PhysicsVolume value becomes valid. This event also causes the PhysicsVolumeChange() event to be called, which sees PhysicsVolume still as the <a href="../../../../articles/d/e/f/Legacy%7EDefaultPhysicsVolume_752c.html" title="Legacy:DefaultPhysicsVolume">DefaultPhysicsVolume</a> and the actual PhysicsVolume is passed as the NewVolume parameter.</p>
+<p><a name="Encroachment_Check" id="Encroachment_Check"></a></p>
+<h3><span class="mw-headline">Encroachment Check</span></h3>
+<p>Encroachment is when two actors in the collision hash overlap. In UnrealScript there is the EncroachingOn() event which returns whether the overlapping collision hulls with another actor actually needs to be handled and the EncroachedBy() event which is called for the other actor when EncroachingOn() returned True. The newly spawned actor will be destroyed if other colliding actors detect encroachment with this actor.</p>
+<p><a name="Actor.PostBeginPlay.28.29" id="Actor.PostBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">Actor.PostBeginPlay()</span></h3>
+<p>Most actors use PostBeginPlay() to initialize their UnrealScript values. The actor's PhysicsVolume and Zone are valid but the actor is not yet in any state.</p>
+<p><a name="Actor.SetInitialState.28.29" id="Actor.SetInitialState.28.29"></a></p>
+<h3><span class="mw-headline">Actor.SetInitialState()</span></h3>
+<p>At this point the actor is concidered "initialized" by the engine (bScriptInitialized is set to True in this event) and the actor's initial state is set. If the <a href="../../../../articles/i/n/i/Legacy%7EInitialState_868c.html" title="Legacy:InitialState">InitialState</a> property is set, it will be used, otherwise the actor goes to its auto state. Since SetInitialState() is a <a href="../../../../articles/s/i/m/Legacy%7ESimulated_Function_71f0.html" title="Legacy:Simulated Function">simulated function</a> by default this happens on server and clients.</p>
+<p>This event uses GotoState to change the state, so during its executing the initial state's BeginState() event is called. The state's state code will however not yet start executing at this point. This will happen after all the events described on this page have finished doing their work.</p>
+<p><a name="Actor_Base" id="Actor_Base"></a></p>
+<h3><span class="mw-headline">Actor Base</span></h3>
+<p>Actors with without a Base, <tt>bCollideActors = true</tt> and <tt>bShouldBaseAtStartup = true</tt> which use either PHYS_None or PHYS_Rotating try to find a base for themselves.</p>
+<p>When a base is set the actor's BaseChange() event will be called.</p>
+<p><a name="Actor.PostNetBeginPlay.28.29" id="Actor.PostNetBeginPlay.28.29"></a></p>
+<h3><span class="mw-headline">Actor.PostNetBeginPlay()</span></h3>
+<p>PostNetBeginPlay() will only be called for actors created with the Spawn() function. For replicated actors this event will be called (if it's marked as "simulated") by the netcode when the initial variables have been replicated. That means you don't know when it'll happen... but eventually&#160;:)</p>
+<p><a name="SpawnNotify.SpawnNotification.28.29_.28UT.29" id="SpawnNotify.SpawnNotification.28.29_.28UT.29"></a></p>
+<h3><span class="mw-headline">SpawnNotify.SpawnNotification() <i>(UT)</i></span></h3>
+<p>In UT there are special <a href="../../../../articles/s/p/a/Legacy%7ESpawnNotify_42d9.html" title="Legacy:SpawnNotify">SpawnNotify</a> actors which receive a SpawnNotification() event if the new actor is a subclass of their configured ActorClass after the new actor has been initialized. The <a href="../../../../articles/s/p/a/Legacy%7ESpawnNotify_42d9.html" title="Legacy:SpawnNotify">SpawnNotify</a> can modify the actor or even spawn a completely different actor which will be returned by the Spawn() function instead of this actor.</p>
+<p><a name="Actor.Tag" id="Actor.Tag"></a></p>
+<h3><span class="mw-headline">Actor.Tag</span></h3>
+<p>The actor's <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a> property is set to the value passed to the Spawn() function after all initialization events have been executed. The first place where you can access its final value is the code executed after the Spawn() function that created this actor.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a></li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">Creating Actors And Objects</a></li>
+<li><a href="../../../../articles/c/h/a/Legacy%7EChain_Of_Events_At_Level_Startup_e598.html" title="Legacy:Chain Of Events At Level Startup">Chain Of Events At Level Startup</a></li>
+<li><a href="../../../../articles/d/e/s/Legacy%7EDestroying_Objects_45cb.html" title="Legacy:Destroying Objects">Destroying Objects</a> (and Actors)</li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 55/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/h/a/Legacy%7EChain_Of_Events_When_Spawning_Actors_fb91.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/h/a/Legacy_talk%7EChain_Of_Events_When_Spawning_Actors_5d29.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Chain_Of_Events_When_Spawning_Actors">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:37, 23 May 2004 by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

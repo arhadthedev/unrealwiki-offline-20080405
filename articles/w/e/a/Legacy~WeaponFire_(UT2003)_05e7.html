@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:WeaponFire (UT2003) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:WeaponFire (UT2003)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; WeaponFire (Package: Engine)</div>
+<p>Weapons in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> have been divided up into multiple actors, of which this one is intimately involved. WeaponFire actors and their children form the FireMode[i] array in <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a> which manifests itself on the screen as the different modes of firing a weapon can do (typically the primary and secondary fire). The properties for the firing of a weapon reside in the weaponfire classes, including fire rate, damage, etc.</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<dl>
+<dt>Weapon (Weapon)&#160;</dt>
+<dd>Points to the weapon this WeaponFire belongs to.</dd>
+<dt>ThisModeNum (int)&#160;</dt>
+<dd>Either 0 or 1 depending on which position in the weapon's FireMode array this WeaponFire is.</dd>
+<dt>PreFireAnim (Name)&#160;</dt>
+<dd>Animation played before firing starts.</dd>
+<dt>FireAnim (Name)&#160;</dt>
+<dd>Animation played when firing starts.</dd>
+<dt>FireLoopAnim (Name)&#160;</dt>
+<dt>FireEndAnim (Name)&#160;</dt>
+<dd>Animation played when firing ends.</dd>
+<dt>ReloadAnim (Name)&#160;</dt>
+<dt>PreFireAnimRate (float)&#160;</dt>
+<dt>FireAnimRate (float)&#160;</dt>
+<dt>FireLoopAnimRate (float)&#160;</dt>
+<dt>FireEndAnimRate (float)&#160;</dt>
+<dt>ReloadAnimRate (float)&#160;</dt>
+<dt>TweenTime (float)&#160;</dt>
+<dd>Used to create fluent transitions between animations. Old anim will fade into new one depending on the given time.</dd>
+<dt>FireSound (Sound)&#160;</dt>
+<dt>ReloadSound (Sound)&#160;</dt>
+<dt>NoAmmoSound (Sound)&#160;</dt>
+<dt>FireForce (String)&#160;</dt>
+<dd>Force FeedBack file to play with the .ifr file</dd>
+<dt>PreFireForce (String)&#160;</dt>
+<dt>PreFireTime (float)&#160;</dt>
+<dd>seconds before first shot*/</dd>
+<dt>FireRate (float)&#160;</dt>
+<dd>seconds between shots*/</dd>
+<dt>MaxHoldTime (float)&#160;</dt>
+<dd>Maximum value to clamp HoldTime.</dd>
+<dt>HoldTime (float)&#160;</dt>
+<dd>How long the fire button has been held, in seconds. Great for chargeable weapons.</dd>
+<dt>bFireOnRelease ()&#160;</dt>
+<dd>if true, shot will be fired when button is released, HoldTime will be the time the button was held for*/</dd>
+<dt>bWaitForRelease ()&#160;</dt>
+<dd>if true, fire button must be released between each shot*/</dd>
+<dt>bModeExclusive ()&#160;</dt>
+<dd>if true, no other fire modes can be active at the same time as this one*/</dd>
+<dt>AmmoClass (class&lt;Ammunition&gt;)&#160;</dt>
+<dt>AmmoPerFire (int)&#160;</dt>
+<dd>Ammount of Ammo used when gun fired</dd>
+<dt>AmmoClipSize (int)&#160;</dt>
+<dt>Load (float)&#160;</dt>
+<dd>Ammo the firemode wants to consume. May vary if the firemode uses variable amounts of ammo. Automatically set to be equal to AmmoPerFire initially.</dd>
+<dt>ShakeRotMag (vector)&#160;</dt>
+<dd>how far to rot view*/</dd>
+<dt>ShakeRotRate (vector)&#160;</dt>
+<dd>how fast to rot view*/</dd>
+<dt>ShakeRotTime ()&#160;</dt>
+<dd>how much time to rot the instigator's view*/</dd>
+<dt>ShakeOffsetMag (vector)&#160;</dt>
+<dd>max view offset vertically*/</dd>
+<dt>ShakeOffsetRate (vector)&#160;</dt>
+<dd>how fast to offset view vertically*/</dd>
+<dt>ShakeOffsetTime ()&#160;</dt>
+<dd>how much time to offset view*/</dd>
+<dt>ProjectileClass (class&lt;Projectile&gt;)&#160;</dt>
+<dd>Which projectile to create when firing</dd>
+<dt>BotRefireRate (float)&#160;</dt>
+<dd>AI setting, for how fast bot can fire - 0.99 highest (for assault rifle) (<b>Foxpaw:</b> I believe this is actually the probability that a bot will continue firing in "full automatic" as opposed to stopping firing briefly and then resuming the next time it thinks it has a good shot. The higher this value is, the more the bot will "spray and pray" as opposed to taking aimed shots.)</dd>
+<dt>WarnTargetPct (float)&#160;</dt>
+<dd>AI &amp; Projectile setting, warns target - for bot dodging etc</dd>
+<dt>bSplashDamage (bool)&#160;</dt>
+<dd>AI setting, lets bot know that weapon causes plash damage</dd>
+<dt>bSplashJump (bool)&#160;</dt>
+<dt>bRecommendSplashDamage (bool)&#160;</dt>
+<dd>AI setting, try to hit people with splash damage e.g. bouncing people with rockets</dd>
+<dt>bTossed (bool)&#160;</dt>
+<dd>AI setting, tells bots to launch projectile up at an angle, e.g. for grenades.</dd>
+<dt>bLeadTarget (bool)&#160;</dt>
+<dd>AI setting for prjectile so that bot aims ahead of target</dd>
+<dt>bInstantHit (bool)&#160;</dt>
+<dd>AI setting for intant hit weapons so bot aim at target</dd>
+<dt>bPawnRapidFireAnim ()&#160;</dt>
+<dd>for determining what anim the firer should play*/</dd>
+<dt>bReflective ()&#160;</dt>
+<dt>bAttachSmokeEmitter (bool)&#160;</dt>
+<dt>bAttachFlashEmitter (bool)&#160;</dt>
+<dt>FlashEmitterClass (class&lt;xEmitter&gt;)&#160;</dt>
+<dt>FlashEmitter (xEmitter)&#160;</dt>
+<dt>SmokeEmitterClass (class&lt;xEmitter&gt;)&#160;</dt>
+<dt>SmokeEmitter (xEmitter)&#160;</dt>
+<dt>AimError (float)&#160;</dt>
+<dd>0=none 1000=quite a bit*/</dd>
+<dt>Spread (float)&#160;</dt>
+<dd>rotator units. no relation to AimError*/</dd>
+<dt>SpreadStyle (ESpreadStyle)&#160;</dt>
+<dd>How the shots spread. Has four values: SS_None, SS_Random, where spread is max random angle deviation, SS_Line where spread is angle between each projectile and SS_Ring.</dd>
+<dt>DamageAtten (float)&#160;</dt>
+<dd>attenuate instant-hit/projectile damage by this multiplier*/</dd>
+</dl>
+<p><a name="Non-editable" id="Non-editable"></a></p>
+<h3><span class="mw-headline">Non-editable</span></h3>
+<dl>
+<dt>ServerStartFireTime (float)&#160;</dt>
+<dt>NextFireTime (float)&#160;</dt>
+<dd>Minimum required Level.timeSeconds for the engine to call ModeDoFire().</dd>
+<dt>bIsFiring ()&#160;</dt>
+<dd>Used by the engine to decide if ModeDoFire() has to be called. It's set by Weapon.startFire(mode) and cleared by Weapon.stopFire(mode).</dd>
+<dt>bNowWaiting ()&#160;</dt>
+<dt>bServerDelayStopFire ()&#160;</dt>
+<dt>bServerDelayStartFire ()&#160;</dt>
+<dt>FireCount (int)&#160;</dt>
+</dl>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<pre>
++-BallTarget
++-<a href="../../../../articles/i/n/s/Legacy%7EInstantFire_f898.html" title="Legacy:InstantFire">InstantFire</a>
+|  +-AssaultFire
+|  +-<a href="../../../../articles/m/i/n/Legacy%7EMinigunFire_0cc8.html" title="Legacy:MinigunFire">MinigunFire</a>
+|  |  +-<a href="../../../../articles/m/i/n/Legacy%7EMinigunAltFire_d8d0.html" title="Legacy:MinigunAltFire">MinigunAltFire</a>
+|  +-<a href="../../../../articles/s/h/o/Legacy%7EShockBeamFire_6c22.html" title="Legacy:ShockBeamFire">ShockBeamFire</a>
+|  |  +-SuperShockBeamFire
+|  +-SniperFire
++-LinkFire
++-PainterFire
++-[[PainterZoom
++-<a href="../../../../articles/p/r/o/Legacy%7EProjectileFire_4126.html" title="Legacy:ProjectileFire">ProjectileFire</a>
+|  +-AssaultGrenade
+|  +-BallShot
+|  +-BioChargedFire
+|  +-BioFire
+|  +-<a href="../../../../articles/f/l/a/Legacy%7EFlakAltFire_cd57.html" title="Legacy:FlakAltFire">FlakAltFire</a>
+|  +-<a href="../../../../articles/f/l/a/Legacy%7EFlakFire_b008.html" title="Legacy:FlakFire">FlakFire</a>
+|  +-LinkAltFire
+|  +-RedeemerFire
+|  |  +-RedeemerGuidedFire 
+|  +-RocketFire
+|  +-RocketMultiFire
+|  +-ShockProjFire
+|  +-TransFire
++-ShieldAltFire
++-ShieldFire
++-SniperZoom
++-TransRecall
+</pre>
+<hr />
+<p>----</p>
+<p><b>Daid303:</b> Is this page going to be updated for UT2004, or stays to UT2003, and a new one for UT2004? Anyhow. WeaponFire in UT2004 isn't an Actor anymore. And basicly that sucks. They hacked back in SetTimer, Spawn and Trace BUT, the Timer is buggie, after too many hours debugging I found out that you CAN'T call a new SetTimer() in a Timer() event. Hurray for that.</p>
+<p><b>Mysterial:</b> If you could see for yourself the performance improvement after converting WeaponFire to an Object subclass you wouldn't think that sucks so much. Anyway, about Timer(), have you posted to the mod mailing list about it, or emailed anyone at Epic, or anything? Sure would do a whole lot more towards getting it fixed.</p>
+<p><b>OlympusMons:</b> Need to get some stuff happening for the ut2004 weaponfire class.</p>
+<hr />
+<p>----</p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Category:Legacy Class (UT2003)</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_Class_Tree_7925.html" title="Category:Legacy Class Tree">Category:Legacy Class Tree</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – add functions and bring properties into standard format</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 15/1000000
+Post-expand include size: 196/2097152 bytes
+Template argument size: 83/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_Tree_7925.html" title="Category:Legacy Class Tree">Legacy Class Tree</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/w/e/a/Legacy%7EWeaponFire_%28UT2003%29_05e7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/w/e/a/Legacy_talk%7EWeaponFire_%28UT2003%29_e768.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:WeaponFire_%28UT2003%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 23:54, 24 September 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

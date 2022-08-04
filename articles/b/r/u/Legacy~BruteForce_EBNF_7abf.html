@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:BruteForce/EBNF - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:BruteForce/EBNF</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/b/r/u/Legacy%7EBruteForce_e5eb.html" title="Legacy:BruteForce">Legacy:BruteForce</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>If you don't understand this first read about <a href="http://www.garshol.priv.no/download/text/bnf.html" class="external text" title="http://www.garshol.priv.no/download/text/bnf.html" rel="nofollow">EBNF</a>.</p>
+<p><a name="Non_terminals" id="Non_terminals"></a></p>
+<h2><span class="mw-headline">Non terminals</span></h2>
+<pre>
+ PROGRAM               ::= DECLARATIONS STATEMENTS
+</pre>
+<p>It's not that difficult to allow declarations everywhere in the code, it's just that I prefer to have it at the top. This way it's easy to find the declaration when you are looking at the code.</p>
+<pre>
+ DECLARATIONS          ::= ((DECLARATION|FUNCTION) SEMICOLON)*
+</pre>
+<p>Well ok, this allows you to mix variable declarations and function declarations, but that's up to you. You might prefer to declare vars first and then function. This gives you the freedom.</p>
+<p>Note that this rule may be empty. I use the semicolon as a divider of parts, and it's checked here and not in the declaration/function because it's part of the block, seperating the elements.</p>
+<pre>
+ DECLARATION           ::= VAR TYPE IDENTIFIER
+</pre>
+<p>C style variable declaration, but prefixed with a <b>var</b> keyword. This is to make it a bit easier for the parser.</p>
+<pre>
+ TYPE                  ::= INTEGER
+                         | STRING
+                         | FLOAT
+                         | BOOLEAN
+</pre>
+<p>We've got four types, I've not thought about custom type declarations.</p>
+<pre>
+ IDENTIFIER            ::= __implicit__
+</pre>
+<p>Identifiers are returned by the tokenizer so I haven't added it to the language specification.</p>
+<pre>
+ FUNCTION              ::= FUNC TYPE IDENTIFIER LBRACK ARGUMENTS RBRACK DECLARATIONS BEGIN STATEMENTS END
+</pre>
+<p>A function declaration including body. You always have to return a type, this is used to declare the always present local variable <i>result</i> (just like in Pascal functions). Before the function body you can define local variables (and even functions). The function body is encapsued with a <b>begin</b> and <b>end</b> just like in Pascal. I like this way, ok it's more to write but it makes to code more <i>readable</i>, ok I just like it since I can easily replace it with <b>{</b> and <b>}</b> or whatever I want.</p>
+<pre>
+ ARGUMENTS             ::= (TYPE LVALUE (SEMICOLON TYPE LVALUE)*)?
+</pre>
+<p>Function arguments are optional, and to prevent you from adding a semicolon after the last argument I used this construction. It's doesn't matter for the resulting AST, just the parser.</p>
+<pre>
+ STATEMENTS            ::= (STATEMENT SEMICOLON)*
+</pre>
+<p>Zero or more statements, yes it's possible to define a program without any code to be executed, this might be usefull for function declarations to be reused or something.</p>
+<pre>
+ STATEMENT             ::= ASSIGNMENT
+                         | WHILEDO
+                         | IFTHENELSE
+</pre>
+<p>A statement can be everything, an assignment or a control block like <b>while</b> ... <b>do</b> or <b>if</b> ... <b>then</b> ... <b>else</b>. It's easy to add new kind of statements here.</p>
+<pre>
+ ASSIGNMENT            ::= IDENTIFIER BECOMES EXPR
+                         | FUNCTIONCALL
+</pre>
+<p>Well this is the reason why BruteForce is no longer LL(1), because I have to look a head to see if it's an assignment or an function call. Both start with an identifier. I could work around it but this would require me to add a keyword to one of them. For example <code><b>call</b> function_name()</code></p>
+<pre>
+ WHILEDO               ::= WHILE EXPR DO CODEBLOCK
+ CODEBLOCK             ::= STATEMENT
+                         | (BEGIN STATEMENTS END)
+</pre>
+<p>The <b>while</b> and <b>if</b> control blocks accept code blocks this is either one statement or more, because more statements qould require to use the semicolon to divide them a code block will start with <b>begin</b> and end with <b>end</b> .</p>
+<pre>
+ IFTHENELSE            ::= IF EXPR THEN CODEBLOCK (ELSE CODEBLOCK)?
+</pre>
+<p>I've made the else part optional, empty <b>else</b> parts are just ugly and it can easily be avoided since it's a diffirence between a semicolon and <b>else</b></p>
+<pre>
+ EXPR                  ::= BOOLEX
+</pre>
+<p>Here's an nice example of a pretty useless rule, but maybe when I want to extend expression with something that has a lower precendence than a boolean expression I would only need to update one rule instead of a lot.</p>
+<p>The following rules define the operator precedance, the sooner the lower the priority. The definition below allows constructs like:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="nu0">1</span><span class="nu0">+2</span><span class="nu0">+3</span><span class="nu0">+4</span><span class="nu0">+5</span> 
+<span class="nu0">1</span>*<span class="nu0">2</span><span class="nu0">+3</span>/<span class="nu0">5</span>&lt;=<span class="nu0">4</span><span class="nu0">+1</span>
+</pre></div>
+<pre>
+ BOOLEX                ::= ACCUM ((LT|LE|GT|GE|EQ|NE) ACCUM)*
+ ACCUM                 ::= MULT ((PLUS|MINUS) MULT)*
+ MULT                  ::= PREOP ((MULTIPLY|DIVIDE) PREOP)*
+ PREOP                 ::= (MINUS|NOT)? OPERAND
+ OPERAND               ::= IDENTIFIER
+                         | FUNCTIONCALL
+                         | INTVALUE
+                         | FLOATVALUE
+                         | STRINGVALUE
+                         | BOOLVALUE
+                         | LBRACK EXPR RBRACK
+</pre>
+<p>An operant is either a constant value, a variable identifier, a function call or again an expression between braches. These expressions between braces are very important, it allows you to overrule the operator precedance. You won't see these braces in the AST anymore because they are no longer needed in there, the operators are already set in the correct order.</p>
+<pre>
+ FUNCTIONCALL          ::= IDENTIFIER LBRACK (EXPR (COMMA EXPR)*)? RBRACK
+</pre>
+<p>The arguments of a function call are expressions, this allows you to use a constant or expression besides the normal identifiers.</p>
+<pre>
+ INTVALUE              ::= __implicit__
+ FLOATVALUE            ::= __implicit__
+ STRINGVALUE           ::= __implicit__
+ BOOLVALUE             ::= TRUE|FALSE
+</pre>
+<p>Boolean values are returned as an identifier by the tokenizer, so we need to filter those out manualy.</p>
+<p><a name="Terminals" id="Terminals"></a></p>
+<h2><span class="mw-headline">Terminals</span></h2>
+<pre>
+ BEGIN                 ::= 'begin'
+ END                   ::= 'end'
+ SEMICOLON             ::= ';'
+ VAR                   ::= 'var'
+ INTEGER               ::= 'int'
+ STRING                ::= 'string'
+ FLOAT                 ::= 'float'
+ BOOLEAN               ::= 'bool'
+ FUNC                  ::= 'function'
+ BECOMES               ::= '='
+ WHILE                 ::= 'while'
+ DO                    ::= 'do'
+ IF                    ::= 'if'
+ THEN                  ::= 'then'
+ ELSE                  ::= 'else'
+ LT                    ::= '&lt;'
+ LE                    ::= '&lt;='
+ GT                    ::= '&gt;'
+ GE                    ::= '&gt;='
+ EQ                    ::= '=='
+ NE                    ::= '!='
+ PLUS                  ::= '+'
+ MINUS                 ::= '-'
+ MULTIPLY              ::= '*'
+ DIVIDE                ::= '/'
+ MOD                   ::= '%'
+ NOT                   ::= '!'
+ LBRACK                ::= '('
+ RBRACK                ::= ')'
+ TRUE                  ::= 'true'
+ FALSE                 ::= 'false'
+ COMMA                 ::= ','
+</pre>
+<p><a name="Sample_code" id="Sample_code"></a></p>
+<h2><span class="mw-headline">Sample code</span></h2>
+<p>Here's a piece of example code that will print all easters dates from 2003 to 2012, unless you provide diffirent values on the input</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">int</span> y;
+<span class="kw5">var</span> <span class="kw4">int</span> ey;
+ 
+<span class="kw5">function</span> <span class="kw4">string</span> easter<span class="br0">(</span><span class="kw4">int</span> year<span class="br0">)</span>
+  <span class="kw5">var</span> <span class="kw4">int</span> m;
+  <span class="kw5">var</span> <span class="kw4">int</span> d;
+  <span class="kw5">var</span> <span class="kw4">int</span> g;
+  <span class="kw5">var</span> <span class="kw4">int</span> c;
+  <span class="kw5">var</span> <span class="kw4">int</span> x;
+  <span class="kw5">var</span> <span class="kw4">int</span> z;
+  <span class="kw5">var</span> <span class="kw4">int</span> b;
+  <span class="kw5">var</span> <span class="kw4">int</span> e;
+begin
+  g = year % <span class="nu0">19</span> + <span class="nu0">1</span>;         
+  c = <span class="br0">(</span>year / <span class="nu0">100</span><span class="br0">)</span> + <span class="nu0">1</span>;
+  x = <span class="br0">(</span><span class="nu0">3</span>*c / <span class="nu0">4</span><span class="br0">)</span> - <span class="nu0">12</span>;
+  z = <span class="br0">(</span><span class="br0">(</span><span class="nu0">8</span>*c + <span class="nu0">5</span><span class="br0">)</span> / <span class="nu0">25</span><span class="br0">)</span> - <span class="nu0">5</span>;
+  b = <span class="br0">(</span><span class="nu0">5</span>*year / <span class="nu0">4</span><span class="br0">)</span> - x - <span class="nu0">10</span>;
+  e = <span class="br0">(</span><span class="nu0">11</span>*g + <span class="nu0">20</span> + z - x<span class="br0">)</span>;
+  e = e % <span class="nu0">30</span>;                     
+  <span class="kw1">if</span> e &lt; <span class="nu0">0</span> then e = e<span class="nu0">+30</span>;
+  <span class="kw1">if</span> <span class="br0">(</span><span class="br0">(</span><span class="br0">(</span>e == <span class="nu0">25</span><span class="br0">)</span>+<span class="br0">(</span>g&gt;<span class="nu0">11</span><span class="br0">)</span> == <span class="nu0">2</span><span class="br0">)</span> + <span class="br0">(</span>e==<span class="nu0">24</span><span class="br0">)</span><span class="br0">)</span> &gt; <span class="nu0">0</span> then e = e<span class="nu0">+1</span>;
+  d = <span class="nu0">44</span>-e;
+  <span class="kw1">if</span> d &lt; <span class="nu0">21</span> then d = d<span class="nu0">+30</span>;
+  d = d<span class="nu0">+7</span>-<span class="br0">(</span><span class="br0">(</span>b+d<span class="br0">)</span> - <span class="br0">(</span><span class="br0">(</span>b+d<span class="br0">)</span>/<span class="nu0">7</span><span class="br0">)</span>*<span class="nu0">7</span><span class="br0">)</span>;
+  <span class="kw1">if</span> d&gt;<span class="nu0">31</span> then m = <span class="nu0">4</span> <span class="kw1">else</span> m = <span class="nu0">3</span>;
+  <span class="kw1">if</span> d&gt;<span class="nu0">31</span> then d = d<span class="nu0">-31</span>;
+  result = <span class="st0">""</span>+year+<span class="st0">"-"</span>+m+<span class="st0">"-"</span>+d;
+end;
+ 
+y = <span class="nu0">2003</span>;
+ey = <span class="nu0">2012</span>;
+ 
+<span class="kw1">if</span> <span class="br0">(</span>argc<span class="br0">(</span><span class="br0">)</span> == <span class="nu0">1</span><span class="br0">)</span> then ey = <span class="kw4">Int</span><span class="br0">(</span>argv<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+<span class="kw1">if</span> <span class="br0">(</span>argc<span class="br0">(</span><span class="br0">)</span> == <span class="nu0">2</span><span class="br0">)</span> then begin
+  y = <span class="kw4">Int</span><span class="br0">(</span>argv<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span>;
+  ey = <span class="kw4">Int</span><span class="br0">(</span>argv<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span><span class="br0">)</span>;
+end;
+print<span class="br0">(</span><span class="st0">"Day of Easter for "</span>+y+<span class="st0">"-"</span>+ey+<span class="st0">"."</span><span class="br0">)</span>;
+ 
+<span class="kw1">while</span> <span class="br0">(</span>y &lt;= ey<span class="br0">)</span> <span class="kw1">do</span> begin
+  print<span class="br0">(</span>easter<span class="br0">(</span>y<span class="br0">)</span><span class="br0">)</span>;
+  y = y<span class="nu0">+1</span>;
+end;
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/r/u/Legacy%7EBruteForce_EBNF_7abf.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/r/u/Legacy_talk%7EBruteForce_EBNF_6dc2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:BruteForce/EBNF">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 12:18, 23 April 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

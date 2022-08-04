@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Using Objects - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Using Objects</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This follows on from the <a href="../../../../articles/o/b/j/Legacy%7EObject_Oriented_Programming_Overview_3984.html" title="Legacy:Object Oriented Programming Overview">Object Oriented Programming Overview</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Object_References"><span class="tocnumber">1</span> <span class="toctext">Object References</span></a>
+<ul>
+<li class="toclevel-2"><a href="#What_can_object_references_be_used_for.3F"><span class="tocnumber">1.1</span> <span class="toctext">What can object references be used for?</span></a></li>
+<li class="toclevel-2"><a href="#Getting_a_Reference_to_an_Object"><span class="tocnumber">1.2</span> <span class="toctext">Getting a Reference to an Object</span></a></li>
+<li class="toclevel-2"><a href="#Casting_References"><span class="tocnumber">1.3</span> <span class="toctext">Casting References</span></a></li>
+<li class="toclevel-2"><a href="#IsA_and_ClassIsChildOf"><span class="tocnumber">1.4</span> <span class="toctext">IsA and ClassIsChildOf</span></a></li>
+<li class="toclevel-2"><a href="#References_to_Classes"><span class="tocnumber">1.5</span> <span class="toctext">References to Classes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">2</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion_Topics"><span class="tocnumber">3</span> <span class="toctext">Discussion Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Object_References" id="Object_References"></a></p>
+<h2><span class="mw-headline">Object References</span></h2>
+<p><a name="What_can_object_references_be_used_for.3F" id="What_can_object_references_be_used_for.3F"></a></p>
+<h3><span class="mw-headline">What can object references be used for?</span></h3>
+<p>Remember in the overview when we made up a recipe (class) for a simple and a better pizza and created (spawned) actual pizzas?</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Pizza MyPizza;             <span class="co1">// That's where I'm going to hold the pizza.  Like a dish.</span>
+ 
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pizza'</span><span class="br0">)</span>;  <span class="co1">// Hooray!  Pizza's ready!</span>
+</pre></div>
+<p>Just like we could define variables such as bHasSauce to store information, we can define variables that will store a reference to an object. This is how we can refer to other objects and interact with them. In the example above, the "MyPizza" variable was a reference to the pizza we spawned. Once we have a reference to an object, we can interact with it, like we did before:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+MyPizza.<span class="me1">EatParts</span><span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>;
+</pre></div>
+<p>This breaks down fairly simply. The first part, "MyPizza," is our reference variable. It specifies <b>what</b> we want to interact with. The second part, "EatParts(2)," specifies <b>how</b> we want to interact with it.</p>
+<p>You can call functions on another thing when you have a reference to it. EatParts was a function, as you may recall, and by using the reference we can call that function on the pizza. Some more examples: (not examples of actual UT2003 code, but for illustrative purposes)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+TheGun.<span class="me1">Fire</span><span class="br0">(</span><span class="br0">)</span>;
+  ThatButton.<span class="me1">Press</span><span class="br0">(</span><span class="br0">)</span>;
+  APie.<span class="me1">ThrowAtClown</span><span class="br0">(</span><span class="br0">)</span>;
+  MyPizza.<span class="me1">AddSauce</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>We can also use a reference to an object to find out information about it. For instance, suppose we wanted to find out whether the pizza still has sauce on it. The "MyPizza" variable refers to the pizza, so we can clearly state <b>what</b> we want to know about, then we need only specify what we want to know about it, like so:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span> MyPizza.<span class="me1">bHasSauce</span> <span class="br0">)</span>     <span class="co1">// If MyPizza still has sauce on it...</span>
+    MyPizza.<span class="me1">EatSauce</span><span class="br0">(</span><span class="br0">)</span>;        <span class="co1">// ... then eat the aforementioned sauce.</span>
+</pre></div>
+<p>We can also use the variables in our referenced object for anything we could use our own variables for, and we can even change them:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">float</span> HalfThePieces;
+  HalfThePieces = MyPizza.<span class="me1">NumberOfParts</span> / <span class="nu0">2</span>;
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> TheGun.<span class="me1">Bullets</span> &gt; <span class="nu0">0</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+    TheGun.<span class="me1">Fire</span><span class="br0">(</span><span class="br0">)</span>;
+    TheGun.<span class="me1">Bullets</span> = TheGun.<span class="me1">Bullets</span> - <span class="nu0">1</span>;
+  <span class="br0">}</span>
+</pre></div>
+<p><a name="Getting_a_Reference_to_an_Object" id="Getting_a_Reference_to_an_Object"></a></p>
+<h3><span class="mw-headline">Getting a Reference to an Object</span></h3>
+<p>In order to call functions on an object or to access it's variables, we must first obtain a valid reference to it. When we first declare the reference, it is empty. Before we can use it for anything productive we must assign an object to it. Remember this line?</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pizza'</span><span class="br0">)</span>;  <span class="co1">// Hooray!  Pizza's ready!</span>
+</pre></div>
+<p>The <b>spawn</b> function not only creates the object you specify, but returns a reference to it. This is an easy way to obtain a reference to an object. Just as you would assign a number to a numeric variable, you can assign an object to an object reference. Generally an object reference is set by setting it equal to another object reference, either obtained through Spawn or through another function call. Sometimes, however, you want a reference to an object that is already in the game but is not currently interacting in any way with your class. To find a reference to it you will generally have to use an <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterator</a>.</p>
+<p><a name="Casting_References" id="Casting_References"></a></p>
+<h3><span class="mw-headline">Casting References</span></h3>
+<p>Remember when we made the BetterPizza from before? It had properties and functions that the regular pizza did not. However, we can still use a regular pizza reference to hold it.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Pizza MyPizza;
+ 
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'BetterPizza'</span><span class="br0">)</span>;  <span class="co1">// Hooray!  Pizza's ready!</span>
+</pre></div>
+<p>Similarly, we could use something even lower level to hold the pizza, such as the Meal class that the pizza was derived from. You can hold a more complex class in a reference to simpler class, but you cannot store a simpler class in a reference to a more complex class. For instance, we can use a reference to Meal or Pizza to refer to a BetterPizza, but we cannot use a reference to a BetterPizza to store a regular Pizza. This is because a BetterPizza is a special type of Pizza, but it's still a Pizza. A BetterPizza is a special type of Meal too, because it's a special type of Pizza and a Pizza is a special type of Meal. However, a Pizza is not a special type of BetterPizza, so we can't use a BetterPizza to refer to a Pizza.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Meal        AMeal;
+<span class="kw5">local</span> Pizza       MyPizza;
+<span class="kw5">local</span> BetterPizza MyBetterPizza;
+ 
+AMeal   = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'BetterPizza'</span><span class="br0">)</span>;  <span class="co1">// A BetterPizza is a type of meal.</span>
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'BetterPizza'</span><span class="br0">)</span>;  <span class="co1">// It's also a type of Pizza.</span>
+MyBetterPizza = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Meal'</span><span class="br0">)</span>;   <span class="co1">// This won't work. A Meal is not a type of BetterPizza.</span>
+</pre></div>
+<p>Now, this all seems fine and dandy, but what's the catch? When you store a reference to an object you can only call functions and access variables that are in the class to which that reference was defined. So, for instance, you can't do the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Meal AMeal;
+ 
+AMeal = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'BetterPizza'</span><span class="br0">)</span>;
+AMeal.<span class="me1">EatSauce</span><span class="br0">(</span><span class="br0">)</span>;                      <span class="co1">// This won't work. Meals don't have sauce, and although</span>
+                                       <span class="co1">// this meal happens to be a Pizza, which does have</span>
+                                       <span class="co1">// sauce, the game has no way of knowing when it</span>
+                                       <span class="co1">// compiles that there is indeed a pizza in that meal</span>
+                                       <span class="co1">// reference, so it goes to the lowest common</span>
+                                       <span class="co1">// denominator: the meal.</span>
+</pre></div>
+<p>However, there is a way around this: If you know ahead of time that a reference to a certain class actually contains a subclass of it, you can <b>cast</b> it to let the game know just to take your word for it. The cast lets you temporarily access the functions and variables of a class just as if the reference was actually one to the subclass you specify. It makes no permanent change to the reference itself, though, so you must cast the reference every time you want to access it's subclasses' special functions. This is best illustrated by examples. This is done like so:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> Meal AMeal;
+ 
+AMeal = Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pizza'</span><span class="br0">)</span>;
+Pizza<span class="br0">(</span> AMeal <span class="br0">)</span>.<span class="me1">EatSauce</span><span class="br0">(</span><span class="br0">)</span>;             <span class="co1">// This one works. We have told the compiler that</span>
+                                       <span class="co1">// although the reference is to a meal, the reference</span>
+                                       <span class="co1">// actually points to a special type of meal that has</span>
+                                       <span class="co1">// some added functions. By doing this, we can access</span>
+                                       <span class="co1">// that subclasses special variables and functions.</span>
+</pre></div>
+<p>If you try to cast something into a class that it is not, or a class that it is not a subclass of, it will return an empty reference. In the above example, we can cast the meal to a pizza, but not to a BetterPizza because it doesn't actually store a BetterPizza, it only stores a Pizza. The compiler will let you cast to any subclass, but it will cause problems in-game if you cast a reference to a class that it does not actually point to. As shown above, the syntax for casting is to put the name of the class as if it were a function, with the argument being the reference that you are casting. Some more examples:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span> Owner <span class="br0">)</span>.<span class="me1">Health</span> = <span class="nu0">100</span>;            <span class="co1">// Owner is an actor reference to a pawn object. We have casted it to</span>
+                                       <span class="co1">// Pawn so we can access it's health, which is declared</span>
+                                       <span class="co1">// in pawn, not in actor.</span>
+ 
+AIController<span class="br0">(</span> Controller <span class="br0">)</span>.<span class="me1">AIScript</span> = <span class="kw9">None</span>;    <span class="co1">// Controller's don't have AIScripts, only</span>
+                                               <span class="co1">// AIControllers do. But, if we know for sure</span>
+                                               <span class="co1">// that a Pawns controller is an AIController,</span>
+                                               <span class="co1">// we can cast it to access the AIScript anyway.</span>
+ 
+<span class="kw1">if</span> <span class="br0">(</span> BetterPizza<span class="br0">(</span> MyPizza <span class="br0">)</span>.<span class="me1">bHasEgg</span> <span class="br0">)</span>    <span class="co1">// Only BetterPizzas have eggs.</span>
+<span class="br0">{</span>
+  BetterPizza<span class="br0">(</span> MyPizza <span class="br0">)</span>.<span class="me1">bHasEgg</span> = <span class="kw9">false</span>;<span class="co1">// I don't like egg on pizza. Pick it off.</span>
+  MyPizza.<span class="me1">EatSauce</span><span class="br0">(</span><span class="br0">)</span>;                    <span class="co1">// Note that although I'm not calling the betterpizzas</span>
+                                         <span class="co1">// EatSauce directly, it will still get the call and</span>
+                                         <span class="co1">// still call the betterpizzas EatSauce. You only have</span>
+                                         <span class="co1">// to cast for things that didn't exist in the</span>
+                                         <span class="co1">// superclass. You don't have to cast to use functions</span>
+                                         <span class="co1">// that were only overridden.</span>
+  MyPizza.<span class="me1">EatParts</span><span class="br0">(</span> <span class="nu0">2</span> <span class="br0">)</span>;                 <span class="co1">// But all pizzas can have parts eaten, no cast is</span>
+                                         <span class="co1">// required.</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="IsA_and_ClassIsChildOf" id="IsA_and_ClassIsChildOf"></a></p>
+<h3><span class="mw-headline">IsA and ClassIsChildOf</span></h3>
+<p>Now you know how to cast a class, in circumstances where you already know for sure that a reference points to a certain subclass. However, what about situations where you don't know for sure? Suppose you had a function like the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Called to determine what type of food something is.</span>
+<span class="kw5">function</span> <span class="kw4">string</span> TypeOfMeal<span class="br0">(</span> Meal M <span class="br0">)</span>
+</pre></div>
+<p>This function takes a meal as a parameter, and returns a string describing what type of food it is. We want to return "Spicy" if it is a pizza with sauce, "Bland" if it is a pizza without sauce. Otherwise, we want to return "Unknown."</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Called to determine what type of food something is.</span>
+<span class="kw5">function</span> <span class="kw4">string</span> TypeOfMeal<span class="br0">(</span> Meal M <span class="br0">)</span>
+<span class="br0">{</span>
+       <span class="kw1">if</span> <span class="br0">(</span>  Pizza<span class="br0">(</span> M <span class="br0">)</span>.<span class="me1">bHasSauce</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="st0">"Spicy"</span>;
+  <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> !Pizza<span class="br0">(</span> M <span class="br0">)</span>.<span class="me1">bHasSauce</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="st0">"Bland"</span>;
+  <span class="kw1">else</span> <span class="kw1">return</span> <span class="st0">"Unknown"</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>This seems like it would work, but it does not. If the pizza has sauce, it returns "Spicy." If the pizza does not have sauce, it returns "Bland." This is what we want, so far. However, if the meal is not a pizza at all, we want to return "Unknown." This function will return "Bland" in that situation. Here's why: If M is not a pizza, then Pizza( M ) returns None. None.bHasSauce will always evaluate as false, as well as generating an error message in the log. Before we can safely cast to the Pizza, we need to know for sure whether or not the meal M actually is a Pizza. There are four ways to do this:</p>
+<ul>
+<li>As mentioned, a cast to something that isn't that class will always return None. We can test this to see if it really is a Pizza or not. If Pizza( M ) == None, then M is either an empty reference, or it isn't a reference to a pizza.</li>
+<li>There is a native function called IsA that does basically the same thing. IsA takes a name argument, like 'Pizza'. To find out if M is a pizza, just call M.IsA( 'Pizza' ); It will return true if M is a pizza, or false if M is not a pizza.</li>
+<li>Every object has a class variable that holds it's own class. We can check this to determine if a class is a pizza or not. However, this method is not ideal because it will not catch subclasses. A pizza checked in this manner will not register as a pizza if it is a BetterPizza.</li>
+<li>ClassIsChildOf is another native function that allows us to investigate the class tree. However, like the above method, ClassIsChildOf is less than ideal for this application as it will return only subclasses of the specified class, not that class itself. It can be combined with the above methods to get the same results as either of the top two methods. It's syntax is below.</li>
+</ul>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span> Pizza<span class="br0">(</span> M <span class="br0">)</span> == <span class="kw9">None</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="st0">"Unknown"</span>;
+  <span class="kw1">if</span> <span class="br0">(</span> M.<span class="kw7">IsA</span><span class="br0">(</span> <span class="st0">'Pizza'</span> <span class="br0">)</span> <span class="br0">)</span>
+  <span class="br0">{</span>
+         <span class="kw1">if</span> <span class="br0">(</span>  Pizza<span class="br0">(</span> M <span class="br0">)</span>.<span class="me1">bHasSauce</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="st0">"Spicy"</span>;
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> !Pizza<span class="br0">(</span> M <span class="br0">)</span>.<span class="me1">bHasSauce</span> <span class="br0">)</span> <span class="kw1">return</span> <span class="st0">"Bland"</span>;
+  <span class="br0">}</span>
+ 
+  <span class="kw1">if</span> <span class="br0">(</span> <span class="kw5">Class</span> != <span class="kw5">class</span><span class="st0">'Pizza'</span>
+  &amp;&amp;  !<span class="kw7">ClassIsChildOf</span><span class="br0">(</span> <span class="st0">'Pizza'</span> <span class="br0">)</span> <span class="br0">)</span>
+    <span class="kw1">return</span> <span class="st0">"Unknown"</span>;
+</pre></div>
+<p><a name="References_to_Classes" id="References_to_Classes"></a></p>
+<h3><span class="mw-headline">References to Classes</span></h3>
+<p>As you may have noticed, the class comparing and ClassIsChildOf both use a "class" notation. This is a special type of variable, somewhere between a reference and a primitive. It holds the class name of an object. Remember how we spawned the Pizza?</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Spawn<span class="br0">(</span><span class="kw5">class</span> <span class="st0">'Pizza'</span><span class="br0">)</span>;
+</pre></div>
+<p>Note that the class designation was used there as well. In those cases, a variable is not used, just an absolute value. For instance, the number 5 is not the same as a variable holding the number 5, but both can be used interchangeably. Similarly, a class variable and the constant version (as illustrated above) can be used interchangeably. You can set a class variable in the same way you would set any other variable:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> class&lt;Meal&gt; PizzaClass;        <span class="co1">// The triangle brackets in the declaration narrow down what type</span>
+                                     <span class="co1">// of class this can point to, but it is not necessary.</span>
+<span class="kw5">local</span> Pizza MyPizza;
+<span class="kw5">local</span> Pizza AnotherPizza;
+ 
+MyPizza = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pizza'</span><span class="br0">)</span>;
+ 
+PizzaClass = <span class="kw5">class</span><span class="st0">'Pizza'</span>;
+AnotherPizza = Spawn<span class="br0">(</span> PizzaClass <span class="br0">)</span>;
+</pre></div>
+<p>The constant syntax should be obvious, it is simply the word class, followed by a single quote, followed by the name of the class, followed by another single quote. It is useful in cases where you do not know at compile time what the class is going to be. For instance, weapons use this for their projectiles. Instead of having to change every reference to the projectile class in the code, you can change it all by modifying one simple variable. In other cases, that may not even be an option, and a class variable is required. Here's an example: Let's say we were making a duplicator gun. Whenever it hit something, it spawns a duplicate of that thing. The code for the duplication function might look something like the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Duplicate<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> class&lt;actor&gt; OtherClass;
+ 
+  OtherClass = Other.<span class="kw5">Class</span>;
+  Spawn<span class="br0">(</span> OtherClass <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<p>These pages cover the above in more detail:</p>
+<ul>
+<li><a href="../../../../articles/p/e/p/Legacy%7EPeppers_And_Pepper_Grinders_6769.html" title="Legacy:Peppers And Pepper Grinders">Peppers And Pepper Grinders</a></li>
+<li><a href="../../../../articles/t/y/p/Legacy%7ETypecasting_7c5f.html" title="Legacy:Typecasting">Typecasting</a></li>
+</ul>
+<hr />
+<p><a name="Discussion_Topics" id="Discussion_Topics"></a></p>
+<h2><span class="mw-headline">Discussion Topics</span></h2>
+<p><b>Sobiwan:</b> I dont 'remember when we spawned a pizza'. The previous section only defined a pizza (the class), but there was no mention of spawning or what spawning is. Hence, I am confused until this first sentence is clearer.</p>
+<p><b>Tarquin:</b> we spawned one in the section 'Where's My Pizza?'. But it could be clearer. I'll work on it.</p>
+<p><b>Don:</b> Forgive the professor mode here, but I'd suggest changing the example that includes "TheGun.Fire(); TheGun.Bullets = TheGun.Bullets - 1;" - it may just be an example but it completely disregards proper encapsulation.</p>
+<p><b>Tarquin:</b> Good point. Change it&#160;:)</p>
+<p><b>n8:</b> Looks like Don copped out. Did he mean change to: "TheGun.Fire(); TheGun.Bullets -= 1;"?</p>
+<p><b>Pachacutec:</b> Hmmm. I want to alter an object reference in a class post its initialization instead to one of its subclasses. This way, all existing calls to that reference can stay the same, the functionality is updated with no hassle. I think this is called protoyping in javascript. I can do this here with Spawn? I'm not adding new function NAMES, but one of the functions will have extra commands in the new sub. Is this possible?</p>
+<p><b>Pachacutec:</b> "You don't have to cast to use functions that were only overridden." Sorry, missed that comment. thanks for this great page&#160;:)</p>
+<p><b>HoMeRS}i{MpSoN:</b> It looks to me like the ClassIsChildOf function has changed in UT2k4 (and I am guessing 2k3 before it):</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">258</span><span class="br0">)</span> <span class="kw6">static</span> <span class="kw6">final</span> <span class="kw5">function</span> <span class="kw4">bool</span> <span class="kw7">ClassIsChildOf</span><span class="br0">(</span> <span class="kw5">class</span> TestClass, <span class="kw5">class</span> ParentClass <span class="br0">)</span>;
+</pre></div>
+<p>This requires a statement such as:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span> <span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span>V.<span class="kw5">Class</span>, <span class="kw5">class</span><span class="st0">'Volume'</span><span class="br0">)</span><span class="br0">)</span>
+    ...<span class="me1">blah</span> blah
+</pre></div>
+<p>instead of the examples above.</p>
+<p><b>SuperApe:</b> This <i>restaurant</i> family of beginner UScripting pages should be linked from the Modding pages. Currently, <a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a> and <a href="../../../../articles/m/u/t/Legacy%7EMutator_Topics_c760.html" title="Legacy:Mutator Topics">Mutator Topics</a> are the ones that get the most foot traffic.</p>
+<p><b>Stelcontar:</b> In UT2004 the ChildIsClassOf function returns true if the test class is a child of the "parent" class OR is the same as the parent class. Example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//the following return true in UT2004</span>
+<span class="kw7">ClassIsChildOf</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ShockRifle'</span>,<span class="kw5">class</span><span class="st0">'ShockRifle'</span><span class="br0">)</span> 
+<span class="kw7">ClassIsChildOf</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ShockRifle'</span>,<span class="kw5">class</span><span class="st0">'Weapon'</span><span class="br0">)</span>
+<span class="kw7">ClassIsChildOf</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ShockRifle'</span>,<span class="kw5">class</span><span class="st0">'Inventory'</span><span class="br0">)</span>
+</pre></div>
+<p><b>KewlAzMe</b> For the <i>Duplicate</i> function example, do you always need to make a variable for that class? Wouldn't this work:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Duplicate<span class="br0">(</span> <a href="/Actor"><span class="kw10">actor</span></a> Other <span class="br0">)</span>
+<span class="br0">{</span>
+  Spawn<span class="br0">(</span> Other <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>???</p>
+<p><b>Vertex</b> i am a noob and just learning uscript, this helped more than ALL the tutorials</p>
+<p><b>Sweavo:</b> yeah, this really is a great tut for noobs</p>
+<hr />
+<p><b>OlympusMons:</b> Okay so I didnt want to mess up the Typecasting page with discussion so I thought I would put this here instead.</p>
+<dl>
+<dd><i>ThingToGetObjectFrom</i> <b>.</b> <i>PropertyToAccess</i> <b>.</b> <i>PropertyToAccess</i></dd>
+</dl>
+<p>so what if the first property to access is a class and you want to cast it?</p>
+<p>The first PropertyToAccess being ObjectToTypecast would be like this:</p>
+<p>This:</p>
+<dl>
+<dd><i>ClassToTypecastTo</i> <b>(</b> <i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>) .</b> <i>PropertyToAccess</i></dd>
+</dl>
+<p>Not:</p>
+<dl>
+<dd><strike><i>ThingToGetObjectFrom</i> <b>.</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ObjectToTypecast</i> <b>) .</b> <i>PropertyToAccess</i></strike></dd>
+</dl>
+<p>Or:</p>
+<dl>
+<dd><strike><i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>(</b> <i>ClassToTypecastTo</i> <b>) .</b> <i>PropertyToAccess</i></strike></dd>
+</dl>
+<p>Okay so this is a common mistake I make but on the typecasting page is only says how you should do it, I suggest putting a section on what doesnt work also. This way people can compare and see what they are doing wrong, from here though I needed to casr the second PropertyToAccess which would be like:</p>
+<dl>
+<dd><i>ClassToTypecastTo</i> <b>(</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>) .</b> <i>ObjectToTypecast</i> <b>)</b></dd>
+</dl>
+<p>Which I think shows nesting alittle better and how it works, obviously its only an extension on the first but sometimes I try to just full stop my way through adding brackets till I get it right which isnt the best method. So this would provide a quick reference for those who might need to go deeper into the cast. Usually though I break these up using local variables to keep it neater but it is possible to put it all on one line.</p>
+<p>And to access a property all the way through, so:</p>
+<dl>
+<dd><i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>.</b> <i>ObjectToTypecast</i> <b>.</b> <i>PropertyToAccess</i></dd>
+</dl>
+<p>Would look like:</p>
+<dl>
+<dd><i>ClassToTypecastTo</i> <b>(</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>) .</b> <i>ObjectToTypecast</i> <b>) .</b> <i>PropertyToAccess</i></dd>
+</dl>
+<p>Not:</p>
+<dl>
+<dd><strike><i>ThingToGetObjectFrom</i> <b>.</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ObjectToTypecast</i> <b>) .</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ObjectToTypecast</i> <b>) .</b> <i>PropertyToAccess</i></strike></dd>
+</dl>
+<p>Or:</p>
+<dl>
+<dd><strike><i>ClassToTypecastTo</i> <b>(</b> <i>ThingToGetObjectFrom</i> <b>.</b> <i>ObjectToTypecast</i> <b>) .</b> <i>ClassToTypecastTo</i> <b>(</b> <i>ObjectToTypecast</i> <b>) .</b> <i>PropertyToAccess</i></strike></dd>
+</dl>
+<p>Anyways alot of people already know this but yeah perhaps this could be added in some form to the typecasting page. I'll leave it here though so people can read my findings, cool.</p>
+<p><b>Solid Snake:</b> The best way I can explain this, is to think of it like a nested tree, and to use only two terms, WHAT and SOURCE. WHAT stands for what you want, and SOURCE is where the WHAT comes from. Lets present a fairly nested statement.</p>
+<p>WHAT_4(WHAT_3(WHAT_2(SOURCE_1.SOURCE_2).SOURCE_3).SOURCE_4).SOURCE_5</p>
+<p>Essentially SOURCE_5 is what you want at the end of the day (if SOURCE_5 is absent, then you'll be wanting WHAT_4). Let's dissect that, first of all there is no WHAT_1. I deliberately set the numbers so people could see the pairing of WHAT and SOURCE. Let me first start by presenting a tree topology of the class structure</p>
+<p>SOURCE_1 contains SOURCE_2</p>
+<p>WHAT_2 is a child class of SOURCE_2</p>
+<p>WHAT_3 is a child class of SOURCE_3</p>
+<p>WHAT_4 is a child class of SOURCE_4</p>
+<p>WHAT_2 contains SOURCE_3</p>
+<p>WHAT_3 contains SOURCE_4</p>
+<p>You find that WHAT_4 contains SOURCE_5. In order to get WHAT_4, you need to find WHAT_2 and WHAT_3. You see that SOURCE_2 is actually a child class to WHAT_2, which contains a reference to WHAT_3, which contains a reference to WHAT_4.</p>
+<p>So you first type cast SOURCE_2 to WHAT_2. [ WHAT_2(SOURCE_1.SOURCE_2) ].</p>
+<p>You now have a reference to WHAT_2.</p>
+<p>WHAT_2 contains a reference to WHAT_3, so you type cast the reference found within WHAT_2, into WHAT_3. [ WHAT_3(WHAT_2(SOURCE_1.SOURCE_2).SOURCE_4) ]</p>
+<p>WHAT_3 contains a reference to WHAT_4, so you type cast the reference found within WHAT_3 (which is the result of the two type casts) and result with the above code.</p>
+<p>It can still be confusing but think backwards and sometimes you just have to learn you class trees better to get the results you want. Hope that helps a little.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 81/1000000
+Post-expand include size: 13/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/i/Legacy%7EUsing_Objects_0d74.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/i/Legacy_talk%7EUsing_Objects_1559.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Using_Objects">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:12, 2 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

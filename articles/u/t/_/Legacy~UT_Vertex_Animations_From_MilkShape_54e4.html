@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UT Vertex Animations From MilkShape - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UT Vertex Animations From MilkShape</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This tutorial is specific to <a href="../../../../articles/m/i/l/Legacy%7EMilkShape_a714.html" title="Legacy:MilkShape">MilkShape</a> for making models and importing them into Unreal Tournament.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Create_a_Kickass_Model"><span class="tocnumber">1</span> <span class="toctext">Create a Kickass Model</span></a></li>
+<li class="toclevel-1"><a href="#Export_Your_Mesh_to_Unreal_Format"><span class="tocnumber">2</span> <span class="toctext">Export Your Mesh to Unreal Format</span></a></li>
+<li class="toclevel-1"><a href="#Importing_Your_Model"><span class="tocnumber">3</span> <span class="toctext">Importing Your Model</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Class_Definition"><span class="tocnumber">3.1</span> <span class="toctext">Class Definition</span></a></li>
+<li class="toclevel-2"><a href="#Mesh_Import"><span class="tocnumber">3.2</span> <span class="toctext">Mesh Import</span></a></li>
+<li class="toclevel-2"><a href="#Origin_Definition"><span class="tocnumber">3.3</span> <span class="toctext">Origin Definition</span></a></li>
+<li class="toclevel-2"><a href="#Animation_Sequences"><span class="tocnumber">3.4</span> <span class="toctext">Animation Sequences</span></a></li>
+<li class="toclevel-2"><a href="#Meshmap_to_Mesh_Associations"><span class="tocnumber">3.5</span> <span class="toctext">Meshmap to Mesh Associations</span></a></li>
+<li class="toclevel-2"><a href="#Meshmap_Scaling"><span class="tocnumber">3.6</span> <span class="toctext">Meshmap Scaling</span></a></li>
+<li class="toclevel-2"><a href="#Texture_and_Palette_Import"><span class="tocnumber">3.7</span> <span class="toctext">Texture and Palette Import</span></a></li>
+<li class="toclevel-2"><a href="#Meshmap_to_Texture_Associations"><span class="tocnumber">3.8</span> <span class="toctext">Meshmap to Texture Associations</span></a></li>
+<li class="toclevel-2"><a href="#Default_Properties"><span class="tocnumber">3.9</span> <span class="toctext">Default Properties</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Adding_Code"><span class="tocnumber">4</span> <span class="toctext">Adding Code</span></a></li>
+<li class="toclevel-1"><a href="#Import_It_Into_the_Game.21"><span class="tocnumber">5</span> <span class="toctext">Import It Into the Game!</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Create_a_Kickass_Model" id="Create_a_Kickass_Model"></a></p>
+<h2><span class="mw-headline">Create a Kickass Model</span></h2>
+<p>Find a good tutorial on modeling with <a href="../../../../articles/m/i/l/Legacy%7EMilkShape_a714.html" title="Legacy:MilkShape">MilkShape</a>. Once you have successfully created your <a href="../../../../articles/m/e/s/Legacy%7EMesh_86f6.html" title="Legacy:Mesh">mesh</a>, including texturing and animation, you're ready to go on to step 2.</p>
+<p><a name="Export_Your_Mesh_to_Unreal_Format" id="Export_Your_Mesh_to_Unreal_Format"></a></p>
+<h2><span class="mw-headline">Export Your Mesh to Unreal Format</span></h2>
+<p>In order to get your model into unreal you must first prepare for it. This involves creating a package which is a little complex, but gets easier with time.</p>
+<p>First off, you need to set up your folders so Unreal will know where to look for them when we tell it to make our package.</p>
+<p>Under your UnrealTournament folder, create a new folder with the name of your package (or what it will be, e.g. "MyCustomGuns"). Then, under your package folder place new folders with the following names: Classes, Models, Textures, which are required, and some non-required folders like Sounds(but you have to make new sounds and import them with code).</p>
+<ul>
+<li>Also worth noting, packages can contain more than one class in them so any other models you make using this tutorial can be placed within the same package... but beware of size if you plan to distribute.</li>
+</ul>
+<p>After you have exported your model into the UT format – (that is the <tt>_a.3d</tt> and <tt>_d.3d</tt> files from the export list of MilkShape), save them in the <tt>Models</tt> folder you just made under your package folder.</p>
+<ul>
+<li>At this point, you may want to use <a href="../../../../articles/u/n/r/Legacy%7EUnrealFX_ef17.html" title="Legacy:UnrealFX">UnrealFX</a> to spice up your model. It allows models to be set to special face flags, one poly at a time. E.g. You could make a particular surface environment mapped, which makes it shiny once ingame.</li>
+</ul>
+<p>Once you export from MilkShape you'll end up with 2 files ending with .3d. (One will end with _a.3d and the other with _d.3d). MilkShape also makes a .uc file, but it is no where near complete. You will definitely need to edit this but it is a good base.</p>
+<p><a name="Importing_Your_Model" id="Importing_Your_Model"></a></p>
+<h2><span class="mw-headline">Importing Your Model</span></h2>
+<p>Now modify the .uc file for importing the mesh into Unreal Tournament. (Or make a new one if you are able. If you want to have a look at an .uc file that's properly set up for mesh importing, check one that was generated by <a href="../../../../articles/m/e/s/Legacy%7EMeshMaker_53d9.html" title="Legacy:MeshMaker">MeshMaker</a>.)</p>
+<p>This can be created or edited in any text editor. (I use Notepad cause it's simple, but there are many other programs you can use.) Move or save this .uc file in your <tt>Classes</tt> folder that is under your package's folder. This is what it should look like.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> testGun <span class="kw5">expands</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw2">#exec</span> MESH <span class="kw6">IMPORT</span> MESH=myGun ANIVFILE=MODELS\gun1_a.3d DATAFILE=MODELS\gun1_d.3d X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span>
+<span class="kw2">#exec</span> MESH ORIGIN MESH=myGun X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span>
+ 
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=All STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">25</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Still STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Fire STARTFRAME=<span class="nu0">1</span> NUMFRAMES=<span class="nu0">20</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Reload STARTFRAME=<span class="nu0">21</span> NUMFRAMES=<span class="nu0">5</span>
+ 
+<span class="kw2">#exec</span> MESHMAP <span class="kw6">NEW</span> MESHMAP=myGun MESH=myGun
+<span class="kw2">#exec</span> MESHMAP <span class="kw4">SCALE</span> MESHMAP=myGun X=<span class="nu0">1</span> Y=<span class="nu0">1</span> Z=.<span class="nu0">5</span>
+ 
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex1 FILE=TEXTURES\guntex1.<span class="me1">pcx</span> GROUP=Skins FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex1 FILE=TEXTURES\guntex1.<span class="me1">pcx</span> GROUP=Skins PALETTE=myGunTex1
+ 
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex2 FILE=TEXTURES\guntex2.<span class="me1">pcx</span> GROUP=Skins FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex2 FILE=TEXTURES\guntex2.<span class="me1">pcx</span> GROUP=Skins PALETTE=myGunTex1
+ 
+<span class="kw2">#exec</span> MESHMAP SETTEXTURE MESHMAP=myGun NUM=<span class="nu0">1</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a>=myGunTex1
+<span class="kw2">#exec</span> MESHMAP SETTEXTURE MESHMAP=myGun NUM=<span class="nu0">2</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a>=myGunTex2
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  DrawType=DT_Mesh
+  Mesh=myGun
+<span class="br0">}</span>
+</pre></div>
+<p>It may be difficult to see what's going on here, so let's take a look at all of the types of statements you'll need in your file.</p>
+<p><a name="Class_Definition" id="Class_Definition"></a></p>
+<h3><span class="mw-headline">Class Definition</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyGun <span class="kw5">expands</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+</pre></div>
+<p>Ok, this is a problem. When MilkShape made .uc file it didn't know anything about what you wanted out of your mesh, so it just set it up to expand (or acts as) a generic <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>. This is rarely (if ever) what you'll want when you get to the point of really using your mesh for something (like for a weapon or character). Even if it's just a <a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">Decoration</a>, you'll want to change this. For now just set this field to expand <a href="../../../../articles/u/t/_/Legacy%7EUT_Decoration_2805.html" title="Legacy:UT Decoration">UT_Decoration</a>, you won't be able to use it as a weapon, but you'll know its ingame and see it in the mesh viewer.</p>
+<p>For now, replace "MyGun" with what you want to call your new object. Do not include any spaces. (This new object name must also match the name of the .uc file or you will get an error when compiling, so save the .uc file as the same name.)</p>
+<p><a name="Mesh_Import" id="Mesh_Import"></a></p>
+<h3><span class="mw-headline">Mesh Import</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH <span class="kw6">IMPORT</span> MESH=myGun ANIVFILE=MODELS\mygun1_a.3d DATAFILE=MODELS\mygun1_d.3d X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span>
+</pre></div>
+<p>This one's easy. Just replace the <tt>_a.3d</tt> and <tt>_d.3d</tt> names with the names of your .3d files and the mesh name to whatever you like, e.g. "MESH=Pistol". This tells the Unreal compiler where to find your .3d files. In this example, the .3d files would be stored in the Models folder under your package folder.</p>
+<p><a name="Origin_Definition" id="Origin_Definition"></a></p>
+<h3><span class="mw-headline">Origin Definition</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH ORIGIN MESH=myGun X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span>
+</pre></div>
+<p>For most items like weapons or pickup items, you'll want to just leave this statement as is, except for changing the mesh name. The MESH ORIGIN statement sets up where the center of the mesh is. In other words, the point where your mesh will rotate around and move from, as well as the center of its mass and is used in colision detection.</p>
+<p>You can also use the MESH ORIGIN statement to set the initial rotation values of your mesh. If you've modeled a weapon and it ends up facing the wrong direction in the game, you can fix that here. You do that by adding PITCH, ROLL, and/or YAW values to the statement. The values aren't normal angles though as the unreal engine relies on a system using of multiples of 16 units. A value of 64 means 90 degrees, a value of 128 means 180 degrees, 256 means 360 degrees, etc. So this statement:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH ORIGIN MESH=myGun X=<span class="nu0">0</span> Y=<span class="nu0">0</span> Z=<span class="nu0">0</span> PITCH=<span class="nu0">32</span> ROLL=<span class="nu0">128</span> YAW=<span class="nu0">-64</span>
+</pre></div>
+<p>...would mean a pitch of 45 degrees, a roll of 180 degrees, and a yaw of -90 degrees. Also, when MilkShape exports the models are usually off by 90 degrees of yaw, I almost always have to set it to YAW=64 or -64.</p>
+<p><a name="Animation_Sequences" id="Animation_Sequences"></a></p>
+<h3><span class="mw-headline">Animation Sequences</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=All STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">25</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Still STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Fire STARTFRAME=<span class="nu0">1</span> NUMFRAMES=<span class="nu0">20</span> RATE=<span class="nu0">24</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Reload STARTFRAME=<span class="nu0">21</span> NUMFRAMES=<span class="nu0">5</span> RATE=<span class="nu0">7.5</span>
+</pre></div>
+<p>If your mesh includes animation (even some <a href="../../../../articles/d/e/c/Legacy%7EDecoration_90d6.html" title="Legacy:Decoration">Decorations</a> do), you'll need to name your animation sequences in these statements. When MilkShape generates .uc files it is does not know which sequences go where as it is all one line of anims to it. Usually, the first sequence name is called "All" and simply includes all of your animation frames. Create a MESH SEQUENCE statement for each of your animation sequences and name them something descriptive. You can also add a "RATE=" statement to the end of the anim seq line. This sets up how long it will take to play the sequence, in frames per second (unless it is only 1 frame long). MilkShape by default uses 24 fps so a RATE of 24 will set animations to the same speed as in MilkShape.</p>
+<p>The animations should have been made in MilkShape as one long animation of all the sequences one after another (this gets to be a large file if making a player model). While making your model, since all the sequences will run together, it is good to write down the sequences as well as their starting frame number, and their length of frames.</p>
+<p>If your mesh does not include any animation, you can just use something like this (which is good for weapon pickup and third person view meshes).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=All STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+<span class="kw2">#exec</span> MESH SEQUENCE MESH=myGun SEQ=Still STARTFRAME=<span class="nu0">0</span> NUMFRAMES=<span class="nu0">1</span>
+</pre></div>
+<p><a name="Meshmap_to_Mesh_Associations" id="Meshmap_to_Mesh_Associations"></a></p>
+<h3><span class="mw-headline">Meshmap to Mesh Associations</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESHMAP <span class="kw6">NEW</span> MESHMAP=myGun MESH=myGun
+</pre></div>
+<p>This must match as it tells the compiler which uv mapping coordinates to use with your mesh, it will not compile if incorrect. I suggest leaving this as is because it is correct this way, just swap the name here with your class name. (...see a pattern? everything must represent the name of your class.)</p>
+<p><a name="Meshmap_Scaling" id="Meshmap_Scaling"></a></p>
+<h3><span class="mw-headline">Meshmap Scaling</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> MESHMAP <span class="kw4">SCALE</span> MESHMAP=myGun X=<span class="nu0">1</span> Y=<span class="nu0">1</span> Z=.<span class="nu0">5</span>
+</pre></div>
+<p>Scaling is an important concept to understand. The way that MilkShape's "units" relate to Unreal units is easy – 1:1... as in 1 MilkShape unit will become 1 Unreal unit. That way if you treat 16 units in MilkShape as 1 foot (as it is in UT, roughly), you should be able to set your scaling to "X=1 Y=1 Z=.5". The Z axis of meshes is always half of the others in UT.</p>
+<p><a name="Texture_and_Palette_Import" id="Texture_and_Palette_Import"></a></p>
+<h3><span class="mw-headline">Texture and Palette Import</span></h3>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex1 FILE=TEXTURES\guntex1.<span class="me1">pcx</span> GROUP=Skins FLAGS=<span class="nu0">2</span>
+<span class="kw2">#exec</span> <a href="/Texture"><span class="kw10">TEXTURE</span></a> <span class="kw6">IMPORT</span> <span class="kw4">NAME</span>=myGunTex1 FILE=TEXTURES\guntex1.<span class="me1">pcx</span> GROUP=Skins PALETTE=myGunTex1
+</pre></div>
+<p>For every new <a href="../../../../articles/t/e/x/Legacy%7ETexture_%28UT%29_9f36.html" title="Legacy:Texture (UT)">Texture (UT)</a> image that your mesh uses, you'll need a line to import it. Give it a descriptive name in place of "myGunTex1" and fill in the name of your .pcx file. In this example, the .pcx files would be in the <tt>Textures</tt> folder under your package folder. Some people put textures in the models folder but I do not, that is what the <tt>Textures</tt> folder is for.</p>
+<dl>
+<dd><i>Note:</i> The height and width of your textures need to be "powers of 2." In other words, both the height and the width need to be one of these numbers: 1, 2, 4, 8, 16, 32, 64, 128, or 256. You can go higher (512, 1024, etc), but that doesn't seem to be typical when using the Unreal engine (yet). The height and width do not need to be the same, so a 64 x 32 image is fine, even a 256 x 2 is allowed if you need it.</dd>
+</dl>
+<p><a name="Meshmap_to_Texture_Associations" id="Meshmap_to_Texture_Associations"></a></p>
+<h3><span class="mw-headline">Meshmap to Texture Associations</span></h3>
+<p>These statements associate the UV mapping of your mesh with specific textures. In MilkShape, you will get one of these for each Group you create. Each Group will be a "surface" that is numbered 1, 2, 3, etc.. The "NUM=1" line says to associate the first surface with the myGunTex1 texture. NUM=3 shows how you can use the same textures over again on different groups.</p>
+<p>Since the maximum number of surfaces allowed is 8, you would never have more than 8 of these statments per mesh.</p>
+<p><a name="Default_Properties" id="Default_Properties"></a></p>
+<h3><span class="mw-headline">Default Properties</span></h3>
+<p>Setting the default properties correctly is <i>very important</i>.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  DrawType=DT_Mesh
+  Mesh=MyGun
+<span class="br0">}</span>
+</pre></div>
+<p><a href="../../../../articles/a/c/t/Legacy%7EActor_%28UT%29_Display_2203.html" title="Legacy:Actor (UT)/Display">DrawType</a> simply tells the engine that you want this to be a mesh. Most models will be "DT_Mesh". (Except for effects, they will normally use "DT_Particle" but use a mesh for the vertex location and animation).</p>
+<p>Remember to save your .uc file in the <tt>Classes</tt> folder under your package folder and name it the same as the class. The example here would have been named MyGun.uc.</p>
+<p><a name="Adding_Code" id="Adding_Code"></a></p>
+<h2><span class="mw-headline">Adding Code</span></h2>
+<p>If you already have the code, you can add it to the .uc file to tell UT what you want your model to actually "do" or "be" ingame.</p>
+<p>Currently, your mesh is just a 3D object with no properties or behaviors. You'll typically want to use your mesh as a weapon, character, pickup item, or at least something you can interact with in some way. The way to do that is by scripting your .uc file so that it "expands" on an existing type of object, such as <a href="../../../../articles/t/o/u/Legacy%7ETournamentWeapon_fe41.html" title="Legacy:TournamentWeapon">TournamentWeapon</a> (for weapons), <a href="../../../../articles/p/a/w/Legacy%7EPawn_%28UT%29_69ef.html" title="Legacy:Pawn (UT)">Pawn (UT)</a> (for players or creatures or inanimate things that are interactive), or Decoration (for stuff like furniture). Each type of object that you can create (there are many), has a set of properties that you can set. One of the properties you can set is which mesh (or meshes) to use. Some objects may have multiple meshes associated with them. For instance, a weapon has a "first person" version of the mesh that includes the player's hand and part of his arm, as well as a "pickup" version that is used to show that weapon sitting on the ground (rotating?) and a "third person" view which is what other players will see you carrying. (maybe with a small set of anims of its own.) The field labeled "Mesh" ("Mesh=MyGun") is the model that will show up in the Mesh Viewer in UnrealEd.</p>
+<p>Here's an example. The part in quotes after LodMesh would be the reference to your mesh (which can be imported seperately in another .uc file).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyGun <span class="kw5">extends</span> Decoration;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  bCanBeBase=<span class="kw9">True</span>
+  ItemName=<span class="st0">"Colt Peacemaker"</span>
+  Mesh=LodMesh<span class="st0">'MyCustomGuns.MyGun'</span>
+  CollisionRadius=<span class="nu0">18.790000</span>
+  CollisionHeight=<span class="nu0">6.750000</span>
+  Mass=<span class="nu0">10.000000</span>
+  Buoyancy=<span class="nu0">15.000000</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Import_It_Into_the_Game.21" id="Import_It_Into_the_Game.21"></a></p>
+<h2><span class="mw-headline">Import It Into the Game!</span></h2>
+<p>When you have your .uc files, your .3d model files, and your .pcx texture files in place, you're ready to actually import your mesh into your package, so that it's ready to use in Unreal Tournament.</p>
+<ol>
+<li>First, delete the .u package file with the name of this package(if it already exists) from the \UnrealTournament\System folder.</li>
+<li>Next, go in your UnrealTournament\System folder and find the file called <a href="../../../../articles/u/n/r/Legacy%7EUnrealTournament.Ini_74a4.html" title="Legacy:UnrealTournament.Ini">UnrealTournament.ini</a> and scroll down or search for the line beginning with "[Editor.EditorEngine]" then scroll down the lines below it untill you hit "EditPackages" and at the end of that list, add a new editpackage with your package name.</li>
+<li>For example, "EditPackages=MyCustomGuns" then save the .ini file without changing anything else.</li>
+<li>Now in a command prompt (MS-DOS prompt) in the \UnrealTournament\System directory type in "ucc make" (or under your start menu, choose "run" and type "C:\UnrealTournament\System\ucc make" if thats the location of your UT folder).</li>
+<li>You will then see a dos window pop up and load a list of all the packages listed in the UnrealTournament.ini file untill it gets to your package name, then it will proceed to load the components from the folders you made.</li>
+</ol>
+<p>If you've done everything right, and you recieve no errors or warnings, your mesh is ready to go. Fire up <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a> and check it out in the mesh viewer.</p>
+<p>For more help with using the UCC pragram, see <a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">Compiling With UCC</a>.</p>
+<p>Oh yeah, for weapons, you may need to delete your .u package file and adjust the alignment in your .uc file then re-compile quite a few times to get it right so don't be discouraged, you will learn it with practice and keeping notes.</p>
+<p>(To align your weapon's first person view, just add the line <tt>PlayerViewOffset</tt> in default properties (either in the .uc before a re-compile or in advanced options ingame by typing "preferences" in the console) and give a value for each of the X, Y, and Z coordinates. Z being up and down in Unreal. And remember, <tt>PlayerViewOffset</tt> manipulates <i>your perspective</i> of the weapon, <i>not the actual weapon</i>!)</p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a></p>
+<hr />
+<p><b>Tarquin:</b> Probably. We could perhaps clean this area up. Some questions, which we should answer &amp; discuss on the page <a href="../../../../articles/m/i/l/Legacy%7EMilkShape_a714.html" title="Legacy:MilkShape">MilkShape</a>:</p>
+<ul>
+<li>what pages do we have on MilkShape?</li>
+<li>how should we organize them?</li>
+<li>what should we call them?</li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 77/1000000
+Post-expand include size: 35/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/t/_/Legacy%7EUT_Vertex_Animations_From_MilkShape_54e4.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/t/_/Legacy_talk%7EUT_Vertex_Animations_From_MilkShape_ee10.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UT_Vertex_Animations_From_MilkShape">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 06:00, 14 November 2003 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

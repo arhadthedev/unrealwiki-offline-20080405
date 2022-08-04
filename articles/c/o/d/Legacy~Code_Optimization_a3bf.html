@@ -1,0 +1,562 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Code Optimization - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Code Optimization</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>If your code runs slow or causes hitches on some computers, here are several <b>optimization techniques</b> you can apply to your code to make it run better.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#You_might_be_looking_for..."><span class="tocnumber">1</span> <span class="toctext">You might be looking for...</span></a></li>
+<li class="toclevel-1"><a href="#Keep_the_log_clean"><span class="tocnumber">2</span> <span class="toctext">Keep the log clean</span></a></li>
+<li class="toclevel-1"><a href="#Avoid_iterators"><span class="tocnumber">3</span> <span class="toctext">Avoid iterators</span></a></li>
+<li class="toclevel-1"><a href="#Optimize_iterator_use"><span class="tocnumber">4</span> <span class="toctext">Optimize iterator use</span></a></li>
+<li class="toclevel-1"><a href="#Disable_engine_events_when_you_don.27t_need_them"><span class="tocnumber">5</span> <span class="toctext">Disable engine events when you don't need them</span></a></li>
+<li class="toclevel-1"><a href="#Re-use_objects"><span class="tocnumber">6</span> <span class="toctext">Re-use objects</span></a></li>
+<li class="toclevel-1"><a href="#Precache_materials_and_static_meshes"><span class="tocnumber">7</span> <span class="toctext">Precache materials and static meshes</span></a></li>
+<li class="toclevel-1"><a href="#Optimize_expressions"><span class="tocnumber">8</span> <span class="toctext">Optimize expressions</span></a></li>
+<li class="toclevel-1"><a href="#Avoid_Nesting_functions"><span class="tocnumber">9</span> <span class="toctext">Avoid Nesting functions</span></a></li>
+<li class="toclevel-1"><a href="#Use_native_functionality_instead_of_UnrealScript_code"><span class="tocnumber">10</span> <span class="toctext">Use native functionality instead of UnrealScript code</span></a></li>
+<li class="toclevel-1"><a href="#Execute_code_only_as_often_as_needed"><span class="tocnumber">11</span> <span class="toctext">Execute code only as often as needed</span></a></li>
+<li class="toclevel-1"><a href="#Find_bottlenecks_by_measuring_execution_time"><span class="tocnumber">12</span> <span class="toctext">Find bottlenecks by measuring execution time</span></a></li>
+<li class="toclevel-1"><a href="#Unroll_your_loops"><span class="tocnumber">13</span> <span class="toctext">Unroll your loops</span></a></li>
+<li class="toclevel-1"><a href="#Speed_comparison_of_loops"><span class="tocnumber">14</span> <span class="toctext">Speed comparison of loops</span></a></li>
+<li class="toclevel-1"><a href="#Refine_your_algorithms"><span class="tocnumber">15</span> <span class="toctext">Refine your algorithms</span></a></li>
+<li class="toclevel-1"><a href="#The_member_selection_operator_has_its_price"><span class="tocnumber">16</span> <span class="toctext">The member selection operator has its price</span></a></li>
+<li class="toclevel-1"><a href="#Be_careful_with_temporary_variables"><span class="tocnumber">17</span> <span class="toctext">Be careful with temporary variables</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">18</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="You_might_be_looking_for..." id="You_might_be_looking_for..."></a></p>
+<h2><span class="mw-headline">You might be looking for...</span></h2>
+<ul>
+<li><a href="../../../../articles/m/a/p/Legacy%7EMap_Optimization_c3b2.html" title="Legacy:Map Optimization">Map Optimization</a></li>
+</ul>
+<p><a name="Keep_the_log_clean" id="Keep_the_log_clean"></a></p>
+<h2><span class="mw-headline">Keep the log clean</span></h2>
+<p>Every line that is written to the log file takes time. Writing lots of them to the log may slow down your mod to a crawl and can inflate the game's log to several megabytes after a short time already.</p>
+<dl>
+<dt>Fix <i>Accessed None</i> and other log warnings&#160;</dt>
+<dd>Fix all <i>Accessed None</i> and other <a href="../../../../articles/l/o/g/Legacy%7ELog_Warnings_d633.html" title="Legacy:Log Warnings">log warnings</a> you find in the log after executing your mod. (You can safely assume that your code is responsible for any script warning you find in the log after executing it, even those that point to somewhere in Epic's code. Compare with the log when not playing your mod if in doubt.)</dd>
+</dl>
+<dl>
+<dt>Remove debug logging&#160;</dt>
+<dd>Make sure to remove any debugging log statements in release versions of your mods. If you think you may need the log statements in future again, just comment them out.</dd>
+</dl>
+<p><a name="Avoid_iterators" id="Avoid_iterators"></a></p>
+<h2><span class="mw-headline">Avoid iterators</span></h2>
+<p>Avoid using any <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">iterators</a> in frequently executed functions like <code>Tick</code> or <code>PostRender</code> because they are, for the most part, extremely slow.</p>
+<p>Instead try using <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_d63f.html" title="Legacy:Linked List">linked lists</a> or <a href="../../../../articles/d/y/n/Legacy%7EDynamic_Array_dc99.html" title="Legacy:Dynamic Array">dynamic arrays</a> for the actors you work with. You could either fill these at the start of the match, e.g. with a single iterator loop, or maintain the list when spawning and destroying actors like the <a href="../../../../articles/s/p/a/Legacy%7ESpawnNotify_42d9.html" title="Legacy:SpawnNotify">SpawnNotify</a> in UT or the <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a> lists maintained by the <a href="../../../../articles/i/n/t/Legacy%7EInteractionMaster_c727.html" title="Legacy:InteractionMaster">InteractionMaster</a> in UT2003.</p>
+<p><a name="Optimize_iterator_use" id="Optimize_iterator_use"></a></p>
+<h2><span class="mw-headline">Optimize iterator use</span></h2>
+<p>If you can't avoid using them, at least try to optimize them.</p>
+<p>VisibleActors and VisibleCollidingActors are good examples of this. Every actor that is within the radius has a FastTrace called on it. Traces use a lot of CPU resources and if the radius is large you will be calling a lot of traces. You can spare yourself some traces by checking anything else than needs to be checked on top of the trace first.</p>
+<p>For example, if you are looking for all visible pawns within 2000 units that have over 50 health, we can check the health before we check the trace – that way we don't bother doing the expensive visibility check if it was going to fail the health check anyway. For example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// this way is slow</span>
+ 
+<span class="kw1">foreach</span> VisibleActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pawn'</span>, P, Radius, Location, <span class="kw9">True</span><span class="br0">)</span>
+  <span class="kw1">if</span> <span class="br0">(</span>P.<span class="me1">Health</span> &gt; <span class="nu0">50</span><span class="br0">)</span>
+    <span class="co1">// do something</span>
+ 
+<span class="co1">// this way is faster</span>
+<span class="kw1">foreach</span> RadiusActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Pawn'</span>, P, Radius, Location, <span class="kw9">True</span><span class="br0">)</span>
+  <span class="kw1">if</span> <span class="br0">(</span>P.<span class="me1">Health</span> &gt; <span class="nu0">50</span> &amp;&amp; FastTrace<span class="br0">(</span>P.<span class="me1">Location</span>, Location<span class="br0">)</span><span class="br0">)</span>
+    <span class="co1">// do something</span>
+</pre></div>
+<p>Another example of an even slower implementation that needs to check all actors, not just Pawns:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">foreach</span> VisibleCollidingActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Actor'</span>, thisActor, Radius, Location<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>thisActor.<span class="me1">bStatic</span> || thisActor.<span class="me1">Physics</span> == PHYS_None<span class="br0">)</span>
+        <span class="kw1">continue</span>;  <span class="co1">// skip this actor</span>
+    <span class="co1">// do the actual stuff</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Within a radius of e.g. 1500 you could easily find over 300 actors. The loop will execute a FastTrace (see <a href="../../../../articles/a/c/t/Legacy%7EActor_Methods_da97.html" title="Legacy:Actor/Methods">Actor/Methods</a>) for every single actor in the collision hash within the specified area. However, a lot of those actors are most probably static and/or have <code>Physics == None</code>. FastTrace requires much more time than the checks used within the loop, but those checks would catch almost as many actors. A simple optimization would be executing the FastTrace <i>after</i> the other two checks. This can be done by using the CollidingActors (still faster than RadiusActors with up to 2000 UU radius) iterator instead:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">ForEach</span> CollidingActors<span class="br0">(</span><span class="kw5">class</span><span class="st0">'Actor'</span>, thisActor, Radius, Location<span class="br0">)</span> <span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span> thisActor.<span class="me1">bStatic</span> || thisActor.<span class="me1">Physics</span> == PHYS_None || !FastTrace<span class="br0">(</span>Other.<span class="me1">Location</span>, Location<span class="br0">)</span> <span class="br0">)</span>
+        <span class="kw1">continue</span>; <span class="co1">// skip this actor</span>
+ 
+    <span class="co1">// do the actual stuff</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This will execute much faster, but why?</p>
+<p>Imagine those 300 actors, let's say 200-250 of them are StaticMeshes placed in the map. Those are all static actors which will be caught by the first part of the <tt>if</tt> statement. Some other actors might be e.g. gibs lying on the floor. Those actors have <code>Physics == PHYS_None</code> and will be caught by the second part of the <tt>if</tt> statement. Typically over 90% of the actors will <i>fail</i> to pass those first two tests, leaving only about 30 actors for the FastTrace check in this example. This means we only have to do 30 FastTraces instead of 300. Now imagine you want to run this loop every Tick. A high number of FastTraces can slow down the game by 50% or even more, while about 10-30 of those Traces can only be noticed by checking the frame rate.</p>
+<p><a name="Disable_engine_events_when_you_don.27t_need_them" id="Disable_engine_events_when_you_don.27t_need_them"></a></p>
+<h2><span class="mw-headline">Disable engine events when you don't need them</span></h2>
+<p>Use the Disable function to deactivate certain engine events when you don't need them. (That only applies for events you provide an UnrealScript implementation for; if you haven't overwritten an engine event in your class, disabling it makes no difference.)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">event</span> PostBeginPlay
+<span class="br0">{</span>
+    <span class="co1">// all events are enabled by default, so disable Tick event to start with</span>
+    <span class="kw7">Disable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> Trigger<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Sender, <a href="/Pawn"><span class="kw10">Pawn</span></a> Instigator<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// tell engine to call Tick event from now on</span>
+    <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">// do something -- executed only after the actor has been triggered</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Using Disable and Enable is more efficient than using a bool variable and doing an UnrealScript-level check in the Tick function. (And it's more elegant as well.)</p>
+<p><a name="Re-use_objects" id="Re-use_objects"></a></p>
+<h2><span class="mw-headline">Re-use objects</span></h2>
+<p><a href="../../../../articles/c/r/e/Legacy%7ECreating_Actors_And_Objects_d90a.html" title="Legacy:Creating Actors And Objects">Creating actors and objects</a> is a relatively expensive operation. If you can, design your code so that you spawn an actor or object you need only once, save a reference to it and use it later again.</p>
+<p>The <a href="../../../../articles/o/b/j/Legacy%7EObject_Pool_933c.html" title="Legacy:Object Pool">object pool</a> makes re-using non-Actor objects convenient and straightforward: <i>Allocating</i> an object of a given class either takes an existing one from the pool or automatically creates a new one if none exists yet; <i>freeing</i> an object doesn't destroy it but puts it into the pool.</p>
+<p><a name="Precache_materials_and_static_meshes" id="Precache_materials_and_static_meshes"></a></p>
+<h2><span class="mw-headline">Precache materials and static meshes</span></h2>
+<p>Precache any new materials or static meshes you use to avoid hitches when they're displayed the first time. Overwrite the UpdatePrecacheMaterials and UpdatePrecacheStaticMeshes functions (defined in <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>) to do that:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdatePrecacheMaterials<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">Super</span>.<span class="me1">UpdatePrecacheMaterials</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span><a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'MyUserInterfaceTexture'</span><span class="br0">)</span>;  <span class="co1">// hard-coded texture reference</span>
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheMaterial</span><span class="br0">(</span>MapperSpecifiedMaterial<span class="br0">)</span>;          <span class="co1">// specified by mapper in UnrealEd</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> UpdatePrecacheStaticMeshes<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">Super</span>.<span class="me1">UpdatePrecacheStaticMeshes</span><span class="br0">(</span><span class="br0">)</span>;
+    <span class="kw8">Level</span>.<span class="me1">AddPrecacheStaticMesh</span><span class="br0">(</span>StaticMesh<span class="st0">'MyStaticMesh'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Optimize_expressions" id="Optimize_expressions"></a></p>
+<h2><span class="mw-headline">Optimize expressions</span></h2>
+<p>Place operators in an optimized order – this seems trivial but can be important for things that get called a lot, especially for replication statements.</p>
+<p>Expressions in UnrealScript will terminate prematurely if applicable, so you can take advantage of this. Similar to the optimizations for iterators, if using "or" expressions, evaluate the most likely or least expensive things first. That way, if it is true, it doesn't have to waste time on things that usually will be false anyway. If it is an "and" expression, evaluate the least likely thing first – that way you won't pass one check only to get stopped by the second as often.</p>
+<p>The only real exception to this is if it is necessary to avoid <i>Accessed None</i>s – obviously it's more likely that a <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a>'s <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> will have over 10 health than that a controller will not have a pawn at all, but for obvious reasons you need to confirm that the controller has a pawn before attempting to read a variable from it.</p>
+<p><a name="Avoid_Nesting_functions" id="Avoid_Nesting_functions"></a></p>
+<h2><span class="mw-headline">Avoid Nesting functions</span></h2>
+<p>Although it seems like it would use less memory to nest function calls, I've timed different variations on nested and non-nested calls, and a non-nested call consistently ran at <i><b>twice</b></i> the speed as a nested one:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Runs relatively slow.</span>
+<span class="kw5">function</span> <span class="kw4">int</span> NestedFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> DoSomething<span class="br0">(</span> DoSomethingElse<span class="br0">(</span> DoEvenMore<span class="br0">(</span> <span class="nu0">5</span> <span class="br0">)</span> <span class="br0">)</span> <span class="br0">)</span>;
+<span class="br0">}</span>;
+ 
+<span class="co1">// Runs WAY faster.</span>
+<span class="kw5">function</span> AFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> Value;
+ 
+  Value = DoEvenMore<span class="br0">(</span> <span class="nu0">5</span> <span class="br0">)</span>;
+  Value = DoSomethingElse<span class="br0">(</span> Value <span class="br0">)</span>;
+  <span class="kw1">return</span> DoSomething<span class="br0">(</span> Value <span class="br0">)</span>;
+<span class="br0">}</span>;
+</pre></div>
+<p>I suspect this is an indication that the interpreter's "stack" is not used very efficiently.</p>
+<p><b>Switch:</b> With relatively simple functions I noticed something opposite - NestedFunction() was faster by about 10%. With relatively large functions I couldn't measure the difference. I was testing with stopwatch() in build 3355 commandlet.<br />
+Can someone post an example where the nested function calls are noticeably slower?</p>
+<p><a name="Use_native_functionality_instead_of_UnrealScript_code" id="Use_native_functionality_instead_of_UnrealScript_code"></a></p>
+<h2><span class="mw-headline">Use native functionality instead of UnrealScript code</span></h2>
+<p>Use native functions instead of scripted ones whenever possible.</p>
+<p>UnrealScript runs a lot slower than the native functions do – it's usually better to use a native function instead of writing your own, even if the native function does a bunch of stuff you don't need. The wasted functionality is nothing compared to the added speed of native functions.</p>
+<p><a name="Execute_code_only_as_often_as_needed" id="Execute_code_only_as_often_as_needed"></a></p>
+<h2><span class="mw-headline">Execute code only as often as needed</span></h2>
+<p>Timeslicing less important calls in Tick or Timer can increase speed.</p>
+<p>You could, for instance, use a boolean variable and store the previous deltatime so that a less critical function can be called only half the time, with the cumulative deltatime. You can also use an incrementing integer and a cumulative Deltatime float to call functions even less often. This makes the program look more complicated, unfortunately, but can decrease the strain on the CPU.</p>
+<p><b>EntropicLqd:</b> Under those circumstances couldn't you use the SetTimer(..) function to reduce the number of times the Timer() function is called?</p>
+<p><b>Foxpaw:</b> Yes, but you only have one Timer. If a superclass uses it you won't be able to use it unless your timing needs are the exact same as those of the superclass. Furthermore, you can only use it for one thing then. Say, for instance, you wanted to make your own physics system. You wanted to update location every tick, velocity every 3 ticks, and rotation every 5 ticks. Furthermore, you want to check collision only every 13 ticks. This would be a bit difficult to do in Timer.</p>
+<p><a name="Find_bottlenecks_by_measuring_execution_time" id="Find_bottlenecks_by_measuring_execution_time"></a></p>
+<h2><span class="mw-headline">Find bottlenecks by measuring execution time</span></h2>
+<p>You can use the Clock and UnClock functions (defined in <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a>, moved to <a href="../../../../articles/o/b/j/Legacy%7EObject_f294.html" title="Legacy:Object">Object</a> for DeusEx) to measure the time a part of your code spends executing, in milliseconds. Use this to find the sections of your code that require performance optimzation most urgently, and to compare different ways of doing something performance-wise.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MyFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">float</span> ExecutionTime;
+ 
+    Clock<span class="br0">(</span>ExecutionTime<span class="br0">)</span>;
+    <span class="co1">// do something</span>
+    UnClock<span class="br0">(</span>ExecutionTime<span class="br0">)</span>;
+ 
+ 
+    <span class="kw7">Log</span><span class="br0">(</span><span class="st0">"Time spent executing something:"</span> @ ExecutionTime @ <span class="st0">"ms"</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Clock is a very useful function when you know exactly what you want to measure. It is also handy because it returns the elapsed time to you, so you can use it to take averages, etc. You could also even use it for some kind of gameplay timer, though it sometimes "rolls over" which might not make it the best for that.</p>
+<p>Clock uses CPU cycles rather than actual time. In most engines the script equivalent of clock\unclock automatically converts the value to seconds rather than CPU cycles. However you should never use clock\unclock for actual timing perposes, only use it for local performance testing (e.g. in case you change an algorithm and want to test if it's better or worse). CPU cycles roll over very often, thus it's useless for longer periods (a second is too much). Because of the over rolling the result after <code>UnClock</code> might be incorrect, so when you use it perform the test multiple times to get a proper value.</p>
+<p>If you want to test a lot of code, adding a lot of clock, unclock, and log statements can be tedious. Enter Stopwatch. Stopwatch is a much more powerful function than Clock, but works very differently. The stopwatch is global, and it's either "on" or "off."</p>
+<p>StopWatch( false ); starts the stopwatch. StopWatch( true ); disables and resets the timer. When you stop the timer, a line will be printed in the log stating something like: Time=41.768ms. This is the time that the stopwatch was at when it was stopped. This makes it appear to be very much like clock.. but the log statement that shows the stop time is not what you can really do with StopWatch.</p>
+<p>The magic of stopwatch is that when it is running it timestamps log entries. Each is stamped with the time elapsed since the timer was started. It is great for finding out the time taken throughout a function, without writing a veritable pile of clock and unclock statements, as well as adding temporary variables for them, and the works! But I digress. Here's an example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> SuperFantasticFunction<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+  <span class="kw7">StopWatch</span><span class="br0">(</span> <span class="kw9">false</span> <span class="br0">)</span>;
+ 
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Beginning Execution"</span> <span class="br0">)</span>;
+  <span class="co1">// ... some code goes here ...</span>
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Initialization Complete"</span> <span class="br0">)</span>;
+  <span class="co1">// ... more code ...</span>
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Precomputation Complete"</span> <span class="br0">)</span>;
+  <span class="co1">// ... yet more code ...</span>
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Entering Loop"</span> <span class="br0">)</span>;
+  <span class="kw1">for</span> <span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;<span class="nu0">5</span>;i++<span class="br0">)</span>
+  <span class="br0">{</span>
+    <span class="co1">// .. something done in a loop</span>
+    <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Iteration "</span>$<span class="br0">(</span>i<span class="nu0">+1</span><span class="br0">)</span> <span class="br0">)</span>;
+  <span class="br0">}</span>
+ 
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Loop Completed"</span> <span class="br0">)</span>;
+  <span class="co1">// ... some finishing code ...</span>
+  <span class="kw7">log</span><span class="br0">(</span> <span class="st0">"Function Completed"</span> <span class="br0">)</span>;
+ 
+  <span class="kw7">StopWatch</span><span class="br0">(</span> <span class="kw9">true</span> <span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Produces something like the following in the log: (except stopwatch actually has a few more digits of precision.)</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ScriptLog: <span class="nu0">0.00</span> ms: Beginning Execution 
+  ScriptLog: <span class="nu0">0.12</span> ms: Initialization Complete
+  ScriptLog: <span class="nu0">0.45</span> ms: Precomputation Complete
+  ScriptLog: <span class="nu0">0.76</span> ms: Entering Loop
+  ScriptLog: <span class="nu0">1.02</span> ms: Iteration <span class="nu0">1</span> 
+  ScriptLog: <span class="nu0">1.35</span> ms: Iteration <span class="nu0">2</span>
+  ScriptLog: <span class="nu0">1.68</span> ms: Iteration <span class="nu0">3</span>
+  ScriptLog: <span class="nu0">1.92</span> ms: Iteration <span class="nu0">4</span>
+  ScriptLog: <span class="nu0">2.24</span> ms: Iteration <span class="nu0">5</span>
+  ScriptLog: <span class="nu0">2.24</span> ms: Loop Completed
+  ScriptLog: <span class="nu0">3.16</span> ms: <span class="kw5">Function</span> Completed
+  Time=<span class="nu0">3.16</span> ms
+</pre></div>
+<p><a name="Unroll_your_loops" id="Unroll_your_loops"></a></p>
+<h2><span class="mw-headline">Unroll your loops</span></h2>
+<p>Setting up a loop can take extra time (especially if Mychaeel is correct and loop iterations are counted). In some cases, the number of iterations are known, and a loop doesn't need to be used at all:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">for</span> <span class="br0">(</span><span class="kw4">int</span> i = <span class="nu0">0</span>; i &lt; <span class="nu0">5</span>; i++<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">//Some Code.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>can be changed to</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//Some Code.</span>
+<span class="co1">//Some Code.</span>
+<span class="co1">//Some Code.</span>
+<span class="co1">//Some Code.</span>
+<span class="co1">//Some Code.</span>
+</pre></div>
+<p><b>Dante:</b> What if the engine doesn't count loop iterations but counts every instruction&#160;? Then you might save 3 called instructions with the unrolled loop. Sometimes it looks very ugly, leaving the for(i=0...5) solution the better one.</p>
+<p><b>Sordith:</b> We could second guess how the scripting engine works until we fill up the server's hard drive and not really get anywhere. I <i>think</i> I tested this one (along with all of the techniques I posted), but I can't remember the results. I'll test again later and post some sample numbers. You are correct that sometimes (read most of the time) it looks very ugly, and the time saved during execution may not be worth the time lost when working with the ugly code. I didn't mention that because the questions of what and when to optimize could easily take it's own page.</p>
+<p><a name="Speed_comparison_of_loops" id="Speed_comparison_of_loops"></a></p>
+<h2><span class="mw-headline">Speed comparison of loops</span></h2>
+<p>Different loops have different overhead times. Lets say we have following situation:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// data, length = 100</span>
+        <span class="kw5">var</span> array&lt;vector&gt; stuff;                                                         
+ 
+        <span class="co1">// code to loop                                       </span>
+        stuff<span class="br0">[</span>i<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p>An obvious choice is for loop. Lets say that it takes 1 time unit to execute such function. For comparison function with unrolled loop takes 0.66 time units.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Test<span class="br0">(</span> <span class="kw4">int</span> n <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw5">local</span> <span class="kw4">int</span> i;
+                <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i!=n; ++i<span class="br0">)</span>
+                <span class="br0">{</span>
+                        stuff<span class="br0">[</span>i<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+</pre></div>
+<p>While loop takes 0.93 time units. That's probably because the i variable is accessed not three but two times in each loop iteration.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">while</span><span class="br0">(</span> i!=n <span class="br0">)</span>
+        <span class="br0">{</span>
+                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+</pre></div>
+<p>Until loop takes 0.90 time units. Equality operator or internal implementation may be faster.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">if</span><span class="br0">(</span> n!=<span class="nu0">0</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw1">do</span>
+                <span class="br0">{</span>
+                        stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                <span class="br0">}</span><span class="kw1">until</span><span class="br0">(</span> i==n <span class="br0">)</span>
+        <span class="br0">}</span>
+</pre></div>
+<p>What about a goto loop? 0.93 time units, same as while loop.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+loop:
+                <span class="kw1">if</span><span class="br0">(</span> i!=n <span class="br0">)</span>
+                <span class="br0">{</span>
+                        stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                        <span class="kw1">goto</span> <span class="st0">'loop'</span>;
+                <span class="br0">}</span>
+</pre></div>
+<p>The fastest loop I tested was partially unrolled one - 0.76 time units. Choose how many times you want to duplicate the code (4-8 will do), loop couple times so the number of iterations is a multiply of chosen number and run the duplicated code in another loop.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">int</span> iterations, modulus;
+ 
+        <span class="kw1">if</span><span class="br0">(</span> n != <span class="nu0">0</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                modulus = n % <span class="nu0">8</span>;
+                <span class="kw1">if</span><span class="br0">(</span> modulus != <span class="nu0">0</span> <span class="br0">)</span> 
+                <span class="br0">{</span>
+                        <span class="kw1">do</span>
+                        <span class="br0">{</span>
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                        <span class="br0">}</span>
+                        <span class="kw1">until</span><span class="br0">(</span> --modulus == <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">}</span>
+ 
+                iterations = n / <span class="nu0">8</span>;
+                <span class="kw1">if</span><span class="br0">(</span> iterations != <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">{</span>
+                        <span class="kw1">do</span>
+                        <span class="br0">{</span>
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                                stuff<span class="br0">[</span>i++<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span> + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span>*<span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>;
+                        <span class="br0">}</span>
+                        <span class="kw1">until</span><span class="br0">(</span> --iterations == <span class="nu0">0</span> <span class="br0">)</span>
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+</pre></div>
+<p><a name="Refine_your_algorithms" id="Refine_your_algorithms"></a></p>
+<h2><span class="mw-headline">Refine your algorithms</span></h2>
+<p>Different operations take different amounts of time. Generally speaking, addition, subtraction, assignment, and shifting take small amounts time. Multiplication takes a slightly longer time, while division takes the most time. Using floating point numbers also increases execution time. Integer multiplication and division by powers of 2 can be converted into shifts. Division by a floating point number can be converted into multiplication by a floating point number (x/0.5 == x * (1/0.5)).</p>
+<p><b>Sordith:</b> Don't like the way this one reads, but can't seem to spit it out more clearly.</p>
+<p><b>Mychaeel:</b> I don't believe UnrealScript's compiler optimizes constant subexpressions, so "1/0.5" does probably involve a division at run time. Also, while you're technically right of course, I don't believe that this technique has <i>noticable</i> impact on the execution speed of UnrealScript code – you have to assume that UnrealScript byte code is executed at least one order of magnitude slower than native code, and on top of that every operation in an expression translates to a function call with all of its overhead anyway (instead of being resolved to an inline operation).</p>
+<p><b>Sordith:</b> This is true. Optimising outside of a loop will rarely have noticable results. These techniques should be used where working with a large number of objects, or when doing calculations every frame, and probably not even then unless you need the extra time.</p>
+<p>I was thinking more along the lines of:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <span class="kw4">float</span> mult = <span class="nu0">1</span>/<span class="nu0">0.5</span>;
+<span class="kw1">for</span> <span class="br0">(</span><span class="kw4">int</span> i = <span class="nu0">0</span>; i &lt; <span class="nu0">1000</span>; i++<span class="br0">)</span>
+<span class="br0">{</span>
+    a *= mult;
+    b *= mult;
+    c *= mult;
+<span class="br0">}</span>
+</pre></div>
+<p>also, if you want to divide by a constant number, you can change it to multiplication by a constant number without the overhead of the first division or the temp variable.</p>
+<p><a name="The_member_selection_operator_has_its_price" id="The_member_selection_operator_has_its_price"></a></p>
+<h2><span class="mw-headline">The member selection operator has its price</span></h2>
+<p>By member selection operator I mean the dot used to access objects in other objects. Don't forget it's also a function and one that may slow down your calculations quite a lot. If the objects are constant from the loop point of view, you may cache them as mentioned above. You may also try to optimize by using additional calculations instead of the member selection operator.</p>
+<p>In following example the member selection operator is used 900 times. Let's say that execution of this function took 1 time unit.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="kw4">vector</span> stuff<span class="br0">[</span><span class="nu0">100</span><span class="br0">]</span>;
+ 
+        <span class="kw5">function</span> Test<span class="br0">(</span> <span class="kw4">vector</span> v <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw5">local</span> <span class="kw4">int</span> i;
+                <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;<span class="nu0">100</span>; ++i<span class="br0">)</span>
+                <span class="br0">{</span> 
+                        stuff<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">x</span> = v.<span class="me1">x</span> + v.<span class="me1">x*</span><span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.5</span><span class="br0">)</span>;
+                        stuff<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">y</span> = v.<span class="me1">y</span> + v.<span class="me1">y*</span><span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.6</span><span class="br0">)</span>;
+                        stuff<span class="br0">[</span>i<span class="br0">]</span>.<span class="me1">z</span> = v.<span class="me1">x</span> + v.<span class="me1">z*</span><span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.7</span><span class="br0">)</span>;
+                <span class="br0">}</span> 
+        <span class="br0">}</span>
+</pre></div>
+<p>Let's eliminate 600 uses of member selection operator (v members) by adding 3 local variables, 3 assignments, and 3 uses of member selection operator. At this point it takes 0.6 time units to execute the function.<br />
+The remaining 300 uses of member selection operator (stuff[i] members) can be eliminated by adding 300 multiplications by vector and 200 vector additions. After this optimization the execution time is 0.39 time units. That's over 2.5 times faster than the original example.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> Test<span class="br0">(</span> <span class="kw4">vector</span> v <span class="br0">)</span>
+        <span class="br0">{</span>
+                <span class="kw5">local</span> <span class="kw4">int</span> i;
+                <span class="kw5">local</span> <span class="kw4">float</span> vx,vy,vz;
+ 
+                vx=v.<span class="me1">x</span>;
+                vy=v.<span class="me1">y</span>;
+                vz=v.<span class="me1">z</span>;
+ 
+                <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;<span class="nu0">100</span>; ++i<span class="br0">)</span>
+                <span class="br0">{</span> 
+                        stuff<span class="br0">[</span>i<span class="br0">]</span> = <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span> * <span class="br0">(</span>vx + vx*<span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.5</span><span class="br0">)</span><span class="br0">)</span>
+                                         + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span> * <span class="br0">(</span>vy + vy*<span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.6</span><span class="br0">)</span><span class="br0">)</span>
+                                         + <span class="kw4">vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">1</span><span class="br0">)</span> * <span class="br0">(</span>vz + vz*<span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span><span class="nu0">-0.7</span><span class="br0">)</span><span class="br0">)</span>;
+                <span class="br0">}</span>
+        <span class="br0">}</span>
+</pre></div>
+<p><a name="Be_careful_with_temporary_variables" id="Be_careful_with_temporary_variables"></a></p>
+<h2><span class="mw-headline">Be careful with temporary variables</span></h2>
+<p>First of all, you should remove all unused variables from your functions. (The UT200x compiler will warn you about unused local variables.) They slightly increase package size and whether they also affect execution speed is yet to be proven. They definately make your code harder to read if you have lots of them.</p>
+<p>Assignment is a pretty expensive operation in UnrealScript compared to reading variable values, especially with structs. If you are working with dynamic arrays and want to move an element to a new position with a higher array index you might come up with a solution similar to this if you are used to languages without dynamic arrays:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MoveElementUp<span class="br0">(</span><span class="kw4">int</span> Source, <span class="kw4">int</span> Destination<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">int</span> i;
+  <span class="kw5">local</span> <span class="kw4">float</span> tmp;
+ 
+  tmp = MyArray<span class="br0">[</span>Source<span class="br0">]</span>;
+  <span class="kw1">for</span> <span class="br0">(</span>i = Source; i &lt; Destination; i++<span class="br0">)</span>
+    MyArray<span class="br0">[</span>i<span class="br0">]</span> = MyArray<span class="br0">[</span>i + <span class="nu0">1</span><span class="br0">]</span>;
+  MyArray<span class="br0">[</span>Destination<span class="br0">]</span> = tmp;
+<span class="br0">}</span>
+</pre></div>
+<p>Of source, this is a really bad implementation since it completely neglects the features of dynamic arrays. (You might have to use it for static arrays, though.)</p>
+<p>A way better solution would be the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MoveElement<span class="br0">(</span><span class="kw4">int</span> Source, <span class="kw4">int</span> Destination<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw5">local</span> <span class="kw4">float</span> tmp;
+ 
+  tmp = MyArray<span class="br0">[</span>Source<span class="br0">]</span>;
+  MyArray.<span class="kw6">Remove</span><span class="br0">(</span>Source, <span class="nu0">1</span><span class="br0">)</span>;
+  MyArray.<span class="kw6">Insert</span><span class="br0">(</span>Destination, <span class="nu0">1</span><span class="br0">)</span>
+  MyArray<span class="br0">[</span>Destination<span class="br0">]</span> = tmp;
+<span class="br0">}</span>
+</pre></div>
+<p>This implementation not only works for moving in both directions (up or down), but also completely drops the loop.</p>
+<p>There's still a temporary variable though, which requires an additional assignment operation. Let's get rid of that as well:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> MoveElement<span class="br0">(</span><span class="kw4">int</span> Source, <span class="kw4">int</span> Destination<span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw1">if</span> <span class="br0">(</span> Source &lt; Destination <span class="br0">)</span> <span class="br0">{</span>  <span class="co1">// move up</span>
+    MyArray.<span class="kw6">Insert</span><span class="br0">(</span>Destination + <span class="nu0">1</span>, <span class="nu0">1</span><span class="br0">)</span>;
+    MyArray<span class="br0">[</span>Destination + <span class="nu0">1</span><span class="br0">]</span> = MyArray<span class="br0">[</span>Source<span class="br0">]</span>;
+    MyArray.<span class="kw6">Remove</span><span class="br0">(</span>Source, <span class="nu0">1</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+  <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Source &gt; Destination <span class="br0">)</span> <span class="br0">{</span> <span class="co1">// move down</span>
+    MyArray.<span class="kw6">Insert</span><span class="br0">(</span>Destination, <span class="nu0">1</span><span class="br0">)</span>;
+    MyArray<span class="br0">[</span>Destination<span class="br0">]</span> = MyArray<span class="br0">[</span>Source + <span class="nu0">1</span><span class="br0">]</span>;
+    MyArray.<span class="kw6">Remove</span><span class="br0">(</span>Source + <span class="nu0">1</span>, <span class="nu0">1</span><span class="br0">)</span>;
+  <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>If the destination has a higher index than the source, the new element needs to be inserted at an index 1 higher than the desired index, because when removing the source element afterwards, all following elements' indices are decreased by 1. In the case of moving the element down, inserting the destination element increases the source element's index by 1.</p>
+<p><b>Xian:</b> I'll also assume that resetting temporary Object pointers to "None" will also help. Though I am not too sure about how UE handles memory management at such points.</p>
+<p><b>Wormbo:</b> Like the second paragraph in this section mentions: Assignment is a relatively expensive operation. Local variables (and thus any object references) cease to exist upon returning from the function they are declared in. The UnrealEngine 1 and 2 don't collect garbage at all during gameplay, only when the "Obj Garbage" console command is executed, which in regular gameplay only happens at mapchange and in UT2004 between Onslaught/Assault rounds. I don't think much was changed in UnrealEngine 3, but maybe the garbage collector can run asynchronously now. Anyway, it's probably still not worth the additional execution time to explicitly clear local object references. If you really have to create a lot of objects dynamically, consider using an object pool instead of creating temporary objects every time.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 106/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/c/o/d/Legacy%7ECode_Optimization_a3bf.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/c/o/d/Legacy_talk%7ECode_Optimization_edce.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Code_Optimization">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 08:40, 19 January 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

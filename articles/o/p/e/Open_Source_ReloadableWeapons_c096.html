@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Open Source/ReloadableWeapons - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-0">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Open Source/ReloadableWeapons</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">2</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Visible"><span class="tocnumber">2.1</span> <span class="toctext">Visible</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Methods"><span class="tocnumber">3</span> <span class="toctext">Methods</span></a></li>
+<li class="toclevel-1"><a href="#Source_Code"><span class="tocnumber">4</span> <span class="toctext">Source Code</span></a></li>
+<li class="toclevel-1"><a href="#Notes"><span class="tocnumber">5</span> <span class="toctext">Notes</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><br /></p>
+<p><a name="Introduction" id="Introduction"></a></p>
+<h2><span class="mw-headline">Introduction</span></h2>
+<p>This is a very rough version of a reloadable weapon base class. It is not designed with replication (and thus online play) in mind and it is currently unknown whether it will work properly in an online modification as is. If you need reloadable weapons for a single player modification, then this could be what you're looking for. Again, it is merely a skeleton and has no animation support and will only work with the primary fire mode (FireMode[0]). To use this class, you will need to not only create it/compile it, but you will need to make a sub-class of it, where your sub-class is the actual weapon you will use in-game.</p>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p><a name="Visible" id="Visible"></a></p>
+<h3><span class="mw-headline">Visible</span></h3>
+<dl>
+<dt>bool bReloading&#160;</dt>
+<dd>True if the weapon has started reloading</dd>
+<dt>int iReloadWait&#160;</dt>
+<dd>Time interval between reloading a bullet. Set <b>only</b> in your sub-class.</dd>
+<dt>int iTimeToReload&#160;</dt>
+<dd>Set internally. Do not play around with it.</dd>
+<dt>bool bClipReload&#160;</dt>
+<dd>Will force the weapon's reloading to behave more like an assault rifle, rather than a shot gun (per clips versus per bullet/shell).</dd>
+<dt>int iNumberOfClips&#160;</dt>
+<dd>Number of clips the weapon has. Used only if bClipReload is true. Set <b>only</b> in your sub-class.</dd>
+<dt>bool bSingleReload&#160;</dt>
+<dd>Will force the weapon's reloading to behave more like a shotgun and reload per bullet/shell.</dd>
+<dt>int iNumberOfBullets&#160;</dt>
+<dd>Number of bullets the weapon has. Set <b>only</b> in your sub-class.</dd>
+</dl>
+<p><a name="Methods" id="Methods"></a></p>
+<h2><span class="mw-headline">Methods</span></h2>
+<dl>
+<dt>(exec) ReloadMe()&#160;</dt>
+<dd>Reloads the weapons ammo.</dd>
+<dt>Timer()&#160;</dt>
+<dd>Controls the reloading system.</dd>
+</dl>
+<p><a name="Source_Code" id="Source_Code"></a></p>
+<h2><span class="mw-headline">Source Code</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ReloadableWeaponsBase <span class="kw5">extends</span> Weapon;
+ 
+<span class="coMULTI">/* Note: The Reloading features of this custom class will only affect FireMode(0) or Primary Fire
+   As most weapons will only have one fire that will use ammo */</span>
+   <span class="co1">//TODO:  ADD DISABLING OF THE ABILITY TO FIRE WHEN RELOADING</span>
+   <span class="co1">//TODO:  ADD ANIMATION SUPPORT</span>
+   <span class="co1">//TODO:  ADD SUPPORT BOOLS FOR MORE FIREMODES</span>
+ 
+<span class="co1">//New Reloadable Weapon System</span>
+ 
+<span class="co1">//Basic Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bReloading; <span class="co1">//True if the weapon has commenced reloading</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iReloadWait; <span class="co1">//How much time to wait before each reload is done? SET THIS ONLY IN YOUR CUSTOM WEAPON CLASS</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iTimeToReload; <span class="co1">//Internally Set... IGNORE</span>
+ 
+<span class="co1">//Clips Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bClipReload; <span class="co1">//Set to true in weapon class if you want the gun to reload like an assault rifle</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iNumberOfClips; <span class="co1">//How many clips does this gun have? SET IN WEAPON CLASS</span>
+ 
+<span class="co1">//Single Reload Vars</span>
+<span class="kw5">var</span> <span class="kw4">bool</span> bSingleReload; <span class="co1">//Set to true in weapon class if you want the gun to reload like a shotgun</span>
+<span class="kw5">var</span> <span class="kw4">int</span> iNumberOfBullets; <span class="co1">//How many bullets does this gun have left? SET IN WEAPON CLASS</span>
+ 
+<span class="kw6">exec</span> <span class="kw5">function</span> ReloadMe<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+     iTimeToReload=iReloadWait; <span class="co1">//reset the amount of time to wait before you have completely reloaded</span>
+     bReloading=<span class="kw9">True</span>; <span class="co1">//reloading has commenced</span>
+     SetTimer<span class="br0">(</span><span class="nu0">1.0</span>, <span class="kw9">True</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+       <span class="kw6">Super</span>.<span class="me1">Timer</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+       <span class="kw1">if</span><span class="br0">(</span>bClipReload<span class="br0">)</span>
+       <span class="br0">{</span>
+             <span class="kw1">if</span><span class="br0">(</span>bReloading<span class="br0">)</span> <span class="co1">//Reloading</span>
+             <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span>iTimeToReload != <span class="nu0">0</span><span class="br0">)</span>
+                iTimeToReload--;  <span class="co1">//decrement the wait time</span>
+ 
+                <span class="kw1">if</span><span class="br0">(</span>iTimeToReload == <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//when iTimeToReload is 0, reload the weapon as long as...</span>
+                <span class="br0">{</span>
+                      <span class="kw1">if</span><span class="br0">(</span>iNumberOfClips != <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//You still have clips left</span>
+                      <span class="br0">{</span>
+                           <span class="kw1">if</span> <span class="br0">(</span> AmmoClass<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> != <span class="kw9">None</span> <span class="br0">)</span>
+                                AmmoCharge<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = MaxAmmo<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>; <span class="co1">//max out the ammo of your primary fire</span>
+ 
+                           iNumberOfClips--; <span class="co1">//Decrement the number of clips we have as we used one up!</span>
+                      <span class="br0">}</span>
+                      bReloading=<span class="kw9">False</span>; <span class="co1">//No longer reloading</span>
+                <span class="br0">}</span>
+             <span class="br0">}</span>
+       <span class="br0">}</span>
+       <span class="kw1">if</span><span class="br0">(</span>bSingleReload<span class="br0">)</span>
+       <span class="br0">{</span>           
+            <span class="kw1">if</span><span class="br0">(</span>bReloading<span class="br0">)</span> <span class="co1">//Reloading</span>
+            <span class="br0">{</span>
+                         <span class="kw1">if</span><span class="br0">(</span>iTimeToReload != <span class="nu0">0</span><span class="br0">)</span>
+                         iTimeToReload--;  <span class="co1">//decrement time to reload</span>
+                         <span class="kw1">if</span><span class="br0">(</span>iTimeToReload == <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//if time to reload is 0 (you don't have to wait anymore)</span>
+                         <span class="br0">{</span>
+                            <span class="kw1">if</span><span class="br0">(</span>iNumberOfBullets != <span class="nu0">0</span><span class="br0">)</span> <span class="co1">//and if you still have bullets left</span>
+                            <span class="br0">{</span>
+                              AddAmmo<span class="br0">(</span><span class="nu0">1</span>,<span class="nu0">0</span><span class="br0">)</span>;   <span class="co1">//give gun 1 ammo and...</span>
+                              iNumberOfBullets--; <span class="co1">//take away one bullet from the belt</span>
+                            <span class="br0">}</span>
+                          <span class="br0">}</span>
+ 
+                          <span class="kw1">if</span><span class="br0">(</span>AmmoMaxed<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span><span class="br0">)</span> <span class="co1">//if you can't put anymore more bullets in... stop reloading</span>
+                          <span class="br0">{</span>
+                                iTimeToReload = iReloadWait;
+                                bReloading=<span class="kw9">False</span>;
+                          <span class="br0">}</span>
+            <span class="br0">}</span>
+       <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Notes" id="Notes"></a></p>
+<h2><span class="mw-headline">Notes</span></h2>
+<p>To reload your weapon, you will have to call 'reloadme' from the console. For gametypes and mods, you should make a custom bind to call this function.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-main"
+	       class="selected"	       ><a href="../../../../articles/o/p/e/Open_Source_ReloadableWeapons_c096.html">Page</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/o/p/e/Talk%7EOpen_Source_ReloadableWeapons_f843.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Open_Source/ReloadableWeapons">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:34, 1 April 2008 by <a href="../../../../articles/d/a/l/User%7EDalinSeivewright_5093.html" title="User:DalinSeivewright">Dalin Seivewright</a>. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

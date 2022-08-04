@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Pseudo-Raytraced Shadowing - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Pseudo-Raytraced Shadowing</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This technique was shown to me and others by Commader K who developed this technique. He's asked me to write this tutorial, so here we are. This method has its ups and downs and it actually does look very nice ... when used in the right places at the right times. While this definately doesn't equate to Doom 3's shadowing, it does allow some very interesting scenes to be made for UT2004 without any need for coding. However, with extra code, more effects can be pulled of. Other effects which I didn't use to any strong effect were the use of extra materials and as well as other texture methods would could further enhance the scenes.</p>
+<p>Here are some pictures of the example scene I have cooked up:</p>
+<p>[[Image:Legacy_rtshotA.jpeg|]] @inline@rtshotB @inline@rtshotC</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Credits_where_Credits_are_due"><span class="tocnumber">1</span> <span class="toctext">Credits where Credits are due</span></a></li>
+<li class="toclevel-1"><a href="#Pros"><span class="tocnumber">2</span> <span class="toctext">Pros</span></a></li>
+<li class="toclevel-1"><a href="#Cons"><span class="tocnumber">3</span> <span class="toctext">Cons</span></a></li>
+<li class="toclevel-1"><a href="#Method"><span class="tocnumber">4</span> <span class="toctext">Method</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Credits_where_Credits_are_due" id="Credits_where_Credits_are_due"></a></p>
+<h2><span class="mw-headline">Credits where Credits are due</span></h2>
+<ul>
+<li>Commander K (From IRC, #unrealed) developed this technique.</li>
+</ul>
+<p><a name="Pros" id="Pros"></a></p>
+<h2><span class="mw-headline">Pros</span></h2>
+<ul>
+<li>Complex geometry doesn't matter in this technique. For example the Unreal Logo mesh is quite a lot, but it doesn't matter. Any kind of geometry doesn't matter.</li>
+<li>Movement/Vert meshs/Alpha textures are all supported.</li>
+<li>It is faster in relative to have similar amounts of ShadowProjects to do the same job.</li>
+<li>Accurate</li>
+<li>Scale shadow accuracy. Higher accuracy = Lower FPS and vice versa</li>
+<li>Creates fuzzy shadows naturally, but not in a good way.</li>
+<li>Fancy shadows can be created with the use of extra materials</li>
+</ul>
+<p><a name="Cons" id="Cons"></a></p>
+<h2><span class="mw-headline">Cons</span></h2>
+<ul>
+<li>Still has a large footprint on CPU</li>
+<li>There are noticable seams in the shadows where the projectors combine together</li>
+<li>Can only be used in relatively simple scenes. By that I mean that things can't be heavy overlapped on top of each other (barrels on top of barrels for example)</li>
+<li>Large use of projectors. Projectors still aren't rendered properly on static meshes, and they cause darkening (32-bit) or pixelation (16-bit) when a lot of them are on one static mesh.</li>
+<li>Extra work for the mapper</li>
+<li>Still a little trial and error method.</li>
+<li>Each light source needs up to 6 projectors and 6 scripted textures on the minimum.</li>
+</ul>
+<p><a name="Method" id="Method"></a></p>
+<h2><span class="mw-headline">Method</span></h2>
+<p>The way this method works is that there is a shadow room and a normal room. The shadow room is the same as the normal room in terms of geometry. The shadow room can have different geometry, but we will get to this later. Then create 6 scriped textures with different names, but easily identifiable like CamA_1, CamA_2, CamA_3 ... etc, for example. Next create the projectors like so,</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_rtshotD.jpeg_9165.html" class="image" title="Legacy rtshotD.jpeg"><img alt="" src="../../../../images/Legacy_rtshotD.jpeg" width="848" height="880" border="0" /></a></span></div>
+</div>
+<p>What you want to do here is create six dynamic projectors all facing the different directions of a cube. This is because this idea works somewhat like a cubemap does. So now you have six dynamic projectors in a cube. Assign the ProjTexture to the different scripted textures. Set the projector's FOV to 90. As for the other properties, tweak them a little. Adjust the drawscale so that each projector's end plate aligns with the others. Ideally you want each projector projecting the scripted image as a cube. The diagonal lines you see in the image above are actually two projectors FOV extents merged as one line ...</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_rtshotE.jpeg_413a.html" class="image" title="Legacy rtshotE.jpeg"><img alt="" src="../../../../images/Legacy_rtshotE.jpeg" width="848" height="880" border="0" /></a></span></div>
+</div>
+<p>So this is how your normal room should appear like now.</p>
+<p>Now you have to create the shadow room. Here is the one that was used for this scene.</p>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_rtshotF.jpeg_1553.html" class="image" title="Legacy rtshotF.jpeg"><img alt="" src="../../../../images/Legacy_rtshotF.jpeg" width="848" height="880" border="0" /></a></span></div>
+</div>
+<p>Anything black in the shadow room can 'cast' a shadow. Anything that us grey (128, 128, 128) is transparent. Tweak, tinker and play with stuff in this room and you get interesting results. In this room is where the magic happens. You use ClientCameraTexture to draw a portal onto the scripted images. In the case of my example, I used Movers (attached to the swinging light) as the positions of each camera for each scripted image. If you line up the correct textures for the correct viewpoint you get the appropriate shadow cube. In reality your actually emulating cube projection so to speak.</p>
+<p>It's actually pretty easy to understand, once you realize that the actual method is a ingenious way of thinking. Have fun!</p>
+<p><b>James 'Solid Snake' Tan</b></p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Solid Snake:</b> Ahh I hope this is well explained. It should be kind of easy to understand. Some please format this page. It looks ugly compared to other Wiki pages.</p>
+<p><b>Arelius:</b> I think you did a decent job explaining it, wonderful way to think out of the box, not exactally easy to update your level afterwards though. but used in the right places, it could do a great job.</p>
+<p><b>DemonThing:</b> Can we have an example map perhaps?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/s/e/Legacy%7EPseudo-Raytraced_Shadowing_8d70.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/s/e/Legacy_talk%7EPseudo-Raytraced_Shadowing_53a4.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Pseudo-Raytraced_Shadowing">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 03:47, 8 July 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

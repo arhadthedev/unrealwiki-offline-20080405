@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Animation Replication - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Animation Replication</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page is about animations in <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>.</p>
+<p>After running into many problems with animations online, and after discovering many more have these problems, I decided to write this little how to/tut so new people can figure it out a bit more easy. I hope&#160;;)</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Basic_Animation_info"><span class="tocnumber">1</span> <span class="toctext">Basic Animation info</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Where_it_fails"><span class="tocnumber">1.1</span> <span class="toctext">Where it fails</span></a></li>
+<li class="toclevel-2"><a href="#Need_more_control.3F"><span class="tocnumber">1.2</span> <span class="toctext">Need more control?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Where_the_engine_starts_to_interupt"><span class="tocnumber">2</span> <span class="toctext">Where the engine starts to interupt</span></a></li>
+<li class="toclevel-1"><a href="#The_End"><span class="tocnumber">3</span> <span class="toctext">The End</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">4</span> <span class="toctext">Related Topics</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Basic_Animation_info" id="Basic_Animation_info"></a></p>
+<h2><span class="mw-headline">Basic Animation info</span></h2>
+<p>There are many ways to play animations, I guess most used are PlayAnim and LoopAnim. Animations are blended over different channels etc.</p>
+<p>I am sure someone with great animation skills will someday make a animation tut.</p>
+<p><a name="Where_it_fails" id="Where_it_fails"></a></p>
+<h3><span class="mw-headline">Where it fails</span></h3>
+<p>It's important to know that the PlayAnim and related functions don't get replicated. This is where the real trouble starts. So you have yourself a good animation offline, now how do you make it work online?</p>
+<p>The simple solution is well documented and goes like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//In your Pawn class</span>
+<span class="kw6">simulated</span> <span class="kw5">event</span> SetAnimAction<span class="br0">(</span><span class="kw4">name</span> NewAction<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">//This is the default animation replication method</span>
+    <span class="kw1">if</span> <span class="br0">(</span>animaction != NewAction<span class="br0">)</span> <span class="br0">{</span>
+       <span class="co1">//This means that the animation played by the server is not the same as by the client</span>
+ 
+       <span class="co1">//Do some checks here to see what animation should be played, and play it</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now in this function you will be doing basicly the stuff done by the server also, for example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//Somewhere in your code you do:</span>
+    PlayAnim<span class="br0">(</span><span class="st0">'myanim'</span>,,,<span class="nu0">0</span><span class="br0">)</span>;
+    FreezeAnimAt<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+</pre></div>
+<p>So the myanim animation you need to be replicated. Now alter the SetAnimAction function to do this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//In your Pawn class</span>
+<span class="kw6">simulated</span> <span class="kw5">event</span> SetAnimAction<span class="br0">(</span><span class="kw4">name</span> NewAction<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="co1">//This is the default animation replication method</span>
+    <span class="kw1">if</span> <span class="br0">(</span>animaction != NewAction<span class="br0">)</span> <span class="br0">{</span>
+       <span class="co1">//This means that the animation played by the server is not the same as by the client</span>
+       <span class="kw1">if</span> <span class="br0">(</span>animaction == <span class="st0">'myanim'</span><span class="br0">)</span> <span class="br0">{</span>
+          PlayAnim<span class="br0">(</span>animaction,,,<span class="nu0">0</span><span class="br0">)</span>;
+          FreezeAnimAt<span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Well all nice and perfect so far, but it wont work online just yet.</p>
+<p>First you need to set the animaction variable to make it replicate and let the client see that it needs to update. You do this by setting the AnimAction property of your pawn to the animation you told the server to play:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//Somewhere in your code you do:</span>
+    P.<span class="me1">PlayAnim</span><span class="br0">(</span><span class="st0">'myanim'</span>,,,<span class="nu0">0</span><span class="br0">)</span>;
+    P.<span class="me1">FreezeAnimAt</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+    P.<span class="me1">SetAnimAction</span><span class="br0">(</span><span class="st0">'myanim'</span><span class="br0">)</span>;
+</pre></div>
+<p><a name="Need_more_control.3F" id="Need_more_control.3F"></a></p>
+<h3><span class="mw-headline">Need more control?</span></h3>
+<p>Well I did, some of my animations needed calculated properties to run smoothly with their environment. This is the hard part IMO. I decided to use boolean and integers that got replicated, then the pawn's Tick function would check the boolean and set the animation so it would use the proper calculated properties etc.</p>
+<p>I am sure this part so far is clear, this isn't the hard part of online animations.&#160;;)</p>
+<p><a name="Where_the_engine_starts_to_interupt" id="Where_the_engine_starts_to_interupt"></a></p>
+<h2><span class="mw-headline">Where the engine starts to interupt</span></h2>
+<p>Now when I tested my animation replication online I was shocked to see the pawn revert to default player animations at random moments. I spend then many hours trying to find the source of these animations. It turned out that a part of UT2003's engine does animation control already. These where overruling my animations all the time. A good way to solve this is by setting the Physics to PHYS_None, this stops the engine from updating your pawn.</p>
+<p>Another part that overrules the animations is the AnimEnd function. You can simply subclass it and make it check for certain conditions where you don't want the animations to be overruled.</p>
+<p><a name="The_End" id="The_End"></a></p>
+<h2><span class="mw-headline">The End</span></h2>
+<p>So I hope this helps people to get their animations working online, its just a start. I might add more over time. Specially since I don't have it all working myself.&#160;;)</p>
+<p>Feel free to alter, fix and complete.</p>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a></li>
+<li><a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> class (declares the animation functions)</li>
+</ul>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Category:Legacy Tutorial</a><br />
+<a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – This needs merged into the grand topic of <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">Replication</a>. See <a href="../../../../articles/r/e/p/Legacy%7EReplication_Discussing_10e8.html" title="Legacy:Replication/Discussing">Replication/Discussing</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 22/1000000
+Post-expand include size: 42/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/a/n/i/Legacy%7EAnimation_Replication_fc17.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/a/n/i/Legacy_talk%7EAnimation_Replication_667a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Animation_Replication">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:59, 26 November 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

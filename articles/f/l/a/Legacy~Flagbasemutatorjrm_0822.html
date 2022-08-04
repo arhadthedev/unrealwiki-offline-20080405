@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Flagbasemutatorjrm - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Flagbasemutatorjrm</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="A_Flagbase_mutator_that_adds_a_mesh_to_show_where_the_flag_was." id="A_Flagbase_mutator_that_adds_a_mesh_to_show_where_the_flag_was."></a></p>
+<h3><span class="mw-headline">A Flagbase mutator that adds a mesh to show where the flag was.</span></h3>
+<p><br />
+<br />
+<a href="../../../../articles/s/a/b/Legacy%7ESabbathCat_61e9.html" title="Legacy:SabbathCat">SabbathCat</a>&#160;: <i><b>Note: This doesn't actually work, I'm still trying to figure out why.</b></i><br /></p>
+<p><a name="FlagBaseJrM_The_Flagbase_thing_itself.." id="FlagBaseJrM_The_Flagbase_thing_itself.."></a></p>
+<h5><span class="mw-headline">FlagBaseJrM<br />
+The Flagbase thing itself..</span></h5>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// FlagBaseJrM.</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> FlagBaseJRM <span class="kw5">expands</span> FlagBase;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw4">byte</span> Team;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <a href="/sound"><span class="kw10">Sound</span></a> TakenSound;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> CTFFlag myFlag;
+ 
+        <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+        LoopAnim<span class="br0">(</span><span class="st0">'newflag'</span><span class="br0">)</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> !<span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'CTFGame'</span><span class="br0">)</span> <span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        bHidden = <span class="kw9">false</span>;
+        <span class="kw1">if</span> <span class="br0">(</span> Team == <span class="nu0">0</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+                Skin=<a href="/Texture"><span class="kw10">texture</span></a><span class="st0">'BotPack.Skins.RedSkin2'</span>; 
+                myFlag = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'RedFlag'</span><span class="br0">)</span>;
+                Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'flagbasemutejrm.flgred'</span>,, <span class="st0">''</span>,<span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span> Team == <span class="nu0">1</span> <span class="br0">)</span>
+                myFlag = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'CTFFlag'</span><span class="br0">)</span>;
+                Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'flagbasemutejrm.flgblu'</span>,, <span class="st0">''</span>,<span class="br0">)</span>;
+ 
+        myFlag.<span class="me1">HomeBase</span> = <span class="kw8">self</span>;
+        myFlag.<span class="me1">Team</span> = Team;
+        CTFReplicationInfo<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameReplicationInfo</span><span class="br0">)</span>.<span class="me1">FlagList</span><span class="br0">[</span>Team<span class="br0">]</span> = myFlag;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> PlayAlarm<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        SetTimer<span class="br0">(</span><span class="nu0">5.0</span>, <span class="kw9">false</span><span class="br0">)</span>;
+        AmbientSound = TakenSound;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        AmbientSound = <span class="kw9">None</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+     TakenSound=<a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'Botpack.CTF.flagtaken'</span>
+     bStatic=<span class="kw9">False</span>
+     bNoDelete=<span class="kw9">True</span>
+     bAlwaysRelevant=<span class="kw9">True</span>
+     DrawType=DT_Mesh
+     Skin=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'BotPack.Skins.BlueSkin2'</span>
+     Mesh=Mesh<span class="st0">'flgred'</span>
+     DrawScale=<span class="nu0">1.300000</span>
+     SoundRadius=<span class="nu0">255</span>
+     SoundVolume=<span class="nu0">255</span>
+     CollisionRadius=<span class="nu0">60.000000</span>
+     CollisionHeight=<span class="nu0">60.000000</span>
+     bCollideActors=<span class="kw9">True</span>
+     NetUpdateFrequency=<span class="nu0">3.000000</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a name="flgred" id="flgred"></a></p>
+<h5><span class="mw-headline">flgred</span></h5>
+<p>One of the flagbase's (There are two, one for each team. )</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// Generated by MeshMaker (c) 2001 by Mychaeel &lt;mychaeel@planetunreal.com&gt;</span>
+ 
+<span class="kw5">class</span> flgred <span class="kw5">extends</span> Decoration;
+ 
+<span class="co1">// Include EditPackages=BotPack in UnrealTournament.ini</span>
+ 
+<span class="kw2">#exec</span> mesh <span class="kw6">import</span> mesh=flgred anivfile=Models\flgred_a.3d datafile=Models\flgred_d.3d x=<span class="nu0">0</span> y=<span class="nu0">0</span> z=<span class="nu0">0</span> mlod=<span class="nu0">0</span>
+<span class="kw2">#exec</span> mesh origin mesh=flgred x=<span class="nu0">0</span> y=<span class="nu0">0</span> z=<span class="nu0">0</span>
+<span class="kw2">#exec</span> mesh sequence mesh=flgred seq=All startframe=<span class="nu0">0</span> numframes=<span class="nu0">1</span>
+ 
+<span class="kw2">#exec</span> meshmap <span class="kw6">new</span> meshmap=flgred mesh=flgred
+<span class="kw2">#exec</span> meshmap <span class="kw4">scale</span> meshmap=flgred x=<span class="nu0">0.50000</span> y=<span class="nu0">0.50000</span> z=<span class="nu0">1.00000</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+  DrawType=DT_Mesh
+  Mesh=Mesh<span class="st0">'flgred'</span>
+  bCollideWhenPlacing=<span class="kw9">False</span>
+  CollisionHeight=<span class="nu0">128.00000</span>
+  MultiSkins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'BotPack.Skins.jpillar'</span>
+  MultiSkins<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'BotPack.Skins.RedSkin2'</span>
+  MultiSkins<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'BotPack.Skins.jtubelight2'</span>
+  DrawScale=<span class="nu0">0.25000</span>
+  ScaleGlow=<span class="nu0">3.00000</span>
+<span class="br0">}</span>
+</pre></div>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_Mod_Ideas_c1f2.html" title="Category:Legacy Mod Ideas">Category:Legacy Mod Ideas</a> | <a href="../../../../articles/l/e/g/Category%7ELegacy_Personal_Page_0f2d.html" title="Category:Legacy Personal Page">Category:Legacy Personal Page</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 36/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mod_Ideas_c1f2.html" title="Category:Legacy Mod Ideas">Legacy Mod Ideas</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Personal_Page_0f2d.html" title="Category:Legacy Personal Page">Legacy Personal Page</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/f/l/a/Legacy%7EFlagbasemutatorjrm_0822.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/f/l/a/Legacy_talk%7EFlagbasemutatorjrm_f269.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Flagbasemutatorjrm">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 10:20, 19 November 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

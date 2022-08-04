@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Ideas/Deadman Launcher - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Ideas/Deadman Launcher</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_bf77.html" title="Legacy:Mod Ideas">Legacy:Mod Ideas</a></span></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy">Mod ideas for UT 2003 – Deadman launcher</div>
+<p><a name="Description" id="Description"></a></p>
+<h2><span class="mw-headline">Description</span></h2>
+<p>Nothing much to explain I suppose, exept that you'd launch Ragdoll'ish dead bodies from guns to inflict damage on you opponent (according to the speed of the flailing limbs flying at you!), I dont know about you, but that sounds like fun.</p>
+<p><b>C–B:</b></p>
+<p><b>Camper at Heart:</b> Here's the BodyLauncher 1.0 from ZedLep...(ripped from the package by the only way I know how) I put it here because it's a good idea that I'd like to see work but it doesn't function. I put the error below in the discussion section.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> BodyFire <span class="kw5">extends</span> FlakAltFire;
+ 
+<span class="kw5">function</span> projectile SpawnProjectile<span class="br0">(</span><span class="kw4">Vector</span> Start, <span class="kw4">Rotator</span> Dir<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> xPawn p;
+    <span class="kw5">local</span> <span class="kw4">vector</span> vec;<span class="co1">//, hitloc, hitnorm;</span>
+    <span class="kw5">local</span> <span class="kw4">rotator</span> dir1;
+ 
+    Dir1=Dir;
+    Dir1.<span class="me1">Pitch</span>=<span class="nu0">0</span>;
+    vec=Start+<span class="kw4">Vector</span><span class="br0">(</span>Dir1<span class="br0">)</span>*<span class="kw5">class</span><span class="st0">'xPawn'</span>.<span class="kw1">Default</span>.<span class="me1">CollisionRadius*BodyWeapon</span><span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">InitScale*</span><span class="nu0">1.07</span>;
+ 
+    p = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'xPawn'</span>,,, vec, Dir<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span> p == <span class="kw9">None</span> <span class="br0">)</span>
+        <span class="kw1">return</span> <span class="kw9">None</span>;
+ 
+    AdjustPawn<span class="br0">(</span>p<span class="br0">)</span>;
+ 
+    P.<span class="me1">Velocity</span>=<span class="kw4">Vector</span><span class="br0">(</span>Dir<span class="br0">)</span>*BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>+Weapon.<span class="me1">Owner</span>.<span class="me1">Velocity</span>;
+    P.<span class="me1">PlayDying</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'DamageType'</span>, vec<span class="br0">)</span>;
+ 
+    <span class="co1">//AdjustPawn(p);</span>
+    <span class="kw1">return</span> <span class="kw9">none</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> AdjustPawn<span class="br0">(</span>xpawn p<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> DMRosterConfigured tDM;
+        <span class="kw5">local</span> xRosterEntry Chosen;
+        <span class="kw5">local</span> <span class="kw4">int</span> i;
+ 
+        i=<span class="kw4">Int</span><span class="br0">(</span><span class="kw7">FRand</span><span class="br0">(</span><span class="br0">)</span>*tDM.<span class="me1">Characters</span>.<span class="kw6">Length</span><span class="br0">)</span>;
+        tDM = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'DMRosterConfigured'</span><span class="br0">)</span>;
+        Chosen = xRosterEntry<span class="br0">(</span>DeathMatch<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span><span class="br0">)</span>.<span class="me1">EnemyRoster</span>.<span class="me1">ChooseBotClass</span><span class="br0">(</span>tDM.<span class="me1">Characters</span><span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span><span class="br0">)</span>;
+        tDM.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>Chosen==<span class="kw9">None</span><span class="br0">)</span>
+                <span class="kw1">Return</span>;
+        P.<span class="me1">LinkMesh</span><span class="br0">(</span>Mesh<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>Chosen.<span class="me1">PlrProfile</span>.<span class="me1">MeshName</span>, <span class="kw5">class</span><span class="st0">'Mesh'</span><span class="br0">)</span><span class="br0">)</span><span class="br0">)</span>;
+        P.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>Chosen.<span class="me1">PlrProfile</span>.<span class="me1">BodySkinName</span>, <span class="kw5">class</span><span class="st0">'Texture'</span><span class="br0">)</span><span class="br0">)</span>;
+        P.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span>Chosen.<span class="me1">PlrProfile</span>.<span class="me1">FaceSkinName</span>, <span class="kw5">class</span><span class="st0">'Texture'</span><span class="br0">)</span><span class="br0">)</span>;
+        P.<span class="me1">SoundGroupClass</span>=<span class="kw9">None</span>;
+        P.<span class="me1">RagDeathUpKick</span>=<span class="nu0">150</span>;
+        P.<span class="me1">RagdollLifeSpan</span>=<span class="nu0">30</span>;
+        P.<span class="me1">RagSpinScale</span>=<span class="nu0">2.5</span>;
+        P.<span class="me1">RagInvInertia</span>=<span class="nu0">16</span>;
+        P.<span class="me1">PhysicsVolume</span>.<span class="me1">TerminalVelocity</span>=BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>;
+        P.<span class="me1">AirSpeed</span>=BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>;
+        P.<span class="me1">WaterSpeed</span>=BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>;
+        P.<span class="me1">GroundSpeed</span>=BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>;
+        P.<span class="me1">AccelRate</span>=BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">bool</span> AllowFire<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">return</span> <span class="kw9">True</span>;
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> BodyWeapon <span class="kw5">extends</span> FlakCannon;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> BodyLaunchVel, InitScale;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="co1">//local PhysicsVolume PV;</span>
+ 
+        <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw8">Level</span>.<span class="me1">MaxRagdolls</span>=<span class="nu0">32</span>;
+        <span class="coMULTI">/*
+        ForEach AllActors(Class'PhysicsVolume',PV)
+                PV.TerminalVelocity=20000;
+        */</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> BLVChange<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">BroadcastHandler</span>.<span class="me1">Broadcast</span><span class="br0">(</span><span class="kw9">None</span>, <span class="st0">"Body Launch Velocity is now at"</span>@BodyLaunchVel<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+          gUTF8_REPLACEMENTclass BodyFireSpeed <span class="kw5">extends</span> ProjectileFire;
+ 
+<span class="kw5">function</span> projectile SpawnProjectile<span class="br0">(</span><span class="kw4">Vector</span> Start, <span class="kw4">Rotator</span> Dir<span class="br0">)</span>
+<span class="br0">{</span>
+        BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>+=<span class="nu0">2000</span>;
+        <span class="kw1">if</span><span class="br0">(</span>BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>&gt;<span class="nu0">20000</span><span class="br0">)</span>
+                BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BodyLaunchVel</span>=<span class="nu0">4000</span>;
+        BodyWeapon<span class="br0">(</span>Weapon<span class="br0">)</span>.<span class="me1">BLVChange</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">Return</span> <span class="kw9">None</span>;
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw4">bool</span> AllowFire<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">return</span> <span class="kw9">True</span>;
+<span class="br0">}</span>
+</pre></div>
+<p><a name="Interested_Scripters" id="Interested_Scripters"></a></p>
+<h4><span class="mw-headline">Interested Scripters</span></h4>
+<p>If you are interested in developing this mod for UT2003 then add your name to the list. Once you start development you should indicate that below (and hopefully include a link to a journal page). Before you start development you should also check this section to see if anyone else has started.</p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>C–B:</b>: Seeing as how I dont actually own UT2003, I wouldnt be able to really do anything, But I just think it would be a great thing to have (My name is supposed to be in lower-case, oh well.).</p>
+<p><b>ZxAnPhOrIaN:</b> ...thinks about the <a href="http://en.wikipedia.org/wiki/Gary_Larson" class="extiw" title="wikipedia:Gary_Larson">Wikipedia:Gary Larson</a> <i>The Far Side</i> Cartoon about the Dobie-o-matic...&#160;;)</p>
+<p><b>DJPaul:</b> I think this mod has been done or in development. anyone got a URL?</p>
+<p><b>Daid303:</b> It's the body launcher, made by ZedLep, I found a link <a href="http://www.unreality.dk/files/files_show.asp?mode=FileShow&amp;fileID=68" class="external text" title="http://www.unreality.dk/files/files_show.asp?mode=FileShow&amp;fileID=68" rel="nofollow">here</a></p>
+<p><b>Camper at Heart:</b> ZedLep's bodylauncher doesn't appear to work in UT2K4. Gives me, at least, a general</p>
+<p>protection fault when I attempt to use it. Anyone know enough to try to fix it or tell me I'm the only one</p>
+<p>with a problem?</p>
+<p>General protection fault!</p>
+<p>History: UObject::ProcessEvent &lt;- (BodyFire DM-1on1-Albatross.BodyWeapon.BodyFire0, Function Engine.WeaponFire.ModeDoFire) &lt;- UWeaponFire::ModeTick &lt;- AActor::Tick &lt;- TickAllActors &lt;- ULevel::Tick &lt;- (NetMode=0) &lt;- TickLevel &lt;- UGameEngine::Tick &lt;- Level Albatross &lt;- UpdateWorld &lt;- MainLoop &lt;- FMallocWindows::Free &lt;- FMallocWindows::Realloc &lt;- 676F4C57 0 FArray &lt;- FArray::Realloc &lt;- 0*2 &lt;- FMallocWindows::Free</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 16/1000000
+Post-expand include size: 102/2097152 bytes
+Template argument size: 46/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_Deadman_Launcher_b742.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Ideas_Deadman_Launcher_2311.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Ideas/Deadman_Launcher">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 02:45, 6 December 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

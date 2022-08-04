@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Trigger Systems (UT) - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Trigger Systems (UT)</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page is reserved for concepts behind and examples of complex behaviour using systems of <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Triggers</a> or other actors capable of triggering <a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Events</a>. There are large differences in the available Trigger classes between UT and UT200x.</p>
+<p>For the UT200x version of this page, see <a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_cb2d.html" title="Legacy:Trigger Systems">Trigger Systems</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Timed_Light"><span class="tocnumber">1</span> <span class="toctext">Timed Light</span></a></li>
+<li class="toclevel-1"><a href="#Looping_system_.28dual_dispatcher_method.29"><span class="tocnumber">2</span> <span class="toctext">Looping system (dual dispatcher method)</span></a></li>
+<li class="toclevel-1"><a href="#Initiator"><span class="tocnumber">3</span> <span class="toctext">Initiator</span></a></li>
+<li class="toclevel-1"><a href="#Looping_Mechanism"><span class="tocnumber">4</span> <span class="toctext">Looping Mechanism</span></a></li>
+<li class="toclevel-1"><a href="#Other_Examples"><span class="tocnumber">5</span> <span class="toctext">Other Examples</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">6</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Timed_Light" id="Timed_Light"></a></p>
+<h3><span class="mw-headline">Timed Light</span></h3>
+<p>A light that is switched on by a player and switches itself off again after a set time. You will need:</p>
+<ul>
+<li>1 (one) <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a> (in the style of Road Runner cartoons...)</li>
+<li>1 <a href="../../../../articles/d/i/s/Legacy%7EDispatcher_8f77.html" title="Legacy:Dispatcher">Dispatcher</a></li>
+<li>1 <a href="../../../../articles/t/r/i/Legacy%7ETriggerLight_1afa.html" title="Legacy:TriggerLight">TriggerLight</a></li>
+</ul>
+<p>Set the following tag sets:</p>
+<ul>
+<li>Tag1 to link Trigger's Event to Dispatcher's Tag (the Trigger calls the Dispatcher. Note that you could replace the Trigger with something else that can call an event, for example a Mover)</li>
+<li>Tag2 to link the Dispatcher's first 2 OutEvents (note... check property name!) to the TriggerLight's Tag.</li>
+</ul>
+<p>Other settings:</p>
+<ul>
+<li>Set the Dispatcher's second OutDelay to the time you want the light to stay on.</li>
+<li>Set the TriggerLight's InitialState to <i>TriggerToggle</i>, so the second time the light is triggered it switches off.</li>
+<li>It may be a good idea to prevent the Trigger from being triggered while the light is on; ie set the ReTriggerDelay to a value larger than the Dispatcher's second OutDelay.</li>
+</ul>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_triggermachine.timedlight.gif_2827.html" class="image" title="Legacy triggermachine.timedlight.gif"><img alt="" src="../../../../images/Legacy_triggermachine.timedlight.gif" width="225" height="125" border="0" /></a></span></div>
+</div>
+<p><a name="Looping_system_.28dual_dispatcher_method.29" id="Looping_system_.28dual_dispatcher_method.29"></a></p>
+<h3><span class="mw-headline">Looping system (dual dispatcher method)</span></h3>
+<p>This system triggers an event at a regular interval during the whole game. Seen in:</p>
+<ul>
+<li>DM-Hyperblast: the movement of the sky is a mover that is triggered, opens, closes, and is triggered again.</li>
+</ul>
+<p><i>(The basic outline is needed.)</i></p>
+<p><a name="Initiator" id="Initiator"></a></p>
+<h3><span class="mw-headline">Initiator</span></h3>
+<p>An actor needs to fire off an event to start the looping process. If you want the loop to be initiated by players, a simple Trigger will do. If the looping system is required to run from the start of play, there are two methods:</p>
+<ul>
+<li>A single <a href="../../../../articles/t/r/i/Legacy%7ETrigger_c58a.html" title="Legacy:Trigger">Trigger</a>, with a collision cylinder large enough to encompass the entire map. This ensures that it will be activated by a spawning player.</li>
+<li>A <a href="../../../../articles/t/i/m/Legacy%7ETimedTrigger_%28UT%29_bf8a.html" title="Legacy:TimedTrigger (UT)">TimedTrigger (UT)</a>, with bRepeating=false and DelaySeconds set to a small number, say 0.1 – this will activate almost immediately after play begins and then destroy itself.</li>
+</ul>
+<p><a name="Looping_Mechanism" id="Looping_Mechanism"></a></p>
+<h3><span class="mw-headline">Looping Mechanism</span></h3>
+<p>The iniator triggers a looping mechanism, made from two dispatchers, named D1 and D2 here. The loop time is the interval between each call of the main event. For example, a mover can be made to move continually and seamlessly by setting the loop time of this system to the same time as it takes to open and close. (or does it have to be marginally higher so the mover wakes up to triggering again?)</p>
+<ul>
+<li>D1 fires off the main event and D2 immediately</li>
+</ul>
+<ul>
+<li>D2 waits for the loop time, and then triggers D1</li>
+</ul>
+<p>As an aside, it would be possible to create a Mover subclass that opens and closes continually.</p>
+<p><a name="Other_Examples" id="Other_Examples"></a></p>
+<h2><span class="mw-headline">Other Examples</span></h2>
+<ul>
+<li>RoundRobin tutorial: <a href="../../../../articles/s/h/o/Legacy%7EShoot_One%2C_Shoot_Two%2C_Shoot_Three_0a97.html" title="Legacy:Shoot One, Shoot Two, Shoot Three">Shoot One, Shoot Two, Shoot Three</a></li>
+<li><a href="../../../../articles/l/i/g/Legacy%7ELightning_Storm_065e.html" title="Legacy:Lightning Storm">Lightning Storm</a></li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/e/v/e/Legacy%7EEvent_714d.html" title="Legacy:Event">Event</a> and <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a></li>
+<li><a href="../../../../articles/t/y/p/Legacy%7ETypes_Of_Trigger_07fa.html" title="Legacy:Types Of Trigger">Types of Trigger</a></li>
+<li><a href="../../../../articles/a/r/t/Legacy%7EArtificial_Intelligence_63c0.html" title="Legacy:Artificial Intelligence">Artificial Intelligence</a></li>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScriptedAction_8012.html" title="Legacy:ScriptedAction">ScriptedAction</a></li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_And_Using_ScriptedActions_53bc.html" title="Legacy:Creating And Using ScriptedActions">Creating and Using ScriptedActions</a></li>
+<li><a href="../../../../articles/r/a/n/Legacy%7ERandomTrigger_dcdd.html" title="Legacy:RandomTrigger">RandomTrigger</a> (custom)</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 40/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Mapping_ae48.html" title="Category:Legacy Mapping">Legacy Mapping</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Tutorial_261e.html" title="Category:Legacy Tutorial">Legacy Tutorial</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/i/Legacy%7ETrigger_Systems_%28UT%29_b6c7.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/i/Legacy_talk%7ETrigger_Systems_%28UT%29_3d97.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Trigger_Systems_%28UT%29">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:09, 17 September 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

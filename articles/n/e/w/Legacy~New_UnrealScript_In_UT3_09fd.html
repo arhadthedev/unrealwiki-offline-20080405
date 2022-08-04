@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:New UnrealScript In UT3 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:New UnrealScript In UT3</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is a list of new UnrealScript features in <a href="../../../../articles/u/t/3/Legacy%7EUT3_675f.html" class="mw-redirect" title="Legacy:UT3">UT3</a>, compared to <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>:</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Interfaces"><span class="tocnumber">1</span> <span class="toctext">Interfaces</span></a></li>
+<li class="toclevel-1"><a href="#Built-in_Preprocessor"><span class="tocnumber">2</span> <span class="toctext">Built-in Preprocessor</span></a></li>
+<li class="toclevel-1"><a href="#No_More_.23-Directives"><span class="tocnumber">3</span> <span class="toctext">No More #-Directives</span></a></li>
+<li class="toclevel-1"><a href="#New_Default_Properties_Features"><span class="tocnumber">4</span> <span class="toctext">New Default Properties Features</span></a></li>
+<li class="toclevel-1"><a href="#New_Dynamic_Array_Features"><span class="tocnumber">5</span> <span class="toctext">New Dynamic Array Features</span></a></li>
+<li class="toclevel-1"><a href="#Metatags_for_Variables_and_Enum_Elements"><span class="tocnumber">6</span> <span class="toctext">Metatags for Variables and Enum Elements</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Interfaces" id="Interfaces"></a></p>
+<h2><span class="mw-headline">Interfaces</span></h2>
+<p>Previously only some licensees implemented interface support in their games, but UnrealEngine 3 adds it as a default feature.</p>
+<p>Interfaces are declared in separate .UC files, just like classes. The difference is, that they are declared using the keyword "interface" instead of "class". Interfaces don't have to extend from any other class, but if they do, the other class needs to be an interface as well.</p>
+<p>Like in Java, you can only declare constants (not variables marked with the "const" modifier!), functions and delegates. It is currently unknown whether functions and delegates can have an implementation, but some stock interfaces declare native functions, which could be considered a kind of implementation.</p>
+<p><a name="Built-in_Preprocessor" id="Built-in_Preprocessor"></a></p>
+<h2><span class="mw-headline">Built-in Preprocessor</span></h2>
+<p>The UE3 Preprocessor provides a powerful macro system, similar to that provided by elmuerte's <a href="../../../../articles/u/c/p/Legacy%7EUCPP_4ad2.html" title="Legacy:UCPP">UCPP</a>. There are a few built-in macro functions and values. For example the type of compiler run can be determined by checking if any of the macros DEBUG, RELEASE or FINAL_RELEASE are defined.</p>
+<p>Logging is preferably done through the `log() and `warn() macro functions now. They take the message string as first parameter and an optional condition as second parameter. The message is only logged if the condition evaluates to true at runtime.</p>
+<p>There are no instances of user-defined macro functions in the downloadable UnrealScript sources, but several instances of macro definitions for code snippets. An example is located in Object.uc:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+`<span class="kw1">if</span><span class="br0">(</span>`isdefined<span class="br0">(</span>FINAL_RELEASE<span class="br0">)</span><span class="br0">)</span>
+        `define prevent_direct_calls    <span class="kw6">private</span>
+ `<span class="kw1">else</span>
+        `define prevent_direct_calls
+ `endif
+</pre></div>
+<p>it is used further down in declaration of the LogInternal and WarnInternal functions, which now should be called through the `log and `warn macros:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">231</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> `<span class="br0">{</span>prevent_direct_calls<span class="br0">}</span>  <span class="kw5">function</span> LogInternal<span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S, <span class="kw6">optional</span> <span class="kw4">name</span> Tag <span class="br0">)</span>;
+<span class="kw6">native</span><span class="br0">(</span><span class="nu0">232</span><span class="br0">)</span> <span class="kw6">final</span> <span class="kw6">static</span> `<span class="br0">{</span>prevent_direct_calls<span class="br0">}</span>  <span class="kw5">function</span> WarnInternal<span class="br0">(</span> <span class="kw6">coerce</span> <span class="kw4">string</span> S <span class="br0">)</span>;
+</pre></div>
+<p>The `{<i>macroname</i>} syntax apparently means the macro value should be omitted from the imported source code, but still be used by the compiler. If the macro value should be inserted into the imported source code, use the `<i>macroname</i> syntax instead.</p>
+<p><a name="No_More_.23-Directives" id="No_More_.23-Directives"></a></p>
+<h2><span class="mw-headline">No More #-Directives</span></h2>
+<p>There's no replacement for #<a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">exec directives</a>, you have to use UnrealEd to import resources now.</p>
+<p>The (admittedly, very infrequently used) <b>#include</b> directive has been replaced by the <b>`include()</b> preprocessor macro.</p>
+<p><a name="New_Default_Properties_Features" id="New_Default_Properties_Features"></a></p>
+<h2><span class="mw-headline">New Default Properties Features</span></h2>
+<p>In addition to the defaultproperties block of the class file you can now also specify a structdefaultproperties block for every newly declared struct type. Members of a struct variable are initialized with the specified values, no matter where the struct is used.</p>
+<p>Default dynamic array values can now be added or removed with special macros. (see <b>New Dynamic Array Features</b> below)</p>
+<p><a href="../../../../articles/s/u/b/Legacy%7ESubobject_0a6b.html" title="Legacy:Subobject">Subobjects</a> can now be modified by subclasses. For this, the subobject needs to be redeclared in the subclass's defaults block with the same name, but without a class specification. The following is an example from <a href="../../../../articles/p/a/t/Legacy%7EPathNode_ad03.html" title="Legacy:PathNode">PathNode</a> changing the sprite component's texture:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        Begin <a href="/Object"><span class="kw10">Object</span></a> <span class="kw4">NAME</span>=Sprite
+                Sprite=Texture2D<span class="st0">'EngineResources.S_Pickup'</span>
+        End <a href="/Object"><span class="kw10">Object</span></a>
+<span class="br0">}</span>
+</pre></div>
+<p>The "Sprite" object was originally defined in the <a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Begin <a href="/Object"><span class="kw10">Object</span></a> <span class="kw5">Class</span>=SpriteComponent <span class="kw4">Name</span>=Sprite
+                Sprite=Texture2D<span class="st0">'EngineResources.S_NavP'</span>
+                HiddenGame=<span class="kw9">true</span>
+                HiddenEditor=<span class="kw9">false</span>
+                AlwaysLoadOnClient=<span class="kw9">False</span>
+                AlwaysLoadOnServer=<span class="kw9">False</span>
+        End <a href="/Object"><span class="kw10">Object</span></a>
+        Components.<span class="me1">Add</span><span class="br0">(</span>Sprite<span class="br0">)</span>
+        GoodSprite=Sprite
+</pre></div>
+<p>Note that <code>HiddenGame</code>, etc. are inherited by the PathNode Sprite. If these classes were in different packages and the NavigationPoint's Sprite properties were changed, all changes (except those to the Sprite property, which was overridden in PathNode's Sprite) would propagate to the PathNode Sprite without recompiling its package as well.</p>
+<p><a name="New_Dynamic_Array_Features" id="New_Dynamic_Array_Features"></a></p>
+<h2><span class="mw-headline">New Dynamic Array Features</span></h2>
+<p><a href="../../../../articles/d/y/n/Legacy%7EDynamic_Array_dc99.html" title="Legacy:Dynamic Array">Dynamic arrays</a> are now a lot easier to handle, both in regular code and the <a href="../../../../articles/d/e/f/Legacy%7EDefault_Properties_bc11.html" title="Legacy:Default Properties">default properties</a> blocks. In UT200x dynamic arrays only had the property Length and the functions Insert and Remove and they were only available in regular code, not in the defaults section.</p>
+<p>Now the following additional functions are available in regular code:</p>
+<dl>
+<dt>Add(<i>number</i>)&#160;</dt>
+<dd>Adds empty elements to the end of the array. <code>ar.Add(x)</code> is the same as:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ar.<span class="kw6">Length</span> = ar.<span class="kw6">Length</span> + x;
+</pre></div>
+</dd>
+</dl>
+<dl>
+<dt>AddItem(<i>value</i>)&#160;</dt>
+<dd>Adds the value to the array. <code>ar.AddItem(value)</code> is the same as:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ar<span class="br0">[</span>ar.<span class="kw6">Length</span><span class="br0">]</span> = value;
+</pre></div>
+</dd>
+</dl>
+<dl>
+<dt>RemoveItem(<i>value</i>)&#160;</dt>
+<dd>Removes all occurrences of the value from the array. For example <code>ar.RemoveItem(none)</code> removes all empty elements from an object array, which would otherwise require code similar to the following snippet but is likely to perform faster:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">for</span> <span class="br0">(</span>i = ar.<span class="me1">length</span><span class="nu0">-1</span>; i &gt;= <span class="nu0">0</span>; i--<span class="br0">)</span>
+</pre></div>
+</dd>
+</dl>
+<pre>
+ <span class="kw1">if</span> <span class="br0">(</span>ar<span class="br0">[</span>i<span class="br0">]</span> == <span class="kw9">None</span><span class="br0">)</span>
+</pre>
+<p>ar.<span class="kw6">Remove</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;</p>
+<dl>
+<dt>InsertItem(<i>value</i>, <i>index</i>)&#160;</dt>
+<dd>Inserts a value before the specified array element. <code>ar.InsertItem(x, i)</code> has the same effect as:
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+ar.<span class="kw6">Insert</span><span class="br0">(</span>i, <span class="nu0">1</span><span class="br0">)</span>;
+</pre></div>
+</dd>
+</dl>
+<p>ar<span class="br0">[</span>i<span class="br0">]</span> = x;</p>
+<dl>
+<dt>Find(<i>value</i>)&#160;</dt>
+<dd>Searches for a value and either returns the index of the first array element containing that value or -1 if the array doesn't contain the value.</dd>
+</dl>
+<dl>
+<dt>Find(<i>property name</i>, <i>value</i>)&#160;</dt>
+<dd>A special version of <b>Find</b> for dynamic arrays of structs. The first parameter must be a name value matching the name of the struct member to compare to the specified value.</dd>
+</dl>
+<p>Additionally, every dynamic arrays automatically serves as an <a href="../../../../articles/i/t/e/Legacy%7EIterator_df22.html" title="Legacy:Iterator">Iterator</a> function. If an actual iterator function existed, its declaration would probably look similar to the following:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">// The array would be declared as "array&lt;ArrayType&gt; ArrayName"</span>
+<span class="co1">// NOTE: No actual code!</span>
+<span class="kw6">native</span> <span class="kw6">iterator</span> <span class="kw5">function</span> ArrayName<span class="br0">(</span><span class="kw6">out</span> ArrayType Value, <span class="kw6">optional</span> <span class="kw6">out</span> <span class="kw4">int</span> Index<span class="br0">)</span>;
+</pre></div>
+<p>Note that, unlike "real" iterator functions, there's no way to limit the output to certain classes.</p>
+<p>And finally, UnrealEngine 3 also adds dynamic array macros to defaultproperties and the new structdefaultproperties blocks. These are different from the functions available in "real" code.</p>
+<dl>
+<dt>Add(<i>value</i>)&#160;</dt>
+<dd>Like AddItem in real code.</dd>
+</dl>
+<dl>
+<dt>Remove(<i>value</i>)&#160;</dt>
+<dd>Like RemoveItem in real code. This makes it easier to remove specific inherited values from a dynamic array without having to know the exact index.</dd>
+</dl>
+<dl>
+<dt>Empty&#160;</dt>
+<dd>Removes all inherited values from the dynamic array. You don't have to add any parentheses after this one.</dd>
+</dl>
+<p><a name="Metatags_for_Variables_and_Enum_Elements" id="Metatags_for_Variables_and_Enum_Elements"></a></p>
+<h2><span class="mw-headline">Metatags for Variables and Enum Elements</span></h2>
+<p>After the name of class and struct variables and enum elements you can now add metadata in angle brackets. Various fields are comma-separated.</p>
+<p>Syntax:</p>
+<pre>
+var() <i>usual modifiers</i> type name&lt;tag1=value1,tag2=value2,tag3&gt;;
+</pre>
+<p>The following tags have been spotted in the UT3 UnrealScript source code:</p>
+<dl>
+<dt>Tooltip=<i>text</i>&#160;</dt>
+<dd>Displays the specified description as tooltip for the variable in UnrealEd's property window. Note that it's usually easier to use a doc comment, i.e. <code>/** ... */</code>, but if you already have such a comment and want to use a different text for the tooltip, you need to use the tag to override the displayed text.</dd>
+</dl>
+<dl>
+<dt>DisplayName=<i>text</i>&#160;</dt>
+<dd>Displays the specified text instead of the variable or enum element name. Note that UnrealEd already automatically removes enum name prefixes in ALL-CAPS followed by an underscore '_' character.</dd>
+</dl>
+<dl>
+<dt>EditCondition=<i>boolean value</i>&#160;</dt>
+<dd><i>(needs confirmation)</i> Similar to the editconst variable modifier, but applied dynamically based on the specified condition.<br />
+All occurrences in stock code refer to bool variables at the same scope, i.e. for class variables it's a bool variable in the same class and for struct members it's a bool-type member in the same struct.</dd>
+</dl>
+<dl>
+<dt>AllowAbstract&#160;</dt>
+<dd>For variables of type Class this tag allows the user to select abstract classes. Without the tag, only non-abstract classes can be selected from the drop-down list. Always use this tag if you don't intend to create instances of the specified class. For for example it is absolutely essential to use this class for <a href="../../../../articles/d/a/m/Legacy%7EDamageType_c81e.html" title="Legacy:DamageType">DamageTypes</a> or <a href="../../../../articles/l/o/c/Legacy%7ELocalMessage_9c04.html" title="Legacy:LocalMessage">LocalMessages</a>, since those classes are always abstract.</dd>
+</dl>
+<dl>
+<dt>AutoComment=true&#160;</dt>
+<dd>Apparently this tag only works in SequenceObject classes and also only if the class's bSuppressAutoComment property is set to false. The effect of this tag seems to be that the tagged variable's value is displayed in the sequence object's comment in the <a href="../../../../articles/k/i/s/Legacy%7EKismet_8995.html" title="Legacy:Kismet">Kismet</a> editor.</dd>
+</dl>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 47/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/n/e/w/Legacy%7ENew_UnrealScript_In_UT3_09fd.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/n/e/w/Legacy_talk%7ENew_UnrealScript_In_UT3_a2a3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:New_UnrealScript_In_UT3">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 20:39, 18 January 2008 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

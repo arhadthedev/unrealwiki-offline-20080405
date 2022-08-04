@@ -1,0 +1,440 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Vehicles/Dynamics - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Vehicles/Dynamics</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/v/e/h/Legacy%7EVehicles_acc3.html" title="Legacy:Vehicles">Legacy:Vehicles</a></span></div>
+	    	    	    <!-- start content -->
+	    <p>Physics as they apply to vehicles.</p>
+<ul>
+<li>Unlike the <a href="../../../../articles/v/e/h/Legacy%7EVehicles_Anatomy_40f3.html" title="Legacy:Vehicles/Anatomy">Anatomy</a> page, <b>no subPages</b> exist for specific types (<i>land, air, sea...</i>)</li>
+<li>Any <i>Unreal</i> references may or may not be <a href="../../../../articles/k/a/r/Legacy%7EKarma_3d96.html" title="Legacy:Karma">Karma</a> related. Just keep in mind that Karma does have its own page!</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Real"><span class="tocnumber">1</span> <span class="toctext">Real</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Basic_Forces"><span class="tocnumber">1.1</span> <span class="toctext">Basic Forces</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Thrust"><span class="tocnumber">1.1.1</span> <span class="toctext">Thrust</span></a></li>
+<li class="toclevel-3"><a href="#Drag"><span class="tocnumber">1.1.2</span> <span class="toctext">Drag</span></a></li>
+<li class="toclevel-3"><a href="#Lift"><span class="tocnumber">1.1.3</span> <span class="toctext">Lift</span></a></li>
+<li class="toclevel-3"><a href="#Weight"><span class="tocnumber">1.1.4</span> <span class="toctext">Weight</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Other_Forces"><span class="tocnumber">1.2</span> <span class="toctext">Other Forces</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Friction"><span class="tocnumber">1.2.1</span> <span class="toctext">Friction</span></a></li>
+<li class="toclevel-3"><a href="#Traction"><span class="tocnumber">1.2.2</span> <span class="toctext">Traction</span></a></li>
+<li class="toclevel-3"><a href="#Buoyancy"><span class="tocnumber">1.2.3</span> <span class="toctext">Buoyancy</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Aerodynamics"><span class="tocnumber">1.3</span> <span class="toctext">Aerodynamics</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Level_Flying"><span class="tocnumber">1.3.1</span> <span class="toctext">Level Flying</span></a></li>
+<li class="toclevel-3"><a href="#Changing_Altitude"><span class="tocnumber">1.3.2</span> <span class="toctext">Changing Altitude</span></a></li>
+<li class="toclevel-3"><a href="#Changing_Speed"><span class="tocnumber">1.3.3</span> <span class="toctext">Changing Speed</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Natural_States"><span class="tocnumber">1.4</span> <span class="toctext">Natural States</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Diving"><span class="tocnumber">1.4.1</span> <span class="toctext">Diving</span></a></li>
+<li class="toclevel-3"><a href="#Sinking"><span class="tocnumber">1.4.2</span> <span class="toctext">Sinking</span></a></li>
+<li class="toclevel-3"><a href="#Submerged"><span class="tocnumber">1.4.3</span> <span class="toctext">Submerged</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#UT2004"><span class="tocnumber">2</span> <span class="toctext">UT2004</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Thrust_2"><span class="tocnumber">2.1</span> <span class="toctext">Thrust</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Appling_thrust_to_a_KCar_Wheel"><span class="tocnumber">2.1.1</span> <span class="toctext">Appling thrust to a KCar Wheel</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Drag_2"><span class="tocnumber">2.2</span> <span class="toctext">Drag</span></a></li>
+<li class="toclevel-2"><a href="#Lift_2"><span class="tocnumber">2.3</span> <span class="toctext">Lift</span></a></li>
+<li class="toclevel-2"><a href="#Weight_2"><span class="tocnumber">2.4</span> <span class="toctext">Weight</span></a></li>
+<li class="toclevel-2"><a href="#Friction_2"><span class="tocnumber">2.5</span> <span class="toctext">Friction</span></a></li>
+<li class="toclevel-2"><a href="#Traction_2"><span class="tocnumber">2.6</span> <span class="toctext">Traction</span></a></li>
+<li class="toclevel-2"><a href="#Buoyancy_2"><span class="tocnumber">2.7</span> <span class="toctext">Buoyancy</span></a></li>
+<li class="toclevel-2"><a href="#Aerodynamics_2"><span class="tocnumber">2.8</span> <span class="toctext">Aerodynamics</span></a></li>
+<li class="toclevel-2"><a href="#Natural_Vehicle_States"><span class="tocnumber">2.9</span> <span class="toctext">Natural Vehicle States</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Diving_2"><span class="tocnumber">2.9.1</span> <span class="toctext">Diving</span></a></li>
+<li class="toclevel-3"><a href="#Sinking_2"><span class="tocnumber">2.9.2</span> <span class="toctext">Sinking</span></a></li>
+<li class="toclevel-3"><a href="#Submerged_2"><span class="tocnumber">2.9.3</span> <span class="toctext">Submerged</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2"><a href="#Code"><span class="tocnumber">2.10</span> <span class="toctext">Code</span></a>
+<ul>
+<li class="toclevel-3"><a href="#In-Game_Examples"><span class="tocnumber">2.10.1</span> <span class="toctext">In-Game Examples</span></a></li>
+<li class="toclevel-3"><a href="#User-Made_Examples"><span class="tocnumber">2.10.2</span> <span class="toctext">User-Made Examples</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">3</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">4</span> <span class="toctext">Discussion</span></a></li>
+<li class="toclevel-1"><a href="#Comments"><span class="tocnumber">5</span> <span class="toctext">Comments</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Real" id="Real"></a></p>
+<h2><span class="mw-headline">Real</span></h2>
+<p>Various forces that act upon ANY vehicle in real life. Under most circumstances, every object has these four basic forces acting upon it.</p>
+<p><a name="Basic_Forces" id="Basic_Forces"></a></p>
+<h3><span class="mw-headline">Basic Forces</span></h3>
+<p><a name="Thrust" id="Thrust"></a></p>
+<h4><span class="mw-headline">Thrust</span></h4>
+<dl>
+<dd>The force generated to enable forward motion of an object.</dd>
+</dl>
+<p><a name="Drag" id="Drag"></a></p>
+<h4><span class="mw-headline">Drag</span></h4>
+<dl>
+<dd>The force that resists forward motion of an object.</dd>
+</dl>
+<ul>
+<li>Aerodynamics - this is caused by an object moving through a fluid. The fluid isn't going to move out of the way by itself, so the object must use <i>thrust</i> to overcome this resulting <i>drag</i> and 'squeeze' it's way through.</li>
+<li>Friction - A measure of how hard it is to slide one object over another
+<ul>
+<li>This is <u>one</u> cause of <i>drag</i>.</li>
+<li>Coefficient of Friction (<b>μ</b>) == Force Applied (<b>F <sub>App</sub></b>) / Weight (<b>w</b> == Mass * Gravity )</li>
+</ul>
+</li>
+</ul>
+<p><a name="Lift" id="Lift"></a></p>
+<h4><span class="mw-headline">Lift</span></h4>
+<dl>
+<dd>The force that resists the weight of an object.</dd>
+</dl>
+<ul>
+<li><b>Land-based Vehicles:</b> The 'land' itself applies an equal &amp; opposite force to the weight.</li>
+<li><b>Winged Vehicles:</b> <i>Lift</i> is generated through pressure variations caused by turning a moving fluid. Confused? I often imagine it like this: the shape of an object creates changes in air/fluid pressure when moving. The wings on a plane are designed to "manipulate" and "ride" that pressure change like a wave.</li>
+<li><b>Hovering Vehicles:</b> Hovering is often generated from a downward <i>thrust</i> to cause <i>lift</i>, though forward thrust is non-existent.</li>
+<li><b>Balloon Vehicles:</b> Blimps, use buoyancy to generate lift. Since air, like water, is a form of fluid... it too has a level of buoyancy.</li>
+</ul>
+<p><a name="Weight" id="Weight"></a></p>
+<h4><span class="mw-headline">Weight</span></h4>
+<dl>
+<dd>The force generated as a result of gravity.</dd>
+</dl>
+<ul>
+<li>Weight = Mass * Gravity</li>
+</ul>
+<p><a name="Other_Forces" id="Other_Forces"></a></p>
+<h3><span class="mw-headline">Other Forces</span></h3>
+<p><a name="Friction" id="Friction"></a></p>
+<h4><span class="mw-headline">Friction</span></h4>
+<dl>
+<dd>The measurement of the force it takes to slide one object over another.</dd>
+</dl>
+<ul>
+<li>Friction occurs due to the microscopic interactions of two surfaces.</li>
+<li>Example: Imagine rubbing two sheets of sandpaper together. The force keeping the two sheets together causes their roughness to also squeeze closer together. The greater the force, the more difficult it is to rub the sheets together; this is friction.</li>
+</ul>
+<p><a name="Traction" id="Traction"></a></p>
+<h4><span class="mw-headline">Traction</span></h4>
+<dl>
+<dd>A measurement of the 'grip' a vehicle has on it's surroundings.</dd>
+<dd><i>NOTE:</i> This is being approached as a form of <i>grabbing</i> (through friction) and then <i>pulling</i> (through centripetal force). Possibly the most common vision is "the grip a tire has on the road".</dd>
+</dl>
+<ul>
+<li>As traction increases, typically <i>thrust</i> increases and <i>drag</i> decreases. The actual amount of 'change' is dependent on the density of the surrounding fluid (be it liquid or gas) and the maximum amount of traction the driving surface has.</li>
+<li>The ratio of <i>thrust</i> to <i>drag</i> of the vehicle's tread is an occasional factor to consider. A tread comprised of long spikes would provide superior traction but greatly decrease it's ability to provide thrust.</li>
+<li>Surface Type - The type of surface affects the level of traction that can be obtained.
+<ul>
+<li>Small objects producing a surface - It is the individual shape (rocks vs. marbles) and collective density (Packed Gravel vs. Loose Gravel) that comprise the actual traction of the resulting surface.</li>
+<li>Surface Modifiers ~ ( Dirt Road + Water = Muddy Road )</li>
+</ul>
+</li>
+</ul>
+<p><a name="Buoyancy" id="Buoyancy"></a></p>
+<h4><span class="mw-headline">Buoyancy</span></h4>
+<dl>
+<dd>Most vehicles have an initial buoyancy level, since the air inside cant always escape b4 the vehicle becomes submerged.</dd>
+</dl>
+<p><a name="Aerodynamics" id="Aerodynamics"></a></p>
+<h3><span class="mw-headline">Aerodynamics</span></h3>
+<p><a name="Level_Flying" id="Level_Flying"></a></p>
+<h4><span class="mw-headline">Level Flying</span></h4>
+<dl>
+<dd><i>Both</i> these equations must be true. Remember: the <i>change</i> in speed will also change the amount of <i>lift</i> on the wings. Only a constant speed will provide a constant <i>lift</i>, enabling the plane to fly level.</dd>
+</dl>
+<ul>
+<li>Thrust == Drag</li>
+<li>Lift == Weight</li>
+</ul>
+<p><i>Note:</i> When <i>thrust</i> equals <i>drag</i>, speed isn't eliminated but will remain constant. Similarly, elevation is constant when <i>lift</i> equals <i>weight</i>.</p>
+<dl>
+<dd><b>odo324:</b> Took me quite a while b4 I figured out this one&#160;:rolleyes:.</dd>
+</dl>
+<p><a name="Changing_Altitude" id="Changing_Altitude"></a></p>
+<h4><span class="mw-headline">Changing Altitude</span></h4>
+<ul>
+<li>Ascending (+) == <i>Lift</i> &gt; <i>Weight</i></li>
+<li>Descending (-) == <i>Lift</i> &lt; <i>Weight</i></li>
+</ul>
+<p><a name="Changing_Speed" id="Changing_Speed"></a></p>
+<h4><span class="mw-headline">Changing Speed</span></h4>
+<ul>
+<li>Accelerating (+) == <i>Thrust</i> &gt; <i>Drag</i></li>
+<li>Decelerating (-) == <i>Thrust</i> &lt; <i>Drag</i></li>
+</ul>
+<p><a name="Natural_States" id="Natural_States"></a></p>
+<h3><span class="mw-headline">Natural States</span></h3>
+<p>States that are <i>NOT</i> powered by the vehicle. (<i>"Driving" would not be one, but "Rolling" would.</i>)</p>
+<p><a name="Diving" id="Diving"></a></p>
+<h4><span class="mw-headline">Diving</span></h4>
+<ul>
+<li>Vehicles should have an initial buoyancy factor, representing the maximum amount of buoyancy it can have (due to air being initially trapped inside).</li>
+<li>A vehicle's initial buoyancy will decrease immediately when it starts to take on water. However, this doesn't mean it will immediately sink.
+<ul>
+<li>The <u>slower</u> a vehicle travels into water, the <u>less of a chance</u> its buoyancy will be enough for it to momentarily float.</li>
+<li>The <u>faster</u> a vehicle travels into water, the <u>greater a chance</u> its buoyancy will be enough for it to momentarily float.</li>
+</ul>
+</li>
+</ul>
+<p><a name="Sinking" id="Sinking"></a></p>
+<h4><span class="mw-headline">Sinking</span></h4>
+<dl>
+<dd>If the vehicle 'could' take on water (as most do), its buoyancy should rapidly decrease (sinking it).</dd>
+</dl>
+<p><a name="Submerged" id="Submerged"></a></p>
+<h4><span class="mw-headline">Submerged</span></h4>
+<dl>
+<dd>Underwater (or any <i>liquid</i>), <i>drag</i> is greatly increased due to the higher density of the water.</dd>
+</dl>
+<hr />
+<p><a name="UT2004" id="UT2004"></a></p>
+<h2><span class="mw-headline">UT2004</span></h2>
+<p>How the Unreal Engine mimics these forces.</p>
+<p><a name="Thrust_2" id="Thrust_2"></a></p>
+<h3><span class="mw-headline">Thrust</span></h3>
+<p>Getting pawns to move forward.</p>
+<p><a name="Appling_thrust_to_a_KCar_Wheel" id="Appling_thrust_to_a_KCar_Wheel"></a></p>
+<h4><span class="mw-headline">Appling thrust to a <a href="../../../../articles/k/c/a/Legacy%7EKCar_5e40.html" title="Legacy:KCar">KCar</a> Wheel</span></h4>
+<p>The TorqueCurve is used for applying thrust to the wheel. It's defined like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">var</span> <span class="br0">(</span>KCar<span class="br0">)</span> <span class="kw4">InterpCurve</span>      TorqueCurve; <span class="co1">// Engine RPM in, Torque out.</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        TorqueCurve=<span class="br0">(</span>Points=<span class="br0">(</span>
+                                        <span class="br0">(</span>InVal=<span class="nu0">0</span>,         OutVal=<span class="nu0">150</span><span class="br0">)</span>,
+                                        <span class="br0">(</span>InVal=<span class="nu0">245756</span>,    OutVal=<span class="nu0">150</span><span class="br0">)</span>,
+                                        <span class="br0">(</span>InVal=<span class="nu0">491512</span>,    OutVal=<span class="nu0">0</span><span class="br0">)</span>
+                                <span class="br0">)</span><span class="br0">)</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The variable "<i>Points</i>" can be read like this:</p>
+<table>
+<tr>
+<td>Starting at this <b>Speed</b>...</td>
+<td>...<b>Effect</b>...</td>
+<td><b>Change</b> per.&#160;??? <a href="../../../../articles/l/e/g/Category%7ELegacy_Answer_Needed_ec9f.html" title="Category:Legacy Answer Needed">Category:Legacy Answer Needed</a></td>
+</tr>
+<tr>
+<td>0</td>
+<td>A static Acceleration begins.</td>
+<td>150</td>
+</tr>
+<tr>
+<td>245756</td>
+<td>Climax is reached, acceleration begins to drop (linarly?).</td>
+<td>150</td>
+</tr>
+<tr>
+<td>491512</td>
+<td>Maximum speed is reached. No more acceleration.</td>
+<td>0</td>
+</tr>
+</table>
+<p><a name="Drag_2" id="Drag_2"></a></p>
+<h3><span class="mw-headline">Drag</span></h3>
+<p>What keep holding back pawns.</p>
+<p><a name="Lift_2" id="Lift_2"></a></p>
+<h3><span class="mw-headline">Lift</span></h3>
+<p>Keeping pawns in the air.</p>
+<ul>
+<li><b>Hovering Vehicles</b>
+<dl>
+<dd><b>odo324:</b> A good <i>visual</i> example (in a game) that uses a single form of thrust <i>to hover</i> and <i>for propulsion</i> is the "Hydra" Fighter Jet seen in GTA: San Andreas. Its hovering jets are redirected to enable thrust.</dd>
+<dd>Regarding UT2004's "Hover Bike"? Unknown but I truly doubt it's created in this manner of downward <i>thrust</i>. Sadly, it act's more like a wheeled vehicle that has low traction, no tires, and has low mass.</dd>
+<dd>I've come to this conclusion because... <i>(excluding the "Destroyed" vehicle state)</i>
+<ol>
+<li>..it <i>can't</i> snag the ground.</li>
+<li>..it <i>can't</i> tip left/right from an impact.</li>
+<li>..it <i>doesn't</i> travel backward when tilted backward (<i>holding "crouch"</i>).</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+<p><a name="Weight_2" id="Weight_2"></a></p>
+<h3><span class="mw-headline">Weight</span></h3>
+<p>Getting pawns to fall and how the engine enables it to fall.</p>
+<p><a name="Friction_2" id="Friction_2"></a></p>
+<h3><span class="mw-headline">Friction</span></h3>
+<p>How <i>Unreal</i> vehicles simulate 'friction'.</p>
+<p><a name="Traction_2" id="Traction_2"></a></p>
+<h3><span class="mw-headline">Traction</span></h3>
+<p>How <i>Unreal</i> vehicles are able to 'grip' their environment.</p>
+<p><a name="Buoyancy_2" id="Buoyancy_2"></a></p>
+<h3><span class="mw-headline">Buoyancy</span></h3>
+<p>Karma handles buoyancy by adding a bit of force to an object that is touching water. The problem with this is that it does not take into account things like how much of the object is submerged. If the top half of a vehicle isn't submerged, then buoyancy has less effect than if the entire vehicle is submerged (this is ignoring things that change buoyancy such as the vehicle filling with water.), so if you're trying to create a boat class, then the object will bounce up and down in the water as the object is in the water, is accelerated upwards, then is pulled back down by gravity. Most objects in real life stop bouncing when they reach an equal point where a small amount of the object is submerged and therefore the force caused by the buoyancy and gravity is balanced.</p>
+<p><a name="Aerodynamics_2" id="Aerodynamics_2"></a></p>
+<h3><span class="mw-headline">Aerodynamics</span></h3>
+<p><a name="Natural_Vehicle_States" id="Natural_Vehicle_States"></a></p>
+<h3><span class="mw-headline">Natural Vehicle States</span></h3>
+<p><a name="Diving_2" id="Diving_2"></a></p>
+<h4><span class="mw-headline">Diving</span></h4>
+<p><a name="Sinking_2" id="Sinking_2"></a></p>
+<h4><span class="mw-headline">Sinking</span></h4>
+<ul>
+<li>Initial Buoyancy Factor
+<dl>
+<dd><b>odo324:</b> Say a vehicle was only submerged 40% and unable to sink further, than its buoyancy should stop decreasing once roughly 40% of is submerged.</dd>
+</dl>
+</li>
+</ul>
+<p><a name="Submerged_2" id="Submerged_2"></a></p>
+<h4><span class="mw-headline">Submerged</span></h4>
+<p><a name="Code" id="Code"></a></p>
+<h3><span class="mw-headline">Code</span></h3>
+<p>Some of these examples could be quite simple but are perhaps not obvious to everyone.</p>
+<p><a name="In-Game_Examples" id="In-Game_Examples"></a></p>
+<h4><span class="mw-headline">In-Game Examples</span></h4>
+<dl>
+<dd>Example snippets <i>from</i> UT'04.</dd>
+</dl>
+<p><a name="User-Made_Examples" id="User-Made_Examples"></a></p>
+<h4><span class="mw-headline">User-Made Examples</span></h4>
+<dl>
+<dd>User examples - Snippets <i>for</i> UT'04.</dd>
+</dl>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/v/e/h/Legacy%7EVehicles_acc3.html" title="Legacy:Vehicles">Vehicles</a></li>
+<li><a href="../../../../articles/k/a/r/Legacy%7EKarma_3d96.html" title="Legacy:Karma">Karma</a></li>
+<li><b>External:</b>
+<ul>
+<li>www.HowStuffWorks.com - Search any topic for some seriously detailed information!</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>odo324:</b> IMO, the <i>Hover-Bike</i> &amp; <i>Helicopter-Thing</i> feel very 'fake' (while air-born) because they respond to UI as if they have little (if any) weight. Not only that, but all vehicles have a high resistance to being crushed, which only serves to decrease their level of <i>value</i> in any situation.</p>
+<p><b>Solid Snake:</b> The is because there is no weight applied onto the raptor when it is flying hence there is no reason to continually thrust upwards to hover. If you notice the weight value it actually doesn't have any, if you add some on it will sink to the ground. Vehicles can't be crushed because from memory they ignore encroaching things... Besides UT2004 can't really handle crushing things very well...</p>
+<p><b>odo324:</b> The lack of Aerodynamic forces isn't really the issue (although I feel it is 'part', I left some specifics out). The Raptor in question, acts like a 'ball' that can fly. IE: "Turning". With wheeled vehicles, you can spin out of control, adding a little difficulty in performing a quick 180 (something quite fun). Now, rotating of the raptor occurs at the center of the front section, but the tail doesn’t swing around like it should. This prevents any possibility of maneuvering with skill. Of course, this subject is debatable in a game like UT'04. It is the first "real" appearance of vehicles in <i>Unreal</i>, after all. → At my fault, I didn't mean crushed as in "squished" but instead their resistance to sudden large forces (2 parts). 1) High-Speed collisions with anything, result in very little damage. 2) In ut'04, vehicles are 100% functional, or 0% functional. Vehicle health has no influence on vehicle-ability, sad. For an example, take the Raptor for a high-speed impact into what should be a very damaging obstacle (building or cliff) and see how damaged you become&#160;:p.</p>
+<p><b>Foxpaw:</b> I believe that those are design decisions, not really flaws. If vehicles were damaged realistically from high speed collisions, vehicles would become very unattractive as anyone could take out your vehicle by ramming it with another vehicle.</p>
+<p>WRT not losing functionality when damaged, this is also an important design decision. The abilities of the vehicles must be carefully balanced - any change in capabilities will disrupt this balance. In effect, taking only a very small amount of damage would make a vehicle next to useless against any other vehicle - making vehiclular combat mostly an issue of "who hits first," sort of like instagib.</p>
+<p><b>T1:</b> Actually, the Manta IS a hovercraft. It CAN tip back and forth, but not much. It is held up by KRepulsors that ALWAYS repulse downward rather than repulsing the direction that the bottom of the craft is facing. If you disable the always upright variable in it's KarmaParams then it'll continue to repulse downwards even while flipped. It has 3 KRepulsors, 1 in the front, 1 on each side. Because of this, it leans back while ducking because there is no KRepulsor there to hold it up.</p>
+<p><b>5parrowhawk:</b> Making the Manta behave more "realistically" is not excessively difficult. For swaying/rocking, it's simply a matter of altering its center of gravity and adjusting the parameters of the repulsors (e.g. to increase softness). You'll want to set bStayUpright to false in any case, which will help too. Finally, you'll need to set the penetration direction of the repulsors, every tick, to match the vehicle's rotation (not too hard either). The real question is whether this would improve gameplay very much (or, indeed, at all).</p>
+<hr />
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>odo324:</b> Oh, may the wiki gods forgive me! Honestly, I no references as to 'how' Unreal simulates this stuff (YET!). I'm starting with real-life info and add Unreal references as I find them. I hope others may do the same.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 55/1000000
+Post-expand include size: 17/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Answer_Needed_ec9f.html" title="Category:Legacy Answer Needed">Legacy Answer Needed</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/e/h/Legacy%7EVehicles_Dynamics_0bae.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/e/h/Legacy_talk%7EVehicles_Dynamics_72ee.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Vehicles/Dynamics">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:26, 7 February 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

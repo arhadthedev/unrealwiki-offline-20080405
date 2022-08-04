@@ -1,0 +1,431 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Respawn Delay Mutator - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Respawn Delay Mutator</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>By UT2004Addict</p>
+<p><a href="http://www.arclength.net/ut2004" class="external free" title="http://www.arclength.net/ut2004" rel="nofollow">http://www.arclength.net/ut2004</a></p>
+<p>Also look for me on the official Atari forums.</p>
+<p><a href="http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286" class="external free" title="http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286" rel="nofollow">http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286</a></p>
+<p>Anyway, I comment my scripts fairly well, you should get a good idea how this works:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Respawn Delay coding by UT2004Addict</span>
+<span class="co1">// All rights reserved</span>
+<span class="co1">// 2007</span>
+<span class="co1">// http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> RespawnDelayGameRules <span class="kw5">extends</span> GameRules;
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> RespawnDelay;
+ 
+ 
+ 
+<span class="kw5">function</span> <span class="kw4">bool</span> PreventDeath<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> Killed, Controller Killer, class&lt;DamageType&gt; <a href="/DamageType"><span class="kw10">damageType</span></a>, <span class="kw4">vector</span> HitLocation<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw5">local</span> RespawnDelayActor RDA;
+    <span class="kw5">local</span> Controller C;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>Killed.<span class="me1">Controller</span> != <span class="kw9">none</span><span class="br0">)</span>
+        C = Killed.<span class="me1">Controller</span>;
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>Killed.<span class="me1">Owner</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Controller'</span><span class="br0">)</span><span class="br0">)</span>
+        C = Controller<span class="br0">(</span>Killed.<span class="me1">Owner</span><span class="br0">)</span>;
+    <span class="kw1">else</span> <span class="kw1">if</span> <span class="br0">(</span>  Killed.<span class="me1">Owner</span>.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Pawn'</span><span class="br0">)</span>
+         &amp;&amp;    <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Killed.<span class="me1">Owner</span><span class="br0">)</span>.<span class="me1">Controller</span> != <span class="kw9">none</span>  <span class="br0">)</span>
+        C = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Killed.<span class="me1">Owner</span><span class="br0">)</span>.<span class="me1">Controller</span>;
+ 
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>  C != <span class="kw9">none</span>
+    &amp;&amp;    !C.<span class="me1">bVehicleTransition</span>  <span class="br0">)</span>
+    <span class="br0">{</span>
+        RDA = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'RespawnDelayActor'</span>, C<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>RDA != <span class="kw9">none</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            RDA.<span class="me1">RespawnDelay</span> = RespawnDelay;
+            RDA.<span class="me1">CheckController</span> = C;
+            RDA.<span class="me1">CheckPawn</span> = Killed;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>NextGameRules != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; NextGameRules.<span class="me1">PreventDeath</span><span class="br0">(</span>Killed,Killer, <a href="/DamageType"><span class="kw10">damageType</span></a>,HitLocation<span class="br0">)</span> <span class="br0">)</span>
+        <span class="br0">{</span>
+ 
+        <span class="kw1">return</span> <span class="kw9">true</span>;
+        <span class="br0">}</span>
+ 
+    <span class="kw1">return</span> <span class="kw9">false</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ 
+    RespawnDelay=<span class="nu0">10.0</span>
+ 
+ 
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Respawn Delay coding by UT2004Addict</span>
+<span class="co1">// All rights reserved</span>
+<span class="co1">// 2007</span>
+<span class="co1">// http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> RespawnDelayActor <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> TickChecks;
+<span class="kw5">var</span> <span class="kw4">bool</span> bActivated;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> RespawnDelay;
+<span class="kw5">var</span> Controller CheckController, TargetController;
+<span class="kw5">var</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> CheckPawn, TargetPawn;
+<span class="kw5">var</span> <span class="kw4">float</span> OldControllerFrequency, OldPawnFrequency;
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Timer'</span><span class="br0">)</span>;
+    <span class="kw7">Enable</span><span class="br0">(</span><span class="st0">'Tick'</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> <span class="kw8">Tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+ 
+    <span class="co1">// Just in case something else is going on,</span>
+    <span class="co1">// don't check more than a few times</span>
+    <span class="kw1">if</span> <span class="br0">(</span>!bActivated<span class="br0">)</span>
+        TickChecks--;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>TickChecks &lt;= <span class="nu0">0</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        EndDelay<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+ 
+ 
+    <span class="kw6">super</span>.<span class="kw8">Tick</span><span class="br0">(</span>DeltaTime<span class="br0">)</span>;
+ 
+ 
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>  !bActivated
+    &amp;&amp;    <span class="br0">(</span>   CheckPawn == <span class="kw9">none</span>
+          ||  CheckPawn.<span class="me1">Health</span> &lt;= <span class="nu0">0</span>  <span class="br0">)</span>  <span class="br0">)</span>
+    <span class="br0">{</span>
+        StartDelay<span class="br0">(</span>CheckController<span class="br0">)</span>;
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>CheckPawn != <span class="kw9">none</span><span class="br0">)</span>
+            SetTargetPawn<span class="br0">(</span>CheckPawn<span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> StartDelay<span class="br0">(</span>Controller C<span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>C == <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        Destroy<span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">return</span>;
+    <span class="br0">}</span>
+ 
+    bActivated = <span class="kw9">true</span>;
+ 
+    TargetController = C;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span>  TargetController.<a href="/Pawn"><span class="kw10">Pawn</span></a> != <span class="kw9">none</span>
+    &amp;&amp;    TargetController.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Health</span> &gt; <span class="nu0">0</span>  <span class="br0">)</span>
+        SetTargetPawn<span class="br0">(</span>TargetController.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+ 
+ 
+        TargetController.<span class="me1">bVehicleTransition</span> = <span class="kw9">true</span>; <span class="co1">// to keep Bots from doing Restart()</span>
+        TargetController.<span class="me1">Unpossess</span><span class="br0">(</span><span class="br0">)</span>;
+        TargetController.<span class="me1">bStasis</span> = <span class="kw9">true</span>;
+ 
+ 
+        TargetController.<span class="me1">NetUpdateTime</span> = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+        OldControllerFrequency = TargetController.<span class="me1">NetUpdateFrequency</span>;
+        TargetController.<span class="me1">NetUpdateFrequency</span> = RespawnDelay;
+ 
+ 
+ 
+        SetTimer<span class="br0">(</span>RespawnDelay, <span class="kw9">false</span><span class="br0">)</span>;
+ 
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> SetTargetPawn<span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a> P<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span> <span class="br0">(</span>P == <span class="kw9">none</span><span class="br0">)</span>
+        <span class="kw1">return</span>;
+ 
+ 
+    TargetPawn = P;
+ 
+        TargetPawn.<span class="me1">NetUpdateTime</span> = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+        OldPawnFrequency = TargetPawn.<span class="me1">NetUpdateFrequency</span>;
+        TargetPawn.<span class="me1">NetUpdateFrequency</span> = RespawnDelay;
+ 
+ 
+<span class="br0">}</span>
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> Timer<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    EndDelay<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> EndDelay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+ 
+    <span class="co1">// End our delay</span>
+    <span class="kw1">if</span> <span class="br0">(</span>TargetController != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+ 
+        TargetController.<span class="me1">bStasis</span> = <span class="kw9">false</span>;
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>  TargetPawn != <span class="kw9">none</span>
+        &amp;&amp;    TargetPawn.<span class="me1">Health</span> &gt; <span class="nu0">0</span>  <span class="br0">)</span>
+        <span class="br0">{</span>
+            TargetController.<span class="me1">Possess</span><span class="br0">(</span>TargetPawn<span class="br0">)</span>;
+ 
+            <span class="kw1">if</span> <span class="br0">(</span>TargetController.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'PlayerController'</span><span class="br0">)</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                PlayerController<span class="br0">(</span>TargetController<span class="br0">)</span>.<span class="me1">ClientSetViewTarget</span><span class="br0">(</span>TargetPawn<span class="br0">)</span>;
+            <span class="br0">}</span>
+ 
+ 
+            TargetPawn.<span class="me1">NetUpdateTime</span> = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+                TargetPawn.<span class="me1">NetUpdateFrequency</span> = OldPawnFrequency;
+ 
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+ 
+            <span class="co1">// Copied from Controller PawnDied</span>
+            TargetController.<a href="/Pawn"><span class="kw10">Pawn</span></a> = <span class="kw9">None</span>;
+                TargetController.<span class="me1">PendingMover</span> = <span class="kw9">None</span>;
+                <span class="kw1">if</span> <span class="br0">(</span> TargetController.<span class="me1">bIsPlayer</span> <span class="br0">)</span>
+            <span class="br0">{</span>
+                <span class="kw1">if</span> <span class="br0">(</span>  !TargetController.<span class="kw7">IsInState</span><span class="br0">(</span><span class="st0">'GameEnded'</span><span class="br0">)</span>
+                &amp;&amp;    !TargetController.<span class="kw7">IsInState</span><span class="br0">(</span><span class="st0">'RoundEnded'</span><span class="br0">)</span> <span class="br0">)</span>
+                                TargetController.<span class="kw7">GotoState</span><span class="br0">(</span><span class="st0">'Dead'</span><span class="br0">)</span>; <span class="co1">// can respawn</span>
+            <span class="br0">}</span>
+                <span class="kw1">else</span>
+                        TargetController.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+ 
+        <span class="br0">}</span>
+ 
+ 
+        TargetController.<span class="me1">bVehicleTransition</span> = <span class="kw9">false</span>;
+ 
+ 
+            TargetController.<span class="me1">NetUpdateTime</span> = <span class="kw8">Level</span>.<span class="me1">TimeSeconds</span>;
+            TargetController.<span class="me1">NetUpdateFrequency</span> = OldControllerFrequency;
+ 
+ 
+    <span class="br0">}</span>
+ 
+ 
+    <span class="co1">// Clear out everything</span>
+    TargetController = <span class="kw9">none</span>;
+    SetTimer<span class="br0">(</span><span class="nu0">0.0</span>, <span class="kw9">false</span><span class="br0">)</span>;
+    Destroy<span class="br0">(</span><span class="br0">)</span>;
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ 
+    RespawnDelay=<span class="nu0">10.0</span>
+    TickChecks=<span class="nu0">5</span>
+    bActivated = <span class="kw9">false</span>;
+ 
+    LifeSpan=<span class="nu0">0.0</span>
+    bHidden=<span class="kw9">true</span>
+ 
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="co1">// Respawn Delay coding by UT2004Addict</span>
+<span class="co1">// All rights reserved</span>
+<span class="co1">// 2007</span>
+<span class="co1">// http://www.ataricommunity.com/forums/member.php?s=&amp;action=getinfo&amp;userid=225286</span>
+<span class="co1">//-----------------------------------------------------------</span>
+<span class="kw5">class</span> MutRespawnDelay <span class="kw5">extends</span> <a href="/Mutator"><span class="kw10">Mutator</span></a>;
+ 
+ 
+<span class="kw5">var</span> <span class="kw6">config</span> <span class="kw4">float</span> RespawnDelay;
+ 
+ 
+ 
+ 
+<span class="kw6">static</span> <span class="kw5">function</span> FillPlayInfo<span class="br0">(</span>PlayInfo PlayInfo<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">FillPlayInfo</span><span class="br0">(</span>PlayInfo<span class="br0">)</span>;
+ 
+        PlayInfo.<span class="me1">AddSetting</span><span class="br0">(</span><span class="kw1">default</span>.<span class="me1">RulesGroup</span>, <span class="st0">"RespawnDelay"</span>, <span class="st0">"Respawn Delay Duration:"</span>, <span class="nu0">0</span>, <span class="nu0">1</span>, <span class="st0">"Text"</span>, <span class="st0">"10.0;1.0:20.0"</span><span class="br0">)</span>;
+ 
+        <span class="kw1">return</span>;
+<span class="br0">}</span>
+ 
+ 
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw5">local</span> GameRules G;
+ 
+        <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+        G = spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'RespawnDelayGameRules'</span><span class="br0">)</span>;
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span>G != <span class="kw9">none</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        RespawnDelayGameRules<span class="br0">(</span>G<span class="br0">)</span>.<span class="me1">RespawnDelay</span> = RespawnDelay;
+    <span class="br0">}</span>
+ 
+ 
+        <span class="kw1">if</span> <span class="br0">(</span> <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> == <span class="kw9">None</span> <span class="br0">)</span>
+                <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span> = G;
+        <span class="kw1">else</span>
+                <span class="kw8">Level</span>.<span class="me1">Game</span>.<span class="me1">GameRulesModifiers</span>.<span class="me1">AddGameRules</span><span class="br0">(</span>G<span class="br0">)</span>;
+ 
+ 
+<span class="br0">}</span>
+ 
+ 
+ 
+ 
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+ 
+    RespawnDelay=<span class="nu0">10.0</span>
+ 
+    IconMaterialName=<span class="st0">"MutatorArt.nosym"</span>
+    GroupName=<span class="st0">"RespawnDelay01"</span>
+    FriendlyName=<span class="st0">"Respawn Delay"</span>
+    Description=<span class="st0">"Delay before players can respawn."</span>
+<span class="br0">}</span>
+</pre></div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 21/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Custom_Class_%28UT2004%29_0b8c.html" title="Category:Legacy Custom Class (UT2004)">Legacy Custom Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/r/e/s/Legacy%7ERespawn_Delay_Mutator_2bc1.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/r/e/s/Legacy_talk%7ERespawn_Delay_Mutator_66fc.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Respawn_Delay_Mutator">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 09:49, 13 December 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

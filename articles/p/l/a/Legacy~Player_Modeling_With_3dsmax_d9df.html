@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Player Modeling With 3dsmax - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Player Modeling With 3dsmax</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>So, you've got this great idea for a player model, and you know you want to get it into UT2003 or 2004, but you have no idea how to get it from 3dsmax to the game. You have come to the right place. Let's go over some basics first:</p>
+<dl>
+<dt>Tutorial Goal&#160;</dt>
+<dd>To show you all the steps required to get a player model from concept to inside UT2003/4. This tutorial was created using 3dsmax 6 and Character Studio 4 for the examples.</dd>
+</dl>
+<p>Assumptions:</p>
+<ul>
+<li>You know how to model in 3dsmax and can create your mesh and texture on your own or have one already made</li>
+<li>You know the basics of 3dsmax</li>
+<li>You don't have any custom bones or animations (advanced)</li>
+<li>You have all the tools required
+<ul>
+<li>A copy of <a href="../../../../articles/3/d/_/Legacy%7E3D_Studio_Max_5e8e.html" title="Legacy:3D Studio Max">3D Studio Max</a> and UT2003/4</li>
+<li>The <a href="http://udn.epicgames.com/Two/ActorX" class="external text" title="http://udn.epicgames.com/Two/ActorX" rel="nofollow">ActorX plugin</a> for your version of 3dsmax</li>
+<li>The [<a href="http://old.fileplanet.com/dl/dl.asp?/planetquake/polycount/Tools/ut2k3/ut2k3_characters.zip" class="external free" title="http://old.fileplanet.com/dl/dl.asp?/planetquake/polycount/Tools/ut2k3/ut2k3_characters.zip" rel="nofollow">http://old.fileplanet.com/dl/dl.asp?/planetquake/polycount/Tools/ut2k3/ut2k3_characters.zip</a> 3DSMax Character model source for UT2003</li>
+</ul>
+</li>
+</ul>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#The_First_Step"><span class="tocnumber">1</span> <span class="toctext">The First Step</span></a></li>
+<li class="toclevel-1"><a href="#Rigging_it_All_Together"><span class="tocnumber">2</span> <span class="toctext">Rigging it All Together</span></a></li>
+<li class="toclevel-1"><a href="#Model_Export"><span class="tocnumber">3</span> <span class="toctext">Model Export</span></a></li>
+<li class="toclevel-1"><a href="#Model_Import_and_Animation"><span class="tocnumber">4</span> <span class="toctext">Model Import and Animation</span></a></li>
+<li class="toclevel-1"><a href="#Code.3F.21_I_don.27t_know_code.21"><span class="tocnumber">5</span> <span class="toctext">Code?! I don't know code!</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="The_First_Step" id="The_First_Step"></a></p>
+<h2><span class="mw-headline">The First Step</span></h2>
+<p>Got your model finished and textured? Good, then the first step in getting it ready to go is deciding which UT base skeleton you want to use. There are a variety to choose from and all of them are in the Character Model Source. For this example I am using the HumanMaleA skeleton.</p>
+<p>(insert Example pic here, HumanMaleA bones)</p>
+<p>Now that you know what skeleton you want to use, how do you get it? This is a fairly simple trick built into 3dsmax:</p>
+<ol>
+<li>Open the Source model for your chosen skeleton.</li>
+<li>Select all the mesh objects in the scene and delete them, DON'T delete the bones or anything else</li>
+<li>Do a Save As... on the scene and save it for use now and later</li>
+<li>Open your model back up and merge the file you just saved into you scene</li>
+<li>DON'T move or scale the bones at this point to match your model</li>
+<li>If your model does not line up with the bones, it is best to scale and move your model to match it</li>
+</ol>
+<p><a href="http://syntaxerror22.virtualave.net/screens/males_bones.jpg" class="external free" title="http://syntaxerror22.virtualave.net/screens/males_bones.jpg" rel="nofollow">http://syntaxerror22.virtualave.net/screens/males_bones.jpg</a></p>
+<p><a name="Rigging_it_All_Together" id="Rigging_it_All_Together"></a></p>
+<h2><span class="mw-headline">Rigging it All Together</span></h2>
+<p>Now that you have your model lined up and scaled to the bones, the next step is rigging. Rigging, depending on what plugin you use, can be a very long process. The basic idea is so when you move the bones of the skeleton, your mesh bends and moves with it. The example will use Character Studio that comes with 3dsmax for rigging. The steps are as follows:</p>
+<ol>
+<li>Select your mesh, and go to the Modifiers tab</li>
+<li>From the modifiers drop down select the Physique modifier</li>
+<li>In the rollout below select the button with a stick figure under a plus sign <a href="http://syntaxerror22.virtualave.net/screens/AddRoot.jpg" class="external free" title="http://syntaxerror22.virtualave.net/screens/AddRoot.jpg" rel="nofollow">http://syntaxerror22.virtualave.net/screens/AddRoot.jpg</a></li>
+<li>Select the root bone of the skeleton; this is in the center of the hipbone</li>
+<li>A dialog box will come up; there are only 2 major things you need to worry about here
+<ul>
+<li>Ensure blending between links is set to 3 links</li>
+<li>Vertex link assignment needs to be rigid</li>
+</ul>
+</li>
+<li>This set the basic assignment for rigging; you can now rotate the bones and see that it moves your mesh</li>
+<li>Ensure that when you move any bones for testing that you "Undo" to put them back in the reference pose</li>
+</ol>
+<p>More then likely you noticed that not all of your vertexes are moving, or some are moving that you don't want to move. This is where the process can get lengthy depending on the detail you want in your joints. There are 2 main areas you should focus on when correcting your rigging. Envelope allows you to edit the area each bone affects. This is a gross edit and is not intended to be perfect. The other method is vertex mode, where you assign individual vertexes to up to 3 bones, and weight them accordingly. For the example only envelope was used. You can come back after testing your model ingame and tweak this as much as desired.</p>
+<p>(example pic, MaleA rigged)</p>
+<p><a name="Model_Export" id="Model_Export"></a></p>
+<h2><span class="mw-headline">Model Export</span></h2>
+<p>Got your mesh rigged and moving nicely? No weird vertices? Then you are ready to get this into UnrealEd. Ensure you have the ActorX plugin loaded and ready, and then follow these steps:</p>
+<ol>
+<li>Select everything in the scene or everything you want to export (bones and mesh)</li>
+<li>Go to the Utilities tab (hammer icon on the right) and click more</li>
+<li>Select ActorX from the list</li>
+<li>For convenience you may wish to add the plug in as a button
+<ol>
+<li>Click the "Configure button sets" button</li>
+<li>Scroll down the utilities list until you see ActorX and select it</li>
+<li>Increase total buttons and scroll down to the new button</li>
+<li>Drag ActorX to the new button and click ok</li>
+</ol>
+</li>
+<li>Define the output folder and mesh file name to export</li>
+<li>Ensure these options are checked
+<ul>
+<li>Persistent paths and settings</li>
+<li>All Skin Type, All Textured and All Selected</li>
+<li>Bake smoothing groups</li>
+</ul>
+</li>
+<li>Click the Save Mesh/Refpose button. A message box will tell you if the export was successful</li>
+</ol>
+<p><a name="Model_Import_and_Animation" id="Model_Import_and_Animation"></a></p>
+<h2><span class="mw-headline">Model Import and Animation</span></h2>
+<p>Now that you have your rigged model exported to a format that UnrealEd can recognize it is time to import your model and texture into it.</p>
+<ol>
+<li>First we will import the textures, open the texture browser and click File &gt; Import...</li>
+<li>Browse to where you saved your textures and open them. Note:
+<ul>
+<li>Recommended textures are square (1:1), uncompressed TGA or BMP files</li>
+<li>Unreal works best with few large textures rather then many smaller textures</li>
+<li>Be sure to include a 512 tall by 256 wide portrait of your model</li>
+</ul>
+</li>
+<li>Create a new package name and name the textures, the example package is called MyTexPak and the texture names are GuyTexture and GuyFace</li>
+<li>Your textures should show up in the browser now, but they are still uncompressed</li>
+<li>Right click and convert your texture to the optimal directx compression, DTX1 is recommended for basic textures</li>
+<li>Note the package name and texture name as you will need it later, click the save button and save it all down to the .utx</li>
+<li>Click on the Animations tab</li>
+<li>Click File &gt; Mesh Import</li>
+<li>Browse to the place where you saved the export from the ActorX plugin and open it</li>
+<li>Name your new package and mesh; again, remember these names
+<ul>
+<li>The example is called MyAnimPak and the mesh is MyMesh</li>
+</ul>
+</li>
+<li>You should now see your model, but it may look too large and may not be facing the proper direction</li>
+<li>Open a UT character with the same skeleton as your model</li>
+<li>Click Mesh &gt; Copy mesh properties</li>
+<li>Go back to your package and mesh and click Mesh &gt; Paste mesh properties</li>
+<li>To display your texture on your model:
+<ol>
+<li>Ensure the body texture is selected in the texture browser</li>
+<li>On the side panel under the mesh tab, open up skin &gt; material &gt; select 0 and click the ... button to apply the selected texture</li>
+<li>Do the same for the head texture, except select 1 instead</li>
+</ol>
+</li>
+<li>Click the save button to save it all up</li>
+</ol>
+<p>This will now have your model shown with your texture, scaled properly and facing the correct direction, but how do we get it to move? This is where the use of the Source bones comes into play. Because your model is using those bones, you can easily copy the animations from one of the UT characters that use the same skeleton. Here's how:</p>
+<ol>
+<li>Open up the UT model you got the Mesh Properties from</li>
+<li>Click Animation &gt; Rename animation set</li>
+<li>Change the package name to your package name
+<ul>
+<li>Again, the example was MyAnimPak</li>
+</ul>
+</li>
+<li>Go back to your Package and you will see the animation set in the animations drop down</li>
+<li>Select the set and click Edit &gt; Linkup anim and mesh</li>
+<li>Your mesh should now have the animations and move properly</li>
+<li>Save your mesh and animations</li>
+</ol>
+<dl>
+<dt>Tips and Hints&#160;</dt>
+</dl>
+<ul>
+<li>Do NOT save the package you got the animations from. This will overwrite an original game file, which will screw up UT.</li>
+<li>Step 5 above is very important as the code for the player models only loads the mesh. The animation set must be linked or the mesh will not move.</li>
+</ul>
+<p><a name="Code.3F.21_I_don.27t_know_code.21" id="Code.3F.21_I_don.27t_know_code.21"></a></p>
+<h2><span class="mw-headline">Code?! I don't know code!</span></h2>
+<p>There is only one thing left to do to get your model to show up in the player model select list. You must add a line of code to the xPlayers.upl file. Don't fret, this is only one line and is fairly simple. This doesn't require much programming know how, but you need to know the names of your packages and items (textures and animations) in them. Here is the line from the example:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Public<span class="br0">]</span>
+ 
+Player=<span class="br0">(</span>DefaultName=<span class="st0">"Guy"</span>, Mesh=MyAnimPak.<span class="me1">ExampleGuy</span>, species=xGame.<span class="me1">SPECIES_Egypt</span>, BodySkin=MyTexPak.<span class="me1">GuyTexture</span>, FaceSkin=MyTexPak.<span class="me1">GuyFace</span>, Portrait=MyTexPak.<span class="me1">GuyPic</span>, Text=<span class="st0">"It's the example Guy!"</span>, Sex=Male, Menu=<span class="st0">"SP"</span><span class="br0">)</span>
+</pre></div>
+<ul>
+<li>DefaultName - what the bot will name itself</li>
+<li>Mesh - references the mesh and animation package you made</li>
+<li>Species - in conjunction with Sex defines the voice your character will use</li>
+<li>BodySkin - the texture on the body</li>
+<li>FaceSkin - texture on the face</li>
+<li>Portrait - a pic of your model</li>
+<li>Text - string that is used as the description of your model</li>
+<li>Sex - defines voice and she/he in console messages</li>
+<li>Menu - SP makes your model available in single player as a bot</li>
+</ul>
+<p>Save XPlayers and that is it; your new model will now show up in the Character Select screen.</p>
+<hr />
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>Syntax_Error:</b> Content is nearing completion, just need to get those screens.</p>
+<p><b>Syntax_Error:</b> Found that line of code and explained all the vars. Now I just need to get 3dsmax back and get some screens. Beginning work on the weapon tut as well.</p>
+<p><b>Syntax_Error:</b> Content is at about 90%. Need to get into UnrealEd to confirm instructions and menus, and I need to proofread this fully. Still waiting for my computer so I can get some screens and UT2004.</p>
+<p><b>TheBypasser:</b> Guuys! Why copying the animation set? It's way more logical to just set the DefaultAnimation to a reference skeletal anim - like <b>MeshAnimation 'HumanFemaleA.BipedFemaleA</b> <i>for example! Less duplicates = more optimization&#160;;) (btw alike was used on some UT2k4 out-of-the-box models)</i></p>
+<p><b>Wormbo:</b> <a href="../../../../articles/l/e/g/Category%7ELegacy_Text_Mangling_Alert_b025.html" title="Category:Legacy Text Mangling Alert">Category:Legacy Text Mangling Alert</a>! Please don't use Word or any other formatting text editor to create or modify wiki pages.</p>
+<hr />
+<p>Category_Tutorial</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 11/1000000
+Post-expand include size: 27/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Text_Mangling_Alert_b025.html" title="Category:Legacy Text Mangling Alert">Legacy Text Mangling Alert</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/l/a/Legacy%7EPlayer_Modeling_With_3dsmax_d9df.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/l/a/Legacy_talk%7EPlayer_Modeling_With_3dsmax_6011.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Player_Modeling_With_3dsmax">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:35, 7 February 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

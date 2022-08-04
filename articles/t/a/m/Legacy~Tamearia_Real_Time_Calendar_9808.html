@@ -1,0 +1,364 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Tamearia Real Time Calendar - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Tamearia Real Time Calendar</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>The real time calendar for Tamearia turned out to be more complicated to code than I realized. Fortunately I didn't have to store any actual calendar data here, I used the current date and the day of the week and worked backwards to figure out when the first day falls on.</p>
+<p>This calendar doesn't update at midnight, but it could easily be altered to. For Tamearia the level changes at midnight, so it will recalculate it when the next level loads.</p>
+<p>The main calendar class, which handles assigning dates and textures to each row of the calendar:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> Calendar <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>
+    <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span> <span class="kw4">int</span> NumDays, StartDayOfWeek, CurrentDayOfWeek;
+<span class="kw5">var</span> <span class="kw4">float</span> CurrentDay;
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">edfindable</span> CalendarMesh CalendarMesh<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, MonthMesh; <span class="co1">// The mapper places dummy actors in the level.</span>
+                                                          <span class="co1">// This gives a lot of freedom for customization.</span>
+<span class="kw5">var</span> <a href="/Texture"><span class="kw10">texture</span></a> RightTexture<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, LeftTexture<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, FullTexture, EmptyTexture; <span class="co1">// Accounts for all possible combinations.</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i, m;
+    <span class="kw5">local</span> <span class="kw4">float</span> YearF;
+ 
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    MonthMesh.<span class="me1">bMonthMesh</span> = <span class="kw9">true</span>;
+    MonthMesh.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = EmptyTexture; <span class="co1">// Clear the month mesh's texture so there's no grid.</span>
+    <span class="kw1">switch</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Month</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">case</span> <span class="nu0">1</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"January"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">2</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"February"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">3</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"March"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">4</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"April"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">5</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"May"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">6</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"June"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">7</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"July"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">8</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"August"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">9</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"September"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">10</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"October"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">11</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"November"</span>; <span class="kw1">break</span>;
+        <span class="kw1">case</span> <span class="nu0">12</span>: MonthMesh.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"December"</span>; <span class="kw1">break</span>;
+    <span class="br0">}</span>
+ 
+    CurrentDayOfWeek = <span class="kw8">Level</span>.<span class="me1">DayOfWeek</span> + <span class="nu0">1</span>; <span class="co1">// Use 1-7, not 0-6 (easier for the math calculations).</span>
+    CurrentDay = <span class="kw8">Level</span>.<span class="me1">Day</span>;
+    NumDays = <span class="nu0">31</span>; <span class="co1">// Default, will be changed later.</span>
+    YearF = <span class="kw8">Level</span>.<span class="me1">Year</span>;
+    <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Month</span> == <span class="nu0">2</span><span class="br0">)</span> <span class="co1">// Account for leap years.</span>
+    <span class="br0">{</span>
+        NumDays = <span class="nu0">28</span>;
+ 
+        <span class="co1">// Leap years are every 4 years EXCEPT every 100 years is not, EXCEPT every 400 years is.  :S</span>
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>YearF/<span class="nu0">400</span><span class="br0">)</span> == YearF/<span class="nu0">400</span><span class="br0">)</span>
+            NumDays = <span class="nu0">29</span>;
+        <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>YearF/<span class="nu0">4</span><span class="br0">)</span> == YearF/<span class="nu0">4</span> &amp;&amp; !<span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>YearF/<span class="nu0">100</span><span class="br0">)</span> == YearF/<span class="nu0">100</span><span class="br0">)</span><span class="br0">)</span>
+            NumDays = <span class="nu0">29</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Month</span> == <span class="nu0">4</span> || <span class="kw8">Level</span>.<span class="me1">Month</span> == <span class="nu0">6</span> || <span class="kw8">Level</span>.<span class="me1">Month</span> == <span class="nu0">9</span> || <span class="kw8">Level</span>.<span class="me1">Month</span> == <span class="nu0">11</span><span class="br0">)</span>
+        NumDays = <span class="nu0">30</span>;  <span class="co1">// Everyone knows the rhyme, right?</span>
+ 
+    <span class="co1">// This block of code figures out what day the 1st of the month falls on.</span>
+    i = <span class="kw4">int</span><span class="br0">(</span>CurrentDay/<span class="nu0">7</span><span class="br0">)</span>;
+    StartDayOfWeek = CurrentDayOfWeek - <span class="br0">(</span><span class="br0">(</span>CurrentDay - <span class="br0">(</span><span class="nu0">7</span>*i<span class="br0">)</span><span class="br0">)</span> - <span class="nu0">1</span><span class="br0">)</span>;
+    <span class="kw1">if</span><span class="br0">(</span>StartDayOfWeek &lt; <span class="nu0">1</span><span class="br0">)</span>
+        StartDayOfWeek += <span class="nu0">7</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>StartDayOfWeek == <span class="nu0">1</span><span class="br0">)</span>  <span class="co1">// Assign the right grid texture based on when the 1st is.</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FullTexture;
+    <span class="kw1">else</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = RightTexture<span class="br0">[</span><span class="nu0">7</span>-StartDayOfWeek<span class="br0">]</span>;
+ 
+    <span class="co1">// This block of code tells each calendar row what days to display.</span>
+    <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">8</span>;m&gt;StartDayOfWeek;m--<span class="br0">)</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="nu0">-2</span><span class="br0">]</span> = <span class="st0">""</span>@m - StartDayOfWeek;
+    <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">0</span>;m&lt;<span class="nu0">7</span>;m++<span class="br0">)</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="br0">]</span> = <span class="st0">""</span>@<span class="br0">(</span>m + <span class="nu0">9</span><span class="br0">)</span> - StartDayOfWeek;
+    <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">0</span>;m&lt;<span class="nu0">7</span>;m++<span class="br0">)</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="br0">]</span> = <span class="st0">""</span>@<span class="br0">(</span>m + <span class="nu0">16</span><span class="br0">)</span> - StartDayOfWeek;
+    <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">0</span>;m&lt;<span class="nu0">7</span>;m++<span class="br0">)</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="br0">]</span> = <span class="st0">""</span>@<span class="br0">(</span>m + <span class="nu0">23</span><span class="br0">)</span> - StartDayOfWeek;
+ 
+    <span class="co1">// This block is specifically for the last row.</span>
+    <span class="kw1">if</span><span class="br0">(</span>NumDays - <span class="br0">(</span><span class="nu0">21</span> + <span class="br0">(</span><span class="nu0">8</span> - StartDayOfWeek<span class="br0">)</span><span class="br0">)</span> &gt; <span class="nu0">6</span><span class="br0">)</span>
+    <span class="br0">{</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FullTexture;
+        <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">0</span>;m&lt;<span class="nu0">7</span>;m++<span class="br0">)</span>
+            CalendarMesh<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="br0">]</span> = <span class="st0">""</span>@<span class="br0">(</span>m + <span class="nu0">30</span><span class="br0">)</span> - StartDayOfWeek;
+        <span class="kw1">if</span><span class="br0">(</span>NumDays - <span class="br0">(</span><span class="nu0">28</span> + <span class="br0">(</span><span class="nu0">8</span> - StartDayOfWeek<span class="br0">)</span><span class="br0">)</span> &gt; <span class="nu0">0</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = LeftTexture<span class="br0">[</span>NumDays - <span class="br0">(</span><span class="nu0">28</span> + <span class="br0">(</span><span class="nu0">8</span> - StartDayOfWeek<span class="br0">)</span><span class="br0">)</span> - <span class="nu0">1</span><span class="br0">]</span>;
+            <span class="kw1">if</span><span class="br0">(</span>NumDays == <span class="nu0">30</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"30"</span>;
+                CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = LeftTexture<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+            <span class="br0">}</span>
+            <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>NumDays == <span class="nu0">31</span><span class="br0">)</span>
+            <span class="br0">{</span>
+                <span class="kw1">if</span><span class="br0">(</span>StartDayOfWeek == <span class="nu0">6</span><span class="br0">)</span>
+                    CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"31"</span>;
+                <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>StartDayOfWeek == <span class="nu0">7</span><span class="br0">)</span>
+                <span class="br0">{</span>
+                    CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = <span class="st0">"30"</span>;
+                    CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span> = <span class="st0">"31"</span>;
+                <span class="br0">}</span>
+            <span class="br0">}</span>
+        <span class="br0">}</span>
+        <span class="kw1">else</span>
+            CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = EmptyTexture;
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = LeftTexture<span class="br0">[</span>NumDays - <span class="br0">(</span><span class="nu0">21</span> + <span class="br0">(</span><span class="nu0">8</span> - StartDayOfWeek<span class="br0">)</span><span class="br0">)</span> - <span class="nu0">1</span><span class="br0">]</span>;
+        <span class="kw1">for</span><span class="br0">(</span>m=<span class="nu0">0</span>;m&lt;<span class="nu0">7</span>;m++<span class="br0">)</span>
+        <span class="br0">{</span>
+            <span class="kw1">if</span><span class="br0">(</span><span class="br0">(</span>m + <span class="nu0">30</span><span class="br0">)</span> - StartDayOfWeek &lt;= NumDays<span class="br0">)</span>
+            CalendarMesh<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>.<span class="me1">Dates</span><span class="br0">[</span>m<span class="br0">]</span> = <span class="st0">""</span>@<span class="br0">(</span>m + <span class="nu0">30</span><span class="br0">)</span> - StartDayOfWeek;
+        <span class="br0">}</span>
+        CalendarMesh<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = EmptyTexture;
+    <span class="br0">}</span>
+ 
+    <span class="co1">// These rows are always full on a calendar.</span>
+    CalendarMesh<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FullTexture;
+    CalendarMesh<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FullTexture;
+    CalendarMesh<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>.<span class="me1">Skins</span><span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = FullTexture;
+ 
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    RightTexture<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar1Right'</span>
+    RightTexture<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar2Right'</span>
+    RightTexture<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar3Right'</span>
+    RightTexture<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar4Right'</span>
+    RightTexture<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar5Right'</span>
+    RightTexture<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar6Right'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar1Left'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar2Left'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar3Left'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar4Left'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar5Left'</span>
+    LeftTexture<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar6Left'</span>
+    FullTexture=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.CalendarFull'</span>
+    EmptyTexture=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.CalendarEmpty'</span>
+    bHidden=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Now the calendar mesh. Each mesh is one row of the calendar:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> CalendarMesh <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>
+    <span class="kw6">placeable</span>;
+ 
+<span class="co1">//Offsets used for the number and red X to center them.</span>
+<span class="kw5">var</span> <span class="kw4">int</span> Offsets<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>, RedOffset<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>, RedXScale<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>, RedXDate; <span class="co1">// Red X is used to mark the current day.</span>
+<span class="kw5">var</span> ScriptedTexture CalendarCanvas;
+<span class="kw5">var</span> <a href="/Material"><span class="kw10">Material</span></a>        CalendarCanvasBackground, RedX;
+<span class="kw5">var</span> Font            CalendarCanvasFont;
+<span class="kw5">var</span> <span class="kw4">string</span> Dates<span class="br0">[</span><span class="nu0">7</span><span class="br0">]</span>;
+<span class="kw5">var</span> <span class="kw4">bool</span> bMonthMesh; <span class="co1">// If I'm the month mesh, write the month on me.</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> i;
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+ 
+    <span class="co1">// Create a scripted texture I can write to.</span>
+    CalendarCanvas = ScriptedTexture<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">ObjectPool</span>.<span class="me1">AllocateObject</span><span class="br0">(</span><span class="kw5">class</span><span class="st0">'ScriptedTexture'</span><span class="br0">)</span><span class="br0">)</span>;
+    CalendarCanvas.<span class="me1">SetSize</span><span class="br0">(</span><span class="nu0">512</span>,<span class="nu0">64</span><span class="br0">)</span>;
+    CalendarCanvas.<span class="me1">Client</span> = <span class="kw8">Self</span>;
+    CalendarCanvasBackground = Skins<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>;
+    Skins<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span> = CalendarCanvas;
+ 
+    CalendarCanvasFont = Font<span class="br0">(</span><span class="kw7">DynamicLoadObject</span><span class="br0">(</span><span class="st0">"2k4Fonts.Verdana24"</span>, <span class="kw5">class</span><span class="st0">'Font'</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+    RedXDate = <span class="nu0">-1</span>; <span class="co1">// Default to off the calendar, in case the current date isn't on this row.</span>
+ 
+    <span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>;i&lt;<span class="nu0">7</span>;i++<span class="br0">)</span> <span class="co1">// Figure out what day to write the Red X to.</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span>i<span class="br0">]</span><span class="br0">)</span> == <span class="kw8">Level</span>.<span class="me1">Day</span><span class="br0">)</span>
+            RedXDate = i;
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw6">simulated</span> <span class="kw5">event</span> RenderTexture<span class="br0">(</span>ScriptedTexture Tex<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">int</span> SizeX,  SizeY;
+    <span class="kw5">local</span> <span class="kw4">color</span> BackColor, ForegroundColor;
+ 
+    ForegroundColor.<span class="me1">R</span>=<span class="nu0">0</span>;
+    ForegroundColor.<span class="me1">G</span>=<span class="nu0">0</span>;
+    ForegroundColor.<span class="me1">B</span>=<span class="nu0">0</span>;
+    ForegroundColor.<span class="me1">A</span>=<span class="nu0">255</span>;
+ 
+    BackColor.<span class="me1">R</span>=<span class="nu0">255</span>;
+    BackColor.<span class="me1">G</span>=<span class="nu0">255</span>;
+    BackColor.<span class="me1">B</span>=<span class="nu0">255</span>;
+    BackColor.<span class="me1">A</span>=<span class="nu0">0</span>;
+ 
+    Tex.<span class="me1">DrawTile</span><span class="br0">(</span><span class="nu0">0</span>, <span class="nu0">0</span>, Tex.<span class="me1">USize</span>, Tex.<span class="me1">VSize</span>, <span class="nu0">0</span>, <span class="nu0">0</span>, Tex.<span class="me1">USize</span>, Tex.<span class="me1">VSize</span>, CalendarCanvasBackground, BackColor<span class="br0">)</span>;
+ 
+    Tex.<span class="me1">TextSize</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, CalendarCanvasFont, SizeX, SizeY<span class="br0">)</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>bMonthMesh<span class="br0">)</span> <span class="co1">// Write the month to me.</span>
+    <span class="br0">{</span>
+        Tex.<span class="me1">DrawText</span><span class="br0">(</span><span class="nu0">55</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+    <span class="br0">}</span>
+    <span class="kw1">else</span> <span class="co1">// Different offsets for dates greater than 10.</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">0</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">1</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">2</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">3</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">4</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">5</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span><span class="kw4">int</span><span class="br0">(</span>Dates<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span><span class="br0">)</span> &lt; <span class="nu0">10</span><span class="br0">)</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+        <span class="kw1">else</span>
+            Tex.<span class="me1">DrawText</span><span class="br0">(</span>Offsets<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span><span class="nu0">-12</span>, <span class="nu0">15</span>, Dates<span class="br0">[</span><span class="nu0">6</span><span class="br0">]</span>, CalendarCanvasFont, ForegroundColor<span class="br0">)</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span>RedXDate &gt; <span class="nu0">-1</span><span class="br0">)</span> <span class="co1">// If the current date is not on this row, don't draw it.</span>
+        Tex.<span class="me1">DrawTile</span><span class="br0">(</span>RedOffset<span class="br0">[</span>RedXDate<span class="br0">]</span>, <span class="nu0">0</span>, RedXScale<span class="br0">[</span>RedXDate<span class="br0">]</span>, <span class="nu0">64</span>, <span class="nu0">0</span>, <span class="nu0">0</span>, <span class="nu0">64</span>, <span class="nu0">64</span>, RedX, BackColor<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">DefaultProperties</span>
+<span class="br0">{</span>
+    RedX=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.RedX'</span>
+    Offsets<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="nu0">55</span>
+    Offsets<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="nu0">120</span>
+    Offsets<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="nu0">180</span>
+    Offsets<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="nu0">245</span>
+    Offsets<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="nu0">304</span>
+    Offsets<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="nu0">363</span>
+    Offsets<span class="br0">(</span><span class="nu0">6</span><span class="br0">)</span>=<span class="nu0">420</span>
+    RedOffset<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="nu0">44</span>
+    RedOffset<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="nu0">108</span>
+    RedOffset<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="nu0">172</span>
+    RedOffset<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="nu0">234</span>
+    RedOffset<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="nu0">295</span>
+    RedOffset<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="nu0">355</span>
+    RedOffset<span class="br0">(</span><span class="nu0">6</span><span class="br0">)</span>=<span class="nu0">414</span>
+    RedXScale<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<span class="nu0">64</span>
+    RedXScale<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span>=<span class="nu0">64</span>
+    RedXScale<span class="br0">(</span><span class="nu0">2</span><span class="br0">)</span>=<span class="nu0">62</span>
+    RedXScale<span class="br0">(</span><span class="nu0">3</span><span class="br0">)</span>=<span class="nu0">61</span>
+    RedXScale<span class="br0">(</span><span class="nu0">4</span><span class="br0">)</span>=<span class="nu0">60</span>
+    RedXScale<span class="br0">(</span><span class="nu0">5</span><span class="br0">)</span>=<span class="nu0">59</span>
+    RedXScale<span class="br0">(</span><span class="nu0">6</span><span class="br0">)</span>=<span class="nu0">59</span>
+    Skins<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=<a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'TameariaTextures.Calendar3Left'</span> <span class="co1">// Default so the mapper can tell which way it's oriented.</span>
+    DrawType=DT_StaticMesh
+    StaticMesh=StaticMesh<span class="st0">'TameariaMeshes.Misc.TheCalendar'</span>
+    bEdShouldSnap=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The calendar meshes are just blocks long enough to hold 7 days on them.</p>
+<p>[[Image:Legacy_AngelMapperCalendar.jpeg|]]</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/a/m/Legacy%7ETamearia_Real_Time_Calendar_9808.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/a/m/Legacy_talk%7ETamearia_Real_Time_Calendar_c5ff.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Tamearia_Real_Time_Calendar">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:39, 15 May 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

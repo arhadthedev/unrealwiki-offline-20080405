@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Tamearia Teleport Effect - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Tamearia Teleport Effect</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is the teleporter class for Tamearia. Instead of just suddenly teleporting the player, it has a cartoonish collapsing/expanding circle effect.</p>
+<p>First, the teleporter itself:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> FadeOutTeleporter <span class="kw5">extends</span> TameariaObject
+    <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw6">edfindable</span> FadeOutTeleporter Destination;
+<span class="kw5">var</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> Shawna;
+ 
+<span class="kw6">simulated</span> <span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw6">super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>; <span class="co1">// TAMGame is set in the superclass TameariaObject.</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">event</span> Touch<span class="br0">(</span><a href="/Actor"><span class="kw10">Actor</span></a> Other<span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>Other == <span class="kw9">none</span> || Destination == <span class="kw9">none</span><span class="br0">)</span>
+                <span class="kw1">return</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span><a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span> != <span class="kw9">none</span> &amp;&amp; !Other.<span class="kw7">IsA</span><span class="br0">(</span><span class="st0">'Vehicle'</span><span class="br0">)</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            TAMGame.<span class="me1">TeleportingPlayer</span><span class="br0">(</span><span class="kw8">self</span><span class="br0">)</span>; <span class="co1">// Tells the game to start the fade out.</span>
+            Shawna = <a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">(</span>Other<span class="br0">)</span>;
+        <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> TeleportHer<span class="br0">(</span><span class="br0">)</span> <span class="co1">// Called through the Gametype from the HUD once the screen is faded out completely.</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">rotator</span> NewRot;
+ 
+    Shawna.<span class="me1">SetLocation</span><span class="br0">(</span>Destination.<span class="me1">Location</span><span class="br0">)</span>;
+    NewRot = Destination.<span class="me1">Rotation</span>;
+    NewRot.<span class="me1">Roll</span> = <span class="nu0">0</span>;
+    Shawna.<span class="me1">SetRotation</span><span class="br0">(</span>NewRot<span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    bCollideActors=<span class="kw9">True</span>
+    bDirectional=<span class="kw9">True</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Next, the code in the GameType:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TameariaGame <span class="kw5">extends</span> GameInfo
+        <span class="kw6">HideDropDown</span>
+        <span class="kw6">CacheExempt</span>
+        <span class="kw6">config</span><span class="br0">(</span>Tamearia<span class="br0">)</span>;
+ 
+<span class="kw5">var</span> <a href="/Pawn"><span class="kw10">Pawn</span></a> Shawna;
+<span class="kw5">var</span> FadeOutTeleporter FadeOutTeleporter;
+ 
+<span class="kw5">function</span> TeleportingPlayer<span class="br0">(</span>FadeOutTeleporter FOT<span class="br0">)</span> <span class="co1">// When the player hits a teleporter, stop them.</span>
+<span class="br0">{</span>
+    FadeOutTeleporter = FOT;
+    bDrawTeleport = <span class="kw9">true</span>; <span class="co1">// Tell the HUD to start the fade.</span>
+    Shawna.<span class="me1">GroundSpeed</span> = <span class="nu0">0</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DoTheTeleport<span class="br0">(</span><span class="br0">)</span> <span class="co1">// Once the HUD is faded, tell the teleporter to teleport the player.</span>
+<span class="br0">{</span>
+    FadeOutTeleporter.<span class="me1">TeleportHer</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> FinishedTeleportingPlayer<span class="br0">(</span><span class="br0">)</span> <span class="co1">// Once the fade in is complete, allow the player to move.</span>
+<span class="br0">{</span>
+    Shawna.<span class="me1">GroundSpeed</span> = Shawna.<span class="kw1">default</span>.<span class="me1">GroundSpeed</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Then, the final part of the script in the HUD:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> TameariaHUD <span class="kw5">extends</span> HudBase
+    <span class="kw6">config</span><span class="br0">(</span>TameariaUser<span class="br0">)</span>;
+ 
+<span class="kw5">var</span> TameariaGame TAMGame;
+ 
+<span class="kw5">var</span> <span class="kw4">float</span> TeleportPos;
+<span class="kw5">var</span> <span class="kw4">bool</span> bDrawTeleport, bReverseTeleportDraw;
+ 
+<span class="kw5">function</span> PostBeginPlay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    TAMGame = TameariaGame<span class="br0">(</span><span class="kw8">Level</span>.<span class="me1">Game</span><span class="br0">)</span>;
+    <span class="kw6">Super</span>.<span class="me1">PostBeginPlay</span><span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> DrawHUD<span class="br0">(</span>Canvas C<span class="br0">)</span>
+<span class="br0">{</span>
+    C.<span class="me1">SetDrawColor</span><span class="br0">(</span><span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span>,<span class="nu0">255</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span><span class="br0">(</span>TAMGame.<span class="me1">bDrawTeleport</span><span class="br0">)</span> <span class="co1">// If the gametype is set to teleport, acknowledge it and do the fade.</span>
+    <span class="br0">{</span>
+        bDrawTeleport = <span class="kw9">true</span>;
+        TAMGame.<span class="me1">bDrawTeleport</span>= <span class="kw9">false</span>;
+    <span class="br0">}</span>
+ 
+    <span class="kw1">if</span><span class="br0">(</span>bDrawTeleport<span class="br0">)</span>
+    <span class="br0">{</span>
+        C.<span class="me1">SetPos</span><span class="br0">(</span>C.<span class="me1">SizeX*TeleportPos</span>,C.<span class="me1">SizeY*TeleportPos</span><span class="br0">)</span>;
+ 
+        <span class="co1">// Draw the texture with the alpha'd hole cut out of it.</span>
+        C.<span class="me1">DrawTileScaled</span><span class="br0">(</span><a href="/Material"><span class="kw10">Material</span></a><span class="st0">'TameariaTextures.TeleportHUDEffect'</span>,
+                         <span class="br0">(</span>-<span class="br0">(</span>TeleportPos<span class="nu0">-0.5</span><span class="br0">)</span><span class="br0">)</span>*<span class="br0">(</span>C.<span class="me1">ClipX*</span><span class="nu0">2</span>/<span class="nu0">512</span><span class="br0">)</span>,<span class="br0">(</span>-<span class="br0">(</span>TeleportPos<span class="nu0">-0.5</span><span class="br0">)</span><span class="br0">)</span>*<span class="br0">(</span>C.<span class="me1">ClipY*</span><span class="nu0">2</span>/<span class="nu0">512</span><span class="br0">)</span><span class="br0">)</span>;
+ 
+        <span class="co1">// Draw borders around the alpha'd hole texture.</span>
+        <span class="kw1">if</span><span class="br0">(</span>TeleportPos &gt;= <span class="nu0">-0.1</span><span class="br0">)</span>
+        <span class="br0">{</span>
+            C.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Material"><span class="kw10">material</span></a><span class="st0">'UCGeneric.Black'</span>,TeleportPos*C.<span class="me1">SizeX</span>,C.<span class="me1">SizeY</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Material"><span class="kw10">material</span></a><span class="st0">'UCGeneric.Black'</span>,C.<span class="me1">SizeX</span>,TeleportPos*C.<span class="me1">SizeY</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">SetPos</span><span class="br0">(</span><span class="br0">(</span>TeleportPos*C.<span class="me1">SizeX</span><span class="br0">)</span>+<span class="br0">(</span>-<span class="br0">(</span>TeleportPos<span class="nu0">-0.5</span><span class="br0">)</span><span class="br0">)</span>*<span class="br0">(</span>C.<span class="me1">SizeX*</span><span class="nu0">2</span><span class="br0">)</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Material"><span class="kw10">material</span></a><span class="st0">'UCGeneric.Black'</span>,C.<span class="me1">SizeX*TeleportPos</span>,C.<span class="me1">SizeY</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            C.<span class="me1">SetPos</span><span class="br0">(</span><span class="nu0">0</span>,C.<span class="me1">SizeY</span>-<span class="br0">(</span>C.<span class="me1">SizeY*TeleportPos</span><span class="br0">)</span><span class="br0">)</span>;
+            C.<span class="me1">DrawTile</span><span class="br0">(</span><a href="/Material"><span class="kw10">material</span></a><span class="st0">'UCGeneric.Black'</span>,C.<span class="me1">SizeX</span>,C.<span class="me1">SizeY*TeleportPos</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw8">tick</span><span class="br0">(</span><span class="kw4">float</span> DeltaTime<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw1">if</span><span class="br0">(</span>bDrawTeleport<span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="kw1">if</span><span class="br0">(</span>!bReverseTeleportDraw<span class="br0">)</span>
+            TeleportPos += DeltaTime; <span class="co1">// Circle collapsing.</span>
+        <span class="kw1">else</span>
+            TeleportPos -= DeltaTime; <span class="co1">// Circle expanding.</span>
+        <span class="kw1">if</span><span class="br0">(</span>TeleportPos &gt; <span class="nu0">0.5</span><span class="br0">)</span> <span class="co1">// If the circle is collapsed, tell the gametype to teleport the player, and expand the circle.</span>
+        <span class="br0">{</span>
+            bReverseTeleportDraw = <span class="kw9">true</span>;
+            TAMGame.<span class="me1">DoTheTeleport</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+        <span class="kw1">if</span><span class="br0">(</span>bReverseTeleportDraw &amp;&amp; TeleportPos &lt; <span class="nu0">0.25</span><span class="br0">)</span> <span class="co1">// Let the player move a bit before the circle is done expanding.</span>
+            TAMGame.<span class="me1">FinishedTeleportingPlayer</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span>TeleportPos &lt; <span class="nu0">-0.5</span><span class="br0">)</span> <span class="co1">// Reset everything once the teleport is finished.</span>
+        <span class="br0">{</span>
+            TeleportPos = <span class="nu0">-0.5</span>;
+            bReverseTeleportDraw = <span class="kw9">False</span>;
+            bDrawTeleport = <span class="kw9">false</span>;
+        <span class="br0">}</span>
+    <span class="br0">}</span>
+<span class="br0">}</span>
+ 
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    TeleportPos=<span class="nu0">-0.5</span>
+<span class="br0">}</span>
+</pre></div>
+<p>[[Image:Legacy_AngelMapperTeleportEffect.jpeg|]]</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/a/m/Legacy%7ETamearia_Teleport_Effect_b1c9.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/a/m/Legacy_talk%7ETamearia_Teleport_Effect_0a8d.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Tamearia_Teleport_Effect">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:42, 15 May 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

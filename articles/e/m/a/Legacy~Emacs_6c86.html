@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Emacs - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Emacs</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>Emacs can do everything. Check out shell-mode or compile-mode for compiling unrealscript, and launching unreal.</p>
+<p>Here is the source of unrealscript-mode. Suggestions, bug reports, etc, welcome,</p>
+<pre>
+;;; unrealscript-mode.el → unrealscript mode derived from cc-mode
+
+;; Author:     2007 John Connors
+;; Maintainer: John Connors &lt;johnc at yagc dot co dot uk&gt;
+;; Created:    March 2007
+;; Version:    See cc-mode.el
+;; Keywords:   unrealscript cc-mode languages oop
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2 of the License, or
+;; (at your option) any later version.
+;; 
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;; 
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+
+;; Note: The interface used in this file requires CC Mode 5.30 or
+;; later.
+
+;;; Code:
+
+(require 'cc-mode)
+
+;; These are only required at compile time to get the sources for the
+;; language constants.  (The cc-fonts require and the font-lock
+;; related constants could additionally be put inside an
+;; (eval-after-load "font-lock" ...) but then some trickery is
+;; necessary to get them compiled.)
+(eval-when-compile
+  (require 'cc-langs)
+  (require 'cc-fonts))
+
+(eval-and-compile
+  ;; Make our mode known to the language constant system.  Use Java
+  ;; mode as the fallback for the constants we don't change here.
+  ;; This needs to be done also at compile time since the language
+  ;; constants are evaluated then.
+  (c-add-language 'unrealscript-mode 'java-mode))
+
+;; unrealscript has no boolean but a string and a vector type.
+(c-lang-defconst c-primitive-type-kwds
+  unrealscript 
+  (append 
+   '("bool" "name" "object" "actor" "string" "vector")
+   (delete "boolean"
+           ;; Use append to not be destructive on the
+           ;; return value below.
+           (append
+            ;; Due to the fallback to Java, we need not give
+            ;; a language to `c-lang-const'.
+            (c-lang-const c-primitive-type-kwds)
+            nil))))
+
+(c-lang-defconst c-type-modifier-keywds
+   unrealscript
+    (append 
+      '("config" "deprecated" "edfindable" "editconstarray" 
+        "editinline" "export" "noexport" "globalconfig" 
+        "localized" "const" "editconst" "input" "travel" 
+        "skip" "export") 
+      (c-lang-const c-type-modifier-keywds) 
+      nil))
+
+
+;;   "Keywords introducing extra declaration specifiers in the region
+;; between the header and the body \(i.e. the \"K&amp;R-region\") in
+;; declarations."
+
+(c-lang-defconst c-postfix-decl-spec-kwds
+  unrealscript
+  (append
+   '("abstract" "native" "nativereplication" "nousercreate" "within" 
+     "perobjectconfig" "transient" "noexport" "dependson" "exportstructs" 
+     "cacheexempt" "hidedropdown" "parseconfig" "dontcollapsecategories"
+     "collapsecategories" "hidecategories" "showcategories" "placeable"
+     "notplaceable" "instanced")
+   (c-lang-const c-postfix-decl-spec-kwds)
+   nil))
+
+;;   "Keywords that may be followed by a comma separated list of type
+;; identifiers, where each optionally can be prefixed by keywords.  (Can
+;; also be used for the special case when the list can contain only one
+;; element.)"
+(c-lang-defconst c-type-list-kwds
+  unrealscript
+  (cons "within"
+        (c-lang-const c-type-list-kwds)))
+
+;; Function declarations begin with "function" in this language.
+;; There's currently no special keyword list for that in CC Mode, but
+;; treating it as a modifier works fairly well.
+(c-lang-defconst c-modifier-kwds
+ unrealscript 
+  (cons
+    "function" 
+   (c-lang-const c-modifier-kwds)))
+
+
+(c-lang-defconst c-block-decls-with-vars
+  unrealscript
+  (cons 
+   "state" 
+        (c-lang-const c-other-block-decl-kwds)))
+
+;; "Keywords that may be followed by a parenthesis expression that doesn't
+;; contain type identifiers."
+(c-lang-defconst c-paren-nontype-kwds
+  unrealscript
+  (append 
+   '("state" "var")
+   (c-lang-const c-paren-nontype-kwds)
+   nil))
+
+
+;;   "Keywords that may be followed by a parenthesis expression containing
+;; type identifiers separated by arbitrary tokens."
+(c-lang-defconst c-paren-type-kwds
+  unrealscript
+  (append
+   '("config" "dependson")
+   (c-lang-const c-paren-type-kwds)))
+
+;; ;; No cpp in this language, but there's still a "#exec" directive to
+;; ;; fontify.  (The definitions for the extra keywords above are enough
+;; ;; to incorporate them into the fontification regexps for types and
+;; ;; keywords, so no additional font-lock patterns are required.)
+;; (c-lang-defconst c-cpp-matchers
+;;   unrealscript 
+;;       ;; Use the eval form for `font-lock-keywords' to be able to use
+;;       ;; the `c-preprocessor-face-name' variable that maps to a
+;;       ;; suitable face depending on the (X)Emacs version.
+;;       '(eval . (list "^\\s *\\(#exec\\)\\&gt;\\(.*\\)"
+;;                   (list 1 c-preprocessor-face-name)
+;;                   '(2 font-lock-string-face))))
+
+(defcustom unrealscript-font-lock-extra-types nil
+  "*List of extra types (aside from the type keywords) to recognize in Unrealscript mode.
+Each list item should be a regexp matching a single identifier.")
+
+(defconst unrealscript-font-lock-keywords-1 
+  (c-lang-const c-matchers-1 unrealscript)
+  "Minimal highlighting for UNREALSCRIPT mode.")
+
+(defconst unrealscript-font-lock-keywords-2 
+  (c-lang-const c-matchers-2 unrealscript)
+  "Fast normal highlighting for UNREALSCRIPT mode.")
+
+(defconst unrealscript-font-lock-keywords-3 
+  (c-lang-const c-matchers-3 unrealscript)
+  "Accurate normal highlighting for UNREALSCRIPT mode.")
+
+(defvar unrealscript-font-lock-keywords unrealscript-font-lock-keywords-3
+  "Default expressions to highlight in UNREALSCRIPT mode.")
+
+(defvar unrealscript-mode-syntax-table nil
+  "Syntax table used in unrealscript-mode buffers.")
+(or unrealscript-mode-syntax-table
+    (setq unrealscript-mode-syntax-table
+          (funcall (c-lang-const c-make-mode-syntax-table unrealscript))))
+
+(defvar unrealscript-mode-abbrev-table nil
+  "Abbreviation table used in unrealscript-mode buffers.")
+
+(c-define-abbrev-table 'unrealscript-mode-abbrev-table
+  ;; Keywords that if they occur first on a line might alter the
+  ;; syntactic context, and which therefore should trig reindentation
+  ;; when they are completed.
+  '(("else" "else" c-electric-continued-statement 0)
+    ("while" "while" c-electric-continued-statement 0)))
+
+(defvar unrealscript-mode-map (let ((map (c-make-inherited-keymap)))
+                      ;; Add bindings which are only useful for UNREALSCRIPT
+                      map)
+  "Keymap used in unrealscript-mode buffers.")
+
+(easy-menu-define unrealscript-menu unrealscript-mode-map "UNREALSCRIPT Mode Commands"
+                  ;; Can use `unrealscript' as the language for `c-mode-menu'
+                  ;; since its definition covers any language.  In
+                  ;; this case the language is used to adapt to the
+                  ;; nonexistence of a cpp pass and thus removing some
+                  ;; irrelevant menu alternatives.
+                  (cons "UNREALSCRIPT" (c-lang-const c-mode-menu unrealscript)))
+
+;;;###Autoload
+(add-to-list 'auto-mode-alist '("\\.uc\\'" . unrealscript-mode))
+
+;;;###autoload
+(defun unrealscript-mode ()
+  "Major mode for editing UNREALSCRIPT UnrealScript is a
+Java-like object-orientated programming (OOP) language created by
+Epic Games for programming in-game content for the UnrealEngine.
+ 
+The hook `c-mode-common-hook' is run with no args at mode
+initialization, then `unrealscript-mode-hook'.
+
+Key bindings:
+\\{unrealscript-mode-map}"
+  (interactive)
+  (kill-all-local-variables)
+  (c-initialize-cc-mode t)
+  (set-syntax-table unrealscript-mode-syntax-table)
+  (setq major-mode 'unrealscript-mode
+        mode-name "UnrealScript"
+        local-abbrev-table unrealscript-mode-abbrev-table
+        abbrev-mode t)
+  (use-local-map c-mode-map)
+  ;; `c-init-language-vars' is a macro that is expanded at compile
+  ;; time to a large `setq' with all the language variables and their
+  ;; customized values for our language.
+  (c-init-language-vars unrealscript-mode)
+  ;; `c-common-init' initializes most of the components of a CC Mode
+  ;; buffer, including setup of the mode menu, font-lock, etc.
+  ;; There's also a lower level routine `c-basic-common-init' that
+  ;; only makes the necessary initialization to get the syntactic
+  ;; analysis and similar things working.
+  (c-common-init 'unrealscript-mode)
+  (easy-menu-add unrealscript-menu)
+  (run-hooks 'c-mode-common-hook)
+  (run-hooks 'unrealscript-mode-hook)
+  (setq font-lock-keywords-case-fold-search t)
+  (c-update-modeline))
+
+(provide 'unrealscript-mode)
+</pre>
+<!-- 
+NewPP limit report
+Preprocessor node count: 4/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/e/m/a/Legacy%7EEmacs_6c86.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/e/m/a/Legacy_talk%7EEmacs_0324.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Emacs">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 18:46, 4 March 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

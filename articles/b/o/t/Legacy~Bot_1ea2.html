@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Bot - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Bot</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>&#160;:: <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> &gt;&gt; <a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> &gt;&gt; <a href="../../../../articles/a/i/c/Legacy%7EAIController_8307.html" title="Legacy:AIController">AIController</a> &gt;&gt; <a href="../../../../articles/s/c/r/Legacy%7EScriptedController_0d73.html" title="Legacy:ScriptedController">ScriptedController</a> &gt;&gt; Bot</div>
+<p>The Bot class contains most of the details of the AI implementation, except for team-related functions which are mostly handled by the <a href="../../../../articles/s/q/u/Legacy%7ESquadAI_2465.html" title="Legacy:SquadAI">SquadAI</a>. It also has some game-specific code, referencing TransLauncher for translocator hopping (that is, using the translocator just to get you somewhere faster), and <a href="../../../../articles/b/a/l/Legacy%7EBallLauncher_12e9.html" title="Legacy:BallLauncher">BallLauncher</a> for self-passing in Bombing Run.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Properties"><span class="tocnumber">1</span> <span class="toctext">Properties</span></a>
+<ul>
+<li class="toclevel-2"><a href="#AI_Magic_Numbers"><span class="tocnumber">1.1</span> <span class="toctext">AI Magic Numbers</span></a></li>
+<li class="toclevel-2"><a href="#AI_Flags"><span class="tocnumber">1.2</span> <span class="toctext">AI Flags</span></a></li>
+<li class="toclevel-2"><a href="#Translocating"><span class="tocnumber">1.3</span> <span class="toctext">Translocating</span></a></li>
+<li class="toclevel-2"><a href="#Messages"><span class="tocnumber">1.4</span> <span class="toctext">Messages</span></a></li>
+<li class="toclevel-2"><a href="#Advanced_AI_Attributes"><span class="tocnumber">1.5</span> <span class="toctext">Advanced AI Attributes</span></a></li>
+<li class="toclevel-2"><a href="#Modifiable_AI_Attributes"><span class="tocnumber">1.6</span> <span class="toctext">Modifiable AI Attributes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Team_AI_Attributes"><span class="tocnumber">2</span> <span class="toctext">Team AI Attributes</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Scripted_Sequences"><span class="tocnumber">2.1</span> <span class="toctext">Scripted Sequences</span></a></li>
+<li class="toclevel-2"><a href="#ChooseAttachMode.28.29_state"><span class="tocnumber">2.2</span> <span class="toctext">ChooseAttachMode() state</span></a></li>
+<li class="toclevel-2"><a href="#Inventory_Search"><span class="tocnumber">2.3</span> <span class="toctext">Inventory Search</span></a></li>
+<li class="toclevel-2"><a href="#Weapon_Check"><span class="tocnumber">2.4</span> <span class="toctext">Weapon Check</span></a></li>
+<li class="toclevel-2"><a href="#1vs1_Enemy_Location_Model"><span class="tocnumber">2.5</span> <span class="toctext">1vs1 Enemy Location Model</span></a></li>
+<li class="toclevel-2"><a href="#ReviewJumpSpots"><span class="tocnumber">2.6</span> <span class="toctext">ReviewJumpSpots</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Enums"><span class="tocnumber">3</span> <span class="toctext">Enums</span></a>
+<ul>
+<li class="toclevel-2"><a href="#EScriptFollow"><span class="tocnumber">3.1</span> <span class="toctext">EScriptFollow</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Known_Subclasses"><span class="tocnumber">4</span> <span class="toctext">Known Subclasses</span></a></li>
+<li class="toclevel-1"><a href="#Related_Topics"><span class="tocnumber">5</span> <span class="toctext">Related Topics</span></a></li>
+<li class="toclevel-1"><a href="#Related_Classes"><span class="tocnumber">6</span> <span class="toctext">Related Classes</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Related_Bot_AI_Classes"><span class="tocnumber">6.1</span> <span class="toctext">Related Bot AI Classes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Properties" id="Properties"></a></p>
+<h2><span class="mw-headline">Properties</span></h2>
+<p>Nearly all Bot properties are hidden. (exception: OrderNames)</p>
+<p><a name="AI_Magic_Numbers" id="AI_Magic_Numbers"></a></p>
+<h3><span class="mw-headline">AI Magic Numbers</span></h3>
+<dl>
+<dt>AngleConvert = 0.0000958738 (const)&#160;</dt>
+<dd>2*PI/65536</dd>
+</dl>
+<p><a name="AI_Flags" id="AI_Flags"></a></p>
+<h3><span class="mw-headline">AI Flags</span></h3>
+<dl>
+<dt>bool bCanFire&#160;</dt>
+<dd>used by TacticalMove and Charging states</dd>
+<dt>bool bStrafeDir</dt>
+<dt>bool bCanLeadTarget&#160;</dt>
+<dd>Lead target with projectile attack.</dd>
+<dt>bool bChangeDir&#160;</dt>
+<dd>Tactical move boolean.</dd>
+<dt>bool bFrustrated&#160;</dt>
+<dd>Being attacked in certain states causes frustration, and a frustrated bot is more aggressive.</dd>
+<dt>bool bInitLifeMessage&#160;</dt>
+<dd>Keeps track of whether the bot has sent messages like "I've got your back" or "I'm in position". Used by squad AIs.</dd>
+<dt>bool bReachedGatherPoint&#160;</dt>
+<dd>Used for gathering a squad at an <a href="../../../../articles/a/l/t/Legacy%7EAlternatePath_061e.html" title="Legacy:AlternatePath">AlternatePath</a>. Used by squad AIs.</dd>
+<dt>bool bFinalStretch&#160;</dt>
+<dd>True if the bot is almost at its destination objective (ie a flag base). Set by squad AIs.</dd>
+<dt>bool bJumpy&#160;</dt>
+<dd>Likes to jump around if true.</dd>
+<dt>bool bHasTranslocator</dt>
+<dt>bool bHasImpactHammer</dt>
+<dt>bool bTacticalDoubleJump&#160;</dt>
+<dd>True when the bot is going to double jump.</dd>
+<dt>bool bWasNearObjective&#160;</dt>
+<dd>Used by <tt><a href="../../../../articles/g/a/m/Legacy%7EGameObjective_a261.html" title="Legacy:GameObjective">GameObjective</a>.BotNearObjective</tt>.</dd>
+<dt>bool bPlannedShot&#160;</dt>
+<dd>Used for self-passing in Bombing Run.</dd>
+<dt>bool bHasFired&#160;</dt>
+<dd>The bot has recently fired its weapon.</dd>
+<dt>bool bForcedDirection&#160;</dt>
+<dd>Keeps the bot moving in the same direction for tactical moves.</dd>
+<dt>bool bFireSuccess&#160;</dt>
+<dd>Determined by the <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>'s <tt>BotFire</tt> method, which indicates if the weapon actually fired.</dd>
+<dt>bool bStoppedFiring&#160;</dt>
+<dd>Set to true in the <tt>StopFiring</tt> method.</dd>
+<dt>bool bEnemyIsVisible</dt>
+<dt>bool bTranslocatorHop&#160;</dt>
+<dd>Used during a translocator hop maneuver. Also referenced by TransLauncher.</dd>
+<dt>bool bEnemyEngaged&#160;</dt>
+<dd>Used by <a href="../../../../articles/s/q/u/Legacy%7ESquadAI_2465.html" title="Legacy:SquadAI">SquadAI</a> when finding defense scripts.</dd>
+<dt>bool bMustCharge&#160;</dt>
+<dd>Used in <tt>FightEnemy</tt> to determine if the bot should charge the enemy while attacking.</dd>
+<dt>bool bPursuingFlag&#160;</dt>
+<dd>Used by <a href="../../../../articles/c/t/f/Legacy%7ECTFSquadAI_3f7f.html" title="Legacy:CTFSquadAI">CTFSquadAI</a>.</dd>
+<dt>bool bJustLanded&#160;</dt>
+<dd>The bot has just recently landed from a fall.</dd>
+<dt>bool bSingleTestSection&#160;</dt>
+<dd>Used in ReviewJumpSpots</dd>
+<dt>bool bRecommendFastMove&#160;</dt>
+<dd>One of the factors in deciding whether to do a translocator hop in <tt>FaceActor</tt>. May also be set by the squad AI (as in <a href="../../../../articles/b/o/m/Legacy%7EBombingRunSquadAI_37cb.html" title="Legacy:BombingRunSquadAI">BombingRunSquadAI</a>).</dd>
+</dl>
+<p><a name="Translocating" id="Translocating"></a></p>
+<h3><span class="mw-headline">Translocating</span></h3>
+<dl>
+<dt>actor TranslocationTarget&#160;</dt>
+<dd>The actor at which the bot is shooting its translocator. Used for translocator hopping, and also set by <a href="../../../../articles/j/u/m/Legacy%7EJumpSpot_af27.html" title="Legacy:JumpSpot">JumpSpot</a>. Not to be confused with the TransBeacon property of the same name.</dd>
+<dt>actor RealTranslocationTarget&#160;</dt>
+<dd>There doesn't seem to be any instance where this is set differently from TranslocationTarget.</dd>
+<dt>actor ImpactTarget&#160;</dt>
+<dd>Used for impact/shield jumping.</dd>
+<dt>float TranslocFreq&#160;</dt>
+<dd>Set by TransLancher to help bots keep from exceeding its charge.</dd>
+<dt>float NextTranslocTime&#160;</dt>
+</dl>
+<p><a name="Messages" id="Messages"></a></p>
+<h3><span class="mw-headline">Messages</span></h3>
+<dl>
+<dt>name OldMessageType&#160;</dt>
+<dd>Type of last message sent. Used in the <tt>SendMessage</tt> function to keep from repeating the same message too much.</dd>
+<dt>int OldMessageID&#160;</dt>
+<dd>Last message ID, as with OldMessageType.</dd>
+</dl>
+<p><a name="Advanced_AI_Attributes" id="Advanced_AI_Attributes"></a></p>
+<h3><span class="mw-headline">Advanced AI Attributes</span></h3>
+<dl>
+<dt>vector HidingSpot&#160;</dt>
+<dd>Used to track down enemies after losing sight of them.</dd>
+<dt>float Aggressiveness&#160;</dt>
+<dd>0.0 to 1.0 (typically)</dd>
+<dt>float LastAttractCheck&#160;</dt>
+<dt><a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> BlockedPath&#160;</dt>
+<dt>float AcquireTime&#160;</dt>
+<dd>time at which current enemy was acquired</dd>
+<dt>float Aggression</dt>
+<dt>float LoseEnemyCheckTime&#160;</dt>
+<dd>Used in <tt>LoseEnemy</tt> to keep from calling <tt>Squad.LostEnemy()</tt> too often.</dd>
+<dt>actor StartleActor&#160;</dt>
+<dd>The last actor passed to <tt>Startle()</tt></dd>
+<dt>float StartTacticalTime&#160;</dt>
+<dd>Set in <tt>TacticalMove.PickDestination</tt></dd>
+</dl>
+<p><a name="Modifiable_AI_Attributes" id="Modifiable_AI_Attributes"></a></p>
+<h3><span class="mw-headline">Modifiable AI Attributes</span></h3>
+<dl>
+<dt>float BaseAlertness</dt>
+<dt>float Accuracy&#160;</dt>
+<dd>-1 to 1 (0 is default, higher is more accurate)</dd>
+<dt>float BaseAggressiveness&#160;</dt>
+<dd>0 to 1 (0.3 default, higher is more aggressive)</dd>
+<dt>float StrafingAbility&#160;</dt>
+<dd>-1 to 1 (higher uses strafing more)</dd>
+<dt>float CombatStyle&#160;</dt>
+<dd>-1 to 1 = low means tends to stay off and snipe, high means tends to charge and melee.</dd>
+<dt>float Tactics</dt>
+<dt>float TranslocUse&#160;</dt>
+<dd>0 to 1 - higher means more likely to use.</dd>
+<dt>float ReactionTime</dt>
+<dt>class&lt;<a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>&gt; FavoriteWeapon</dt>
+</dl>
+<p><a name="Team_AI_Attributes" id="Team_AI_Attributes"></a></p>
+<h2><span class="mw-headline">Team AI Attributes</span></h2>
+<dl>
+<dt>string GoalString&#160;</dt>
+<dd>For debugging - used to show what bot is thinking (with 'ShowDebug').</dd>
+<dt>string SoakString&#160;</dt>
+<dd>For debugging - shows problem when soaking.</dd>
+<dt><a href="../../../../articles/s/q/u/Legacy%7ESquadAI_2465.html" title="Legacy:SquadAI">SquadAI</a> Squad&#160;</dt>
+<dd>The <a href="../../../../articles/s/q/u/Legacy%7ESquadAI_2465.html" title="Legacy:SquadAI">SquadAI</a> that the bot is in.</dd>
+<dt><strong class="selflink">Bot</strong> NextSquadMember&#160;</dt>
+<dd>Linked list of members of this squad</dd>
+<dt>float ReTaskTime&#160;</dt>
+<dd>Time when squad will retask bot (delayed to avoid hitches).</dd>
+<dt>int FormationPosition&#160;</dt>
+<dd>Determined by the squad's RestingFormation.</dd>
+</dl>
+<p><a name="Scripted_Sequences" id="Scripted_Sequences"></a></p>
+<h3><span class="mw-headline">Scripted Sequences</span></h3>
+<dl>
+<dt><a href="../../../../articles/u/n/r/Legacy%7EUnrealScriptedSequence_7ca2.html" title="Legacy:UnrealScriptedSequence">UnrealScriptedSequence</a> GoalScript&#160;</dt>
+<dd><a href="../../../../articles/u/n/r/Legacy%7EUnrealScriptedSequence_7ca2.html" title="Legacy:UnrealScriptedSequence">UnrealScriptedSequence</a> bot is moving toward (assigned by <a href="../../../../articles/t/e/a/Legacy%7ETeamAI_69cc.html" title="Legacy:TeamAI">TeamAI</a>).</dd>
+<dt><a href="../../../../articles/u/n/r/Legacy%7EUnrealScriptedSequence_7ca2.html" title="Legacy:UnrealScriptedSequence">UnrealScriptedSequence</a> EnemyAcquisitionScript&#160;</dt>
+<dd>Determined by <tt>GoalScript</tt>.</dd>
+<dt><a href="../../../../articles/v/e/h/Legacy%7EVehicle_6bd9.html" title="Legacy:Vehicle">Vehicle</a> FormerVehicle&#160;</dt>
+<dt>enum&lt;EScriptFollow&gt; ScriptedCombat&#160;</dt>
+<dd>See the <tt>EScriptFollow</tt> enum.</dd>
+</dl>
+<p><a name="ChooseAttachMode.28.29_state" id="ChooseAttachMode.28.29_state"></a></p>
+<h3><span class="mw-headline">ChooseAttachMode() state</span></h3>
+<dl>
+<dt>int ChoosingAttackLevel&#160;</dt>
+<dd>Used to detect nested calls to <tt>WhatToDoNext</tt>.</dd>
+<dt>float ChooseAttackTime&#160;</dt>
+<dd>Used in <tt>WhatToDoNext</tt> to detect when it gets called too often (more than 3 times a second).</dd>
+<dt>int ChooseAttackCounter&#160;</dt>
+<dd>How many times <tt>WhatToDoNext</tt> has been called in the current level time second.</dd>
+<dt>float EnemyVisibilityTime&#160;</dt>
+<dd>The last time when the enemy became visible.</dd>
+<dt><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> VisibleEnemy&#160;</dt>
+<dd>Helps determine if the enemy is visible.</dd>
+<dt><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> OldEnemy&#160;</dt>
+<dd>Marked with "FIXME TEMP".</dd>
+<dt>float StopStartTime&#160;</dt>
+<dd>Time that the bot started standing still (sniping, waiting for mover, etc.).</dd>
+<dt>float LastRespawnTime&#160;</dt>
+<dd>Used by <a href="../../../../articles/c/t/f/Legacy%7ECTFSquadAI_3f7f.html" title="Legacy:CTFSquadAI">CTFSquadAI</a> in determining whether to pursue an enemy flag carrier.</dd>
+<dt>float FailedHuntTime&#160;</dt>
+<dd>The last time that the bot could not find a path to its enemy.</dd>
+<dt><a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> FailedHuntEnemy&#160;</dt>
+<dd>The last enemy to which the bot could not find a path.</dd>
+</dl>
+<p><a name="Inventory_Search" id="Inventory_Search"></a></p>
+<h3><span class="mw-headline">Inventory Search</span></h3>
+<dl>
+<dt>float LastSearchTime</dt>
+<dt>float LastSearchWeight</dt>
+<dt>float CampTime</dt>
+<dt>int LastTaunt</dt>
+<dt>int NumRandomJumps&#160;</dt>
+<dd>Attempts to free bot from being stuck.</dd>
+<dt>string ComboNames[4]</dt>
+</dl>
+<p><a name="Weapon_Check" id="Weapon_Check"></a></p>
+<h3><span class="mw-headline">Weapon Check</span></h3>
+<dl>
+<dt>float LastFireAttempt</dt>
+<dt>float GatherTime</dt>
+<dt>name OrderNames[16]</dt>
+<dt>name OldOrders</dt>
+<dt><a href="../../../../articles/c/o/n/Legacy%7EController_ee75.html" title="Legacy:Controller">Controller</a> OldOrderGiver</dt>
+</dl>
+<p><a name="1vs1_Enemy_Location_Model"></a></p>
+<h3><span class="mw-headline">1vs1 Enemy Location Model</span></h3>
+<dl>
+<dt>vector LastKnownPosition</dt>
+<dt>vector LastKillerPosition</dt>
+</dl>
+<p><a name="ReviewJumpSpots" id="ReviewJumpSpots"></a></p>
+<h3><span class="mw-headline">ReviewJumpSpots</span></h3>
+<dl>
+<dt><a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> TestStart</dt>
+<dt>int TestPath</dt>
+<dt>name TestLabel</dt>
+</dl>
+<p><a name="Enums" id="Enums"></a></p>
+<h2><span class="mw-headline">Enums</span></h2>
+<p><a name="EScriptFollow" id="EScriptFollow"></a></p>
+<h3><span class="mw-headline">EScriptFollow</span></h3>
+<dl>
+<dt>FOLLOWSCRIPT_IgnoreAllStimuli</dt>
+<dt>FOLLOWSCRIPT_IgnoreEnemies</dt>
+<dt>FOLLOWSCRIPT_StayOnScript</dt>
+<dt>FOLLOWSCRIPT_LeaveScriptForCombat</dt>
+</dl>
+<p><a name="Known_Subclasses" id="Known_Subclasses"></a></p>
+<h2><span class="mw-headline">Known Subclasses</span></h2>
+<ul>
+<li><a href="../../../../articles/x/b/o/Legacy%7EXBot_f2bb.html" title="Legacy:XBot">xBot</a>
+<ul>
+<li>InvasionBot</li>
+</ul>
+</li>
+</ul>
+<p><a name="Related_Topics" id="Related_Topics"></a></p>
+<h2><span class="mw-headline">Related Topics</span></h2>
+<ul>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Support_c519.html" title="Legacy:Bot Support">Bot Support</a> – Main topic for bot support
+<ul>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Pathing_6d68.html" title="Legacy:Bot Pathing">Bot Pathing</a> – Concepts and elements of a bot path network
+<ul>
+<li><a href="../../../../articles/b/a/s/Legacy%7EBasic_Bot_Pathing_66cc.html" title="Legacy:Basic Bot Pathing">Basic Bot Pathing</a> – A tutorial for basic bot pathing</li>
+</ul>
+</li>
+<li><a href="../../../../articles/s/t/r/Legacy%7EStrategic_Bots_a71d.html" title="Legacy:Strategic Bots">Strategic Bots</a> – Advanced bot support
+<ul>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_And_Using_ScriptedActions_53bc.html" title="Legacy:Creating And Using ScriptedActions">Creating And Using ScriptedActions</a></li>
+<li><a href="../../../../articles/c/r/e/Legacy%7ECreating_A_Defense_Point_In_UT200x_b148.html" title="Legacy:Creating A Defense Point In UT200x">Creating A Defense Point In UT200x</a></li>
+</ul>
+</li>
+<li><a href="../../../../articles/b/o/t/Legacy%7EBot_Mind_425a.html" title="Legacy:Bot Mind">Bot Mind</a> – Understanding the bots</li>
+<li><a href="../../../../articles/t/e/s/Legacy%7ETesting_Botplay_7e2c.html" title="Legacy:Testing Botplay">Testing Botplay</a> – Ensuring reliable bot support</li>
+</ul>
+</li>
+</ul>
+<p><a name="Related_Classes" id="Related_Classes"></a></p>
+<h2><span class="mw-headline">Related Classes</span></h2>
+<ul>
+<li><a href="../../../../articles/c/o/n/Legacy%7EController_Overview_ec80.html" title="Legacy:Controller Overview">Controller Overview</a></li>
+<li><a href="../../../../articles/a/l/t/Legacy%7EAlternatePath_061e.html" title="Legacy:AlternatePath">AlternatePath</a></li>
+<li><a href="../../../../articles/s/c/r/Legacy%7EScriptedSequence_4caa.html" title="Legacy:ScriptedSequence">ScriptedSequence</a></li>
+<li><a href="../../../../articles/u/n/r/Legacy%7EUnrealScriptedSequence_7ca2.html" title="Legacy:UnrealScriptedSequence">UnrealScriptedSequence</a></li>
+</ul>
+<p><a name="Related_Bot_AI_Classes" id="Related_Bot_AI_Classes"></a></p>
+<h3><span class="mw-headline">Related Bot AI Classes</span></h3>
+<p>The following classes and subclasses thereof are involved in UT200x bot support AI. Certain game objects have AI components telling bots what to do with them.</p>
+<ul>
+<li><a href="../../../../articles/t/e/a/Legacy%7ETeamAI_69cc.html" title="Legacy:TeamAI">TeamAI</a> - Creates squads, assigns bots to them and changes the objectives of squads based on the objectives of the <a href="../../../../articles/g/a/m/Legacy%7EGametype_98de.html" title="Legacy:Gametype">gametype</a>.</li>
+<li><a href="../../../../articles/s/q/u/Legacy%7ESquadAI_2465.html" title="Legacy:SquadAI">SquadAI</a> - Team of bots following a Squad Leader.</li>
+<li><a href="../../../../articles/g/a/m/Legacy%7EGameObjective_a261.html" title="Legacy:GameObjective">GameObjective</a> - Immobile (though possibly destructible) markers for relevant places in a map: CTF flag bases, Bombing Run bomb spawn points, goal hoops, Domination control points and so on.</li>
+<li><a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a> - Weapon inventory items.</li>
+<li><a href="../../../../articles/n/a/v/Legacy%7ENavigationPoint_80ac.html" title="Legacy:NavigationPoint">NavigationPoint</a> - Various NavigationPoints, like <a href="../../../../articles/d/o/o/Legacy%7EDoor_dba5.html" title="Legacy:Door">Door</a>, <a href="../../../../articles/l/i/f/Legacy%7ELiftExit_8f23.html" title="Legacy:LiftExit">LiftExit</a>, etc., have code or critical properties that work with other bot support actors.</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SuperApe:</b> Removed "function description links" to other pages. Only <a href="../../../../articles/b/o/t/Legacy%7EBot_Weapon_Management_a5c8.html" title="Legacy:Bot/Weapon Management">Bot/Weapon Management</a> was made and it was utterly useless. Added To Do tag. Filled in all property variable types.</p>
+<hr />
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> – Add functions definitions.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 61/1000000
+Post-expand include size: 251/2097152 bytes
+Template argument size: 186/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2003%29_1edb.html" title="Category:Legacy Class (UT2003)">Legacy Class (UT2003)</a></span> | <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Class_%28UT2004%29_5784.html" title="Category:Legacy Class (UT2004)">Legacy Class (UT2004)</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/b/o/t/Legacy%7EBot_1ea2.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/b/o/t/Legacy_talk%7EBot_95f5.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Bot">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 14:52, 3 July 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Inbox - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Inbox</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This is a page for material that doesn't yet have a home. Add anything you like here, and seasoned contributors will at some point find it a home elsewhere in the Wiki. To get started, click the "Edit text of this page" link at the bottom of this page.</p>
+<p><a name="Example" id="Example"></a></p>
+<h2><span class="mw-headline">Example</span></h2>
+<p>This is the body text. Here's a link to the <a href="../../../../articles/n/e/w/Legacy%7ENew_Contributors_Quick_Start_000e.html" title="Legacy:New Contributors Quick Start">New Contributors Quick Start</a> page.</p>
+<p>New paragraph. Check the above link for info on giving yourself a username &amp; your own user page on the system. Below is a rule-off. Start new entries below &amp; follow this markup.</p>
+<hr />
+<p><b>Mysterial:</b> In UT2003, GameInfo and Mutator have a function GetServerDetails() that allows modmakers to add to the info displayed by the server browser in the bottom left window.</p>
+<hr />
+<p>A problem some mods could have is that they want to modify all of a specific kind of object's properties, yet functions like <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a>'s IsRelevant() don't get called on them. This problem can be fixed with the code:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> O;
+ 
+<span class="kw1">foreach</span> AllObjects<span class="br0">(</span><span class="kw5">class</span><span class="st0">'object'</span>, O<span class="br0">)</span>
+                        <span class="kw1">if</span> <span class="br0">(</span><span class="kw7">ClassIsChildOf</span><span class="br0">(</span><span class="kw5">Class</span><span class="br0">(</span>O<span class="br0">)</span>, <span class="kw5">class</span><span class="st0">'BaseClass'</span><span class="br0">)</span><span class="br0">)</span>
+                                class&lt;BaseClass&gt;<span class="br0">(</span>O<span class="br0">)</span>.<span class="kw1">default</span>.<span class="me1">SomeVariable</span> = SomeValue;
+</pre></div>
+<p>This code needs only run once, and allows you to change the default properties of any class below some base class.</p>
+<p><b>Foxpaw:</b> You could do that with a lot less CPU usage by cutting out the middleman:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> <a href="/Object"><span class="kw10">Object</span></a> O;
+ 
+<span class="kw1">foreach</span> AllObjects<span class="br0">(</span><span class="kw5">class</span><span class="st0">'BaseClass'</span>, O<span class="br0">)</span>
+  class&lt;BaseClass&gt;<span class="br0">(</span>O<span class="br0">)</span>.<span class="kw1">default</span>.<span class="me1">SomeVariable</span> = SomeValue;
+</pre></div>
+<p><b>Mysterial:</b> That doesn't work; the iterator would return actual objects, not classes that you could cast like that. Plus, the point is to change the default value for all subclasses of the BaseClass, not BaseClass itself.</p>
+<p><b>Foxpaw:</b> I see you are right about the class casting. I'm not sure where my head was when I wrote that bit. This one would work - and subclasses of that class will still get the call from the iterator:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">local</span> BaseClass O;
+ 
+<span class="kw1">foreach</span> AllObjects<span class="br0">(</span><span class="kw5">class</span><span class="st0">'BaseClass'</span>, O<span class="br0">)</span>
+  O.<span class="kw5">Class</span>.<span class="kw1">default</span>.<span class="me1">SomeVariable</span> = SomeValue;
+</pre></div>
+<hr />
+<p><b>Mysterial:</b> It seems as though Actor references don't get properly set to None in objects not subclassed from Actor. I had an Interaction that set a variable to one of the local pawn's inventory items, and if that pawn died the game would often crash because the variable wasn't None even though the inventory item no longer existed.</p>
+<p>In addition, the game will randomly crash during garbage collection if an object that is no longer referenced (for example, a menu long closed) if that object contains an invalid Actor reference. The trademark of such a crash is a long list of (Some Object)-&gt;Serialize strings in the backtrace.</p>
+<hr />
+<p><b>Foxpaw:</b> This works, but is bad mojo. So don't do it. It's probrably unstable. If you have a wierd, really wierd bug, maybe it's caused by something like this. I did it by mistake before I realized that I was using something I hadn't declared in that class, but in a subclass of it.</p>
+<p>Ph3AR! A hole in the time-space continuum:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> ImAClass <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+ 
+<span class="kw5">var</span> Someotherclass Classtastic;
+ 
+<span class="kw5">function</span> Ihavefunctions<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+  ClassTastic.<span class="me1">AStruct</span>.<span class="me1">Avar</span> = <span class="nu0">3</span>;
+<span class="br0">}</span>
+<span class="co1">// Blah blah blah.</span>
+ 
+<span class="kw5">class</span> ASubclass <span class="kw5">extends</span> ImAClass;
+ 
+<span class="kw4">struct</span> StructDef
+<span class="br0">{</span>
+  <span class="kw5">var</span> <span class="kw4">float</span> AVar;
+  <span class="kw5">var</span> <span class="kw4">string</span> AnotherVar;
+<span class="br0">}</span>
+<span class="co1">// And then some...</span>
+ 
+<span class="kw5">class</span> Someotherclass <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">actor</span></a> <span class="kw6">dependson</span><span class="br0">(</span>Asubclass<span class="br0">)</span>;
+ 
+<span class="kw5">var</span> ASubclass.<span class="me1">StructDef</span> Astruct;
+</pre></div>
+<p>Note that we are calling something that hasn't really been defined yet. An even easier way of causng mayhem:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyClass <span class="kw5">extends</span> <a href="/Actor"><span class="kw10">Actor</span></a>;
+<span class="kw5">var</span> MySubClass Submarine;
+ 
+<span class="kw5">class</span> MySubClass <span class="kw5">extends</span> MyClass;
+</pre></div>
+<p>Suffice it to say, don't refer to subclasses of a class within that same class, or the UEd Goblin will eat your babies! Alternatively, this type of wanton class looping results in GPFs if you make a wrong move.</p>
+<p><b>Wormbo:</b> That second thing works reasonably well with the <a href="../../../../articles/a/c/t/Legacy%7EActor_5985.html" title="Legacy:Actor">Actor</a> class and its Instigator variable which is a <a href="../../../../articles/p/a/w/Legacy%7EPawn_d11f.html" title="Legacy:Pawn">Pawn</a> reference (subclass of Actor) or its Level variable which a <a href="../../../../articles/l/e/v/Legacy%7ELevelInfo_a2a1.html" title="Legacy:LevelInfo">LevelInfo</a> reference (also a subclass of Actor).</p>
+<p><b>Foxpaw:</b> Well, yes, it works, it's just that it has a high risk of ceasing to work as a result of changes.. plus it's extremely poor OOP form, if you ask me.</p>
+<hr />
+<p><b>Foxpaw:</b> BSP that is extremely distant seems to not be drawn, or not be drawn properly. I made a cubic brush 2^18 units per side and the surfaces did not show up at all when I subtracted it. A brush 2^17 units per side showed up but had a HOM effect in the editor. Brushes of 2^16 units per side and smaller seem to work fine. This seems to work fine if the surfaces are fake backdrop, however.</p>
+<p><b>Birelli:</b> To the BSP drawing thing - I imagine that has something to do with textures. When each "tiling" of the texture becomes less than 1 pixel, for instance, the algorithm might start to break down. This wouldn't necessarily happen with fake backdrop because the backdrop isn't drawn the same way.</p>
+<hr />
+<p><b>Foxpaw:</b> I noticed that if you override a function in a subclass that has one or more variables declared as "out" variables, if you change the declaration in the subclass and leave out the "out" keyword, the compiler will accept the new version and that variable will not be treated as an "out" variable for that class and it's subclasses. I'm not sure if this works the other way around. (making a non-out variable an out variable.)</p>
+<hr />
+<p><b>Foxpaw:</b> If you destroy an actor within KImpact, UT2003 gives you a GPF. I believe this is because the list of all colliding actors is generated, then each collision isis evaluated. As a result, after the actor is destroyed other things that were colliding with that actor still want to collide with it an there's a null pointer being accessed within the native code. But that's just speculation on WHY it GPFs. The workaround appears to be setting a flag so the actor can destroy itself in Tick.</p>
+<p><b>Mysterial:</b> This is true of pretty much every Karma event. In addition, you shouldn't edit the Karma properties of an object in a Karma function, for similar reasons. I *think* there are checks for these kinds of things in UT2004, but I'd take the safe path and just flag things for processing elsewhere.</p>
+<p><b>Foxpaw:</b> I really hope they do include checks.. I'd really like to be able to destroy objects from within the KImpact event. If one of the ships in my mod hits something going at any kind of speed, it takes damage, which may result in destruction.. so I've had to delay all destruction due to damage to the next tick, which is a bit hackier than I like.</p>
+<hr />
+<p><b>Foxpaw:</b> Apparently, using a reference in the default properties to call an iterator gives an "invalid code token" at runtime. IE, class'Whatever'.default.Singleton.SomeFunction() is okay, but foreach class'Whatever'.default.Singleton.AllObjects( class'etc', etc ) gives the invalid code token. I found this interesting as both seem like function calls and you can use an iterator like that for references not stored in the default properties.</p>
+<p>Also AllActors is amazingly slow. A Uscripted Dynamic array with all the same contents can be iterated through in roughly one quarter of the time.</p>
+<hr />
+<p>From Mod Authoring/Introduction to Gametypes</p>
+<p><a name="Update_for_UT2K4_:" id="Update_for_UT2K4_:"></a></p>
+<h2><span class="mw-headline">Update for UT2K4&#160;:</span></h2>
+<p><b>BigJohn:</b> This seems to have changed a bit in Unreal Tournament 2004. In order to make a gametype mod and have it appear under the game list, we now need to have 4 values in our GameType's class' defaultproperties&#160;:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> MyGame <span class="kw5">extends</span> DeathMatch;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+   GameName=<span class="st0">"My Game"</span>
+   Acronym=<span class="st0">"MG"</span>
+   MapPrefix=<span class="st0">"MG"</span>
+   Description=<span class="st0">"A bloody fight to the death!!!."</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Also, there is no need for the Object line in the game's int file (But you do need the Preferences line!).</p>
+<p>Your MyPackage.int should look like this:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="br0">[</span>Public<span class="br0">]</span>
+Preferences=<span class="br0">(</span>Caption=<span class="st0">"My Game"</span>,Parent=<span class="st0">"Game Types"</span>,<span class="kw5">Class</span>=MyPackage.<span class="me1">MyGame</span>,Immediate=<span class="kw9">True</span><span class="br0">)</span>
+ 
+<span class="br0">[</span>MyGame<span class="br0">]</span>
+GameName=<span class="st0">"My Game"</span>
+Description=<span class="st0">"A bloody fight to the death!!!."</span>
+</pre></div>
+<p>You can use the command</p>
+<p>ucc dumpint MyGame.u</p>
+<p>to create the [MyGame] section in the .int file.</p>
+<p>UCC can generate a .ucl file from our package's .u file. This can be achieved by typing this command:</p>
+<p>ucc exportcache MyGame.u MyGame.ucl</p>
+<p>Once this is done, the only thing left is to have a map in the UT2004\Maps folder with the appropriate prefix, in the above case MG.</p>
+<hr />
+<p><b>Tarquin:</b> We can't edit these pages because they are by Epic. Please can we find another home for the above piece of text?</p>
+<p>Co11: Also, for ut2004.. it seems that Deathmatchplus and TeamGamePlus are no longer functional. Try just Deathmatch and TeamGame.</p>
+<p><b>Wormbo:</b> As stated on <a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_4bbb.html" title="Legacy:Mod Authoring">Mod Authoring</a> this whole tutorial is only for <a href="../../../../articles/u/t/_/Legacy%7EUT_9cbd.html" class="mw-redirect" title="Legacy:UT">UT</a>, not for newer engine versions. For anything else go to <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a> or <a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making Mods</a>.</p>
+<p><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Category:Legacy To Do</a> → Move content to the correct pages.</p>
+<hr />
+<p><b>Foxpaw:</b> I noticed something interesting today, apparently function arguments in subclasses need not have the same names as their original declarations, as long as they are of the same type and in the same order. IE, the following is valid:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> A <span class="kw5">extends</span> <a href="/Object"><span class="kw10">Object</span></a>;
+ 
+<span class="kw5">function</span> F<span class="br0">(</span> <span class="kw4">float</span> P <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="co1">// Do Stuff.</span>
+<span class="br0">}</span>
+</pre></div>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> B <span class="kw5">extends</span> A;
+ 
+<span class="kw5">function</span> F<span class="br0">(</span> <span class="kw4">float</span> Q <span class="br0">)</span>
+<span class="br0">{</span>
+  <span class="kw6">Super</span>.<span class="me1">F</span><span class="br0">(</span> Q <span class="br0">)</span>;
+ 
+  <span class="co1">// Do some other stuff.</span>
+<span class="br0">}</span>
+</pre></div>
+<p>Of questionable value, but it's possible. I noticed that some of Epic's code uses "dt" as the argument name for tick some places instead of "Delta," so I tested it in my own code and it seems to work.</p>
+<p><b>MythOpus:</b> Yep&#160;:D I caught on to that quite quickly. It helps to give more descriptive names to arguments in your code, rather than using epics stuff.</p>
+<p><b>Mychaeel:</b> Indeed. Usually, in any object-oriented language, only the function prototype – i.e. the function name, its return type and its parameter types, but not the symbolic parameter names – are relevant for resolving a function reference. (In many languages which support function pre-declaration, it's even valid to leave the parameter names out: <code>void foo(float, int)</code> is perfectly valid in C and C++.)</p>
+<hr />
+<p><b>Blip2:</b> I found this cool program for the text colours in UT this apparently causes problems with names but I have found it is useful with in-game coloured messages I would write happily write a paragraph or two about how to do this and where to get this program if I knew where to write it (any ideas?)</p>
+<p><b>Graphik:</b> Create a page for it.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 33/1000000
+Post-expand include size: 5/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_To_Do_47ce.html" title="Category:Legacy To Do">Legacy To Do</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/i/n/b/Legacy%7EInbox_f510.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/i/n/b/Legacy_talk%7EInbox_d9a6.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Inbox">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:24, 21 September 2005 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

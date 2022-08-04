@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Trystan/11 17 02c - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Trystan/11 17 02c</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/t/r/y/Legacy%7ETrystan_ee42.html" title="Legacy:Trystan">Legacy:Trystan</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="11.2F17.2F02_Adding_a_Weapon"></a></p>
+<h3><span class="mw-headline">11/17/02 Adding a Weapon</span></h3>
+<p><a name="Parts_of_a_weapon" id="Parts_of_a_weapon"></a></p>
+<h4><span class="mw-headline">Parts of a weapon</span></h4>
+<dl>
+<dt>M16A2X.uc&#160;</dt>
+<dd>The main weapon class.</dd>
+<dt>M16A2Fire.uc&#160;</dt>
+<dd>The class that handles primary fire.</dd>
+<dt>M16A2AltFire.uc&#160;</dt>
+<dd>The class that handles secondary fire.</dd>
+<dt>M16A2Pickup.uc&#160;</dt>
+<dd>The class that handles a player or bot picking the item up.</dd>
+<dt>M16Arena.uc&#160;</dt>
+<dd>The class that substitutes your weapon for another, based on the XPaks.</dd>
+</dl>
+<p><a name="Notes" id="Notes"></a></p>
+<h4><span class="mw-headline">Notes</span></h4>
+<p>Examining the structure of a weapon I think I'm ready to discuss how to add one without first dissecting Actor.uc, Inventory.uc, and Weapon.uc. I'll still examine them soon but I'm itching to get some solid results in.</p>
+<p>There's two parts to a weapon: the weapon itself and the bullet it fires. We're not going to be using instant hit weapons; every weapon we create will be a projectile based weapon. So the first class we create is going to be M16A2X.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="co1">//=============================================================================</span>
+<span class="co1">// M16A2</span>
+<span class="co1">//=============================================================================</span>
+<span class="kw5">class</span> M16A2X <span class="kw5">extends</span> Weapon
+    <span class="kw6">config</span><span class="br0">(</span>user<span class="br0">)</span>;
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        FireModeClass<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>     =       <span class="kw5">Class</span><span class="st0">'M16A2Fire'</span>
+    FireModeClass<span class="br0">(</span><span class="nu0">1</span><span class="br0">)</span> =       <span class="kw5">Class</span><span class="st0">'M16A2AltFire'</span>
+    PickupClass                 =       <span class="kw5">Class</span><span class="st0">'M16A2Pickup'</span>
+    SelectAnim                  =       <span class="st0">"Pickup"</span>
+    PutDownAnim                 =       <span class="st0">"PutDown"</span>
+    SelectSound                 =       <a href="/sound"><span class="kw10">Sound</span></a><span class="st0">'WeaponSounds.FlakCannon.SwitchToFlakCannon'</span>
+    SelectForce                 =       <span class="st0">"SwitchToFlakCannon"</span>
+    AIRating                    =       <span class="nu0">0.750000</span>
+    CurrentRating               =       <span class="nu0">0.750000</span>
+    EffectOffset                =       <span class="br0">(</span>X=<span class="nu0">200.000000</span>,Y=<span class="nu0">32.000000</span>,Z=<span class="nu0">-25.000000</span><span class="br0">)</span>
+    DisplayFOV                  =       <span class="nu0">60.000000</span>
+    Priority                    =       <span class="nu0">8</span>
+    DefaultPriority             =       <span class="nu0">8</span>
+    InventoryGroup              =       <span class="nu0">7</span>
+    PlayerViewOffset    =       <span class="br0">(</span>X=<span class="nu0">-7.000000</span>,Y=<span class="nu0">8.000000</span><span class="br0">)</span>
+    PlayerViewPivot             =       <span class="br0">(</span>Yaw=<span class="nu0">16884</span>,Roll=<span class="nu0">200</span><span class="br0">)</span>
+    BobDamping                  =       <span class="nu0">1.400000</span>
+    AttachmentClass             =       <span class="kw5">Class</span><span class="st0">'XWeapons.FlakAttachment'</span>
+    IconMaterial                =       <a href="/Texture"><span class="kw10">Texture</span></a><span class="st0">'InterfaceContent.HUD.SkinA'</span>
+    IconCoords                  =       <span class="br0">(</span>X1=<span class="nu0">322</span>,Y1=<span class="nu0">100</span>,X2=<span class="nu0">444</span>,Y2=<span class="nu0">200</span><span class="br0">)</span>
+    ItemName                    =       <span class="st0">"M16A2"</span>
+    LightType                   =       LT_Steady
+    LightEffect                 =       LE_NonIncidence
+    LightBrightness             =       <span class="nu0">150.000000</span>
+    LightRadius                 =       <span class="nu0">4.000000</span>
+    LightHue                    =       <span class="nu0">30</span>
+    LightSaturation             =       <span class="nu0">150</span>
+    Mesh                                =       SkeletalMesh<span class="st0">'Weapons.Flak_1st'</span>
+    UV2Texture                  =       Shader<span class="st0">'XGameShaders.WeaponShaders.WeaponEnvShader'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>We extend <a href="../../../../articles/w/e/a/Legacy%7EWeapon_e170.html" title="Legacy:Weapon">Weapon</a>, and leave it at that. This is pretty much a complete rip of FlakCannon.uc as you can tell by the defaultproperties. We don't have an M16 model, bullet, or sounds yet – we're just itching to play around. Two important things I noted were the FireModeClass(0) and FireModeClass(1). They specify what class is called with primary or alternate fire is called. The pickup class is the class that happens when you actually pick the weapon up. What that means will make more sense in a few seconds I think.</p>
+<p>Next class up is M16A2Fire.uc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> M16A2Fire <span class="kw5">extends</span> ProjectileFire;
+ 
+<span class="kw5">function</span> InitEffects<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">InitEffects</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> FlashEmitter != <span class="kw9">None</span> <span class="br0">)</span>
+                Weapon.<span class="me1">AttachToBone</span><span class="br0">(</span>FlashEmitter, <span class="st0">'tip'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        ProjPerFire                     =       <span class="nu0">1</span> <span class="co1">// was 9</span>
+        ProjSpawnOffset         =       <span class="br0">(</span>X=<span class="nu0">25.000000</span>,Y=<span class="nu0">5.000000</span>,Z=<span class="nu0">-6.000000</span><span class="br0">)</span>
+        FireEndAnim                     =       <span class="st0">"None"</span>
+        FireSound                       =       SoundGroup<span class="st0">'WeaponSounds.FlakCannon.FlakCannonFire'</span>
+        FireForce                       =       <span class="st0">"FlakCannonFire"</span>
+        FireRate                        =       <span class="nu0">0.150000</span>
+        AmmoClass                       =       <span class="kw5">Class</span><span class="st0">'XWeapons.FlakAmmo'</span>
+        AmmoPerFire                     =       <span class="nu0">1</span>
+        ShakeRotTime            =       <span class="nu0">2.000000</span>
+        ShakeOffsetMag          =       <span class="br0">(</span>X=<span class="nu0">-20.000000</span><span class="br0">)</span>
+        ShakeOffsetRate         =       <span class="br0">(</span>X=<span class="nu0">-1000.000000</span><span class="br0">)</span>
+        ShakeOffsetTime         =       <span class="nu0">2.000000</span>
+        ProjectileClass         =       <span class="kw5">Class</span><span class="st0">'WorldAtWar.Bullet556mm'</span>
+        BotRefireRate           =       <span class="nu0">0.700000</span>
+        FlashEmitterClass       =       <span class="kw5">Class</span><span class="st0">'XEffects.FlakMuzFlash1st'</span>
+        Spread                          =       <span class="nu0">40.000000</span>
+        SpreadStyle                     =       SS_Random
+<span class="br0">}</span>
+</pre></div>
+<p>We extend <a href="../../../../articles/p/r/o/Legacy%7EProjectileFire_4126.html" title="Legacy:ProjectileFire">ProjectileFire</a> and leave it pretty well at that. This code was based on FlakCannonFire.uc. One of the things that needs to be investigated more in the above code is SpreadStyle. For the M16A2 we don't really want a random spread style but we'll leave it alone for now. Declared herein is the ProjectileClass that's used when this gun fires, in this case Bullet556mm. We'll define that class in a second. AmmoPerFire and ProjPerFire are both important as well. They specify, respectively, the ammunition consumed per click of the fire button and the number of projectiles issued by each click. They can be different for various reasons.</p>
+<p>Next up is M16A2AltFire.uc.</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> M16A2AltFire <span class="kw5">extends</span> ProjectileFire;
+ 
+<span class="kw5">function</span> InitEffects<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw6">Super</span>.<span class="me1">InitEffects</span><span class="br0">(</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> FlashEmitter != <span class="kw9">None</span> <span class="br0">)</span>
+                Weapon.<span class="me1">AttachToBone</span><span class="br0">(</span>FlashEmitter, <span class="st0">'tip'</span><span class="br0">)</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+        ProjPerFire                     =       <span class="nu0">3</span> <span class="co1">// was 9</span>
+        ProjSpawnOffset         =       <span class="br0">(</span>X=<span class="nu0">25.000000</span>,Y=<span class="nu0">5.000000</span>,Z=<span class="nu0">-6.000000</span><span class="br0">)</span>
+        FireEndAnim                     =       <span class="st0">"None"</span>
+        FireSound                       =       SoundGroup<span class="st0">'WeaponSounds.FlakCannon.FlakCannonFire'</span>
+        FireForce                       =       <span class="st0">"FlakCannonFire"</span>
+        FireRate                        =       <span class="nu0">0.150000</span>
+        AmmoClass                       =       <span class="kw5">Class</span><span class="st0">'XWeapons.FlakAmmo'</span>
+        AmmoPerFire                     =       <span class="nu0">3</span>
+        ShakeRotTime            =       <span class="nu0">2.000000</span>
+        ShakeOffsetMag          =       <span class="br0">(</span>X=<span class="nu0">-20.000000</span><span class="br0">)</span>
+        ShakeOffsetRate         =       <span class="br0">(</span>X=<span class="nu0">-1000.000000</span><span class="br0">)</span>
+        ShakeOffsetTime         =       <span class="nu0">2.000000</span>
+        ProjectileClass         =       <span class="kw5">Class</span><span class="st0">'WorldAtWar.Bullet556mm'</span>
+        BotRefireRate           =       <span class="nu0">0.700000</span>
+        FlashEmitterClass       =       <span class="kw5">Class</span><span class="st0">'XEffects.FlakMuzFlash1st'</span>
+        Spread                          =       <span class="nu0">40.000000</span>
+        SpreadStyle                     =       SS_Random
+<span class="br0">}</span>
+</pre></div>
+<p>Here we've run into an interesting problem. I had wanted the M16A2's alternate fire to be semi auto so I used 3 for AmmoPerFire and 3 for ProjPerFire. The problem is that all three projectiles are fired at once, in what appears to be a large lump. I've yet to figure this out but I'm sure I will.</p>
+<p><b>Problem found:</b> Apparently no game time passes while you're in UnrealScript. So all three projectiles seem to be fired at the same time, at the same velocity, at the same angle. The solutions I've seen posted include setting a timer for whatever duration you want in between each bullet, and having the timer fire the bullets.</p>
+<dl>
+<dd><b>Mychaeel:</b> You might want to look into <i>state code</i> and <i>latent functions</i> – with that you can code sequences like that which are meant to progress over (game) time straightforwardly:</dd>
+</dl>
+<dl>
+<dd><b>Trystan:</b> oooooooooooooooooooooo.. thank you.</dd>
+</dl>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">state</span> FiringThreeProjectiles <span class="br0">{</span>
+  Begin:
+    FireOneProjectile<span class="br0">(</span><span class="br0">)</span>;
+    Sleep<span class="br0">(</span><span class="nu0">0.5</span><span class="br0">)</span>;  <span class="co1">// Sleep is a latent function</span>
+    FireOneProjectile<span class="br0">(</span><span class="br0">)</span>;
+    Sleep<span class="br0">(</span><span class="nu0">0.5</span><span class="br0">)</span>;
+    FireOneProjectile<span class="br0">(</span><span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>M16A2Pickup.uc</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> M16A2Pickup <span class="kw5">extends</span> WeaponPickup;
+ 
+<span class="kw5">function</span> SetWeaponStay<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        bWeaponStay = <span class="kw9">true</span>;
+<span class="br0">}</span>
+ 
+<span class="kw5">function</span> <span class="kw4">float</span> GetRespawnTime<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+        <span class="kw1">return</span> <span class="nu0">5.0000</span>;
+<span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+    InventoryType=<span class="kw5">Class</span><span class="st0">'M16A2X'</span>
+    PickupMessage=<span class="st0">"You got the M16A2."</span>
+<span class="br0">}</span>
+</pre></div>
+<p>This is fairly simple. Of note is the SetWeaponStay() (does the weapon disappear after someone picks it up?) and the respawn time (only used if the weapon does not stay). In default properties you can see we specify the class attached to this weapon (M16A2X.uc) and the message given to the player when they pick an object of this type up.</p>
+<p>We've defined our weapon, now we just have to give it ammunition to fire.</p>
+<p><br />
+<br /></p>
+<p>Return to <a href="../../../../articles/t/r/y/Legacy%7ETrystan_Developer_Journal_cb52.html" title="Legacy:Trystan/Developer Journal">Trystan/Developer Journal</a>.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 21/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/t/r/y/Legacy%7ETrystan_11_17_02c_14db.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/t/r/y/Legacy_talk%7ETrystan_11_17_02c_ad0a.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Trystan/11_17_02c">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:51, 7 January 2003 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

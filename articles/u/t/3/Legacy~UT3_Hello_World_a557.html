@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:UT3 Hello World - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:UT3 Hello World</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><a name="Getting_Ready" id="Getting_Ready"></a></p>
+<h2><span class="mw-headline">Getting Ready</span></h2>
+<p>Assuming you have read the first UT3 lesson on <a href="../../../../articles/u/t/3/Legacy%7EUT3_Whats_What_cd47.html" title="Legacy:UT3 Whats What">UT3 Whats What</a>, You should be ready to make your first mod.</p>
+<p>The simplest of mods is the "Hello World" mutator.</p>
+<p>Go to "C:\Users\&lt;username&gt;\Documents\My Games\Unreal Tournament 3\UTGame\Src" (or equivelent) and create a new folder. The Folder name will be the package name for your mod. For this tutorial, name the folder "HelloWorld". In this folder, create another folder called classes.</p>
+<pre>
+  The classes folder is where all your source files will go.
+</pre>
+<p>Open up "..\UTGame\Config\UTEditor.ini" and find the [ModPackages] section, and add to it a line that reads "ModPackages=HelloWorld"</p>
+<p>Save and close the file.</p>
+<p>Create a file in this folder and name it "HW_Mutator.uc" and open it for editing.</p>
+<p>Either open notepad and Save As, or create a new .txt document and rename it, making sure that it has the correct file extension. (By default, windows hides known file extensions. This can be disabled in Tool&gt;Folder Options...&gt;View.)</p>
+<p><a name="The_Code" id="The_Code"></a></p>
+<h2><span class="mw-headline">The Code</span></h2>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> HW_Mutator <span class="kw5">extends</span> UTMutator;
+ 
+<span class="kw5">function</span> InitMutator<span class="br0">(</span><span class="kw4">string</span> Options, <span class="kw6">out</span> <span class="kw4">string</span> ErrorMessage<span class="br0">)</span>
+<span class="br0">{</span>
+     loginternal<span class="br0">(</span> <span class="st0">"Hello World"</span> <span class="br0">)</span>;
+ 
+<span class="kw6">Super</span>.<span class="me1">InitMutator</span><span class="br0">(</span>Options, ErrorMessage<span class="br0">)</span>;
+<span class="br0">}</span>
+</pre></div>
+<p>Note: the class name must be the same as the file name.</p>
+<p><b>Sandymac</b>: I think you need to run 'UT3 make' before you launch the game to test the mutator.</p>
+<p>Now, run UT3 -useunpublished and start a game with your mutator. When the mutator is loaded "Hello World" will be outputted to a log file.</p>
+<p>The log file will be in "..\UTGame\Logs\"</p>
+<p><b>Vaptor</b>: i don't think you tried useunpublished cause it keeps crashing with not recognized</p>
+<p><b>Rye</b>: Pretty simple mod. As i am still getting my head around UScript myself, my advice to people new to scripting is you should search and search and search. Dont post on forums the instant you get stuck. Try looking at other pieces of source code and see if you can figure it out. Aside from it being more satisfying, you will also learn UScript faster.</p>
+<p><b>Raven</b>: I have noticed that when you reverse engineer the script using UnrealEd that is does not include any embedded objects. This is particularly important for UT3, as that all components are now exactly that. An example of this is the StaticMeshActor class:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">class</span> StaticMeshActor <span class="kw5">extends</span> StaticMeshActorBase
+        <span class="kw6">native</span>
+        <span class="kw6">placeable</span>;
+ 
+<span class="kw5">var</span><span class="br0">(</span><span class="br0">)</span> <span class="kw5">const</span> <span class="kw6">editconst</span> StaticMeshComponent   StaticMeshComponent;
+ 
+<span class="kw5">event</span> PreBeginPlay<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span><span class="br0">}</span>
+ 
+<span class="kw1">defaultproperties</span>
+<span class="br0">{</span>
+   StaticMeshComponent=StaticMeshComponent0
+   Components<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span>=StaticMeshComponent0
+   BlockRigidBody=<span class="kw9">True</span>
+   CollisionComponent=StaticMeshComponent0
+   CollisionType=COLLIDE_BlockAll
+   <span class="kw4">Name</span>=<span class="st0">"Default__StaticMeshActor"</span>
+   ObjectArchetype=StaticMeshActorBase<span class="st0">'Engine.Default__StaticMeshActorBase'</span>
+<span class="br0">}</span>
+</pre></div>
+<p>The reference to StaticMeshComponent0 should be included in the default properties, but is not extracted during reverse engineering. It should have something like:</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Begin <a href="/Object"><span class="kw10">Object</span></a> <span class="kw5">Class</span>=StaticMeshComponent <span class="kw4">Name</span>=StaticMeshComponent0
+   bAllowApproximateOcclusion=<span class="kw9">TRUE</span>
+   bCastDynamicShadow=<span class="kw9">FALSE</span>
+   bForceDirectLightMap=<span class="kw9">TRUE</span>
+End <a href="/Object"><span class="kw10">Object</span></a>
+</pre></div>
+<p><b>Raven</b>: Probably should also mention that it is a good idea to download the scripts from UDN: <a href="http://udn.epicgames.com/Three/UT3ModHome.html" class="external free" title="http://udn.epicgames.com/Three/UT3ModHome.html" rel="nofollow">http://udn.epicgames.com/Three/UT3ModHome.html</a></p>
+<p><b>EricBlade</b>: I am not having Raven's problem with the exported script not having the objects, although I did definitely have that problem with older Unreal games. I would like to note that in Object.uc, directly above the LogInternal() function, it says that you should never call that function directly, rather use the log() macro .. Apparently this is done by doing `log("message"); .. and as an aside, anyone know what the ` does, and is this 'macro' functionality available to us as coders somewhere? ...</p>
+<p><b>EricBlade</b>: More related to the topic at hand, after doing UT3 Make, I do UT3 -useunpublished, and it starts to start, but then gives me a VC++ crash window, and my CPU usage skyrockets to 100% and stays there until i managed to click OK to get rid of the window, and UT3 closes. The log dosen't look especially useful here, either. In fact, running "ut3" with any arguments except "make" now gives me a VC++ crash window. ugh.</p>
+<p><b>Raven</b>: I had that problem happen as well. For me it seemed to be a directX conflict, went away when I rebooted the computer. You should also use the -log command, as this will give you a chance to see the log messages in real time.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 12/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/t/3/Legacy%7EUT3_Hello_World_a557.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/t/3/Legacy_talk%7EUT3_Hello_World_fba0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:UT3_Hello_World">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 05:54, 8 January 2008 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

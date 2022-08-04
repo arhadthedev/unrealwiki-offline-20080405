@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Mod Ideas/NukeRifles - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Mod Ideas/NukeRifles</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"><span class="subpages">&lt; <a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_bf77.html" title="Legacy:Mod Ideas">Legacy:Mod Ideas</a></span></div>
+	    	    	    <!-- start content -->
+	    <p><a name="NukeRifles_mutator" id="NukeRifles_mutator"></a></p>
+<h3><span class="mw-headline">NukeRifles mutator</span></h3>
+<p><a name="Combat_using_modified_Sniperifles_that_fire_nuclear_bullets.21" id="Combat_using_modified_Sniperifles_that_fire_nuclear_bullets.21"></a></p>
+<h4><span class="mw-headline">Combat using modified Sniperifles that fire nuclear bullets!</span></h4>
+<p>Just as devastating as the Redeemer, but instant hit, and zoom too&#160;;-)</p>
+<p>Yes, I know it's totally silly, but it' good fun for about 5 minutes...</p>
+<p>I'd like to do a version of it for UT2003, but am having trouble figuring out how the new Redeemer code works – specifically it uses states to gradually move the damage radius out as the shockwaves expand, so the victims get gibbed when the wave hits them. Each time I try to use states, the compiler throws up some error or other...&#160;:-( So at the moment, in my mut they just get gibbed instantly, which looks really lame. In good old UT, I could just spawn a <i>Shockwave</i> object, this did the whole lot automatically... &#160;:-)</p>
+<p>Thanks, \</p>
+<p><b>Electric Mini:</b></p>
+<hr />
+<p>Update... I've got it (mostly) working</p>
+<p>I've managed to get it to work after poking around the Net all day&#160;:-)</p>
+<p>I've had to spawn a custom class <i>NukeRifleExplosion</i>, based on the <i>RedeemerFire</i> stuff.</p>
+<p>This spawns a nuke explosion, which is allowed to have states, so I get the nice shockwaves and huge <b>BOOM</b> explosion noise...</p>
+<p>But... I can't get the kills to register properly! Up until 10 minutes ago I couldn't score a single kill with this mut, only suicides were counted (DOH!). The only way I've found to do this so far is to call <i>Other.TakeDamage</i>, this passes the <i>Instigator</i> along so kills are recorded for whichever victim you hit. But this sucks, 'cos it's instant, and you only get credit for killing the poor sucker the beam actually hits!</p>
+<p>Everyone else that dies gets counted as a suicide (ugh!).</p>
+<p>The Redeemer code uses <i>HurtRadius</i>, but I can't see how this gets info on who fired the thing to the victim (like <i>Other.TakeDamage</i> would).</p>
+<p>Is there some easy way to hurt all the actors within a radius of a target, making sure that if they die the person who fired the shot gets the credit?</p>
+<p>Am I just barking up the wrong tree here? Or am I just barking mad? &#160;;-)</p>
+<p>P.S. If anyone wants the NukeRifles mut, put a comment here and I'll put it up on the www somewhere. Oh yes, I've now got zooming working too, like Zoom-Instagib.</p>
+<p>P.P.S. I've also done NukeRifles for UT and a Nuclear-War mut for UT (replaces all weapons with 2-shot Redeemers... better run for cover). Again, if anyone wants them, shout.</p>
+<p><b>Electric Mini</b></p>
+<hr />
+<p><b>Eldhrin:</b> Use HurtRadius for initiating the damage – I'm not sure how, but somehow it Just Works. Most of the time at least&#160;:-)</p>
+<p><b>Electric Mini:</b> That's what it does at the moment. I think the problem may be that I just "borrowed" the Redeemer code, and that spawns the Redeemer missile as a separate Pawn, which then explodes when it hits something. My hack just spawns it, and it explodes immediately ( gross hack or what?&#160;;-).</p>
+<p>So I think the kills are getting attributed to this Redeemer missile actor, rather than to the player who fired it (somewhere the chain of ownership is getting broken).</p>
+<p>I guess I really should dig deeper and learn how the Redeemer stuff works, then think of a decent way to code it. A task to prove me worthy, eh?</p>
+<p><b>Eldhrin:</b> lol yes. However, it sounds like what you should really be doing is using a subclass of InstantFire, with code pulled out of the Redeemer's missile class in its hit-the-target routine. Or, have a look at the code in the Redeemer (or rather in one of its superclasses) which actually spawns the missile, and see if there's anything in that which looks like how the chain of ownership is preserved. It might be as simple as one of the optional parameters passed to Spawn.</p>
+<p><b>Electric Mini:</b> I've got it working properly now, I must have been doing something stupid before (no surprises there!&#160;;-)). I'm using the SuperShockRifle (a.k.a InstaGib Rifle) as the basis for the weapon, so it is a weird hybrid of an instant-hit weapon (InstaGib Rifle) and a projectile weapon (Redeemer).</p>
+<p>I've modified the TracePart() routine so it won't recursively trace until it hits the level (that was how you could shoot through one enemy and kill a second one with just one shot) now it spawns a modified Redeemer projectile (no skins or static meshes, so it's invisible).</p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> TracePart<span class="br0">(</span><span class="kw4">Vector</span> Start, <span class="kw4">Vector</span> End, <span class="kw4">Vector</span> X, <span class="kw4">Rotator</span> Dir, <a href="/Pawn"><span class="kw10">Pawn</span></a> Ignored<span class="br0">)</span>
+<span class="br0">{</span>
+    <span class="kw5">local</span> <span class="kw4">Vector</span> HitLocation, HitNormal;
+    <span class="kw5">local</span> <a href="/Actor"><span class="kw10">Actor</span></a> Other;
+    <span class="kw5">local</span> NukeRifleProjectile big_bang;
+ 
+    Other = Ignored.<span class="me1">Trace</span><span class="br0">(</span>HitLocation, HitNormal, End, Start, <span class="kw9">true</span><span class="br0">)</span>;
+ 
+    <span class="kw1">if</span> <span class="br0">(</span> <span class="br0">(</span>Other != <span class="kw9">None</span><span class="br0">)</span> &amp;&amp; <span class="br0">(</span>Other != Ignored<span class="br0">)</span> <span class="br0">)</span>
+    <span class="br0">{</span>
+        <span class="co1">//if ( !Other.bWorldGeometry )</span>
+        <span class="co1">//{</span>
+            HitNormal = <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+            <span class="co1">//if ( (Pawn(Other) != None) &amp;&amp; (HitLocation != Start) &amp;&amp; Weapon.IsA('NukeRifle') )</span>
+                        <span class="co1">//    TracePart(HitLocation,End,X,Dir,Pawn(Other));</span>
+        <span class="co1">//}</span>
+    <span class="br0">}</span>
+    <span class="kw1">else</span>
+    <span class="br0">{</span>
+        HitLocation = End;
+        HitNormal = <span class="kw4">Vect</span><span class="br0">(</span><span class="nu0">0</span>,<span class="nu0">0</span>,<span class="nu0">0</span><span class="br0">)</span>;
+    <span class="br0">}</span>
+        SpawnBeamEffect<span class="br0">(</span>Start, Dir, HitLocation, HitNormal, <span class="nu0">0</span><span class="br0">)</span>;
+        <span class="kw1">if</span><span class="br0">(</span> Instigator.<span class="me1">bDeleteMe</span> != <span class="kw9">true</span> <span class="br0">)</span>
+                big_bang = Spawn<span class="br0">(</span><span class="kw5">class</span><span class="st0">'my_mod2.NukeRifleProjectile'</span>,Instigator,, HitLocation - <span class="br0">(</span><span class="nu0">100</span>*Normal<span class="br0">(</span>HitLocation - Start<span class="br0">)</span><span class="br0">)</span> , Dir<span class="br0">)</span>;                      
+<span class="br0">}</span>
+</pre></div>
+<p>Am I right about what I think <i>TracePart()</i> is doing? The commented-out bits are how it did the recursive tracing, right?</p>
+<p><i>NukeRifleProjectile</i> is a copy of <i>RedeemerProjectile</i>, with a few of the default properties changed. It also blows up with a full-sized nuke explosion if it is damaged, rather than a small explosion like the Redeemer missile does.</p>
+<p>In my previous attempts this projectile would automatically go into the Dying state, but it'd only produce a pretty explosion if you directly shot someone. If you hit something else, you'd get the damage but no visual explosion (weird).</p>
+<p>This time, I've left its states alone, but I'm spawning it about 100 units back along the line of fire, so the projectile will slam into the target and explode normally.</p>
+<p>Yeehaa! It works!&#160;:-)</p>
+<p>It's also very deadly!&#160;:-)&#160;:-)</p>
+<p>Now the real challenge is to see if it'll work over a network....</p>
+<p>I can't test this – haven't got a network, and my ISP won't allow servers to be run off their cablemodem connections (bummer).</p>
+<p>I've put the whole of the <a href="../../../../articles/n/u/k/Legacy%7ENukeRifles_Code_cf75.html" title="Legacy:NukeRifles Code">NukeRifles Code</a> up.</p>
+<p>Thanks \</p>
+<p><b>Electric Mini</b></p>
+<p><b>Eldhrin:</b> yes, you've commented out the bits that caused recursive tracing&#160;:-) Congratulations</p>
+<p><b>Wormbo:</b> There are several other pages belonging to this one: <a href="../../../../articles/m/u/t/Legacy%7EMutNukeRifles_35e5.html" title="Legacy:MutNukeRifles">MutNukeRifles</a>, <a href="../../../../articles/n/u/k/Legacy%7ENukeRifle_e2eb.html" title="Legacy:NukeRifle">NukeRifle</a>, <a href="../../../../articles/n/u/k/Legacy%7ENukeRifleFire_4df2.html" title="Legacy:NukeRifleFire">NukeRifleFire</a>, <a href="../../../../articles/n/u/k/Legacy%7ENukeRiflePickup_169a.html" title="Legacy:NukeRiflePickup">NukeRiflePickup</a> and <a href="../../../../articles/n/u/k/Legacy%7ENukeRifleProjectile_901b.html" title="Legacy:NukeRifleProjectile">NukeRifleProjectile</a>. Those are custom class pages but not in the wiki's usualy class page format. What to do with those?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 6/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/m/o/d/Legacy%7EMod_Ideas_NukeRifles_dc7b.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/m/o/d/Legacy_talk%7EMod_Ideas_NukeRifles_daa0.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Mod_Ideas/NukeRifles">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 19:56, 18 July 2006 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

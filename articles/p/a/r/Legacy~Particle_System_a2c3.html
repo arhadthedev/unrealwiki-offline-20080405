@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Particle System - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Particle System</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>A <b>particle system</b> is a fairly low-level concept in 3D graphics, though it has only recently become practical for use in a gaming environment. A particle system allows a user to generate complex objects fairly easily and with relatively little resource usage by making many copies of simple, small objects.</p>
+<p>For example, consider a lawn, covered in grass. If you were to model each individual blade of grass and display them all as meshes, the graphics load would be enormous and it would take a long time to make, too. By defining "template" blades of grass and defining the area that the grass should cover, a particle system can randomly or algorithmically generate the lawn quite quickly. Similarly, the "particles" (blades of grass in this example) can be individually affected for very realistic effects.</p>
+<p>The lawn effect is exactly what <a href="../../../../articles/t/e/r/Legacy%7ETerrain_Decoration_Layer_6ca4.html" title="Legacy:Terrain Decoration Layer">Terrain Decoration Layers</a> do in the engine's <a href="../../../../articles/t/e/r/Legacy%7ETerrain_7d48.html" title="Legacy:Terrain">terrain</a> system; in the strictest sense of computer graphics, that is a particle system. However, when we speak of particle systems in Unreal, we mean systems that generate particles dynamically.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Particle_Systems_in_the_Unreal_Engine"><span class="tocnumber">1</span> <span class="toctext">Particle Systems in the Unreal Engine</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Emitters"><span class="tocnumber">1.1</span> <span class="toctext">Emitters</span></a></li>
+<li class="toclevel-2"><a href="#xEmitters_.28UT2003.29"><span class="tocnumber">1.2</span> <span class="toctext">xEmitters (UT2003)</span></a></li>
+<li class="toclevel-2"><a href="#xWeatherEffect_.28UT2003.29"><span class="tocnumber">1.3</span> <span class="toctext">xWeatherEffect (UT2003)</span></a></li>
+<li class="toclevel-2"><a href="#U2_systems"><span class="tocnumber">1.4</span> <span class="toctext">U2 systems</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Notes_on_Particle_Systems"><span class="tocnumber">2</span> <span class="toctext">Notes on Particle Systems</span></a></li>
+<li class="toclevel-1"><a href="#Links"><span class="tocnumber">3</span> <span class="toctext">Links</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Particle_Systems_in_the_Unreal_Engine" id="Particle_Systems_in_the_Unreal_Engine"></a></p>
+<h2><span class="mw-headline">Particle Systems in the Unreal Engine</span></h2>
+<p>The current build of the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal engine</a> (UnrealEngine2, <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a> and beyond) has a particle system built in natively. It allows you to generate a particle system based on sprites, meshes, stretched sprites ("beams") or "sparks".</p>
+<p>Digital Extremes also implemented two additional particle systems that were released with <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>. All three systems contain all of their particles within themselves and handle all of the particle's dynamics within themselves. This results in a dramatic savings of processor and memory usage, because any class that wants to be visible must be an actor, and having thousands of actors on-screen would use piles of resources. The native particle systems are best thought of internally as a single actor which dynamically changes its appearance. <a href="../../../../articles/d/y/n/Legacy%7EDynamic_Texture_768b.html" title="Legacy:Dynamic Texture">Dynamic Textures</a>, aka "procedural textures," were a two dimensional particle system, though they were considerably less flexible than the new particle systems in UT2003.</p>
+<p>Just to complicate matters, <a href="../../../../articles/u/n/r/Legacy%7EUnreal_2_4742.html" title="Legacy:Unreal 2">Unreal 2</a> has a separate particle system too.</p>
+<p><a name="Emitters" id="Emitters"></a></p>
+<h3><span class="mw-headline">Emitters</span></h3>
+<p><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a> is the particle system produced by Epic Games. It is a powerful but complex system, and is capable of reproducing the same effects as <a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitters</a> and <a href="../../../../articles/x/w/e/Legacy%7EXWeatherEffect_722d.html" title="Legacy:XWeatherEffect">xWeatherEffects</a> with only a few exceptions. They are also capable of making compound effects, ie particles that move relative to other particles, etc. However, <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitters</a> have piles upon piles of settings and can be difficult to learn to use properly. There is also a small number of effects that they cannot do without some custom scripting.</p>
+<p>See <a href="../../../../articles/p/a/r/Legacy%7EParticleEmitter_Cookbook_2a69.html" title="Legacy:ParticleEmitter Cookbook">ParticleEmitter Cookbook</a> for some settings.</p>
+<p><a name="xEmitters_.28UT2003.29" id="xEmitters_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">xEmitters (UT2003)</span></h3>
+<p><a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a> is the main particle system made by Digital Extremes for <a href="../../../../articles/u/t/2/Legacy%7EUT2003_f97b.html" class="mw-redirect" title="Legacy:UT2003">UT2003</a>. They cannot make compound effects, but are much easier to use than <a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitters</a> and the beam effects produced by <a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitters</a> can move, allowing you to make beam-based trails, for instance. However, it is worth noting that the xEmitter system is not part of the Unreal Engine per se so if you are planning to get an Unreal Engine license and produce a commercial title you will not be able to use xEmitters.</p>
+<p><a name="xWeatherEffect_.28UT2003.29" id="xWeatherEffect_.28UT2003.29"></a></p>
+<h3><span class="mw-headline">xWeatherEffect (UT2003)</span></h3>
+<p><a href="../../../../articles/x/w/e/Legacy%7EXWeatherEffect_722d.html" title="Legacy:XWeatherEffect">xWeatherEffect</a> is essentially a powered down and simplified <a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a>. Because it is simpler it runs faster than an <a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a> and is much, much easier to set up to do what you want. It will also follow your player around so you do not need to cover the map with particle emitters in order to have coverage everywhere. You can set up certain <a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">volumes</a> to be excluded so it doesn't snow inside your buildings as well.</p>
+<p><a name="U2_systems" id="U2_systems"></a></p>
+<h3><span class="mw-headline">U2 systems</span></h3>
+<p>See <a href="../../../../articles/o/n/_/Legacy%7EOn_ParticleGenerators_%28U2%29_6c9c.html" title="Legacy:On ParticleGenerators (U2)">On ParticleGenerators (U2)</a> for now. (someone with expertise please do a quick summary of U2 types here!)</p>
+<p><b>GRAF1K:</b> Won't U2 be basically dead soon after UT2004 is released? Why bother?&#160;:)</p>
+<p><b>Foxpaw:</b> Well, people are still making mods for UT, long after the release of UT2003, so I don't think U2 will die with the release of UT2004.</p>
+<p><b>GRAF1K:</b> That's because UT is so different from UT2003. I don't think, for example, people will continue modding for UT2003 after the release of UT2004.</p>
+<p><b>EricBlade:</b> Anyone know offhand when the Particle Editor was implemented in the Editor? UDN indicates that it should work for 2226 builds, but my game has no particle editor in it's editor&#160;:(</p>
+<p><br /></p>
+<p><a name="Notes_on_Particle_Systems" id="Notes_on_Particle_Systems"></a></p>
+<h2><span class="mw-headline">Notes on Particle Systems</span></h2>
+<p>Particle systems allow you to generate and display a large number of meshes or sprites with relative ease. However, as Spiderman taught us, "with great power, comes great responsibility!" Particles drawn using a particle system use far less resources than if they were all actors, but they are not "free." This is important to remember as how good a particle effect looks is generally related to the number of particles. For instance, a dust cloud with twice as many particles half the size will have more apparent detail. You must avoid using tons of particles, of course, to prevent large drops in framerate.</p>
+<p>However, it is also important to keep in mind that particles, especially sprites, should never be too large, unless they are in the skybox. The reason for this is simple: every time a sprite intersects a mesh, it must be "clipped" so it isn't drawn overlapping the mesh on-screen. A big sprite can touch a lot of triangles, and this can make the game run REALLY slow. If a particle system you are using is slowing down the framerate, try adjusting it both ways (more/smaller particles, and less/larger particles) to improve performance.</p>
+<p><a name="Links" id="Links"></a></p>
+<h2><span class="mw-headline">Links</span></h2>
+<ul>
+<li><a href="../../../../articles/e/m/i/Legacy%7EEmitter_1879.html" title="Legacy:Emitter">Emitter</a></li>
+<li><a href="../../../../articles/x/e/m/Legacy%7EXEmitter_1324.html" title="Legacy:XEmitter">xEmitter</a></li>
+<li><a href="../../../../articles/x/w/e/Legacy%7EXWeatherEffect_722d.html" title="Legacy:XWeatherEffect">xWeatherEffect</a></li>
+</ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 8/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/p/a/r/Legacy%7EParticle_System_a2c3.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/p/a/r/Legacy_talk%7EParticle_System_3db2.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Particle_System">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 00:06, 19 March 2006 by Anonymous user(s) of Unreal Wiki. Based on work by <a href="../../../../articles/t/a/r/User%7ETarquin_cdb6.html" title="User:Tarquin">tarquin</a>.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

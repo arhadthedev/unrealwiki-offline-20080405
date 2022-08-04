@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Sourced Player Shadows - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Sourced Player Shadows</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#TEST_MAP_FOR_BUGS"><span class="tocnumber">1</span> <span class="toctext">TEST MAP FOR BUGS</span></a></li>
+<li class="toclevel-1"><a href="#Update"><span class="tocnumber">2</span> <span class="toctext">Update</span></a></li>
+<li class="toclevel-1"><a href="#OLDER"><span class="tocnumber">3</span> <span class="toctext">OLDER</span></a></li>
+<li class="toclevel-1"><a href="#MUCH_older"><span class="tocnumber">4</span> <span class="toctext">MUCH older</span></a></li>
+<li class="toclevel-1"><a href="#Features:"><span class="tocnumber">5</span> <span class="toctext">Features:</span></a></li>
+<li class="toclevel-1"><a href="#Ideas:"><span class="tocnumber">6</span> <span class="toctext">Ideas:</span></a></li>
+<li class="toclevel-1"><a href="#Resolved_Issues_.28but_not_fixed_in_release_code.29:"><span class="tocnumber">7</span> <span class="toctext">Resolved Issues (but not fixed in release code):</span></a></li>
+<li class="toclevel-1"><a href="#Known_Issues:"><span class="tocnumber">8</span> <span class="toctext">Known Issues:</span></a></li>
+<li class="toclevel-1"><a href="#Questions"><span class="tocnumber">9</span> <span class="toctext">Questions</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="TEST_MAP_FOR_BUGS" id="TEST_MAP_FOR_BUGS"></a></p>
+<h3><span class="mw-headline">TEST MAP FOR BUGS</span></h3>
+<p>I put together a map to try to track down the cause of the bugs that have shown up. <a href="http://www.ataricommunity.com/forums/showthread.php?s=&amp;threadid=310692" class="external text" title="http://www.ataricommunity.com/forums/showthread.php?s=&amp;threadid=310692" rel="nofollow">Read about it here, and try it if you have a second</a>.</p>
+<p><b>Foxpaw:</b> I didn't really follow that checklist you made but I tested lots of stuff anyway.. I'm not quite sure the exact terminology because I haven't experimented with the classes, I just downloaded the demo map to see if I could help you find the bugs.&#160;:P Anyways, here were my observations: (I supercompressed the JPEGs, so the image quality is very poor, but it should still be enough to illustrate the bug.)</p>
+<ul>
+<li>The area with the three squares on the wall with the A shadows spinning around, the Scripted Shadow/Static Mesh and Scripted Shadow/BSP flickered at some angles. There was a discernable pattern in the flickering, which varies based on the angle. The Shadow Bitmap square did not flicker.</li>
+<li>Switching tasks while playing causes the shadows to be garbled upon switching back. This rectifies itself in the next tick. This affects both the wall shadows and player shadows.</li>
+<li>The square/sphere combo shadowbitmap and plain appeared fine, though the shadowbitmap one exhibited the task switching glitch detailed above.</li>
+<li>The "scripted" square/sphere combo did not experience this glitch, but would go nearly completely flat grey right when I got to the point that the shadow started to be projected on my pawn. The shadow was projected on the pawn properly when this occurred, however.</li>
+<li>The "scriptedShadow" square/sphere combo flickered madly, though with a discernable pattern. At first this appeared independant of the angle. It also suffered from the same "flat grey" effect as the "scripted" square/sphere combo.</li>
+</ul>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Sourced_Player_Shadows_Bug_1.jpeg_6bc8.html" class="image" title="Legacy Sourced Player Shadows Bug 1.jpeg"><img alt="" src="../../../../images/Legacy_Sourced_Player_Shadows_Bug_1.jpeg" width="800" height="600" border="0" /></a></span></div>
+</div>
+<p><b>Note, however:</b></p>
+<ul>
+<li>The behaviour of the shadows changed after I had run the level for several minutes. The "flat grey" issue was consistent and repeatable at first, but disappeared and could not be reproduced after the first few minutes. The flickering on the "scriptedShadow" square/sphere also declined dramatically and no longer appeared to have any discernable pattern or relationship to the angle of viewing.</li>
+</ul>
+<ul>
+<li>Also, if you stand "within" the spinning A in the recess, your player's shadow is projected onto the surface of the A, farthest from where your pawn is actually at. (highly unrealistic) Due to the way the projector is used this is probrably unavoidable. It is a problem with the built in shadows as well. (At least, I assume that your sourced shadows were used for the shadow in this level.</li>
+</ul>
+<div class="center">
+<div class="floatnone"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_Sourced_Player_Shadows_Bug_2.jpeg_91ca.html" class="image" title="Legacy Sourced Player Shadows Bug 2.jpeg"><img alt="" src="../../../../images/Legacy_Sourced_Player_Shadows_Bug_2.jpeg" width="800" height="600" border="0" /></a></span></div>
+</div>
+<p><b>inio:</b> Thanks! What graphics hardware do you have? As for the shadow bug you mentioned, thats the default shadow. This map doesn't have the sourced shadow stuff (just to remove any unnecessary variables).</p>
+<p><b>Foxpaw:</b> I don't remember when the last time was that I opened it, so I'll just go by the sticker on the side of the case. It just says Integrated nVidia GeForce 2 with 32MB Video RAM. It's on a Compaq 6020 CA, though I would assume that the integrated processor is the same as an AGP version of the same card, so that might not be relevant.</p>
+<p><b>inio:</b> Ah, I was wondering if it affected NVidia setups too. So this appears to be either a bug in D3D or UT, rather than in the ATI drivers.</p>
+<p><a name="Update" id="Update"></a></p>
+<h3><span class="mw-headline">Update</span></h3>
+<p>For anyone still listening, Epic has indicated the all render-to-texture is not really supported in the OpenGL and software renderers, so I'm going to make a few more attempts but if those don't work I'm giving up and I'm going to restrict anything not using the D3D renderer to grayscale shadows or a single blob shadow. I have some ideas for making the single blob shadow as useful as possible.</p>
+<p><a name="OLDER" id="OLDER"></a></p>
+<h3><span class="mw-headline">OLDER</span></h3>
+<p>Unfortunately in my final touches I've discovered a fairly serious issue I have to resolve. I still might make it tonight but it might be tomorrow or tuesday sometime. I didn't have time to make a <i>playable</i> demo map so the sample will just be a map showing off all the features instead.</p>
+<p>Quick rundown of those features</p>
+<ul>
+<li>Shadow sources replace <a href="../../../../articles/l/i/g/Legacy%7ELight_37a6.html" title="Legacy:Light">Lights</a> and <a href="../../../../articles/s/p/o/Legacy%7ESpotlight_40a0.html" title="Legacy:Spotlight">Spotlights</a></li>
+<li><a href="../../../../articles/v/o/l/Legacy%7EVolume_3cf1.html" title="Legacy:Volume">Volumes</a> create areas in which actors will cast shadows</li>
+<li>players, pickups, and projectiles all create shadows. Unfortunately doe to some bizareness that I don't yet understand translocators do not in this release. This may be related to the problem I've just encountered.</li>
+<li>transitions into, out of, and between volumes are handled smoothly with configurable fade times</li>
+<li>most shadow options (includeing <i>always blob shadows</i> and <i>no tangent fade</i>) can be configured on a source-specific basis</li>
+<li>Supports regular (bitmap) and blob shadows. blob shadows can be colored to realisticly shadow large colored light sources.</li>
+<li>As of this writing, adds only about 55k to the map file, plus the volumes and extra data in the lights.</li>
+</ul>
+<p>As for license, it's just gonna be a "mention it in the readme" type deal.</p>
+<hr />
+<p><a name="MUCH_older" id="MUCH_older"></a></p>
+<h3><span class="mw-headline">MUCH older</span></h3>
+<div class="floatright"><span><a href="../../../../articles/l/e/g/Image%7ELegacy_sourced_player_shadows_1.jpeg_e7fc.html" class="image" title="Early screenshots in a test map."><img alt="Early screenshots in a test map." src="../../../../images/Legacy_sourced_player_shadows_1.jpeg" width="400" height="432" border="0" /></a></span></div>
+<p>The Unreal-engine generation UT2003 is based on introduced dynamic drop shadows for players, but alas they're always just falling into the same direction with no regard to the lights placed in a map. Hence, this page strives to explain how to get true <b>Sourced Player Shadows</b> into the game.</p>
+<p>Not all the exposed variables do anything, and it probably still has some bugs, but at least it works:</p>
+<dl>
+<dd><a href="http://www.inio.org/~inio/dynamicshadows.zip" class="external text" title="http://www.inio.org/~inio/dynamicshadows.zip" rel="nofollow">Sourced Player Shadows Beta</a></dd>
+</dl>
+<p>That includes a map thats little demo, and source scripts. For some reason I didn't include the myLevel.u package to make it easy to include in your own maps, but I've got a workaround for that in a bit.</p>
+<p>If you're just in it for the tech demo, load up the map single player no bots and type "behindview 1" at the console. Now walk around and watch the shadows change to reflect the local lighting. Weeee!</p>
+<p>If you're thinking of using this tech in your own map, the most important thing to know is that each DynamicShadowVolume creates a shadow for each player within it, source at the most important ShadowCaster (typ. ShadowLight) with the same <a href="../../../../articles/t/a/g/Legacy%7ETag_ab64.html" title="Legacy:Tag">Tag</a>. Each DynamicShadowVolume will create only one shadow for each player within it. As a side effect if you have multiple intersecting DynamicShadowVolumes, players within them will have multiple shadows. ShadowCaster exists to be subclassed. I didn't create a ShadowSpotLight yet, but it wouldn't be hard.</p>
+<p>To use this in your own map, first load the sample map into <a href="../../../../articles/u/n/r/Legacy%7EUnrealEd_0d00.html" class="mw-redirect" title="Legacy:UnrealEd">UnrealEd</a>, then load your map. Now place a DynamicShadowVolume and a ShadowLight somewhere in your map. Always make sure before saving that there is at least one DynamicShadowVolume and one ShadowLight in the map. Loading the sample map as a script package is not advised, as I've had very odd behavior when I've done that in the past.</p>
+<p>Note that right now you do not have the right to redistribute maps containing this code. This will be remedied in the upcoming final release.</p>
+<p><a name="Features:" id="Features:"></a></p>
+<h2><span class="mw-headline">Features:</span></h2>
+<ul>
+<li>Should be pretty easy for mappers to pick up and use.</li>
+<li>Shadows fade out after leaving a zone.</li>
+<li>(unreleased) Mapper can control shadow casting distance, whether shadows should fade as they approach parallel with the surface, and whether to draw the shadow using blob shadow mode.</li>
+<li>(unreleased) A single DynamicShadowVolume can create multiple shadows from players.</li>
+<li>(unreleased) Shadows for pickups and projectiles. Player, Projectile, and Pickup shadows each have their own configuration for max # and type (rendered or blob). Plus, you can get away with more pickup shadows because they don't have to be detached and reattached each frame (as long as the light source isn't moving).</li>
+</ul>
+<p><a name="Ideas:" id="Ideas:"></a></p>
+<h2><span class="mw-headline">Ideas:</span></h2>
+<ul>
+<li>colored shadows for colored lights. (quite possible, just need to merge the testing code into the rest of it)</li>
+<li>blurry shadows for non-point light sources. Could be done by drawing the shadow texture to a couple different locations in a scripted texture with the right blend setup.</li>
+<li>shadows for particles. (maybe to a limited extent for rocket/grenade contrails only)</li>
+<li>Add shadows for first-person. This would be harder from what I can tell, and would cause the odd effect of shadows from your nonexistent legs when you look down.</li>
+<li>figure out a nice way of attaching a Light to a mover, as the code right now doesn't care if it's the light or the player that's moving.</li>
+<li>to reduce load in situations where you have 2 or more shadow sources close together to create shadows appropriate for a non-point light: share the shadow texture between them so it only gets rendered once.</li>
+</ul>
+<p><a name="Resolved_Issues_.28but_not_fixed_in_release_code.29:" id="Resolved_Issues_.28but_not_fixed_in_release_code.29:"></a></p>
+<h2><span class="mw-headline">Resolved Issues (but not fixed in release code):</span></h2>
+<ul>
+<li>Shadows pop up when you enter a DynamicShadowVolume that has a light to close to it's edge. Same thing for the default shadow disappearing and reappearing when you enter and exit DynamicShadowVolumes (not visible in the sample map).</li>
+<li>Blob shadows don't fade</li>
+</ul>
+<p><a name="Known_Issues:" id="Known_Issues:"></a></p>
+<h2><span class="mw-headline">Known Issues:</span></h2>
+<ul>
+<li>If a player gets too close to a light the shadow doesn't behave quite right. This is due to a limit on the <a href="../../../../articles/p/r/o/Legacy%7EProjector_5913.html" title="Legacy:Projector">projector</a> FOV. Without this there would be potential for enormous cpu load when an actor got too close to a light and the FOV of the shadow projector aproached 180, resulting in a slice of the level between the plane of the shadow projector and the plane at the trace distance being considered for shadow casting. Right now the FOV is limited to about 100 (not sure of the exact number).</li>
+<li>Right now there's still a few default values that need to be set to make mappers' lives easier.</li>
+<li>(untested but I assume this is the case) If a player is occluded and therefore not drawn, their shadows will also not be drawn. While it would be really cool to use a ground light shining up at a wall to give a hint of player's locations without directly showing them, this could be a PITA to get working reliably.</li>
+</ul>
+<p><a name="Questions" id="Questions"></a></p>
+<h2><span class="mw-headline">Questions</span></h2>
+<ul>
+<li>This shouldn't add any bandwidth overhead in net games as it happens entirely on the client side, but I'd like someone with more experience with <a href="../../../../articles/r/e/p/Legacy%7EReplication_1109.html" title="Legacy:Replication">replication</a> to validate that.</li>
+</ul>
+<hr />
+<p><b>Mosquito:</b> Just copy and pasted your post on the forums for people twice as ass lazy as me!</p>
+<p><b>inio:</b> You could have at least wikified it a bit. Or even just maintained the formatting that was there.</p>
+<p><b>Mosquito:</b> SILENCE INFIDEL!!!</p>
+<p><b>Tarquin:</b> Do you want a news posting on this? Put a link &amp; summary on <a href="../../../../articles/f/e/a/Legacy%7EFeatured_Pages_cbed.html" title="Legacy:Featured Pages">Featured pages</a> if you do.</p>
+<p><b>inio:</b> Not yet. This is not final by a long shot and doesn't even contain a license allow redistribution. I'll be done with it this weekend some time and have the release party then&#160;:). Why do you insist on changing my 2nd level headings to 1st level heading? I like the way 2nd level headings look.</p>
+<p><b>Mychaeel:</b> Nobody said you should <i>release</i> it. &#160;:-) I suppose tarquin rather thought about pointing people to it as the work in progress it is; that's far more interesting than just a finished component anyway.</p>
+<p>As for the headings: You don't format visually here; you format logically. First-level headings are for first-level structure; so there.</p>
+<p><b>Tarquin:</b> Yeah, I just thought it would make a good news post. People get to see what you're working on. Good publicity for the wiki as a whole too&#160;:D – could probably get us a BU news post.</p>
+<p><b>inio:</b> I'll tell the story of the development for the scripters when I'm done. Right now I don't want a lot of mappers (consumers) playing around with and judging this until I'm satisfied with it's quality. The archive that was released was to get feedback on interest and easy of use. I've gotten negligible feedback on the later but the resounding positive interest has convinced me that any minor easy of use issues are easily compensated by the general coolness of the code (product). Rather than spend time documenting the development and doing incremental releases, I instead am concentrating on getting a full-featured release into the hands of content creators ASAP. When that time comes, I'd love a BU news post&#160;:).</p>
+<p><b>Foxpaw:</b> Instead of having the shadows cast by predefined casters, it might be easier to just have a mutator that places a shadow caster at the location of every light that is over a certain intensity. Generally speaking that's where mapps would place their shadow casters anyway.. wherever the brightest lights are.</p>
+<p><b>inio:</b> First off all, there are way too many bright lights in most maps for that to be feasible. The shadow logic has to examine every potential caster each frame. If you get above about 100 lights that starts becoming a non-trivial CPU hit. Splitting the map into multiple DynamicShadowVolumes reduces this by reducing the number of potential casters the shadow casters. Secondly, the ShadowCaster (and it's descendants ShadowLight and ShadowSpotlight) are already a subclass of Light and so can be used to create light in the map themseleves.</p>
+<p><b>Foxpaw:</b> I suppose, it just seems more logical to me that way because then it could be made to work on any map, since it isn't really map-specific. Perhaps you could use the already existing zoning in lieu of volumes? At any rate, it's just an idea.</p>
+<p><b>inio:</b> Are scripted textures rendered on the gpu or on the cpu?</p>
+<p><b>Foxpaw:</b> I'm pretty sure that they are "assembled" on the CPU. The GPU does the actual drawing on the surface, however.</p>
+<p><b>Mychaeel:</b> I wouldn't be so sure about that; just look at the DrawPortal function. I rather expect the game reserves some video memory for that texture and directly draws there within the realm of the GPU.</p>
+<p><b>Mosquito:</b> Let me just get this straight, you can have Volumes AND points in space that will create shadows (so its just a simple placing these actors over top map lights)&#160;:)</p>
+<p><b>inioAtWork:</b> Not quite. What you do is first define the Volumes in which actors will cast shadows. You then replace regular lights in/near those volumes with special shadow lights (that have all the functionality of a regular light or spotlight). You set the Tag of the volume and the light's from which actors in the volume will cast shadows to the same thing. It's okay to be a little lazy with the volumes - if you keep it under about 50 shadow lights per volume you should be just fine performance wise. If you go over that you might see some issues caused by the code having to pick out the top few lights to cast shadows for every frame. It'll make more sense once you see the demo map (which will be released this weekend, along with version 1.0 of the module).</p>
+<p><b>Mosquito:</b> ok, so the only thing zones do is make the light sources function! I was worried you needed to make like light boxes or something, and have to manually set which way the shadow casts!</p>
+<p><b>inioAtWork:</b> <i>Mosquito:</i> Nope, the directions are automatic based on the sources. A DynamicShadowVolume can also replace the default shadow with one that has custom direction, distance, and darkness/color, which would be useful in outside areas with sunlight. <i>Mychaeel:</i> Just noticed your comments. My worry is that doing faded blob shadows will be almost as bad as if I used regular shadows, causing a texture upload each frame (rather than just rendering a few polygons into a texture, which in comparison is very cheap).</p>
+<p><b>MWGemini:</b> 12/30/03: Is this still a work in progress, and will you be releasing this code to mod teams/the public? If you are no longer supporting this project, but would be willing to release the code as is, I (and many others, I'm sure) would be very interested in using it.</p>
+<p><b>Dr.AwkwArD:</b> Will it also support movers and Karma in general (since it'll support projectiles)?</p>
+<p><b>Dr.AwkwArD:</b> 4/6/2004: What is the status of this project? This seems like it's a great mapping resource, and I'm anxious to see it progress. BTW, in case anyone is interested, I compiled and ran it in UT2004 and it seems to work properly.&#160;:D</p>
+<p><b>Dirk Fist:</b> Back to Fox's idea, The Mutator would only have to perform the caculations ONCE at map start, after that the Shadow caster's would continue to exist on there own. The calculations could limit the number of caster's so that you would'nt have more than a certain number of shadows in any given area (which like emitters should'nt render shadows unless they are likely to be seen) Obviously this kind of mutator would work well on some maps and not well on others but would provide a quick and dirty retrofit for existing maps. (The mutator could even detect whether a map has shadow zone/volume/caster's and not do anything in that case)&#160;:D</p>
+<p><b>Foxpaw:</b> I think Inio's hesitance to do it that was was because of the number of shadow casters that would be created. However, now that I think about it, you could maintain a dynamic array of all zones in the mutator, and that could maintain a dynamic array of shadow casters that can possibly affect actors in that zone. That way, you can precalculate virtually all of the checks, and completely exclude shadow casters that are too far away. The only ones you'd have to check would be ones that may or may not be able to make an affect.</p>
+<p><b>SquirrelZero:</b> True dynamic shadows have interested me for quite some time. I remember reading inio's original data on this project about a year ago and was very intrigued, now i'm getting around to completing my own. For those who might be interested i will be releasing a public domain version of my shadow engine, which does not require any specially placed mapper volumes or anything like that. All light source calculations are done via code and it is compatible with any existing maps and mods. It features multiple shadow support, multiple lightsource calculation, dynamically adjusted shadow FOV, full sunlight actor and even dynamic light support (this makes muzzle flash shadows possible), dynamic shadow lightening and darkening, and will not pass through walls as often as most shadow projectors will (still an issue, although i'm working on improving this). Even in maps with hundreds of lights, it still performs acceptably, as it was designed to support many players at once. The drawbacks are that it performs a bit worse than the standard 2k4 dynamic shadows, does not support zonelight, shadows look a little odd at certain angles sometimes (working on this), it doesn't always support every type of dynamic light (actors that are not light subclasses and are not spawned with lighting properties but later given them) and will not work on linux or mac. Although i wrote this about 5 months ago, it wasn't viable due to the fact that the shadows often projected onto the owner pawn, but with the addition of the bNoProjectOwner variable in UT2004 i decided to revisit it&#160;:)</p>
+<p><b>JCBDigger:</b> worth linking to the page for SquirrelZero's version <a href="http://wiki.beyondunreal.com/wiki/SquirrelZero/RealtimeShadows" class="external free" title="http://wiki.beyondunreal.com/wiki/SquirrelZero/RealtimeShadows" rel="nofollow">http://wiki.beyondunreal.com/wiki/SquirrelZero/RealtimeShadows</a></p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/s/o/u/Legacy%7ESourced_Player_Shadows_7389.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/s/o/u/Legacy_talk%7ESourced_Player_Shadows_4c56.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Sourced_Player_Shadows">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 17:35, 10 July 2004 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

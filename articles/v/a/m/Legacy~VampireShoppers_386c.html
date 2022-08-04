@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:VampireShoppers - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:VampireShoppers</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Vampire_Shoppers_Tutorial:__.28IN_DEVELOPMENT.29"><span class="tocnumber">1</span> <span class="toctext">Vampire Shoppers Tutorial: (IN DEVELOPMENT)</span></a></li>
+<li class="toclevel-1"><a href="#Some_terminology"><span class="tocnumber">2</span> <span class="toctext">Some terminology</span></a></li>
+<li class="toclevel-1"><a href="#Where_we_started.2C_two_lonely_mutators"><span class="tocnumber">3</span> <span class="toctext">Where we started, two lonely mutators</span></a></li>
+<li class="toclevel-1"><a href="#Now_for_some_depth.2C_a_look_at_each_file_and_it.27s_methods:"><span class="tocnumber">4</span> <span class="toctext">Now for some depth, a look at each file and it's methods:</span></a>
+<ul>
+<li class="toclevel-2"><a href="#MutVampShopper.uc:"><span class="tocnumber">4.1</span> <span class="toctext">MutVampShopper.uc:</span></a></li>
+<li class="toclevel-2"><a href="#VampShopper_Rules.uc:"><span class="tocnumber">4.2</span> <span class="toctext">VampShopper_Rules.uc:</span></a></li>
+<li class="toclevel-2"><a href="#VampShopper_Inter.uc:"><span class="tocnumber">4.3</span> <span class="toctext">VampShopper_Inter.uc:</span></a></li>
+<li class="toclevel-2"><a href="#ShoppingHUD.uc:"><span class="tocnumber">4.4</span> <span class="toctext">ShoppingHUD.uc:</span></a></li>
+<li class="toclevel-2"><a href="#Weapon_Price_Variables"><span class="tocnumber">4.5</span> <span class="toctext">Weapon Price Variables</span></a></li>
+<li class="toclevel-2"><a href="#PowerUp_Price_Variables"><span class="tocnumber">4.6</span> <span class="toctext">PowerUp Price Variables</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Concepts_we_learned.2C_or_that_are_worth_noting."><span class="tocnumber">5</span> <span class="toctext">Concepts we learned, or that are worth noting.</span></a></li>
+<li class="toclevel-1"><a href="#Things_we_still_are_trying_to_do:"><span class="tocnumber">6</span> <span class="toctext">Things we still are trying to do:</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">7</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Vampire_Shoppers_Tutorial:__.28IN_DEVELOPMENT.29" id="Vampire_Shoppers_Tutorial:__.28IN_DEVELOPMENT.29"></a></p>
+<h3><span class="mw-headline">Vampire Shoppers Tutorial: (IN DEVELOPMENT)</span></h3>
+<p>Vampire Shoppers is a mutator we're making as a class project for our Gaming class at <a href="http://www.bcc.ctc.edu" class="external text" title="http://www.bcc.ctc.edu" rel="nofollow">Bellevue Community College</a></p>
+<p>The goal of the project is to combine two mutators that we've made. The two mutators are Super Vampire (A vampire that steals adrenaline too, and gets bonuses for headshots) with Buy Mode. (You can't just pick up weapons, you buy them with adrenaline. You've gotta work for it now! Adrenaline junkies be afraid.) This tutorial is meant to walk people through everything we did. Hopefully it can be helpful to others. If you have any comments for us on how we can do things better, please post them.</p>
+<p>Our style for this tutorial is pretty much to show you what we did, and try and explain it as best we can. It's more of a reference manual than a "now press the left mouse button" walkthrough. We figure it's more useful that way.</p>
+<p>Make sure to download the complete source code <a href="http://www.franich.com/MutVampireShoppers.zip" class="external text" title="http://www.franich.com/MutVampireShoppers.zip" rel="nofollow">here</a>. It's extensively commented, and will serve as a sort of tutorial all of it's own. That should be your main source of information.</p>
+<hr />
+<p><a name="Some_terminology" id="Some_terminology"></a></p>
+<h3><span class="mw-headline">Some terminology</span></h3>
+<p>Throughout this tutorial we're going to be using some terms that might be unfamiliar. Here they are:</p>
+<dl>
+<dt>Bottom Feeder&#160;</dt>
+<dd>The currently lowest ranked player. Yes, we stole the term from one of our favorite game modes, Mutant! We also stole some code from them too. We give full credit where it's due. We never would've been able to learn what we've learned without their fine example.</dd>
+</dl>
+<hr />
+<p><a name="Where_we_started.2C_two_lonely_mutators" id="Where_we_started.2C_two_lonely_mutators"></a></p>
+<h3><span class="mw-headline">Where we started, two lonely mutators</span></h3>
+<p>This project was actually about working in a group to combine two separate mutators that we (as individuals) had already made. When we started we had two mutators:</p>
+<dl>
+<dt>Buy Mode&#160;</dt>
+<dd>You start out with a shield gun and an assault rifle. In order to get new weapons you have to spend adrenaline. To choose which weapon you want you bring up a menu by pressing the 'b' key.</dd>
+<dt>Super Vampire&#160;</dt>
+<dd>Like normal vampire, except that if you hit the max health, you can still continue to gain health. (It forces your maximum to go up.) After all, what's the point of being a vampire if you can't just keep getting better and better. Just to make the code more 'interesting' it also ended up adding vampiric adrenaline gain/loss too, to parallel the health.</dd>
+</dl>
+<p>We were assigned to bring these two mutators together into one, and write this tutorial, but in the process we decided we wanted the following features:</p>
+<ul>
+<li>Buy Mode:
+<ul>
+<li>You can now buy powerups too. (For great Double-Damage!)</li>
+<li>You can sell weapons back when they're empty (or before) in exchange for a small amount of adrenaline</li>
+<li>Improved (and now hierarchical) menu system. (Break things down into sub-menus, rather than have everything on one big menu.)</li>
+<li>If you're the worst ranked player in the game, you get a special discount on weapons and powerups. (Hopefully you can use this to improve your standings, or just cause more chaos.)</li>
+</ul>
+</li>
+<li>Super Vampire:
+<ul>
+<li>You're a vampire. Headshots should mean something significant, right? So if you get a headshot, you get an additional little dose of vampirism.</li>
+<li>If you were the worst ranked player in the game, you get a few bonus health and adrenaline points, hopefully allowing you to stay alive a bit longer, buy a better weapon, and improve your standings a bit. (makes for more chaos!)</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p><a name="Now_for_some_depth.2C_a_look_at_each_file_and_it.27s_methods:" id="Now_for_some_depth.2C_a_look_at_each_file_and_it.27s_methods:"></a></p>
+<h3><span class="mw-headline">Now for some depth, a look at each file and it's methods:</span></h3>
+<p><a name="MutVampShopper.uc:" id="MutVampShopper.uc:"></a></p>
+<h4><span class="mw-headline">MutVampShopper.uc:</span></h4>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; <a href="../../../../articles/m/u/t/Legacy%7EMutator_6c1f.html" title="Legacy:Mutator">Mutator</a> &gt;&gt; MutVampShopper</div>
+<p>Main Mutator file, Lots of different functions, that do lots of different things. Probably best to go through them 1 and a time.</p>
+<dl>
+<dt>Tick()&#160;</dt>
+<dd>Loads our interaction(VampShopper_Inter) every tick. That's essentially all this does.</dd>
+</dl>
+<dl>
+<dt>CheckReplacement()&#160;</dt>
+<dd>Hides all pickup, and weapon bases. Moves all pickups to an unreachable location. Can't just destroy the pickups since they are required for Buying Powerups.</dd>
+</dl>
+<dl>
+<dt>PostBeginPlay()&#160;</dt>
+<dd>Loads out gamerules class(VampShopper_Rules) into the game.</dd>
+</dl>
+<dl>
+<dt>IsRelevant()&#160;</dt>
+<dd>Taken from the No Adrenaline MOD. Removes all Adrenaline pickups, not sure if that's all it does.</dd>
+</dl>
+<p><a name="VampShopper_Rules.uc:" id="VampShopper_Rules.uc:"></a></p>
+<h4><span class="mw-headline">VampShopper_Rules.uc:</span></h4>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/i/n/f/Legacy%7EInfo_6292.html" title="Legacy:Info">Info</a> &gt;&gt; <a href="../../../../articles/g/a/m/Legacy%7EGameRules_2d19.html" title="Legacy:GameRules">GameRules</a> &gt;&gt; VampShopper_Rules</div>
+<p>This file actually sets up the game rules. It controls what should happen when a player takes damaage, or is killed.<br />
+It also controls which player is the "bottom feeder".<br />
+This is where the meat of the vampire side of things comes in.</p>
+<dl>
+<dt>ScoreKill()&#160;</dt>
+<dd>This method is called (I think) whenever someone is killed. Credit the code pretty much to the Mutant gametype. The one thing that had to be done is that we had to use ScoreKill() instead of what Mutant used, which was NotifyKilled(). Not really sure of the difference, other than that NotifyKilled is a part of the gametype, but ScoreKill is the game's ruleset. This means that we should be able to operate in any game type. I think.<br />
+All that happens in this method is that whenever someone dies, we trigger an update to see who the current "bottom feeder" is. (By calling UpdateBottomFeeder() strangely enough...&#160;:-D)</dd>
+</dl>
+<dl>
+<dt>NetDamage() &#160;</dt>
+<dd>Whenever someone takes damage, this function is called. This is where we compute how much health should be gained vampirically, and how much adrenaline should be both gained and lost. This includes adding the bonuses for either a headshot, or the bottom feeder.<br />
+I'm not too happy with the way we do all the checks for headshots and all that. It seems inelegant, but at least it's pretty straightforward.<br />
+The only thing this function does that might be hard to understand is the check to see if <i>DamageType==Headshot</i>. <i>HeadShot</i> is defined as a default property. It's just a <i>DamTypeSniperHeadShot</i> class. I'd have liked a way to check for head shots with any weapon, but it's not a built-in concept to the game, and I was too lazy to change everything that would've been required for any-weapon headshots. (I <b>think</b> it would've taken creating a new damage type for each weapon.)<br />
+Other than that, there's nothing at all complicated about what this function does, it just runs through a bunch of <i>if</i> statements. Looking at the (well commented) code is your best bet to see exactly what's going on.</dd>
+</dl>
+<dl>
+<dt>ComparePRI()&#160;</dt>
+<dd>This method takes two players (actually, their PlayerReplicationInfo) and compares them, to see which of the players is ranked lower. (This method also was stolen directly from the Mutant gametype.) It's also a pretty straightforward method. Just compare various player stats to see who is better.<br />
+The important thing to realize about this is that it gets called over and over again on all players...</dd>
+</dl>
+<dl>
+<dt>UpdateBottomFeeder()&#160;</dt>
+<dd>Decides which player is actually the worst by looping through them and calling ComparePRI() to compare them. Voodoo Magic!<br />
+Actually it's fairly simple, even though it's probably the single most complicated part of this file.<br />
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+oldBF = CurrentBottomFeeder;
+</pre></div>
+</dd>
+</dl>
+<p>CurrentBottomFeeder = <span class="kw9">None</span>;<br />
+We set the current bottom feeder into a temporary variable, and then clear the variable that keeps track of who the bottom feeder is.<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+Player = <span class="kw8">Level</span>.<span class="me1">getLocalPlayerController</span><span class="br0">(</span><span class="br0">)</span>;
+</pre></div>
+<p><br />
+This is something that was hard to figure out. This code was taken from the Mutant gametype, but in mutant it was part of a class that extended deathmatch. Apparently <i>GameReplicationInfo</i> is inherited somehow in that class. Apparently though, it's not inherited by a class that extends gamerules. So we had to go and get the GameReplicationInfo from somewhere. (I think that the way we're doing it here is actually about the worst way you could do it, but I couldn't find any clue on how to do it another way. -Josh)<br /></p>
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw1">for</span><span class="br0">(</span>i=<span class="nu0">0</span>; i&lt;Player.<span class="me1">GameReplicationInfo</span>.<span class="me1">PRIArray</span>.<span class="kw6">Length</span>; i++<span class="br0">)</span>
+<br /><span class="br0">{</span>
+        myPRI = Player.<span class="me1">GameReplicationInfo</span>.<span class="me1">PRIArray</span><span class="br0">[</span>i<span class="br0">]</span>;
+ 
+        <span class="co1">// Spectators/mutant can't be BF</span>
+        <span class="kw1">if</span><span class="br0">(</span> myPRI.<span class="me1">bOnlySpectator</span> <span class="br0">)</span> <span class="co1">//|| (CurrentMutant != None &amp;&amp; myPRI == CurrentMutant.PlayerReplicationInfo) )</span>
+                <span class="kw1">continue</span>;
+ 
+        <span class="kw1">if</span><span class="br0">(</span>CurrentBottomFeeder == <span class="kw9">None</span><span class="br0">)</span>
+                CurrentBottomFeeder = Controller<span class="br0">(</span>myPRI.<span class="me1">Owner</span><span class="br0">)</span>;
+        <span class="kw1">else</span>
+        <span class="br0">{</span>
+                <span class="co1">// Compare current BF with this PRI. If its worse, make it the new BF.</span>
+                <span class="kw1">if</span><span class="br0">(</span> ComparePRI<span class="br0">(</span>CurrentBottomFeeder.<span class="me1">PlayerReplicationInfo</span>, myPRI<span class="br0">)</span> &gt; <span class="nu0">0</span> <span class="br0">)</span>
+                        CurrentBottomFeeder = Controller<span class="br0">(</span>myPRI.<span class="me1">Owner</span><span class="br0">)</span>;
+        <span class="br0">}</span>
+
+<span class="br0">}</span>
+</pre></div>
+<p><br />
+There's really nothing terribly complex about this either. It loops through all available players, makes sure that they're a valid potential Bottom Feeder, (IE, not a spectator. In Mutant, there were other ways of not being a valid candidate for Bottom Feeder, but all we care about is that they're not a spectator.) sets them to the bottom feeder automatically if there isn't currently a bottom feeder, or compares the current player represented by the iteration of the loop to the bottom feeder (if there is a bottom feeder.), and sets whichever is worse to be the new bottom feeder. (Although, if the player who WAS the bottom feeder, is still worse, the bottom feeder doesn't actually appear to change.) <a name="VampShopper_Inter.uc:" id="VampShopper_Inter.uc:"></a></p>
+<h4><span class="mw-headline">VampShopper_Inter.uc:</span></h4>
+<div class="infobox infobox-class infobox-legacy"><a href="../../../../articles/i/n/t/Legacy%7EInteractions_bcc4.html" title="Legacy:Interactions">Interactions</a> &gt;&gt; <a href="../../../../articles/i/n/t/Legacy%7EInteraction_b025.html" title="Legacy:Interaction">Interaction</a> &gt;&gt; <a href="../../../../articles/c/o/n/Legacy%7EConsole_f3b2.html" title="Legacy:Console">Console</a> &gt;&gt; VampShopper_Inter</div>
+<p>This file gets and gives activity from the hud and key inputs. (When the player asks for a redeemer, give it to them!)<br />
+Spawns shopping hud, and 2ndary deathmatch hud.<br />
+"Bleh" is needed to override the gun that's spawned on the shopping hud. (Otherwise it ends up in the wrong place when the menu is open.)<br />
+If buymode is true, than each render cycle will know that it should be displaying a buy menu of some sort or the other.</p>
+<p>Extends off console(Which in turn extends off interaction). Handles all key interactions from the player, and controlls the Shopping Menus. Consists of very few function.</p>
+<dl>
+<dt>Initialized()&#160;</dt>
+<dd>This gets run when the file is first accessed. Instantiates the ShoppingHUD(this caused another gun to render over the weapons bar from the base HUD, I'm not sure why), and a 2nd DeathMatchHud(To override the Gun from the Shopping HUD).</dd>
+</dl>
+<dl>
+<dt>PostRender()&#160;</dt>
+<dd>This calls the render functions on each of the HUDs instantiated by the Initialized function. Also turns some elements that conflict off on the 2nd DM HUD.</dd>
+</dl>
+<dl>
+<dt>BuyWeapon()&#160;</dt>
+<dd>Custom Function, called whenver a player buys a weapon. Checks to see if the player has the weapon, and if they have enough adrenaline to buy it. If both check out, it awars the player the weapon, and deducts the cost of it from the player's adrenaline. If they do not, it throws an error out to the client.<br />
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> BuyWeapon<span class="br0">(</span>class&lt;weapon&gt; Weapon,<span class="kw4">int</span> cost<span class="br0">)</span>
+</pre></div>
+</dd>
+</dl>
+<p><span class="br0">{</span></p>
+<pre>
+   <span class="co1">//Checks to see if the player already has the weapon</span>
+   <span class="kw1">if</span><span class="br0">(</span>ViewPortOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">findInventorytype</span><span class="br0">(</span>Weapon<span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+          <span class="br0">{</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"You Already have this weapon."</span><span class="br0">)</span>;
+          <span class="br0">}</span>
+   <span class="co1">//Checks to see if the player has enough adrenaline to buy the weapon</span>
+          <span class="kw1">else</span> <span class="kw1">if</span><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Adrenaline</span> &gt;= cost<span class="br0">)</span>
+          <span class="br0">{</span>
+          <span class="co1">//Spawn the weapon, and give it to the player.</span>
+           W = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Spawn</span><span class="br0">(</span>Weapon<span class="br0">)</span>;
+           W.<span class="me1">GiveTo</span><span class="br0">(</span>ViewPortOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+           <span class="co1">//Turn buyMode off, and turn all menus off</span>
+           BuyMode = <span class="kw9">false</span>;
+           BuyMenu = <span class="nu0">0</span>;
+           BuyHUD.<span class="me1">BuyHUDOn3</span> = <span class="kw9">false</span>;
+           BuyHUD.<span class="me1">BuyHUDOn2</span> = <span class="kw9">false</span>;
+           <span class="co1">//Deduct Adrenaline</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Adrenaline</span> -= cost;
+          <span class="br0">}</span>
+          <span class="kw1">else</span>
+          <span class="br0">{</span>
+          <span class="co1">//toss an error if you don't have enough adrenaline</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"You do not have the Adrenaline Required"</span><span class="br0">)</span>;
+          <span class="br0">}</span>
+</pre>
+<p><span class="br0">}</span></p>
+<dl>
+<dt>SellWeapon()&#160;</dt>
+<dd>Custom Function, called whenever a player wants to sell a weapon. Checks to see if the player actually has the weapon they are trying to sell. If they do, it destroys the weapon, and awards the appropriate amount of adrenaline.<br />
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> SellWeapon<span class="br0">(</span>class&lt;weapon&gt; Weapon,<span class="kw4">int</span> worth<span class="br0">)</span>
+</pre></div>
+</dd>
+</dl>
+<p><span class="br0">{</span></p>
+<pre>
+   <span class="co1">//Checks to make sure the player actually has the weapon they are trying to sell</span>
+   <span class="kw1">if</span><span class="br0">(</span>ViewPortOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">findInventorytype</span><span class="br0">(</span>Weapon<span class="br0">)</span> != <span class="kw9">none</span><span class="br0">)</span>
+   <span class="br0">{</span>
+          <span class="co1">//Assigns the weapon in the inventory to a variable, and destroy it</span>
+          W = Weapon<span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">findInventorytype</span><span class="br0">(</span>Weapon<span class="br0">)</span><span class="br0">)</span>;
+          W.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+          <span class="co1">//Exit buy mode</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">PrevWeapon</span><span class="br0">(</span><span class="br0">)</span>;
+          BuyMode = <span class="kw9">false</span>;
+          BuyMenu = <span class="nu0">0</span>;
+          BuyHUD.<span class="me1">BuyHUDOn3</span> = <span class="kw9">false</span>;
+          BuyHUD.<span class="me1">BuyHUDOn1</span> = <span class="kw9">false</span>;
+          <span class="co1">//Award Adrenaline</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Adrenaline</span> += worth;
+   <span class="br0">}</span>
+   <span class="kw1">else</span>
+   <span class="br0">{</span>
+   <span class="co1">//Error message incase they don't have the weapon they are trying to sell.</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"You do not have that weapon"</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+</pre>
+<p><span class="br0">}</span></p>
+<dl>
+<dt>BuyPowerup()&#160;</dt>
+<dd>Custom Function, called whenever a player tries to purchase a powerup, does basiclly the same thing as BuyWeapon.<br />
+<div dir="ltr" style="text-align: left;" class="highlighted-source">
+<pre class="source-uscript">
+<span class="kw5">function</span> BuyPowerup<span class="br0">(</span>class&lt;Pickup&gt; PowerUp,<span class="kw4">int</span> cost<span class="br0">)</span>
+</pre></div>
+</dd>
+</dl>
+<p><span class="br0">{</span> <span class="co1">//Checking to see if the player has enough adrenaline to buy this.</span></p>
+<pre>
+   <span class="kw1">if</span><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Adrenaline</span> &gt;= cost<span class="br0">)</span>
+   <span class="br0">{</span>
+          <span class="co1">//Same as weapon, however this spawns in the same location as all other pickups on the map(see the main mutator file)</span>
+          P = ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Spawn</span><span class="br0">(</span>PowerUp<span class="br0">)</span>;
+          <span class="co1">//So we have to set it's location to the player's location</span>
+          P.<span class="me1">SetLocation</span><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a>.<span class="me1">Location</span><span class="br0">)</span>;
+          <span class="co1">//And run the touch function on the PickUP</span>
+          P.<span class="me1">Touch</span><span class="br0">(</span>ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<a href="/Pawn"><span class="kw10">Pawn</span></a><span class="br0">)</span>;
+          <span class="co1">//Then Destroy the pickup to keep it from respawning</span>
+          P.<span class="me1">Destroy</span><span class="br0">(</span><span class="br0">)</span>;
+          <span class="co1">//And Turn BuyMOde off</span>
+          BuyMode = <span class="kw9">false</span>;
+          BuyMenu = <span class="nu0">0</span>;
+          BuyHUD.<span class="me1">BuyHUDOn3</span> = <span class="kw9">false</span>;
+          BuyHUD.<span class="me1">BuyHUDOn</span> = <span class="kw9">false</span>;
+          <span class="co1">//And Deduct the adrenaline cost.</span>
+          ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">Adrenaline</span> -= cost;
+   <span class="br0">}</span>
+   <span class="kw1">else</span>
+   <span class="br0">{</span>
+   ViewportOwner.<a href="/Actor"><span class="kw10">Actor</span></a>.<span class="me1">ClientMessage</span><span class="br0">(</span><span class="st0">"You do not have enough Adrenaline"</span><span class="br0">)</span>;
+   <span class="br0">}</span>
+</pre>
+<p><span class="br0">}</span></p>
+<dl>
+<dt>KeyEvent()&#160;</dt>
+<dd>Built in function of the Interaction class. Handles all inputs from the keyboard. Toggles switches on the instaniated version of ShoppingHUD. This causes ShoppingHUD to make certain menus visible/invisible each time PostRender() is called. Calles bIgnoreKeys to check and see if any of the keys pressed are relevant to the menu system(Escape, and 1-8 num keys). If true, it continues down the function. If false, it throws back to the inbedded key rendering system. The rest of the function is only conserned with handling changes in the menu system. Changing menus, buying/selling weapons and powerups. All this is commented in the file for more detail.</dd>
+</dl>
+<p><a name="ShoppingHUD.uc:" id="ShoppingHUD.uc:"></a></p>
+<h4><span class="mw-headline">ShoppingHUD.uc:</span></h4>
+<div class="infobox infobox-class infobox-legacy">Hud &gt;&gt; <a href="../../../../articles/h/u/d/Legacy%7EHudBase_bdaa.html" title="Legacy:HudBase">HudBase</a> &gt;&gt; HudBDeathMatch &gt;&gt; ShoppingHUD</div>
+<p>This file controls the HUD used for buying things.<br />
+There's a bool for each menu that could potentially be displayed. If it's true, render the menu it's related to.<br />
+Hud is "always on" just not visible until VampShopper_Inter.uc tells it to display something.</p>
+<p>Controlls all the displaying of the Shopping Menus. Each menu has a bool applied to it, that controls if that menu should be Rendered or not. Also has 4 draw passes, DrawHudPassA, DrawHudPassB, DrawHudPassC, and DrawHudPassD. These draw the hud to the canvas, however I'm not entirely sure if/why all 4 of them are needed. This file also contains the pricing information that can be set by the user. Those variables are listed in the section below the booleans.</p>
+<dl>
+<dt>bool BuyHUD3&#160;</dt>
+<dd>The base HUD, Allows client to select the Buy Weapon, Sell Weapon, or Buy Powerup menu.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD3On&#160;</dt>
+<dd>Tells the DrawHUD passes to make the base HUD menu visible, or invisible.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD2&#160;</dt>
+<dd>The BuyWeapon HUD, Allows client buy weapons.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD2On&#160;</dt>
+<dd>Tells the DrawHUD passes to make the BuyWeapon HUD menu visible, or invisible.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD1&#160;</dt>
+<dd>The SellWeapon HUD, Allows client sell weapons.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD1On&#160;</dt>
+<dd>Tells the DrawHUD passes to make the SellWeapon HUD menu visible, or invisible.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUD&#160;</dt>
+<dd>The BuyPowerup HUD, Allows client buy powerups.</dd>
+</dl>
+<dl>
+<dt>bool BuyHUDOn&#160;</dt>
+<dd>Tells the DrawHUD passes to make the BuyPowerup HUD menu visible, or invisible.</dd>
+</dl>
+<p><a name="Weapon_Price_Variables" id="Weapon_Price_Variables"></a></p>
+<h4><span class="mw-headline">Weapon Price Variables</span></h4>
+<dl>
+<dt>int CostWeapon_Bio&#160;</dt>
+<dd>Holds BioRifle price.</dd>
+<dt>int CostWeapon_Link&#160;</dt>
+<dd>Holds Linkgun price.</dd>
+<dt>int CostWeapon_Shock&#160;</dt>
+<dd>Holds ShockRifle price.</dd>
+<dt>int CostWeapon_Mini&#160;</dt>
+<dd>Holds Minigun price.</dd>
+<dt>int CostWeapon_Flak&#160;</dt>
+<dd>Holds FlakCannon price.</dd>
+<dt>int CostWeapon_Sniper&#160;</dt>
+<dd>Holds SniperRifle price.</dd>
+<dt>int CostWeapon_Rocket&#160;</dt>
+<dd>Holds RocketLauncher price.</dd>
+<dt>int CostWeapon_Redeemer&#160;</dt>
+<dd>Holds Redeemer price.</dd>
+</dl>
+<p><a name="PowerUp_Price_Variables" id="PowerUp_Price_Variables"></a></p>
+<h4><span class="mw-headline">PowerUp Price Variables</span></h4>
+<dl>
+<dt>int CostPowerUp_MiniHealth&#160;</dt>
+<dd>Holds MiniHealthPack price.</dd>
+<dt>int CostPowerUp_Health&#160;</dt>
+<dd>Holds HealthPack price.</dd>
+<dt>int CostPowerUp_SuperHealth&#160;</dt>
+<dd>Holds SuperHealthPack price.</dd>
+<dt>int CostPowerUp_Shield&#160;</dt>
+<dd>Holds ShieldPack price.</dd>
+<dt>int CostPowerUp_SuperShield&#160;</dt>
+<dd>Holds SuperShieldPack price.</dd>
+<dt>int CostPowerUp_DoubleDam&#160;</dt>
+<dd>Holds DoubleDamage price.</dd>
+</dl>
+<hr />
+<p><a name="Concepts_we_learned.2C_or_that_are_worth_noting." id="Concepts_we_learned.2C_or_that_are_worth_noting."></a></p>
+<h3><span class="mw-headline">Concepts we learned, or that are worth noting.</span></h3>
+<hr />
+<p><a name="Things_we_still_are_trying_to_do:" id="Things_we_still_are_trying_to_do:"></a></p>
+<h3><span class="mw-headline">Things we still are trying to do:</span></h3>
+<ul>
+<li>Make a mutator options menu. (Josh will work on.. But probably not in time for the project due date. It'd be a great feature, but.. Ah, to be using CVS. -Josh)</li>
+<li>Ok all done,The last track with the bottom feeder, ended up working. Also I just had to drop a resolution calculation into my drawtext calls to adjust their position.</li>
+<li>final version is up for download. Will post full source of each file(all heavily commented), and make revisions to the page tommarow. -Antone</li>
+</ul>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>SuperApe:</b> I have no idea how old this page is or if it is still in development. Can we get an update (with a date)?</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 79/1000000
+Post-expand include size: 618/2097152 bytes
+Template argument size: 379/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../../articles/c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Category</a>: <span dir='ltr'><a href="../../../../articles/l/e/g/Category%7ELegacy_Journal_a8a9.html" title="Category:Legacy Journal">Legacy Journal</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/v/a/m/Legacy%7EVampireShoppers_386c.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/v/a/m/Legacy_talk%7EVampireShoppers_abf3.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:VampireShoppers">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:42, 19 November 2007 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

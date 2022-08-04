@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Unreal Engine Core - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Unreal Engine Core</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>This page is an introduction to the core concepts of the <a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_4409.html" title="Legacy:Unreal Engine">Unreal Engine</a>.</p>
+<p>At its simplest, a computer game is made up of the following things:</p>
+<ul>
+<li>a collection of things that describe the environment the player is supposed to experience,</li>
+<li>a means of conveying that to the player on her monitor, through her speakers and so on.</li>
+</ul>
+<p>The collection of things is staggeringly huge, even for the average game of UT2003. We don't tend to realize just how fast computers are these days. In programming terms, each thing is called an <b>object</b>. The Unreal engine is constantly aware of where these objects are in the fictional world, what they are doing and so on. It does this by looking at each one in turn, although as we'll see later from the point of view of the programmer, we can usually envisage all this as happening simultaneously, in real time.</p>
+<p>So far, we have a long list of objects, and each one is assigned a position in 3-dimensional <a href="http://en.wikipedia.org/wiki/Cartesian_coordinates" class="extiw" title="wikipedia:Cartesian_coordinates">Wikipedia:Cartesian coordinates</a>. Now the engine also knows where the player is in the world (the player is represented by just another type of object, but more on this much later), and can calculate what the player is supposed to see and hear. If a rocket just flew past in front of you, then you'll see a rocket in front of you on the screen.</p>
+<p>Some questions that might be raised now include: what makes the rocket fly in a particular direction? what makes it explode when it hits something? when it hits the player, what makes him lose health and go 'ouch'?</p>
+<p><a name="The_virtual_machine" id="The_virtual_machine"></a></p>
+<h2><span class="mw-headline">The virtual machine</span></h2>
+<p>We now come to a fundamental difference between the Unreal Engine and most other first-person shooters. It's a difference which, in the opinion of many modders, makes working with Unreal much easier than with other engines.</p>
+<p>The parts of the software that handle display on the screen (<b>rendering</b>), sound, and knowing where all these objects are, networking (clients and servers sending each other information about the objects) as well as anything else that is platform-specific, is written in <a href="http://en.wikipedia.org/wiki/C_Plus_Plus" class="extiw" title="wikipedia:C_Plus_Plus">C++</a>. We call the "native" stuff. You can't see the code for this (it's "closed-source"), and hardly any of the work done by modders involves this.</p>
+<p>The native software also creates a <a href="http://en.wikipedia.org/wiki/virtual_machine" class="extiw" title="wikipedia:virtual_machine">Wikipedia:virtual machine</a>, similar to the <a href="http://en.wikipedia.org/wiki/Java_virtual_machine" class="extiw" title="wikipedia:Java_virtual_machine">Wikipedia:Java virtual machine</a>. This is like a programming environment that sits on top of the native stuff. The language for this is <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_a9c5.html" title="Legacy:UnrealScript">UnrealScript</a>; it's similar to Java and JavaScript. It is compiled into bytecodes, like Java, but the source remains visible, and it's this that allows the modding of the Unreal engine games. Tim Sweeney's <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Language_Reference_Introduction_1f85.html" title="Legacy:UnrealScript Language Reference/Introduction">Design goals for UnrealScript</a> explain this idea further.</p>
+<p>In very simple terms, every single object in the game is a piece of UnrealScript code. The engine runs all these scripts, and they decide what to do. So when the rocket hits a wall, a function in its script called something like HitAWall says: "I have hit a wall. I should now produce an explosion, make a noise, and remove myself from the game." How does the rocket know it hit a wall? The native part of the engine told it. How does the engine know? Every single moment of the game, it is checking where objects are and what they are touching.</p>
+<blockquote class="legacyquote">
+<p>Since UnrealScript is object oriented, you won't be editing any of the original source. This is different from Quake, where you edit the original source and then distribute a new DLL. In US, you will subclass the classes that shipped with Unreal Tournament, modifying them to suit your needs. – Tim Sweeney</p>
+</blockquote>
+<p><a name="The_tick" id="The_tick"></a></p>
+<h2><span class="mw-headline">The tick</span></h2>
+<p>The engine divides time into <b>ticks</b>. A tick is not a specific length, which allows the engine to scale this according to the power of the machine and the current load. While the C++ parts of the engine are fast, UnrealScript is a relatively slow language to execute. The software is designed in such a way that things that happen all the time, like movement and checking whether objects are touching, is handled natively, while particular events are handled in UnrealScript. While the rocket is moving, no UnrealScript is being executed. The native engine knows to keep moving it forwards each tick, and the renderer is of course showing it to you in a different position each frame (the renderer works in frames, like animation. Again, how fast these go, the FPS, depends on your hardware and how much is going on in the game.)</p>
+<p>But when the rocket hits the wall, things begin to happen in UnrealScript:</p>
+<ol>
+<li>the rocket is notified. This starts a chain of events:</li>
+<li>the rocket informs the thing it's hit: "you've just been hit by a rocket. This is maybe going to hurt you". The thing it's hit could be a player which received damage, or a piece of architecture which won't care much. But the point is that the rocket doesn't care what the target does about being hit. This is a very important point about <b>object-oriented programming</b>, which we'll see later on. Roughly speaking, this is <b>encapsulation</b>.</li>
+<li>the rocket creates a new object: an explosion. This explosion object will begin to run its own script, which says:
+<ol>
+<li>display bright flashes at your position.</li>
+<li>Make a loud noise.</li>
+<li>Now some smoke. When the renderer inspects all the objects the player can see, it will see that there are bright flashes and smoke called for at a particular spot.</li>
+<li>Then remove yourself from the game, you're done.</li>
+</ol>
+</li>
+<li>the rocket then removes itself from the game. The object that represents the rocket no longer exists.</li>
+</ol>
+<p>Now from the point of view of the C++ native code, each object is taken in turn. But from a programmer's point of view, we can imagine the rocket and the explosion as running in parallel.</p>
+<hr />
+<p><b>Tarquin:</b> ok guys, what next? Are we ready to lead on into <a href="../../../../articles/o/b/j/Legacy%7EObject_Oriented_Programming_Overview_3984.html" title="Legacy:Object Oriented Programming Overview">OOP Overview</a>&#160;?</p>
+<p><a name="Comments" id="Comments"></a></p>
+<h2><span class="mw-headline">Comments</span></h2>
+<p><b>Tarquin:</b> How am I doing so far? Want to change the list on <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript Lessons</a> so it reflects the order?</p>
+<p><b>Sobiwan:</b> How can I say this... ah, yes. The music artist "Sting" comes to mind: "every little thing Tarquin does is magic..."&#160;:)</p>
+<p><b>Wormbo:</b> I'm sure this is mentioned somewhere: The Unreal engine loads packages because they are referenced by code, i.e. they are referenced by other packages, or because objects in those packages are mentined in <a href="../../../../articles/i/n/t/Legacy%7EINT_File_d5d3.html" title="Legacy:INT File">INT files</a>, which again leads to code loading those objects after scanning all INT files for a certain MetaClass.</p>
+<p><b>Daid303:</b> "UnrealScript (lets call it US for short)" Let's NOT call it US for short, but UScript for short, ok?</p>
+<p><b>Tarquin:</b> Well I think much of the bottom half of this page will be deleted anyway, unless someone tidies it up... This page needs a better title too.&#160;!Unreal Engine Overview" maybe?</p>
+<p><b>King Mango:</b> Perhaps somewhere a compilation of suggested encapsulation actions for each type of actor that we newbs should begin to train ourselves to be aware of. I really like knowing now that the rocket tells what it hit 'this might hurt' rather than what is being hit is what determines should it be damaged. I'm sure I have this all wrong lol But back to my request, I think I'd like to see "projectiles and what they need to be responsible for." "Player Characters and what they need to be responsible for" But yes from a beginner's stand point, I think I would be ready to move on to OOP overview. I'm probably way ahead of myself... nm me</p>
+<p><b>SuperApe:</b> LOL, Mango. It looks like a link to OOP overview is in order. Although, I see relations to <a href="../../../../articles/c/o/m/Legacy%7ECommunication_Between_Objects_1f02.html" title="Legacy:Communication Between Objects">Communication Between Objects</a> and <a href="../../../../articles/l/i/n/Legacy%7ELinked_List_Existing_Lists_In_Unreal_Tournament_3d86.html" title="Legacy:Linked List/Existing Lists In Unreal Tournament">Linked List/Existing Lists In Unreal Tournament</a> as well. I hope I'm not confusing the point.</p>
+<p><b>Switch`:</b> <i>"So far, we have a long list of objects, and each one is assigned a position in 3-dimensional..."</i> Misleading, objects don't have a location.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 360/2097152 bytes
+Template argument size: 315/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/n/r/Legacy%7EUnreal_Engine_Core_e2de.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/n/r/Legacy_talk%7EUnreal_Engine_Core_7efd.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Unreal_Engine_Core">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 13:17, 23 April 2007 by Unreal Wiki user <a href="../../../../articles/w/o/r/User%7EWormbo_7d13.html" title="User:Wormbo">Wormbo</a>. Based on work by Anonymous user(s) of Unreal Wiki.</li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>

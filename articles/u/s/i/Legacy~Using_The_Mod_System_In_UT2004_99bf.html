@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- headlinks removed -->
+	<link rel="shortcut icon" href="../../../../misc/uewiki-favicon.png"/>
+    <title>Legacy:Using The Mod System In UT2004 - Unreal Wiki</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../../skins/offline/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/md5.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/utf8.js"></script>
+    <script type="text/javascript" src="../../../../skins/offline/lookup.js"></script>
+    <script type="text/javascript" src="../../../../articles/-/_/_/-.html"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../../articles/c/o/m/MediaWiki%7ECommon.css_d42e.html";
+@import "../../../../articles/m/o/n/MediaWiki%7EMonobook.css_fb19.html";
+@import "../../../../articles/-/_/_/-.html";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-100">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Legacy:Using The Mod System In UT2004</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Unreal Wiki, The Unreal Engine Documentation Site</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p>These basic procedures will show you how the unreal engine works with directories and how to setup your modification so it will use the <b>mod system</b>. This will keep your modification seperate to <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a> and allow you to work with greater ease and effiency on bigger mods. Personally I always use this as it keeps my base directory free from clutter although if you are working on something smaller like a mutator or gametype you may not need to use this. The best use for this is in <b>total conversion</b> situations where you modification will take up alot of room and have many <a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">package</a>'s.</p>
+<p>Say your <a href="../../../../articles/b/a/s/Legacy%7EBase_Directory_665f.html" title="Legacy:Base Directory">Base Directory</a> is C:\ut2004\</p>
+<blockquote class="legacyquote">
+<p><b>your mod's</b> directory structure would look like this: C:\ut2004\<b>YourMod</b>\ C:\ut2004\<b>YourMod\MyModCode\</b> &lt;– a UnrealScript package for your mod C:\ut2004\<b>YourMod\MyModCode\Classes</b> &lt;– put you source code here C:\ut2004\<b>YourMod\MyModGUI\</b> &lt;– another UnrealScript Package C:\ut2004\<b>YourMod\MyModGUI\Classes</b> C:\ut2004\<b>YourMod\System</b></p>
+</blockquote>
+<p>The mod system is accessed through the use of <b>-mod=</b> commandline switch</p>
+<blockquote class="legacyquote">
+<p>{{{1}}}</p>
+</blockquote>
+<p><br />
+I have found that in unreal ed it does not default to <b>your mod's</b> directories, so keep an eye on that when saving anything from maps or packages. If there is a way to fix this please let me know.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Basic_Setup"><span class="tocnumber">1</span> <span class="toctext">Basic Setup</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Log_File"><span class="tocnumber">1.1</span> <span class="toctext">Log File</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Intermediate"><span class="tocnumber">2</span> <span class="toctext">Intermediate</span></a>
+<ul>
+<li class="toclevel-2"><a href="#DumpInt"><span class="tocnumber">2.1</span> <span class="toctext">DumpInt</span></a></li>
+<li class="toclevel-2"><a href="#ExportCache"><span class="tocnumber">2.2</span> <span class="toctext">ExportCache</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Custom_Characters"><span class="tocnumber">3</span> <span class="toctext">Custom Characters</span></a></li>
+<li class="toclevel-1"><a href="#Advanced_Importing"><span class="tocnumber">4</span> <span class="toctext">Advanced Importing</span></a></li>
+<li class="toclevel-1"><a href="#External_Links_and_Other_useful_Links"><span class="tocnumber">5</span> <span class="toctext">External Links and Other useful Links</span></a></li>
+<li class="toclevel-1"><a href="#Discussion"><span class="tocnumber">6</span> <span class="toctext">Discussion</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<p><a name="Basic_Setup" id="Basic_Setup"></a></p>
+<h3><span class="mw-headline">Basic Setup</span></h3>
+<p><a href="../../../../articles/e/n/g/Legacy%7EEngine_Directory_Structure_0e30.html" title="Legacy:Engine Directory Structure">Engine_Directory_Structure</a> - First we'll start with a rundown of the unreal engines directory structure.</p>
+<p><a href="../../../../articles/s/e/t/Legacy%7ESet_Up_Package_Folders_6a30.html" title="Legacy:Set Up Package Folders">Set_Up_Package_Folders</a> - Then we examine how to setup <a href="../../../../articles/p/a/c/Legacy%7EPackage_c8e3.html" title="Legacy:Package">package</a>'s so you can compile, <b>Not really related to mod system</b></p>
+<p><a href="../../../../articles/u/t/2/Legacy%7EUT2k4Mod.Ini_6807.html" title="Legacy:UT2k4Mod.Ini">UT2k4Mod.Ini</a> - We start to get into how to setup <b>your mod</b> to be accessed from the community panel in <a href="../../../../articles/u/t/2/Legacy%7EUT2004_5921.html" class="mw-redirect" title="Legacy:UT2004">UT2004</a>.</p>
+<p><a href="../../../../articles/u/t/2/Legacy%7EUT2k4_Default.Ini_7074.html" title="Legacy:UT2k4 Default.Ini">UT2k4 Default.Ini</a> - This will show you how to setup <b>your mod's default.ini</b> file so you can use it to compile.</p>
+<p><a href="../../../../articles/c/o/m/Legacy%7ECompiling_With_UCC_0337.html" title="Legacy:Compiling With UCC">Compiling_With_UCC</a> - Lastly to round things off we take a look at how to compile using <b>ucc.exe</b></p>
+<p><a name="Log_File" id="Log_File"></a></p>
+<h4><span class="mw-headline">Log File</span></h4>
+<blockquote class="legacyquote">
+<p>When running with mod support, the main .log files will be placed in your mod's System directory by default and be called &lt;ModNamer&gt;.Log (ie: MyMod.log). All other secondary log files (such as ucc.log) will still be created in the game's System directory.</p>
+</blockquote>
+<p><a name="Intermediate" id="Intermediate"></a></p>
+<h3><span class="mw-headline">Intermediate</span></h3>
+<p><a href="../../../../articles/c/o/m/Legacy%7ECommandlet_d39f.html" title="Legacy:Commandlet">Commandlets</a> can be very useful to UScripters, providing automated tasks so you dont have to repetativly do things by hand, The Export Cache <a href="../../../../articles/c/o/m/Legacy%7ECommandlet_d39f.html" title="Legacy:Commandlet">commandlet</a> is one example of this. These can also be used to provide language support for various nations.</p>
+<blockquote class="legacyquote">
+<p>Starting with the latest patch, UT2004 can correctly locate and use .int and .ucl files stored in your mod's System directory (or in the case of .ucl whichever directory is specified by the CacheRecordPath array). But, it does require some work on your part.</p>
+</blockquote>
+<p><a name="DumpInt" id="DumpInt"></a></p>
+<h4><span class="mw-headline">DumpInt</span></h4>
+<p><a href="../../../../articles/d/u/m/Legacy%7EDumpIntCommandlet_1fc3.html" title="Legacy:DumpIntCommandlet">DumpIntCommandlet</a> - will always create the new .int files in the game's System directory. This is an unfortunate outcome, but changing it would have proven difficult at this time.</p>
+<p><a name="ExportCache" id="ExportCache"></a></p>
+<h4><span class="mw-headline">ExportCache</span></h4>
+<p><a href="../../../../articles/e/x/p/Legacy%7EExportCacheCommandlet_efa8.html" title="Legacy:ExportCacheCommandlet">ExportCacheCommandlet</a> - will create the .ucl files in the first directory found in the CacheRecordPath array. Using the trick above, you can force it to use your directory, but that’s un supported. As a general rule, you will have to hand copy these files in to their proper place. Sorry.</p>
+<p><a name="Custom_Characters" id="Custom_Characters"></a></p>
+<h3><span class="mw-headline">Custom Characters</span></h3>
+<p>You may want to add custom characters or even custom species type to your total conversion, lucky there is a simple way to set it up. Its called the Unreal Player List.</p>
+<blockquote class="legacyquote">
+<p>There is special logic built in to the latest patch to make UPL files mod friendly. It works as follows: When the cache manager searches for UPL files, it traverses the Paths array in reverse (bottom to top) and it checks either directory for .UPL files &gt;adding any it finds to it’s cache. When it reaches the game's System, the following occurs: 1.If you are not running with a mod, it will scan the directory as normal. 2.If you are running a mod, no .upl files have been found already, it will scan the directory as normal. 3.If you are running a mod, and the game has already found even a single .upl file, it will skip the default System directory. In a nutshell, this means that if you have a mod that uses both your own custom .upl files and you want to allow them to use the default characters, you will need to include a copy of the original .upl files with your mod.</p>
+</blockquote>
+<p><a href="../../../../articles/u/p/l/Legacy%7EUPL_File_00e2.html" title="Legacy:UPL File">UPL_File</a></p>
+<p><a href="../../../../articles/d/e/f/Legacy%7EDefining_SpeciesTypes_0131.html" title="Legacy:Defining SpeciesTypes">Defining_SpeciesTypes</a></p>
+<p><a name="Advanced_Importing" id="Advanced_Importing"></a></p>
+<h3><span class="mw-headline">Advanced Importing</span></h3>
+<p>When working with large amounts of assets it might be alittle overwhelming to do this by hand through unrealed. Now alot of the time unrealed will let you import multiple files at once but sometimes it is much easier done on the command line. It free's up valuable memory that can be used to get the process done quicker without the overhead of the full editor open.</p>
+<p><a href="../../../../articles/e/x/e/Legacy%7EExec_Directive_577d.html" title="Legacy:Exec Directive">Exec_Directive</a></p>
+<p><a name="External_Links_and_Other_useful_Links" id="External_Links_and_Other_useful_Links"></a></p>
+<h3><span class="mw-headline">External Links and Other useful Links</span></h3>
+<p><a href="http://udn.epicgames.com/Two/ImprovedModSupport" class="extiw" title="udn2:ImprovedModSupport">udn2:ImprovedModSupport</a></p>
+<p><a href="http://geeks.beyondunreal.com/ut2004/docs-modsystem.php" class="external free" title="http://geeks.beyondunreal.com/ut2004/docs-modsystem.php" rel="nofollow">http://geeks.beyondunreal.com/ut2004/docs-modsystem.php</a></p>
+<p><a href="../../../../articles/m/a/k/Legacy%7EMaking_Mods_187d.html" title="Legacy:Making Mods">Making_Mods</a></p>
+<p><a href="../../../../articles/m/o/d/Legacy%7EMod_Authoring_4bbb.html" title="Legacy:Mod Authoring">Mod_Authoring</a></p>
+<p><a name="Discussion" id="Discussion"></a></p>
+<h2><span class="mw-headline">Discussion</span></h2>
+<p><b>OlympusMons:</b>Ok so I created this page to pull all the mod system stuff together into a format I can use to make a tutorial. Alot of it is in basic prodecure type pages but I think it'll work very well like that. Im going to work a bit more on this page dont worry, if there is another page on this topic and I missed it please let me know and I'll give this a deleteme. Im hoping to add it to the <a href="../../../../articles/u/n/r/Legacy%7EUnrealScript_Lessons_b51d.html" title="Legacy:UnrealScript Lessons">UnrealScript_Lessons</a> page when Im finsihed.</p>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 40/1000000
+Post-expand include size: 2055/2097152 bytes
+Template argument size: 1823/2097152 bytes
+#ifexist count: 0/100
+-->
+<div class="printfooter">
+</div>
+	    	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-legacy"
+	       class="selected"	       ><a href="../../../../articles/u/s/i/Legacy%7EUsing_The_Mod_System_In_UT2004_99bf.html">Legacy</a></li><li id="ca-talk"
+	       class="new"	       ><a href="../../../../articles/u/s/i/Legacy_talk%7EUsing_The_Mod_System_In_UT2004_25ca.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://wiki.beyondunreal.com/Legacy:Using_The_Mod_System_In_UT2004">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../../misc/uewiki.png);"
+	    href="../../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../../articles/c/o/m/Unreal_Wiki%7ECommunity_Portal_3311.html">Community portal</a></li>
+	     	      <li id="n-help"><a href="../../../../articles/c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="../../../../../COPYING.html"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt='Attribution-Noncommercial-Share Alike 3.0' /></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 22:16, 12 April 2006 by Anonymous user(s) of Unreal Wiki. </li>	  <li id="f-copyright">Licensed as <a href="../../../../articles/c/o/p/Unreal_Wiki%7ECopyrights_e561.html" title="Unreal Wiki:Copyrights">Attribution-Noncommercial-Share Alike 3.0</a>.</li>	  <li id="f-about"><a href="../../../../articles/a/b/o/Unreal_Wiki%7EAbout_9ce6.html" title="Unreal Wiki:About">About Unreal Wiki</a></li>	  <li id="f-disclaimer"><a href="../../../../articles/g/e/n/Unreal_Wiki%7EGeneral_disclaimer_a0a2.html" title="Unreal Wiki:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>
